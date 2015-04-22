@@ -1,0 +1,103 @@
+%%%%%%%%%%%%%%%%%%%%%%% file typeinst.tex %%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% This is the LaTeX source for the instructions to authors using
+% the LaTeX document class 'llncs.cls' for contributions to
+% the Lecture Notes in Computer Sciences series.
+% http://www.springer.com/lncs       Springer Heidelberg 2006/05/04
+%
+% It may be used as a template for your own input - copy it
+% to a new file with a new name and use it as the basis
+% for your article.
+%
+% NB: the document class 'llncs' has its own and detailed documentation, see
+% ftp://ftp.springer.de/data/pubftp/pub/tex/latex/llncs/latex2e/llncsdoc.pdf
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\documentclass[runningheads,a4paper]{llncs}
+\usepackage{times}
+\usepackage{listings}
+\usepackage{colonequals}
+%\usepackage{mathpartir}
+\usepackage{xspace}
+\usepackage{amssymb}
+\setcounter{tocdepth}{3}
+\usepackage{graphicx}
+\usepackage{stmaryrd}
+\usepackage{cite}
+\usepackage{hyperref}
+\usepackage{framed}
+
+% http://mirror.switch.ch/ftp/mirror/tex/macros/latex/contrib/xcolor/xcolor.pdf
+\usepackage{xcolor}
+
+%\usepackage{amsthm}
+\usepackage{amsmath}    % need for subequations
+\usepackage{booktabs}
+%\usepackage{float}
+%\usepackage{fullpage}
+%\floatstyle{ruled}
+%\newfloat{alg}{ht}{loa}
+%\floatname{alg}{Algorithm}
+
+\usepackage{url}
+\urldef{\mailsa}\path|firstname.lastname@epfl.ch|
+\newcommand{\keywords}[1]{\par\addvspace\baselineskip
+\noindent\keywordname\enspace\ignorespaces#1}
+
+
+\newcommand{\cvc}{\textsc{cvc}{\small 4}\xspace}
+\newcommand{\cvciii}{\textsc{cvc}{\small 3}\xspace}
+\newcommand{\ziii}{\textsc{z}{\small 3}\xspace}
+\newcommand{\teq}{\approx}
+\newcommand{\sorts}{\mathsf{sort}}
+\newcommand{\funcs}{\mathsf{func}}
+\newcommand{\cc}[1]{#1^*}
+\newcommand{\terms}{\mathbf{T}}
+\newcommand{\M}{\mathcal{M}}
+\def\AIF{\qtab\keyword{if}\ }
+\def\THEN{\ \keyword{then}\ }
+\def\AELSE{\untab\qtab\keyword{else}\ }
+\def\FI{\untab}
+\def\RETURN{\keyword{return}\ }
+\def\ENDPROC{\untab}
+%\newtheorem{remark}{Remark}
+
+
+%\input{scalalistings}
+%\input{smtlib2listings}
+\usepackage{program}
+
+\begin{document}
+
+\title{Finite Traces of Recursive Functions in SMT}
+
+\author {Andrew Reynolds\inst{1} \and Jasmin Christian Blanchette\inst{2,3} \and more?}
+\authorrunning {A. Reynolds \and J. C. Blanchette}
+\institute{
+\'Ecole Polytechnique F\'ed\'erale de Lausanne (EPFL), Switzerland
+\and
+Inria Nancy \& LORIA, Villers-l\`es-Nancy, France
+\and
+Max-Planck-Institut f\"ur Informatik, Saarbr\"ucken, Germany
+}
+
+\maketitle
+
+\begin{abstract}
+To do.
+\end{abstract}
+
+
+\section{Introduction}
+\label{sec:introduction}
+To do.
+
+
+{
+\bibliographystyle{abbrv}
+\bibliography{bib}
+}
+
+\end{document}
