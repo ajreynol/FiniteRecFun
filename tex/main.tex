@@ -105,7 +105,7 @@
 
 \begin{document}
 
-\title{Model Finding for Finite Function Traces in SMT}
+\title{Model Finding for Recursive Functions in SMT}
 
 \author {Andrew Reynolds\inst{1} \and Jasmin Christian Blanchette\inst{2,3} \and Cesare Tinelli \inst{4}}
 \authorrunning {A. Reynolds \and J. C. Blanchette \and C. Tinelli}
@@ -141,12 +141,13 @@ z3, cvc4
 \section{Approach}
 
 \subsection{Preliminaries}
+\label{sec:prelim}
 
 A \emph{signature} $\Sigma$ consists of 
-a set $\ssorts{\Sigma}$ of sort symbols and
+a set $\ssorts{\Sigma}$ of type symbols and
 a set $\sfuns{\Sigma}$ of function symbols.
-We assume that signatures always include a Boolean sort $\Bool$ and constants 
-$\ltrue$ and $\lfalse$ of that sort (respectively, for true and false), 
+We assume that signatures always include a Boolean type $\Bool$ and constants 
+$\ltrue$ and $\lfalse$ of that type (respectively, for true and false), 
 an (infix) equality predicate $\teq$ of type $\sigma \times \sigma$ for each $\sigma \in \ssorts{\Sigma}$,
 and standard boolean connectives ($\neg$, $\wedge$, $\vee$, $\lite$, etc.).
 %and a function $\lite$ of type $\Bool \times \sigma \times \sigma$ for each $\sigma \in \ssorts{\Sigma}$.
@@ -161,14 +162,14 @@ When $f$ is not $\fnull$, we will refer to $\forallf{f} \vec x. \varphi$ as a \e
 We will write $\forall \vec x. \varphi$ as shorthand for $\forallf{\fnull} \vec x. \varphi$,
 and $\exists \vec x. \varphi$ as shorthand for $\neg \forall \vec x. \neg \varphi$.
 
-\ajr{theories, models, etc.}
+\ajr{theories, models, equisatisfiable, etc.}
 
 
 \begin{definition}
 A formula $\varphi$ \emph{well-defined with respect to functions} $S$ if it is of the form:
-\begin{equation*}
+\begin{eqnarray} \label{eq:wdf}
 (\forallf{f_1} \vec x_1. \varphi_1) \wedge \ldots \wedge (\forallf{f_n} \vec x_n. \varphi_n) \wedge \psi
-\end{equation*}
+\end{eqnarray}
 where $f_1, \ldots, f_n$ are distinct, 
 $S = \{ f_1, \ldots, f_n \}$,
 and $\psi$ contains no function definitions.
@@ -184,7 +185,8 @@ We write $\terms( t )$ to denote the set of subterms in $t$.
 We write $\functerms^\Sigma( t )$ to denote the set of $f$-applications in $t$ such that $f \in \sfundefs{\Sigma}$.
 
 \subsection{Encoding Well-Defined Assumption for Recursive Functions}
-$\Leftrightarrow$, 
+\label{sec:encoding}
+
 In the remainder of the section, we fix a signature $\Sigma$.
 
 
@@ -197,11 +199,21 @@ and translates $\varphi$ to equisatisfiable $\Sigma'$-formula $\psi$ on which kn
 \begin{enumerate}
 %\begin{framed}
 \item[\ ] 
-$\conv( t\typ{\tau}, p )$ : 
+$\conv( \varphi )$ : 
+ \begin{itemize}
+   \item[] $\mathsf{let}$ $( \psi, D ) = \conv( \varphi, \ptrue )$;
+   %\item[] $\mathsf{assert}( D = \emptyset )$;
+   \item[] $\mathsf{return}$ $\psi$
+  \end{itemize}
+\end{enumerate}
+\begin{enumerate}
+%\begin{framed}
+\item[\ ] 
+$\conv_0( t\typ{\tau}, p )$ : 
  \begin{itemize}
    \item[] $\mathsf{if}$ $\tau \equiv \Bool$ and $t \equiv t_1 \boolop \ldots \boolop t_n$ :
     \begin{itemize}
-      \item[] $\mathsf{let}$ $( r_i, D_i ) = \conv( t_i, \pol( \boolop, i, p ) )$ for $i = 1, \ldots, n$
+      \item[] $\mathsf{let}$ $( r_i, D_i ) = \conv_0( t_i, \pol( \boolop, i, p ) )$ for $i = 1, \ldots, n$;
       \item[] $\mathsf{if}$ $p = \ptrue$
       \begin{itemize}
         \item[] $\mathsf{return}$ $( ( r_1 \boolop \ldots \boolop r_n ) \wedge D_1 \wedge \ldots \wedge D_n, \emptyset )$
@@ -217,14 +229,14 @@ $\conv( t\typ{\tau}, p )$ :
     \end{itemize}
   \item[] $\mathsf{else}$ $\mathsf{if}$ $t \equiv \forallf{f} \vec x. t_1$
     \begin{itemize}
-      \item[] $\mathsf{let} ( r_1, D_1 ) = \conv( t_1, p )$
+      \item[] $\mathsf{let} ( r_1, D_1 ) = \conv_0( t_1, p )$;
       \item[] $\mathsf{if}$ $f \equiv \fnull$
       \begin{itemize}
         \item[] $\mathsf{return}$ $( \forall \vec x. r_1, \forall \vec x. D_1 )$
       \end{itemize}
       \item[] else
       \begin{itemize}
-        \item[] $\mathsf{assert}( D_1 = \emptyset )$;
+        %\item[] $\mathsf{assert}( D_1 = \emptyset )$;
         \item[] $\mathsf{return}$ $( \forall y\typ{\fargsort{f}}. ( r_1 [ \vecfarg{f}( y ) / \vec x ] ), \emptyset )$
       \end{itemize}
     \end{itemize}
@@ -236,25 +248,26 @@ $\conv( t\typ{\tau}, p )$ :
 \end{enumerate}
 \vspace{-2ex}
 \caption{A translation procedure $\conv$ for a $\Sigma$-formula that is well-defined with respect to function definitions.
-In the procedure, $\pol( \boolop, i, p )$ returns the polarity of the $i^{th}$ child of a $\boolop$-application having polarity $p$,
+In the subprocedure $\conv_0$, the procedure $\pol( \boolop, i, p )$ returns the polarity of the $i^{th}$ child of a $\boolop$-application having polarity $p$,
 where $\boolop$ is an (interpreted) predicate.
 }
 \label{fig:encoding}
 \end{figure}
 
-The intuition behind this translation is use an uninterpreted sort $\fargsort{f}$ to abstract the set of tuples that each recursive function $f$ is invoked on,
-and restrict the quantification of the function definition for $f$ to a variable of sort $\fargsort{f}$.
+The intuition behind this translation is use an uninterpreted type $\fargsort{f}$ to abstract the set of tuples that each recursive function $f$ is invoked on,
+and restrict the quantification of the function definition for $f$ to a variable of type $\fargsort{f}$.
 In more detail, we construct an extended signature of $\Sigma$, which we will write as $\extendsig{\Sigma}$, as follows.
 For each $f \in \sfundefs{\Sigma}$ of type $\tau_1 \times \ldots \tau_n \rightarrow \tau$, 
 the signature $\extendsig{\Sigma}$ includes:
 \begin{enumerate}
-\item[-] an uninterpreted sort $\fargsort{f}$, and
+\item[-] an uninterpreted type $\fargsort{f}$, and
 \item[-] a vector of $n$ uninterpreted functions $\farg{f}^1$, $\ldots$, $\farg{f}^n$ of type $(\fargsort{f} \rightarrow \tau_1)$, $\ldots$, $(\fargsort{f} \rightarrow \tau_n)$.
 \end{enumerate}
 %The interpretation of uninterpreted sort $\fargsort{f}$ will denote the elements (tuples) on which the function $f$ is applied.
 %The role of the uninterpreted functions $\farg{f}^1$, $\ldots$, $\farg{f}^n$ will be discussed more in the following.
 We then run the procedure $\conv$ in Figure~\ref{fig:encoding} on $\varphi$.
-The procedure $\conv$ takes two arguments: the term $t$ to translate, and a \emph{polarity} $p$ (either $\ptrue$, $\pfalse$, or $\pnone$).
+This calls the subprocedure $\conv_0$ on $\varphi$ and the \emph{polarity} $\ptrue$.
+The procedure $\conv_0$ takes two arguments: the term $t$ to translate, and a polarity $p$ (either $\ptrue$, $\pfalse$, or $\pnone$).
 It returns a pair of the form $( r, D )$, where $r$ is a term of type $\tau$, and $D$ is a set of formulas, which we will call its \emph{domain constaints}.
 The role of $D$ is to ensure that the (restricted) function definition for $f$ includes certain tuples in its domain, which we explain more in the following.
 
@@ -265,7 +278,7 @@ $\ptrue$ if $p$ is $\pfalse$, and
 $\pnone$ if $p$ is $\pnone$.}:
 \begin{equation*}
 \pol( \boolop, i, p ) = \begin{cases}
-                         \pnone & \boolop \equiv \teq \text{ or } \boolop \equiv \lite \wedge i=0 \\
+                         \pnone & \boolop \equiv \teq \text{ or } ( \boolop \equiv \lite \text{ and } i=0 ) \\
                          \neg p & \boolop \equiv \neg \\
                          p & \text{otherwise}
                          \end{cases}
@@ -292,9 +305,9 @@ We demonstrate this translation with a simple example.
 
 \begin{example}
 Consider the (combined) signature $\Sigma = \Sigmalia \cup \Sigma_u$,
-where $\ssorts{\Sigma_u} = \{ \sortint \}$, and 
-$\sfuns{\Sigma_u} = \{ s\typ{ \sortint \rightarrow \sortint }, c\typ{ \sortint } \}$,
-and the $\Sigma$-formula $\varphi$:
+where $\ssorts{\Sigma_u} = \{ \sortint \}$ and 
+$\sfuns{\Sigma_u} = \{ s\typ{ \sortint \rightarrow \sortint }, c\typ{ \sortint } \}$.
+Consider the $\Sigma$-formula $\varphi$:
 \begin{equation*}
 \forall_{s} x\typ{\sortint}. ite( x \leq 0, s(x) \teq 0, s( x ) \teq x + s( x-1 ) ) \wedge s( c ) > 100
 \end{equation*}
@@ -302,7 +315,7 @@ Here, $s$ is a function that returns the sum of positive numbers between $0$ and
 The formula $\varphi$ is well-defined with respect to functions $\sfundefs{\Sigma_u}$,
 and states that the sum of all positive numbers between $0$ and $c$ is greater than $100$.
 The signature $\extendsig{\Sigma}$ includes the sort $\fargsort{s}$,
-and the uninterpreted function $\farg{s}\typ{ \fargsort{s} \rightarrow \sortint }$.
+and the uninterpreted function $\farg{s}$ of sort $\fargsort{s} \rightarrow \sortint$.
 The result of $\conv( \varphi, \ptrue )$ is the pair $( \psi, \emptyset )$, where after simplification, $\psi$ is the $\extendsig{\Sigma}$-formula:
 \begin{equation*}
 \begin{split}
@@ -313,32 +326,70 @@ The result of $\conv( \varphi, \ptrue )$ is the pair $( \psi, \emptyset )$, wher
 \end{split}  
 \wedge ( s( c ) > 100 \wedge \exists z\typ{\fargsort{s}}. \farg{s}( z ) \teq c )
 \end{equation*}
-Note that the universal quantification in this example (the left disjunct) is $\ldots$
+The universal quantification in the resulting formula (the left disjunct) is over an uninterpreted sort $\fargsort{s}$, 
+thus enabling finite model finding techniques~\cite{ReyEtAl-1-RR-13} to find a model for $\psi$ if a finite interpretation exists for $\fargsort{s}$.
+Moreover, all occurrences of $y$ in this formula are beneath applications of the uninterpreted function $\farg{s}$,
+implying that the formula is in the essentially uninterpreted fragment of~\cite{GeDeM-CAV-09}, for which there exists a complete instantiation procedure.
 $\square$
 \end{example}
 
-
-We claim that if $\varphi$ is well-defined with respect to functions $\sfundefs{\Sigma}$,
+It remains to show that our translation produces an equisatisfiable formulae.
+Namely,
+we claim that if $\varphi$ is well-defined with respect to functions $\sfundefs{\Sigma}$,
 function definitions in $\sfundefs{\Sigma}$ are logically consistent \ajr{formalize},
-and $\conv( \varphi, \ptrue )$ returns $( \psi, \emptyset )$,
-then $\psi$ is equisatisfiable to $\varphi$.
+then $\conv(\varphi)$ is equisatisfiable to $\varphi$.
 
 \begin{lemma}
-Let $\varphi$ be a $\Sigma$-formula that is well-defined with respect to functions $\sfundefs{\Sigma}$,
-and let $( \psi, D )$ be the result of $\conv( \varphi, \ptrue )$.
-Then,
-(i) $D = \emptyset$, and
-(ii) for each model of $\varphi$, $\ldots$. \ajr{todo}
+Let $\varphi$ be a $\Sigma$-formula that is well-defined with respect to functions $\sfundefs{\Sigma}$.
+\ajr{todo}
 \end{lemma}
 
-\section{Experiments}
+\section{Evaluation}
+
+In this section, we evaluate both 
+the overall impact of the encoding introduced in the previous section, and
+the performance of individual SMT techniques for benchmarks in the encoding.
+
+For benchmarks, we gathered a set of 245 benchmarks from two sources, which we will refer to as {\bf isa} and {\bf leon}.
+The first ({\bf isa}) consists of the 79 benchmarks from the Isaplanner benchmark suite~\cite{DBLP:conf/itp/JohanssonDB10} that did not contain higher-order functions.
+The benchmarks have been used recently as challenge problems for a variety of inductive theorem provers.
+These benchmarks heavily involve recursive functions, and are limited to the combined theory of uninterpreted functions and inductive datatypes.
+The second ({\bf leon}) consists of 166 benchmarks from the Leon repository~\footnote{Available at \url{https://github.com/epfl-lara/leon}.},
+which were constructed from verification conditions from simple Scala programs.
+These benchmarks also heavily involve recursive functions, 
+and cover a wide variety of theories, including bitvectors, arrays, linear and non-linear arithmetic, and inductive datatypes.
+Each of the 245 benchmarks are of the form described in Formula (~\ref{eq:wdf}) from Section~\ref{sec:prelim},
+namely they each are a conjoined list of function definitions followed by a (negated) conjecture.
+A majority of these benchmarks are unsatisfiable, although a handful of the benchmarks in the {\bf leon} set are satisfiable.
+
+For each of these 245 benchmarks, we considered (up to) three randomly selected mutated forms of its conjecture $\psi$.
+In particular, we considered unique conjectures that are obtained as a result of swapping a subterm of $\psi$ at one position
+with another of the same type at another position.
+In total, we considered 213 mutated forms of conjectures from {\bf isa}, and 427 mutated forms of conjectures from {\bf leon}.
+We will call these sets {\bf isa+m} and {\bf leon+m} respectively.
+
+In total, our benchmark set consisted of 885 benchmarks (640 mutants and 245 originals).
+We considered these 885 benchmarks both before and after the translation method $\conv$ as described in Section~\ref{sec:encoding}.
+We will denote the latter encoding using the suffix {\bf w}, for instance {\bf isa+w} or {\bf isa+mw}.
+
+For solvers, we considered the SMT solver \ziii~\cite{de-moura-bjoerner-2008}, 
+which runs both heuristic methods for quantifier instantiation,
+as well as methods for finding models for quantified formulas~\cite{GeDeM-CAV-09}.
+We also considered three configurations of \cvc~\cite{barrett-et-al-2011} which we will refer to as {\bf cvc4}, {\bf cvc4+f} and {\bf cvc4+i}.
+The default configuration {\bf cvc4} runs heuristic quantifier instantiation, but does not include techniques for finite model finding.
+The configuration {\bf cvc4+f} runs a finite model finding procedure~\ref{ReyEtAl-1-RR-13}.
+The last configuration {\bf cvc4+i} incorporates techniques for automating inductive reasoning in SMT~\ref{reynolds-kuncak-2015}.
+
+
+The results are shown in Figure~\ref{fig:results}.
+
 
 \section{Conclusion}
 \label{sec:conclusion}
 
 {
 \bibliographystyle{abbrv}
-\bibliography{bib}
+\bibliography{main}
 }
 
 \end{document}
