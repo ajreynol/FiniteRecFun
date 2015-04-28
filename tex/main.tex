@@ -68,6 +68,7 @@
 \newcommand{\sfuns}[1]{#1^\mathrm{f}}
 \newcommand{\sfundefs}[1]{#1^\mathrm{df}}
 \newcommand{\sfunndefs}[1]{#1^\mathrm{nf}}
+\newcommand{\sortint}{\mathrm{Int}}
 
 \newcommand{\pnone}{\con{none}}
 \newcommand{\ptrue}{\con{true}}
@@ -88,13 +89,23 @@
 \newcommand{\vecfarg}[1]{\vec{a}_{#1}}
 \newcommand{\fargsort}[1]{\upsilon_{#1}}
 
+\newcommand{\Sigmalia}{\Sigma_{LIA}}
+\newcommand{\extendsig}[1]{\mathcal{E}( #1 )}
+
+\newcommand{\rem}[1]{\textcolor{red}{[#1]}}
+\newcommand{\ajr}[1]{\rem{#1 --ajr}}
+
+
+\newcommand{\vthinspace}{\kern+0.083333em}
+\newcommand{\typ}[1]{^{\vthinspace #1}}
+
 %\input{scalalistings}
 %\input{smtlib2listings}
 \usepackage{program}
 
 \begin{document}
 
-\title{Finite Traces of Recursive Functions in SMT}
+\title{Model Finding for Finite Function Traces in SMT}
 
 \author {Andrew Reynolds\inst{1} \and Jasmin Christian Blanchette\inst{2,3} \and Cesare Tinelli \inst{4}}
 \authorrunning {A. Reynolds \and J. C. Blanchette \and C. Tinelli}
@@ -120,7 +131,7 @@ To do.
 
 \section{Related Work}
 
-Leon, others?
+Leon, Nitpick, others?
 
 \subsection{Model Finding for Quantified Formulas in SMT}
 
@@ -137,8 +148,9 @@ a set $\sfuns{\Sigma}$ of function symbols.
 We assume that signatures always include a Boolean sort $\Bool$ and constants 
 $\ltrue$ and $\lfalse$ of that sort (respectively, for true and false), 
 an (infix) equality predicate $\teq$ of type $\sigma \times \sigma$ for each $\sigma \in \ssorts{\Sigma}$,
-standard boolean connectives ($\wedge$, $\vee$, $\Leftrightarrow$, etc.),
-and a predicate $\lite$ of type $\Bool \times \sigma \times \sigma$ for each $\sigma \in \ssorts{\Sigma}$.
+and standard boolean connectives ($\neg$, $\wedge$, $\vee$, $\lite$, etc.).
+%and a function $\lite$ of type $\Bool \times \sigma \times \sigma$ for each $\sigma \in \ssorts{\Sigma}$.
+We will write $t\typ{\tau}$ to denote a term $t$ of type~$\tau$.
 
 In this paper, we associate quantified formulas with the uninterpreted functions whose semantics they define.
 We will write $\forallf{f} \vec x. \varphi$ to denote a quantified formula that is defines the semantics of uninterpreted function $f$.
@@ -149,8 +161,11 @@ When $f$ is not $\fnull$, we will refer to $\forallf{f} \vec x. \varphi$ as a \e
 We will write $\forall \vec x. \varphi$ as shorthand for $\forallf{\fnull} \vec x. \varphi$,
 and $\exists \vec x. \varphi$ as shorthand for $\neg \forall \vec x. \neg \varphi$.
 
+\ajr{theories, models, etc.}
+
+
 \begin{definition}
-A formula $\varphi$ is well-defined with respect to functions $S$ if it is of the form:
+A formula $\varphi$ \emph{well-defined with respect to functions} $S$ if it is of the form:
 \begin{equation*}
 (\forallf{f_1} \vec x_1. \varphi_1) \wedge \ldots \wedge (\forallf{f_n} \vec x_n. \varphi_n) \wedge \psi
 \end{equation*}
@@ -160,50 +175,31 @@ and $\psi$ contains no function definitions.
 \end{definition}
 
 Given a signature $\Sigma$, 
-we parition its function symbols $\sfuns{\Sigma}$ into $\sfundefs{\Sigma} \mathrel{\uplus} \sfunndefs{\Sigma}$,
+we will commonly parition its function symbols $\sfuns{\Sigma}$ into $\sfundefs{\Sigma} \mathrel{\uplus} \sfunndefs{\Sigma}$,
 where $\sfundefs{\Sigma}$ is the set of \emph{defined} function symbols,
-and $\sfunndefs{\Sigma}$ are the others.
-In this paper, we will consider $\Sigma$-formulas that are well-defined for $\sfundefs{\Sigma}$.
+and $\sfunndefs{\Sigma}$ are the others,
+and consider $\Sigma$-formulas that are well-defined with respect to functions $\sfundefs{\Sigma}$.
 
 We write $\terms( t )$ to denote the set of subterms in $t$.
-We write $\functerms^\Sigma( t )$ to denote the set of $f$-applications in $t$, where $f \in \sfundefs{\Sigma}$.
+We write $\functerms^\Sigma( t )$ to denote the set of $f$-applications in $t$ such that $f \in \sfundefs{\Sigma}$.
 
 \subsection{Encoding Well-Defined Assumption for Recursive Functions}
-
+$\Leftrightarrow$, 
 In the remainder of the section, we fix a signature $\Sigma$.
 
 
-
-The main idea behind this translation is to abstract the set of tuples that a recursive function $f$ is invoked on as a (fresh) uninterpreted sort $\fargsort{f}$.
-We extend our signature $\Sigma$ as follows.
-For each $f \in\sfundefs{\Sigma}$ of type $\tau_1 \times \ldots \tau_n \rightarrow \tau$, we associate:
-\begin{enumerate}
-\item[-] an uninterpreted sort $\fargsort{f}$, and
-\item[-] a vector of $n$ uninterpreted functions $\farg{f}^1$, $\ldots$, $\farg{f}^n$ of type $(\fargsort{f} \rightarrow \tau_1)$, $\ldots$, $(\fargsort{f} \rightarrow \tau_n)$.
-\end{enumerate}
-
-The role of the uninterpreted functions $\farg{f}^1$, $\ldots$, $\farg{f}^n$ will be discussed more in the following.
+Say that $\Sigma$-formula $\varphi$ is well-defined with respect to functions $\sfundefs{\Sigma}$,
+and the definitions in $\sfundefs{\Sigma}$ are logically consistent \ajr{formalize}.
+In this section, we present a method which constructs an extended signature $\Sigma'$,
+and translates $\varphi$ to equisatisfiable $\Sigma'$-formula $\psi$ on which known model-finding procedures~\cite{GeDeM-CAV-09, ReyEtAl-1-RR-13} are applicable.
 
 \begin{figure}[t]
 \begin{enumerate}
 %\begin{framed}
 \item[\ ] 
-$\conv( t^\tau, p )$ : 
+$\conv( t\typ{\tau}, p )$ : 
  \begin{itemize}
-  \item[] $\mathsf{if}$ $t \equiv \forallf{f} \vec x. t_1$
-    \begin{itemize}
-      \item[] $\mathsf{let} ( r_1, D_1 ) = \conv( t_1, p )$
-      \item[] $\mathsf{if}$ $f \equiv \fnull$
-      \begin{itemize}
-        \item[] $\mathsf{return}$ $( \forall \vec x. r_1, \forall \vec x. D_1 )$
-      \end{itemize}
-      \item[] else
-      \begin{itemize}
-        \item[] $\mathsf{assert}( D_1 = \emptyset )$;
-        \item[] $\mathsf{return}$ $( \forall y^{\fargsort{f}}. ( r_1 [ \vecfarg{f}( y ) / \vec x ] ), \emptyset )$
-      \end{itemize}
-    \end{itemize}
-  \item[] $\mathsf{else}$ $\mathsf{if}$ $\tau \equiv \Bool$ and $t \equiv t_1 \boolop \ldots \boolop t_n$ :
+   \item[] $\mathsf{if}$ $\tau \equiv \Bool$ and $t \equiv t_1 \boolop \ldots \boolop t_n$ :
     \begin{itemize}
       \item[] $\mathsf{let}$ $( r_i, D_i ) = \conv( t_i, \pol( \boolop, i, p ) )$ for $i = 1, \ldots, n$
       \item[] $\mathsf{if}$ $p = \ptrue$
@@ -219,31 +215,121 @@ $\conv( t^\tau, p )$ :
         \item[] $\mathsf{return}$ $( r_1 \boolop \ldots \boolop r_n, D_1 \cup \ldots \cup D_n )$
       \end{itemize}
     \end{itemize}
+  \item[] $\mathsf{else}$ $\mathsf{if}$ $t \equiv \forallf{f} \vec x. t_1$
+    \begin{itemize}
+      \item[] $\mathsf{let} ( r_1, D_1 ) = \conv( t_1, p )$
+      \item[] $\mathsf{if}$ $f \equiv \fnull$
+      \begin{itemize}
+        \item[] $\mathsf{return}$ $( \forall \vec x. r_1, \forall \vec x. D_1 )$
+      \end{itemize}
+      \item[] else
+      \begin{itemize}
+        \item[] $\mathsf{assert}( D_1 = \emptyset )$;
+        \item[] $\mathsf{return}$ $( \forall y\typ{\fargsort{f}}. ( r_1 [ \vecfarg{f}( y ) / \vec x ] ), \emptyset )$
+      \end{itemize}
+    \end{itemize}
    \item[] $\mathsf{else}$
    \begin{itemize}
-     \item[] $\mathsf{return}$ $( t, \{ \exists z^{\fargsort{f}}. ( \vecfarg{f}( z ) \teq \vec t ) \mid f( \vec t ) \in \functerms^\Sigma( t ) \} )$
+     \item[] $\mathsf{return}$ $( t, \{ \exists z\typ{\fargsort{f}}. ( \vecfarg{f}( z ) \teq \vec t ) \mid f( \vec t ) \in \functerms^\Sigma( t ) \} )$
    \end{itemize}
  \end{itemize}
 \end{enumerate}
 \vspace{-2ex}
 \caption{A translation procedure $\conv$ for a $\Sigma$-formula that is well-defined with respect to function definitions.
-In the procedure, $\pol( \boolop, i, p )$ returns the polarity of the $i^{th}$ child of a $\boolop$-application having polarity $p$.
+In the procedure, $\pol( \boolop, i, p )$ returns the polarity of the $i^{th}$ child of a $\boolop$-application having polarity $p$,
+where $\boolop$ is an (interpreted) predicate.
 }
 \label{fig:encoding}
 \end{figure}
 
-Figure~\ref{fig:encoding} gives a procedure $\conv$ for translating a formula $t$ containing function definitions.
-The procedure takes two arguments: the term $t^\tau$ to translate, and a \emph{polarity} p (either $\ptrue$, $\pfalse$, or $\pnone$).
-If function definition quantifiers $\forallf{f}$ in $t$ are such that $f$ is well-defined and $\conv( t, \ptrue )$ returns $( r, \emptyset )$,
-then $r$ is equivalent to $t$.
+The intuition behind this translation is use an uninterpreted sort $\fargsort{f}$ to abstract the set of tuples that each recursive function $f$ is invoked on,
+and restrict the quantification of the function definition for $f$ to a variable of sort $\fargsort{f}$.
+In more detail, we construct an extended signature of $\Sigma$, which we will write as $\extendsig{\Sigma}$, as follows.
+For each $f \in \sfundefs{\Sigma}$ of type $\tau_1 \times \ldots \tau_n \rightarrow \tau$, 
+the signature $\extendsig{\Sigma}$ includes:
+\begin{enumerate}
+\item[-] an uninterpreted sort $\fargsort{f}$, and
+\item[-] a vector of $n$ uninterpreted functions $\farg{f}^1$, $\ldots$, $\farg{f}^n$ of type $(\fargsort{f} \rightarrow \tau_1)$, $\ldots$, $(\fargsort{f} \rightarrow \tau_n)$.
+\end{enumerate}
+%The interpretation of uninterpreted sort $\fargsort{f}$ will denote the elements (tuples) on which the function $f$ is applied.
+%The role of the uninterpreted functions $\farg{f}^1$, $\ldots$, $\farg{f}^n$ will be discussed more in the following.
+We then run the procedure $\conv$ in Figure~\ref{fig:encoding} on $\varphi$.
+The procedure $\conv$ takes two arguments: the term $t$ to translate, and a \emph{polarity} $p$ (either $\ptrue$, $\pfalse$, or $\pnone$).
+It returns a pair of the form $( r, D )$, where $r$ is a term of type $\tau$, and $D$ is a set of formulas, which we will call its \emph{domain constaints}.
+The role of $D$ is to ensure that the (restricted) function definition for $f$ includes certain tuples in its domain, which we explain more in the following.
+
+In the case that $t$ is an application of (interpreted) predicate $\boolop$ (e.g. a boolean connective, or equality),
+we recursively call $\conv$ on its subchildren $t_i$ and polarity $\pol( \boolop, i, p )$, where $\pol$ is defined as\footnote{The negation $\neg p$ of polarity $p$ is 
+$\pfalse$ if $p$ is $\ptrue$,
+$\ptrue$ if $p$ is $\pfalse$, and
+$\pnone$ if $p$ is $\pnone$.}:
+\begin{equation*}
+\pol( \boolop, i, p ) = \begin{cases}
+                         \pnone & \boolop \equiv \teq \text{ or } \boolop \equiv \lite \wedge i=0 \\
+                         \neg p & \boolop \equiv \neg \\
+                         p & \text{otherwise}
+                         \end{cases}
+\end{equation*}
+If $t$ has positive polarity,
+we construct a conjunction of the result of the recursive calls with domain constraints $D_1, \ldots, D_n$.
+Similarly, if $t$ has negative polarity,
+we construct a disjunction of the result of the recursive calls with the negation of domain constraints $D_1, \ldots, D_n$.
+It $t$ has no polarity,
+then we return the union of the domain constraints $D_1 \cup \ldots \cup D_n$.
+
+In the case that $t$ is a quantified formula $\forallf{f} \vec x. t_1$, it recursively calls $\conv$ on its body with the same polarity.
+In the case that $t$ is not a function definition, 
+the resulting quantified formula is reconstructed with the term $r_1$ returned by the recursive call,
+and a quantified prefix is appended to the domain constraints $D_1$ returned by the recursive call.
+In the case that $t$ is a function definition,
+we instead construct a quantified formula over a single variable $y$ of type $\fargsort{f}$,
+and replace all occurrences of $\vec x$ in $r_1$ with $\vecfarg{f}( y )$.
+In this case, since function definitions are a top-level conjunct, by case analysis on the return values of $\conv$, we know that $D_1$ is empty.
 
 
+
+We demonstrate this translation with a simple example.
 
 \begin{example}
-Consider the formula
+Consider the (combined) signature $\Sigma = \Sigmalia \cup \Sigma_u$,
+where $\ssorts{\Sigma_u} = \{ \sortint \}$, and 
+$\sfuns{\Sigma_u} = \{ s\typ{ \sortint \rightarrow \sortint }, c\typ{ \sortint } \}$,
+and the $\Sigma$-formula $\varphi$:
+\begin{equation*}
+\forall_{s} x\typ{\sortint}. ite( x \leq 0, s(x) \teq 0, s( x ) \teq x + s( x-1 ) ) \wedge s( c ) > 100
+\end{equation*}
+Here, $s$ is a function that returns the sum of positive numbers between $0$ and its argument $x$.
+The formula $\varphi$ is well-defined with respect to functions $\sfundefs{\Sigma_u}$,
+and states that the sum of all positive numbers between $0$ and $c$ is greater than $100$.
+The signature $\extendsig{\Sigma}$ includes the sort $\fargsort{s}$,
+and the uninterpreted function $\farg{s}\typ{ \fargsort{s} \rightarrow \sortint }$.
+The result of $\conv( \varphi, \ptrue )$ is the pair $( \psi, \emptyset )$, where after simplification, $\psi$ is the $\extendsig{\Sigma}$-formula:
+\begin{equation*}
+\begin{split}
+\forall y\typ{\fargsort{s}}. ite( & \farg{s}( y ) \leq 0,  \\
+ & s(\farg{s}( y )) \teq 0, \\
+ & s(\farg{s}( y )) \teq \farg{s}( y ) + s( \farg{s}( y )-1 ) ) \\
+ & \wedge \exists z\typ{\fargsort{s}}. \farg{s}( z ) \teq \farg{s}( y )-1 )
+\end{split}  
+\wedge ( s( a ) > 100 \wedge \exists z\typ{\fargsort{s}}. \farg{s}( z ) \teq a )
+\end{equation*}
+Note that the universal quantification in this example (the left disjunct) is $\ldots$
+$\square$
 \end{example}
 
 
+We claim that if $\varphi$ is well-defined with respect to functions $\sfundefs{\Sigma}$,
+function definitions in $\sfundefs{\Sigma}$ are logically consistent \ajr{formalize},
+and $\conv( \varphi, \ptrue )$ returns $( \psi, \emptyset )$,
+then $\psi$ is equisatisfiable to $\varphi$.
+
+\begin{lemma}
+Let $\varphi$ be a $\Sigma$-formula that is well-defined with respect to functions $\sfundefs{\Sigma}$,
+and let $( \psi, D )$ be the result of $\conv( \varphi, \ptrue )$.
+Then,
+(i) $D = \emptyset$, and
+(ii) for each model of $\varphi$, $\ldots$. \ajr{todo}
+\end{lemma}
 
 \section{Experiments}
 
