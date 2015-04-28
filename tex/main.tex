@@ -46,15 +46,15 @@
 \newcommand{\keywords}[1]{\par\addvspace\baselineskip
 \noindent\keywordname\enspace\ignorespaces#1}
 
+\newcommand{\con}[1]{\mathsf{#1}}
 
 \newcommand{\cvc}{\textsc{cvc}{\small 4}\xspace}
 \newcommand{\cvciii}{\textsc{cvc}{\small 3}\xspace}
 \newcommand{\ziii}{\textsc{z}{\small 3}\xspace}
 \newcommand{\teq}{\approx}
-\newcommand{\sorts}{\mathsf{sort}}
-\newcommand{\funcs}{\mathsf{func}}
 \newcommand{\cc}[1]{#1^*}
 \newcommand{\terms}{\mathbf{T}}
+\newcommand{\functerms}{\mathbf{DFT}}
 \newcommand{\M}{\mathcal{M}}
 \def\AIF{\qtab\keyword{if}\ }
 \def\THEN{\ \keyword{then}\ }
@@ -62,8 +62,31 @@
 \def\FI{\untab}
 \def\RETURN{\keyword{return}\ }
 \def\ENDPROC{\untab}
+\newcommand{\conv}{\mathcal{C}}
+
+\newcommand{\ssorts}[1]{#1^\mathrm{s}}
+\newcommand{\sfuns}[1]{#1^\mathrm{f}}
+\newcommand{\sfundefs}[1]{#1^\mathrm{df}}
+\newcommand{\sfunndefs}[1]{#1^\mathrm{nf}}
+
+\newcommand{\pnone}{\con{none}}
+\newcommand{\ptrue}{\con{true}}
+\newcommand{\pfalse}{\con{false}}
+\newcommand{\pol}{\con{pol}}
+
 %\newtheorem{remark}{Remark}
 
+\newcommand{\Bool}{\con{Bool}}
+\newcommand{\ltrue}{\top}
+\newcommand{\lfalse}{\bot}
+\newcommand{\lite}{\con{ite}}
+
+\newcommand{\boolop}{\oplus}
+\newcommand{\forallf}[1]{\forall_{#1}}
+\newcommand{\fnull}{\emptyset}
+\newcommand{\farg}[1]{a_{#1}}
+\newcommand{\vecfarg}[1]{\vec{a}_{#1}}
+\newcommand{\fargsort}[1]{\upsilon_{#1}}
 
 %\input{scalalistings}
 %\input{smtlib2listings}
@@ -73,14 +96,16 @@
 
 \title{Finite Traces of Recursive Functions in SMT}
 
-\author {Andrew Reynolds\inst{1} \and Jasmin Christian Blanchette\inst{2,3} \and more?}
-\authorrunning {A. Reynolds \and J. C. Blanchette}
+\author {Andrew Reynolds\inst{1} \and Jasmin Christian Blanchette\inst{2,3} \and Cesare Tinelli \inst{4}}
+\authorrunning {A. Reynolds \and J. C. Blanchette \and C. Tinelli}
 \institute{
 \'Ecole Polytechnique F\'ed\'erale de Lausanne (EPFL), Switzerland
 \and
 Inria Nancy \& LORIA, Villers-l\`es-Nancy, France
 \and
 Max-Planck-Institut f\"ur Informatik, Saarbr\"ucken, Germany
+\and
+Department of Computer Science, The University of Iowa 
 }
 
 \maketitle
@@ -89,11 +114,141 @@ Max-Planck-Institut f\"ur Informatik, Saarbr\"ucken, Germany
 To do.
 \end{abstract}
 
-
 \section{Introduction}
 \label{sec:introduction}
 To do.
 
+\section{Related Work}
+
+Leon, others?
+
+\subsection{Model Finding for Quantified Formulas in SMT}
+
+z3, cvc4
+
+
+\section{Approach}
+
+\subsection{Preliminaries}
+
+A \emph{signature} $\Sigma$ consists of 
+a set $\ssorts{\Sigma}$ of sort symbols and
+a set $\sfuns{\Sigma}$ of function symbols.
+We assume that signatures always include a Boolean sort $\Bool$ and constants 
+$\ltrue$ and $\lfalse$ of that sort (respectively, for true and false), 
+an (infix) equality predicate $\teq$ of type $\sigma \times \sigma$ for each $\sigma \in \ssorts{\Sigma}$,
+standard boolean connectives ($\wedge$, $\vee$, $\Leftrightarrow$, etc.),
+and a predicate $\lite$ of type $\Bool \times \sigma \times \sigma$ for each $\sigma \in \ssorts{\Sigma}$.
+
+In this paper, we associate quantified formulas with the uninterpreted functions whose semantics they define.
+We will write $\forallf{f} \vec x. \varphi$ to denote a quantified formula that is defines the semantics of uninterpreted function $f$.
+For consistency, we consider only quantified formulas of this form, 
+and allow $f$ to be a distinguished constant $\fnull$, 
+denoting that the quantified formula does not define the semantics of an uninterpreted function.
+When $f$ is not $\fnull$, we will refer to $\forallf{f} \vec x. \varphi$ as a \emph{function definition} (for $f$).
+We will write $\forall \vec x. \varphi$ as shorthand for $\forallf{\fnull} \vec x. \varphi$,
+and $\exists \vec x. \varphi$ as shorthand for $\neg \forall \vec x. \neg \varphi$.
+
+\begin{definition}
+A formula $\varphi$ is well-defined with respect to functions $S$ if it is of the form:
+\begin{equation*}
+(\forallf{f_1} \vec x_1. \varphi_1) \wedge \ldots \wedge (\forallf{f_n} \vec x_n. \varphi_n) \wedge \psi
+\end{equation*}
+where $f_1, \ldots, f_n$ are distinct, 
+$S = \{ f_1, \ldots, f_n \}$,
+and $\psi$ contains no function definitions.
+\end{definition}
+
+Given a signature $\Sigma$, 
+we parition its function symbols $\sfuns{\Sigma}$ into $\sfundefs{\Sigma} \mathrel{\uplus} \sfunndefs{\Sigma}$,
+where $\sfundefs{\Sigma}$ is the set of \emph{defined} function symbols,
+and $\sfunndefs{\Sigma}$ are the others.
+In this paper, we will consider $\Sigma$-formulas that are well-defined for $\sfundefs{\Sigma}$.
+
+We write $\terms( t )$ to denote the set of subterms in $t$.
+We write $\functerms^\Sigma( t )$ to denote the set of $f$-applications in $t$, where $f \in \sfundefs{\Sigma}$.
+
+\subsection{Encoding Well-Defined Assumption for Recursive Functions}
+
+In the remainder of the section, we fix a signature $\Sigma$.
+
+
+
+The main idea behind this translation is to abstract the set of tuples that a recursive function $f$ is invoked on as a (fresh) uninterpreted sort $\fargsort{f}$.
+We extend our signature $\Sigma$ as follows.
+For each $f \in\sfundefs{\Sigma}$ of type $\tau_1 \times \ldots \tau_n \rightarrow \tau$, we associate:
+\begin{enumerate}
+\item[-] an uninterpreted sort $\fargsort{f}$, and
+\item[-] a vector of $n$ uninterpreted functions $\farg{f}^1$, $\ldots$, $\farg{f}^n$ of type $(\fargsort{f} \rightarrow \tau_1)$, $\ldots$, $(\fargsort{f} \rightarrow \tau_n)$.
+\end{enumerate}
+
+The role of the uninterpreted functions $\farg{f}^1$, $\ldots$, $\farg{f}^n$ will be discussed more in the following.
+
+\begin{figure}[t]
+\begin{enumerate}
+%\begin{framed}
+\item[\ ] 
+$\conv( t^\tau, p )$ : 
+ \begin{itemize}
+  \item[] $\mathsf{if}$ $t \equiv \forallf{f} \vec x. t_1$
+    \begin{itemize}
+      \item[] $\mathsf{let} ( r_1, D_1 ) = \conv( t_1, p )$
+      \item[] $\mathsf{if}$ $f \equiv \fnull$
+      \begin{itemize}
+        \item[] $\mathsf{return}$ $( \forall \vec x. r_1, \forall \vec x. D_1 )$
+      \end{itemize}
+      \item[] else
+      \begin{itemize}
+        \item[] $\mathsf{assert}( D_1 = \emptyset )$;
+        \item[] $\mathsf{return}$ $( \forall y^{\fargsort{f}}. ( r_1 [ \vecfarg{f}( y ) / \vec x ] ), \emptyset )$
+      \end{itemize}
+    \end{itemize}
+  \item[] $\mathsf{else}$ $\mathsf{if}$ $\tau \equiv \Bool$ and $t \equiv t_1 \boolop \ldots \boolop t_n$ :
+    \begin{itemize}
+      \item[] $\mathsf{let}$ $( r_i, D_i ) = \conv( t_i, \pol( \boolop, i, p ) )$ for $i = 1, \ldots, n$
+      \item[] $\mathsf{if}$ $p = \ptrue$
+      \begin{itemize}
+        \item[] $\mathsf{return}$ $( ( r_1 \boolop \ldots \boolop r_n ) \wedge D_1 \wedge \ldots \wedge D_n, \emptyset )$
+      \end{itemize}
+      \item[] $\mathsf{else}$ $\mathsf{if}$ $p = \pfalse$
+      \begin{itemize}
+        \item[] $\mathsf{return}$ $( ( r_1 \boolop \ldots \boolop r_n ) \vee \neg D_1 \vee \ldots \vee \neg D_n, \emptyset )$
+      \end{itemize}
+      \item[] $\mathsf{else}$
+      \begin{itemize}
+        \item[] $\mathsf{return}$ $( r_1 \boolop \ldots \boolop r_n, D_1 \cup \ldots \cup D_n )$
+      \end{itemize}
+    \end{itemize}
+   \item[] $\mathsf{else}$
+   \begin{itemize}
+     \item[] $\mathsf{return}$ $( t, \{ \exists z^{\fargsort{f}}. ( \vecfarg{f}( z ) \teq \vec t ) \mid f( \vec t ) \in \functerms^\Sigma( t ) \} )$
+   \end{itemize}
+ \end{itemize}
+\end{enumerate}
+\vspace{-2ex}
+\caption{A translation procedure $\conv$ for a $\Sigma$-formula that is well-defined with respect to function definitions.
+In the procedure, $\pol( \boolop, i, p )$ returns the polarity of the $i^{th}$ child of a $\boolop$-application having polarity $p$.
+}
+\label{fig:encoding}
+\end{figure}
+
+Figure~\ref{fig:encoding} gives a procedure $\conv$ for translating a formula $t$ containing function definitions.
+The procedure takes two arguments: the term $t^\tau$ to translate, and a \emph{polarity} p (either $\ptrue$, $\pfalse$, or $\pnone$).
+If function definition quantifiers $\forallf{f}$ in $t$ are such that $f$ is well-defined and $\conv( t, \ptrue )$ returns $( r, \emptyset )$,
+then $r$ is equivalent to $t$.
+
+
+
+\begin{example}
+Consider the formula
+\end{example}
+
+
+
+\section{Experiments}
+
+\section{Conclusion}
+\label{sec:conclusion}
 
 {
 \bibliographystyle{abbrv}
