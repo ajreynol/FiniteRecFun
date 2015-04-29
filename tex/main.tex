@@ -54,7 +54,7 @@
 \newcommand{\teq}{\approx}
 \newcommand{\cc}[1]{#1^*}
 \newcommand{\terms}{\mathbf{T}}
-\newcommand{\functerms}{\mathbf{DFT}}
+%\newcommand{\functerms}{\mathbf{DFT}}
 \newcommand{\M}{\mathcal{M}}
 \def\AIF{\qtab\keyword{if}\ }
 \def\THEN{\ \keyword{then}\ }
@@ -225,7 +225,7 @@ and $\sfunndefs{\Sigma}$ are the others,
 and consider $\Sigma$-formulas that are well-defined with respect to functions $\sfundefs{\Sigma}$.
 
 We write $\terms( t )$ to denote the set of subterms in $t$.
-We write $\functerms^\Sigma( t )$ to denote the set of $f$-applications in $t$ such that $f \in \sfundefs{\Sigma}$.
+%We write $\functerms^\Sigma( t )$ to denote the set of $f$-applications in $t$ such that $f \in \sfundefs{\Sigma}$.
 
 \subsection{Encoding Well-Defined Assumption for Recursive Functions}
 \label{sec:encoding}
@@ -287,7 +287,7 @@ $\conv_0( t\typ{\tau}, p )$ :
     \end{itemize}
    \item[] $\mathsf{else}$
    \begin{itemize}
-     \item[] $\mathsf{return}$ $( t, \{ \exists z\typ{\fargsort{f}}. ( \vecfarg{f}( z ) \teq \vec t ) \mid f( \vec t ) \in \functerms^\Sigma( t ) \} )$
+     \item[] $\mathsf{return}$ $( t, \{ \exists z\typ{\fargsort{f}}. ( \vecfarg{f}( z ) \teq \vec t ) \mid f( \vec t ) \in \terms( t ), f \in \sfundefs{\Sigma} \} )$
    \end{itemize}
  \end{itemize}
 \end{enumerate}
@@ -366,7 +366,7 @@ The formula $\varphi$ is well-defined with respect to functions $\sfundefs{\Sigm
 and states that the sum of all positive numbers between $0$ and $c$ is greater than $100$.
 This formula is satisfiable with a model that interprets $c$ as an integer greater than or equal to $14$.
 Due to the universal quantification in the left disjunct,
-state-of-the-art SMT techniques~\cite{GeDeM-CAV-09, ReyEtAl-1-RR-13} are unable to find a model for this formula.
+current SMT techniques~\cite{GeDeM-CAV-09, ReyEtAl-1-RR-13} are unable to find a model for this formula.
 The signature $\extendsig{\Sigma}$ includes the sort $\fargsort{s}$,
 and the uninterpreted function $\farg{s}$ of sort $\fargsort{s} \rightarrow \sortint$.
 The result of $\conv( \varphi, \ptrue )$ is the pair $( \psi, \emptyset )$, where after simplification, $\psi$ is the $\extendsig{\Sigma}$-formula:
@@ -487,7 +487,7 @@ In terms of number of unsatisfiable responses,
 the configuration {\bf cvc4+i} is the clear winner, finding 318 total benchmarks to be unsatisfiable.
 
 Now, examining the second encoding (the latter nine columns), 
-we see that using the translation $\conv$ drastically improves the ability of configurations for determining satisfiability.
+we see that using the translation $\conv$ drastically improves the ability of configurations for answering satisfiable.
 In total, {\bf cvc4+f} finds 331 of the 885 benchmarks to be satisfiable, including 9 benchmarks in the original {\bf leon} benchmark set.
 The performance of {\bf z3} for counterexamples also improves drastically, as it solves 112 satisfiable,
 including 10 that were unsolved by {\bf cvc4+f}.
