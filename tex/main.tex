@@ -62,7 +62,7 @@
 \def\FI{\untab}
 \def\RETURN{\keyword{return}\ }
 \def\ENDPROC{\untab}
-\newcommand{\conv}{\mathcal{C}}
+\newcommand{\conv}{\mathcal{W}}
 
 \newcommand{\ssorts}[1]{#1^\mathrm{s}}
 \newcommand{\sfuns}[1]{#1^\mathrm{f}}
@@ -149,6 +149,15 @@ To do.
   * corecursive functions???
     * productive
 
+
+\ajr{Demand for recursive functions in SMT (new draft includes define-funs-rec).  Usually not interested in showing logical consistency, there exist other tools that check e.g. termination. 
+Thus, want SMT solver to check satisfiability the assumption that recursive functions are consistent (where this needs to be defined precisely).
+}
+
+\paragraph{Contributions}
+
+\ajr{(1) Encoding, (2) Evaluation, (3) Front-end support for define-funs-rec in \cvc}
+
 \section{Related Work}
 
 first-order model finders: SEM, MACE/Mace, Paradox, iProver
@@ -228,6 +237,8 @@ Say that $\Sigma$-formula $\varphi$ is well-defined with respect to functions $\
 and the definitions in $\sfundefs{\Sigma}$ are logically consistent \ajr{formalize}.
 In this section, we present a method which constructs an extended signature $\Sigma'$,
 and translates $\varphi$ to equisatisfiable $\Sigma'$-formula $\psi$ on which known model-finding procedures~\cite{GeDeM-CAV-09, ReyEtAl-1-RR-13} are applicable.
+The intuition behind this translation is use an uninterpreted type to abstract the set of tuples that each recursive function $f$ is invoked on,
+and restrict the quantification of the function definition for $f$ to a variable of this type.
 
 \begin{figure}[t]
 \begin{enumerate}
@@ -288,9 +299,9 @@ where $\boolop$ is an (interpreted) predicate.
 \label{fig:encoding}
 \end{figure}
 
-The intuition behind this translation is use an uninterpreted type $\fargsort{f}$ to abstract the set of tuples that each recursive function $f$ is invoked on,
-and restrict the quantification of the function definition for $f$ to a variable of type $\fargsort{f}$.
-In more detail, we construct an extended signature of $\Sigma$, which we will write as $\extendsig{\Sigma}$, as follows.
+In more detail, 
+say our signature $\Sigma$ contains a set of defined function symbols $\sfundefs{\Sigma} \subseteq \sfuns{\Sigma}$.
+We extend the signature of $\Sigma$ to a signature $\extendsig{\Sigma}$ containing the following additional definitions.
 For each $f \in \sfundefs{\Sigma}$ of type $\tau_1 \times \ldots \tau_n \rightarrow \tau$, 
 the signature $\extendsig{\Sigma}$ includes:
 \begin{enumerate}
@@ -299,11 +310,16 @@ the signature $\extendsig{\Sigma}$ includes:
 \end{enumerate}
 %The interpretation of uninterpreted sort $\fargsort{f}$ will denote the elements (tuples) on which the function $f$ is applied.
 %The role of the uninterpreted functions $\farg{f}^1$, $\ldots$, $\farg{f}^n$ will be discussed more in the following.
-We then run the procedure $\conv$ in Figure~\ref{fig:encoding} on $\varphi$.
-This calls the subprocedure $\conv_0$ on $\varphi$ and the \emph{polarity} $\ptrue$.
-The procedure $\conv_0$ takes two arguments: the term $t$ to translate, and a polarity $p$ (either $\ptrue$, $\pfalse$, or $\pnone$).
-It returns a pair of the form $( r, D )$, where $r$ is a term of type $\tau$, and $D$ is a set of formulas, which we will call its \emph{domain constaints}.
-The role of $D$ is to ensure that the (restricted) function definition for $f$ includes certain tuples in its domain, which we explain more in the following.
+
+Given the extended signature, we run the procedure $\conv$ in Figure~\ref{fig:encoding} on $\varphi$.
+This calls the subprocedure $\conv_0$, which takes two arguments: the term $t$ to translate, and a \emph{polarity} $p$ (either $\ptrue$, $\pfalse$, or $\pnone$).
+It returns a pair of the form $( r, D )$, where $r$ is a term of type $\tau$, and $D$ is a set of formulas.
+%The role of $D$ is to ensure that the (restricted) function definition for $f$ includes certain tuples in its domain, which we explain more in the following.
+At a high level, the translation modifies $\varphi$ in two ways.
+First, it restricts the quantification on function definitions for $f$ to the corresponding uninterpreted sort $\fargsort{f}$.
+Second, it augments $\varphi$ with additional constraints of the form $\exists z\typ{\fargsort{f}}. ( \vecfarg{f}( z ) \teq \vec t )$
+which ensure that this restriction for the defintion $f$ covers all relevant tuples of terms,
+namely the ones for which an $f$-application exists and is relevant to the satisfiability of the current branch of $\varphi$.
 
 In the case that $t$ is an application of (interpreted) predicate $\boolop$ (e.g. a boolean connective, or equality),
 we recursively call $\conv$ on its subchildren $t_i$ and polarity $\pol( \boolop, i, p )$, where $\pol$ is defined as\footnote{The negation $\neg p$ of polarity $p$ is 
@@ -318,16 +334,16 @@ $\pnone$ if $p$ is $\pnone$.}:
                          \end{cases}
 \end{equation*}
 If $t$ has positive polarity,
-we construct a conjunction of the result of the recursive calls with domain constraints $D_1, \ldots, D_n$.
+we construct a conjunction of the result of the recursive calls with formulas $D_1, \ldots, D_n$.
 Similarly, if $t$ has negative polarity,
-we construct a disjunction of the result of the recursive calls with the negation of domain constraints $D_1, \ldots, D_n$.
+we construct a disjunction of the result of the recursive calls with the negation of formulas $D_1, \ldots, D_n$.
 It $t$ has no polarity,
-then we return the union of the domain constraints $D_1 \cup \ldots \cup D_n$.
+then we return the union of $D_1 \cup \ldots \cup D_n$.
 
 In the case that $t$ is a quantified formula $\forallf{f} \vec x. t_1$, it recursively calls $\conv$ on its body with the same polarity.
 In the case that $t$ is not a function definition, 
 the resulting quantified formula is reconstructed with the term $r_1$ returned by the recursive call,
-and a quantified prefix is appended to the domain constraints $D_1$ returned by the recursive call.
+and a quantified prefix is appended to the formula $D_1$ returned by the recursive call.
 In the case that $t$ is a function definition,
 we instead construct a quantified formula over a single variable $y$ of type $\fargsort{f}$,
 and replace all occurrences of $\vec x$ in $r_1$ with $\vecfarg{f}( y )$.
@@ -348,6 +364,9 @@ Consider the $\Sigma$-formula $\varphi$:
 Here, $s$ is a function that returns the sum of positive numbers between $0$ and its argument $x$.
 The formula $\varphi$ is well-defined with respect to functions $\sfundefs{\Sigma_u}$,
 and states that the sum of all positive numbers between $0$ and $c$ is greater than $100$.
+This formula is satisfiable with a model that interprets $c$ as an integer greater than or equal to $14$.
+Due to the universal quantification in the left disjunct,
+state-of-the-art SMT techniques~\cite{GeDeM-CAV-09, ReyEtAl-1-RR-13} are unable to find a model for this formula.
 The signature $\extendsig{\Sigma}$ includes the sort $\fargsort{s}$,
 and the uninterpreted function $\farg{s}$ of sort $\fargsort{s} \rightarrow \sortint$.
 The result of $\conv( \varphi, \ptrue )$ is the pair $( \psi, \emptyset )$, where after simplification, $\psi$ is the $\extendsig{\Sigma}$-formula:
@@ -360,8 +379,8 @@ The result of $\conv( \varphi, \ptrue )$ is the pair $( \psi, \emptyset )$, wher
 \end{split}  
 \wedge ( s( c ) > 100 \wedge \exists z\typ{\fargsort{s}}. \farg{s}( z ) \teq c )
 \end{equation*}
-The universal quantification in the resulting formula (the left disjunct) is over an uninterpreted sort $\fargsort{s}$, 
-thus enabling finite model finding techniques~\cite{ReyEtAl-1-RR-13} to find a model for $\psi$ if a finite interpretation exists for $\fargsort{s}$.
+The universal quantification in the resulting formula is over an uninterpreted sort $\fargsort{s}$, 
+thus enabling finite model finding techniques~\cite{ReyEtAl-1-RR-13} to search for a finite interpretation for $\fargsort{s}$.
 Moreover, all occurrences of $y$ in this formula are beneath applications of the uninterpreted function $\farg{s}$,
 implying that the formula is in the essentially uninterpreted fragment of~\cite{GeDeM-CAV-09}, for which there exists a complete instantiation procedure.
 $\square$
@@ -390,8 +409,8 @@ The benchmarks have been used recently as challenge problems for a variety of in
 These benchmarks heavily involve recursive functions, and are limited to the combined theory of uninterpreted functions and inductive datatypes.
 The second ({\bf leon}) consists of 166 benchmarks from the Leon repository~\footnote{Available at \url{https://github.com/epfl-lara/leon}.},
 which were constructed from verification conditions from simple Scala programs.
-These benchmarks also heavily involve recursive functions, 
-and cover a wide variety of theories, including bitvectors, arrays, linear and non-linear arithmetic, and inductive datatypes.
+These benchmarks also heavily involve recursive functions over inductive datatypes, 
+and also cover a wide variety of theories, including bitvectors, arrays, and linear and non-linear arithmetic.
 Each of the 245 benchmarks are of the form described in Formula (~\ref{eq:wdf}) from Section~\ref{sec:prelim},
 namely they each are a conjoined list of function definitions followed by a (negated) conjecture.
 A majority of these benchmarks are unsatisfiable, although a handful of the benchmarks in the {\bf leon} set are satisfiable.
@@ -399,24 +418,85 @@ A majority of these benchmarks are unsatisfiable, although a handful of the benc
 For each of these 245 benchmarks, we considered (up to) three randomly selected mutated forms of its conjecture $\psi$.
 In particular, we considered unique conjectures that are obtained as a result of swapping a subterm of $\psi$ at one position
 with another of the same type at another position.
+Note that benchmarks created in this way have a high likelihood of having small and easy-to-find counterexamples.
 In total, we considered 213 mutated forms of conjectures from {\bf isa}, and 427 mutated forms of conjectures from {\bf leon}.
 We will call these sets {\bf isa+m} and {\bf leon+m} respectively.
 
-In total, our benchmark set consisted of 885 benchmarks (640 mutants and 245 originals).
-We considered these 885 benchmarks both before and after the translation method $\conv$ as described in Section~\ref{sec:encoding}.
-We will denote the latter encoding using the suffix {\bf w}, for instance {\bf isa+w} or {\bf isa+mw}.
+In total, our benchmark set consisted of 885 benchmarks (640 mutants plus the original 245).
+We considered these 885 benchmarks both before and after the translation $\conv$ as described in Section~\ref{sec:encoding}.
+We will denote the latter encoding using the suffix {\bf w}.
+For instance {\bf isa+w}, contains 79 benchmarks that are the results of applying $\conv$ to each of the 79 benchmarks in {\bf isa}.
 
 For solvers, we considered the SMT solver \ziii~\cite{de-moura-bjoerner-2008}, 
-which runs both heuristic methods for quantifier instantiation,
+which runs both heuristic methods for quantifier instantiation~\cite{DBLP:conf/cade/MouraB07},
 as well as methods for finding models for quantified formulas~\cite{GeDeM-CAV-09}.
 We also considered three configurations of \cvc~\cite{barrett-et-al-2011} which we will refer to as {\bf cvc4}, {\bf cvc4+f} and {\bf cvc4+i}.
-The default configuration {\bf cvc4} runs heuristic quantifier instantiation, but does not include techniques for finite model finding.
-The configuration {\bf cvc4+f} runs a finite model finding procedure~\cite{ReyEtAl-1-RR-13}.
+The default configuration {\bf cvc4} runs heuristic quantifier instantiation, 
+but does not include techniques for finding models.
+The configuration {\bf cvc4+f} runs a finite model finding procedure~\cite{ReyEtAl-1-RR-13, reynolds-et-al-2013}.
 The last configuration {\bf cvc4+i} incorporates techniques for automating inductive reasoning in SMT~\cite{reynolds-kuncak-2015}.
+%All configurations of \cvc incorporate techniques for conflict-based instantiation~\cite{} ..?
 
+\begin{figure}
+\centering
+{
+\begin{tabular}{|l|cc|cc|cc|cc|l|cc|cc|cc|cc|}
+\hline                                                                
+  & \multicolumn{2}{c|}{{\bf z3}}     & \multicolumn{2}{c|}{{\bf cvc4}}     & \multicolumn{2}{c|}{{\bf cvc4+f}}     & \multicolumn{2}{c|}{{\bf cvc4+i}}     & & \multicolumn{2}{c|}{{\bf z3}}     & \multicolumn{2}{c|}{{\bf cvc4}}     & \multicolumn{2}{c|}{{\bf cvc4+f}}     & \multicolumn{2}{c|}{{\bf cvc4+i}}     
+\\                                                                    
+  & u & s & u & s & u & s & u & s & & u & s & u & s & u & s & u & s 
+\\                                                                    
+\hline                                                                    
+{\bf isa} & 14  & 0 & 15  & 0 & 15  & 0 & {\bf 61}  & 0 & {\bf isa+w} & 15  & 0 & 15  & 0 & 15  & 0 & 14  & 0
+\\                                                                  
+{\bf leon}  & 73  & 0 & 80  & 0 & 80  & 0 & {\bf 96}  & 0 & {\bf leon+w}  & 78  & 2 & 80  & 0 & 76  & {\bf 9} & 78  & 0
+\\                                                                   
+{\bf isa+m} & 17  & 0 & 18  & 0 & 18  & 0 & {\bf 44}  & 0 & {\bf isa+mw}  & 18  & 35  & 18  & 0 & 18  & {\bf 153} & 17  & 0
+\\                                                                  
+{\bf leon+m}  & 83  & 11  & 103 & 6 & 104 & 6 & {\bf 117} & 6 & {\bf leon+mw} & 98  & 75  & 98  & 6 & 95  & {\bf 169} & 98  & 6
+\\                                                                  
+\hline                                                             
+{\bf total} & 187 & 11  & 216 & 6 & 217 & 6 & {\bf 318} & 6 & {\bf total} & 209 & 112 & 211 & 6 & 204 & {\bf 331} & 207 & 6
+\\                                                                                            
+\hline                                                                                            
+\end{tabular}
+\\
+}
+\caption{Number of unsat and sat responses for of all configurations on benchmarks 
+before and after the translation $\conv$.}
+\label{fig:results}
+\end{figure}
 
 The results are shown in Figure~\ref{fig:results}.
+The results are divided into benchmarks before and after the translation $\conv$.
+First, we note that in no cases did a configuration answer differently across the two encodings.
+In other words, there were no cases in which \ziii or \cvc answered e.g. ``unsatisfiable" on a benchmark $\varphi$ in {\bf isa} 
+and ``satisfiable" on its corresponding benchmark $\conv( \varphi )$ in {\bf isa+w}.
+This provides confirming evidence that the translation $\conv$ is \emph{sound},
+as we did not find a case where $\conv( \varphi )$ was unsatisfiable when $\varphi$ was satisfiable.
+It also provides confirming evidence that the translation is \emph{complete} for this set of benchmarks,
+as we did not find a case where $\conv( \varphi )$ was satisfiable when $\varphi$ was unsatisfiable.
+This is to be expected, since the functions in our benchmark sets are intended to be logically consistent.
 
+Examining the first encoding in isolation (the first nine columns),
+the number of satisfiable responses from all configurations is quite low.
+In total, {\bf z3} manages to find only 11 benchmarks to be satisfiable,
+whereas each configuration of \cvc only finds 6.
+This confirms the shortcomings of existing SMT techniques for finding counterexamples for benchmarks containing recursive functions.
+In terms of number of unsatisfiable responses,
+the configuration {\bf cvc4+i} is the clear winner, finding 318 total benchmarks to be unsatisfiable.
+
+Now, examining the second encoding (the latter nine columns), 
+we see that using the translation $\conv$ drastically improves the ability of configurations for determining satisfiability.
+In total, {\bf cvc4+f} finds 331 of the 885 benchmarks to be satisfiable, including 9 benchmarks in the original {\bf leon} benchmark set.
+The performance of {\bf z3} for counterexamples also improves drastically, as it solves 112 satisfiable,
+including 10 that were unsolved by {\bf cvc4+f}.
+Moreover, the translation $\conv$ helps \ziii for unsatisfiable responses as well,
+as we see \ziii solves a total of 209 whereas it solves only 187 before the translation.
+This number is 2 fewer than {\bf cvc4}, which solves 211 unsatisfiable.
+Thus, in most cases the translation $\conv$ does not seriously degrade performance for unsatisfiable benchmark,
+and in some cases may actually aid the solver for determining unsatisfiability
+\footnote{The exception here is {\bf cvc4+i}, which makes use of type information of quantified formulas to make inductive arugments.}.
 
 \section{Conclusion}
 \label{sec:conclusion}
@@ -434,6 +514,7 @@ This research is partially supported by the Inria technological development
 action \relax{Contrexemples Utilisables par Isabelle et Coq} (CUIC).
 
 }
+
 
 
 {
