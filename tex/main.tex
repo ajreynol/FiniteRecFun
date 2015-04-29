@@ -158,32 +158,7 @@ Thus, want SMT solver to check satisfiability the assumption that recursive func
 
 \ajr{(1) Encoding, (2) Evaluation, (3) Front-end support for define-funs-rec in \cvc}
 
-\section{Related Work}
-
-first-order model finders: SEM, MACE/Mace, Paradox, iProver
-  either direct search or reduction to SAT
-
-Alloy (and Alloy idiom by Kuncak \& Jackson), Kodkod
-
-The model finder for KIV based on Alloy
-
-Refute
-  * unsound handling of datatypes
-
-Nitpick
-  * inductive / coinductive predicates
-  * quotient types
-
-Leon
-
-\subsection{Model Finding for Quantified Formulas in SMT}
-
-z3, cvc4
-
-
-\section{Approach}
-
-\subsection{Preliminaries}
+\section{Preliminaries}
 \label{sec:prelim}
 
 A \emph{signature} $\Sigma$ consists of 
@@ -227,18 +202,62 @@ and consider $\Sigma$-formulas that are well-defined with respect to functions $
 We write $\terms( t )$ to denote the set of subterms in $t$.
 %We write $\functerms^\Sigma( t )$ to denote the set of $f$-applications in $t$ such that $f \in \sfundefs{\Sigma}$.
 
-\subsection{Encoding Well-Defined Assumption for Recursive Functions}
+\section{Related Work}
+
+first-order model finders: SEM, MACE/Mace, Paradox, iProver
+  either direct search or reduction to SAT
+
+Alloy (and Alloy idiom by Kuncak \& Jackson), Kodkod
+
+The model finder for KIV based on Alloy
+
+Refute
+  * unsound handling of datatypes
+
+Nitpick
+  * inductive / coinductive predicates
+  * quotient types
+
+Leon
+
+\section{Model Finding for Recursive Functions in SMT}
+
+Recent techniques~\cite{GeDeM-CAV-09, ReyEtAl-1-RR-13} 
+have focused on finding models for quantified formulas in SMT.
+A instatiation-based procedure is shown in~\cite{GeDeM-CAV-09} to be complete for formulas in the \emph{essentially uninterpreted} fragment.
+This fragment is limited to universally quantified formulas where all occurrences of variables occur as direct subchildren of uninterpreted functions.
+For instance, the formula $\forall x\typ{\sortint}. f( x ) \teq g( x ) + 5$ 
+is in the essentially uninterpreted fragment since all occurrences of $x$ occur beneath uninterpreted functions $f$ and $g$.
+Other syntactic criteria are identified in this paper that extend this fragment slightly, including cases when variables occur as arguments of arithmetic predicates.
+The techniques in~\cite{ReyEtAl-1-RR-13} can be used for finding finite models for quantified formulas over uninterpreted types as well as types having a 
+fixed finite interpretation (such as fixed-width bitvectors, datatype enumerations, etc.).
+For instance, 
+finite model finding techniques can find a model for
+the formula $\forall x\typ{\tau} y\typ{\tau} z\typ{\tau}. x \teq y \vee y \teq z \vee x \teq z$
+where the uninterpreted type $\tau$ is interpreted as a set of (at most) two elements.
+
+Unfortunately, these fragments do not coincide with the vast majority of quantified formulas that correspond to recursive function definitions.
+In particular, the fragments in~\cite{GeDeM-CAV-09} are not applicable when the argument of a recursive function is used in various ways (e.g. within an arithmetic expression), 
+while the fragment in~\cite{ReyEtAl-1-RR-13} is not applicable for functions over infinite domains such as the integers.
+So, for instance, the quantified formula $\forall x\typ{\sortint}. \lite( p \leq 0, p( x ) \teq 0, p( x ) \teq 2 * p( x - 1 ) )$ 
+is not in the essentially uninterpreted fragment (since $x$ occurs as a child of $-$),
+nor does finite model finding apply (since $x$ is of type $\sortint$).
+
+Here, we advocate an approach that translates formulas involving function definitions (such as the one mentioned in the previous paragraph)
+into equisatisfiable formulas where the techniques~\cite{GeDeM-CAV-09, ReyEtAl-1-RR-13} are applicable.
+
+\subsection{A Translation for Function Definitions}
 \label{sec:encoding}
 
 In the remainder of the section, we fix a signature $\Sigma$.
-
-
-Say that $\Sigma$-formula $\varphi$ is well-defined with respect to functions $\sfundefs{\Sigma}$,
-and the definitions in $\sfundefs{\Sigma}$ are logically consistent \ajr{formalize}.
-In this section, we present a method which constructs an extended signature $\Sigma'$,
-and translates $\varphi$ to equisatisfiable $\Sigma'$-formula $\psi$ on which known model-finding procedures~\cite{GeDeM-CAV-09, ReyEtAl-1-RR-13} are applicable.
-The intuition behind this translation is use an uninterpreted type to abstract the set of tuples that each recursive function $f$ is invoked on,
+Say that $\Sigma$-formula $\varphi$ is well-defined with respect to functions $\sfundefs{\Sigma}$, 
+and the definitions in $\sfundefs{\Sigma}$ are logically consistent.
+We may translate $\varphi$ into a equisatisfiable formula $\psi$ for which known model-finding procedures~\cite{GeDeM-CAV-09, ReyEtAl-1-RR-13} are applicable.
+In particular, this section presents a method for constructing an extended signature $\extendsig( \Sigma )$,
+and a $\extendsig( \Sigma )$-formula $\psi$ such that $\varphi$ and $\psi$ are equisatisfiable.
+The intuition behind this translation is use an uninterpreted type to abstract the set of \emph{relevant} tuples for each recursive function $f$,
 and restrict the quantification of the function definition for $f$ to a variable of this type.
+Informally, the relevant tuples $\vec t$ of a function $f$ are the ones for which the interpretation of $f( \vec t )$ is relevant to the satisfiability of $\varphi$.
 
 \begin{figure}[t]
 \begin{enumerate}
@@ -316,7 +335,7 @@ This calls the subprocedure $\conv_0$, which takes two arguments: the term $t$ t
 It returns a pair of the form $( r, D )$, where $r$ is a term of type $\tau$, and $D$ is a set of formulas.
 %The role of $D$ is to ensure that the (restricted) function definition for $f$ includes certain tuples in its domain, which we explain more in the following.
 At a high level, the translation modifies $\varphi$ in two ways.
-First, it restricts the quantification on function definitions for $f$ to the corresponding uninterpreted sort $\fargsort{f}$.
+First, it restricts the quantification on function definitions for $f$ to the corresponding uninterpreted type $\fargsort{f}$.
 Second, it augments $\varphi$ with additional constraints of the form $\exists z\typ{\fargsort{f}}. ( \vecfarg{f}( z ) \teq \vec t )$
 which ensure that this restriction for the defintion $f$ covers all relevant tuples of terms,
 namely the ones for which an $f$-application exists and is relevant to the satisfiability of the current branch of $\varphi$.
@@ -349,28 +368,26 @@ we instead construct a quantified formula over a single variable $y$ of type $\f
 and replace all occurrences of $\vec x$ in $r_1$ with $\vecfarg{f}( y )$.
 In this case, since function definitions are a top-level conjunct, by case analysis on the return values of $\conv$, we know that $D_1$ is empty.
 
-
-
-We demonstrate this translation with a simple example.
+We demonstrate this translation with an example.
 
 \begin{example}
 Consider the (combined) signature $\Sigma = \Sigmalia \cup \Sigma_u$,
 where $\ssorts{\Sigma_u} = \{ \sortint \}$ and 
 $\sfuns{\Sigma_u} = \{ s\typ{ \sortint \rightarrow \sortint }, c\typ{ \sortint } \}$.
 Consider the $\Sigma$-formula $\varphi$:
-\begin{equation*}
+\begin{eqnarray} \label{eq:ex-before}
 \forall_{s} x\typ{\sortint}. ite( x \leq 0, s(x) \teq 0, s( x ) \teq x + s( x-1 ) ) \wedge s( c ) > 100
-\end{equation*}
+\end{eqnarray} 
 Here, $s$ is a function that returns the sum of positive numbers between $0$ and its argument $x$.
 The formula $\varphi$ is well-defined with respect to functions $\sfundefs{\Sigma_u}$,
 and states that the sum of all positive numbers between $0$ and $c$ is greater than $100$.
 This formula is satisfiable with a model that interprets $c$ as an integer greater than or equal to $14$.
-Due to the universal quantification in the left disjunct,
+Due to the universally quantified formula in the left disjunct,
 current SMT techniques~\cite{GeDeM-CAV-09, ReyEtAl-1-RR-13} are unable to find a model for this formula.
-The signature $\extendsig{\Sigma}$ includes the sort $\fargsort{s}$,
-and the uninterpreted function $\farg{s}$ of sort $\fargsort{s} \rightarrow \sortint$.
+The signature $\extendsig{\Sigma}$ includes the type $\fargsort{s}$,
+and the uninterpreted function $\farg{s}$ of type $\fargsort{s} \rightarrow \sortint$.
 The result of $\conv( \varphi, \ptrue )$ is the pair $( \psi, \emptyset )$, where after simplification, $\psi$ is the $\extendsig{\Sigma}$-formula:
-\begin{equation*}
+\begin{eqnarray} \label{eq:ex-after}
 \begin{split}
 \forall y\typ{\fargsort{s}}. ite( & \farg{s}( y ) \leq 0,  \\
  & s(\farg{s}( y )) \teq 0, \\
@@ -378,24 +395,39 @@ The result of $\conv( \varphi, \ptrue )$ is the pair $( \psi, \emptyset )$, wher
  & \wedge \exists z\typ{\fargsort{s}}. \farg{s}( z ) \teq \farg{s}( y )-1 )
 \end{split}  
 \wedge ( s( c ) > 100 \wedge \exists z\typ{\fargsort{s}}. \farg{s}( z ) \teq c )
-\end{equation*}
-The universal quantification in the resulting formula is over an uninterpreted sort $\fargsort{s}$, 
+\end{eqnarray} 
+The universal quantification in the resulting formula is over an uninterpreted type $\fargsort{s}$, 
 thus enabling finite model finding techniques~\cite{ReyEtAl-1-RR-13} to search for a finite interpretation for $\fargsort{s}$.
 Moreover, all occurrences of $y$ in this formula are beneath applications of the uninterpreted function $\farg{s}$,
 implying that the formula is in the essentially uninterpreted fragment of~\cite{GeDeM-CAV-09}, for which there exists a complete instantiation procedure.
+We observe that both \cvc and \ziii run indefinitely on formula~(\ref{eq:ex-before}),
+and both produce a model for formula~(\ref{eq:ex-after}) in $<0.1$ second.
 $\square$
 \end{example}
 
-It remains to show that our translation produces an equisatisfiable formulae.
-Namely,
-we claim that if $\varphi$ is well-defined with respect to functions $\sfundefs{\Sigma}$,
-function definitions in $\sfundefs{\Sigma}$ are logically consistent \ajr{formalize},
-then $\conv(\varphi)$ is equisatisfiable to $\varphi$.
+It is important to note that the translation $\conv$ does not preserve the models of $\varphi$.
+One model $\M$ for formula~(\ref{eq:ex-after}) in the previous example interprets 
+$\fargsort{s}$ as a finite set of elements $\{ u_0, \ldots, u_{14} \}$,
+$\farg{s}$ as a finite map mapping containing $u_i \mapsto i$ for $i = 0, \ldots, 14$,
+$c$ as $14$, 
+and $s$ as the (almost constant) function:
+\begin{eqnarray}
+\lambda x\typ{Int}. \lite( x \teq 0, 0, \lite( x \teq 1, 1, \lite( x \teq 2, 3, \ldots, \lite( x \teq 13, 91, 105 ) \ldots )
+\end{eqnarray}
+In other words, $s$ is a function mapping $x$ to the sum of all positive integers between $0$ and $x$ when $0 \leq x \leq 13$,
+and $105$ otherwise.
+Notice that $\M$ is \emph{not} a model for the original formula~(\ref{eq:ex-before}),
+since $\M$ interprets e.g. $s( -1 )$ and $s( 15 )$ as $105$.
+However, under the assumption that function definitions in $\sfundefs{\Sigma}$ are logically consistent, 
+we claim that $\conv(\varphi)$ is equisatisfiable to $\varphi$.
+The intuition is that the interpretation of a term such as $s( -1 )$ is not relevant to the satisfiability of~(\ref{eq:ex-before}).
+\ajr{add invariants, proofs}
 
-\begin{lemma}
-Let $\varphi$ be a $\Sigma$-formula that is well-defined with respect to functions $\sfundefs{\Sigma}$.
-\ajr{todo}
-\end{lemma}
+\begin{theorem}
+If $\varphi$ be a $\Sigma$-formula that is well-defined with respect to functions $\sfundefs{\Sigma}$,
+and function definitions in $\sfundefs{\Sigma}$ are logically consistent,
+then $\varphi$ and $\conv( \varphi )$ are equisatisfiable.
+\end{theorem}
 
 \section{Evaluation}
 
@@ -411,8 +443,8 @@ The second ({\bf leon}) consists of 166 benchmarks from the Leon repository~\foo
 which were constructed from verification conditions from simple Scala programs.
 These benchmarks also heavily involve recursive functions over inductive datatypes, 
 and also cover a wide variety of theories, including bitvectors, arrays, and linear and non-linear arithmetic.
-Each of the 245 benchmarks are of the form described in Formula (~\ref{eq:wdf}) from Section~\ref{sec:prelim},
-namely they each are a conjoined list of function definitions followed by a (negated) conjecture.
+Each of the 245 benchmarks are of the form described in formula~(\ref{eq:wdf}) from Section~\ref{sec:prelim},
+in particular they each are a conjoined list of function definitions followed by a (negated) conjecture.
 A majority of these benchmarks are unsatisfiable, although a handful of the benchmarks in the {\bf leon} set are satisfiable.
 
 For each of these 245 benchmarks, we considered (up to) three randomly selected mutated forms of its conjecture $\psi$.
@@ -433,7 +465,7 @@ as well as methods for finding models for quantified formulas~\cite{GeDeM-CAV-09
 We also considered three configurations of \cvc~\cite{barrett-et-al-2011} which we will refer to as {\bf cvc4}, {\bf cvc4+f} and {\bf cvc4+i}.
 The default configuration {\bf cvc4} runs heuristic quantifier instantiation, 
 but does not include techniques for finding models.
-The configuration {\bf cvc4+f} runs a finite model finding procedure~\cite{ReyEtAl-1-RR-13, reynolds-et-al-2013}.
+The configuration {\bf cvc4+f} runs heuristic instantiation and the finite model finding procedure described in~\cite{ReyEtAl-1-RR-13, reynolds-et-al-2013}.
 The last configuration {\bf cvc4+i} incorporates techniques for automating inductive reasoning in SMT~\cite{reynolds-kuncak-2015}.
 %All configurations of \cvc incorporate techniques for conflict-based instantiation~\cite{} ..?
 
@@ -470,8 +502,8 @@ before and after the translation $\conv$.}
 The results are shown in Figure~\ref{fig:results}.
 The results are divided into benchmarks before and after the translation $\conv$.
 First, we note that in no cases did a configuration answer differently across the two encodings.
-In other words, there were no cases in which \ziii or \cvc answered e.g. ``unsatisfiable" on a benchmark $\varphi$ in {\bf isa} 
-and ``satisfiable" on its corresponding benchmark $\conv( \varphi )$ in {\bf isa+w}.
+In other words, there were no cases in which \ziii or \cvc answered e.g. ``unsatisfiable" on a benchmark $\varphi$
+and ``satisfiable" on its corresponding benchmark $\conv( \varphi )$, or vice versa.
 This provides confirming evidence that the translation $\conv$ is \emph{sound},
 as we did not find a case where $\conv( \varphi )$ was unsatisfiable when $\varphi$ was satisfiable.
 It also provides confirming evidence that the translation is \emph{complete} for this set of benchmarks,
@@ -496,7 +528,21 @@ as we see \ziii solves a total of 209 whereas it solves only 187 before the tran
 This number is 2 fewer than {\bf cvc4}, which solves 211 unsatisfiable.
 Thus, in most cases the translation $\conv$ does not seriously degrade performance for unsatisfiable benchmark,
 and in some cases may actually aid the solver for determining unsatisfiability
-\footnote{The exception here is {\bf cvc4+i}, which makes use of type information of quantified formulas to make inductive arugments.}.
+\footnote{The exception here is {\bf cvc4+i}, which makes use of type information associated with quantified formulas for inductive arguments.}.
+
+We conclude from this evaluation that the translation $\conv$ enables SMT solvers to find counterexamples 
+for conjectures involving recursive functions whose definitions are logically consistent.
+Both {\bf z3} and {\bf cvc4+f} were able to find a large number of counterexamples after the translation,
+with the latter configuration finding significantly more instances (331 to 112).
+
+\section{Front-End Support for Recursive Function Definitions}
+\label{sec:front-end}
+
+We have seen a satisfiability-preserving translation $\conv$ that significantly improves the effectiveness of known SMT techniques
+for finding counterexamples for formulas involving recursive function definitions.
+For convienience, the translation $\conv$ has been implemented in the latest development version of \cvc~\cite{ReyEtAl-1-RR-13}.
+
+
 
 \section{Conclusion}
 \label{sec:conclusion}
