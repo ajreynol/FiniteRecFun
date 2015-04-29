@@ -99,6 +99,9 @@
 \newcommand{\vthinspace}{\kern+0.083333em}
 \newcommand{\typ}[1]{^{\vthinspace #1}}
 
+\newcommand{\definefunreccmd}{\con{define}\text{-}\con{fun}\text{-}\con{rec}}
+\newcommand{\definefunsreccmd}{\con{define}\text{-}\con{funs}\text{-}\con{rec}}
+
 %\input{scalalistings}
 %\input{smtlib2listings}
 \usepackage{program}
@@ -158,6 +161,26 @@ Thus, want SMT solver to check satisfiability the assumption that recursive func
 
 \ajr{(1) Encoding, (2) Evaluation, (3) Front-end support for define-funs-rec in \cvc}
 
+\section{Related Work}
+
+first-order model finders: SEM, MACE/Mace, Paradox, iProver
+  either direct search or reduction to SAT
+
+Alloy (and Alloy idiom by Kuncak \& Jackson), Kodkod
+
+The model finder for KIV based on Alloy
+
+Refute
+  * unsound handling of datatypes
+
+Nitpick
+  * inductive / coinductive predicates
+  * quotient types
+
+Leon
+
+in smt : z3, cvc4 (briefly, text in main section gives detail)
+
 \section{Preliminaries}
 \label{sec:prelim}
 
@@ -202,25 +225,8 @@ and consider $\Sigma$-formulas that are well-defined with respect to functions $
 We write $\terms( t )$ to denote the set of subterms in $t$.
 %We write $\functerms^\Sigma( t )$ to denote the set of $f$-applications in $t$ such that $f \in \sfundefs{\Sigma}$.
 
-\section{Related Work}
-
-first-order model finders: SEM, MACE/Mace, Paradox, iProver
-  either direct search or reduction to SAT
-
-Alloy (and Alloy idiom by Kuncak \& Jackson), Kodkod
-
-The model finder for KIV based on Alloy
-
-Refute
-  * unsound handling of datatypes
-
-Nitpick
-  * inductive / coinductive predicates
-  * quotient types
-
-Leon
-
 \section{Model Finding for Recursive Functions in SMT}
+\label{sec:model-finding-rec-fun}
 
 Recent techniques~\cite{GeDeM-CAV-09, ReyEtAl-1-RR-13} 
 have focused on finding models for quantified formulas in SMT.
@@ -371,6 +377,7 @@ In this case, since function definitions are a top-level conjunct, by case analy
 We demonstrate this translation with an example.
 
 \begin{example}
+\label{ex:translation}
 Consider the (combined) signature $\Sigma = \Sigmalia \cup \Sigma_u$,
 where $\ssorts{\Sigma_u} = \{ \sortint \}$ and 
 $\sfuns{\Sigma_u} = \{ s\typ{ \sortint \rightarrow \sortint }, c\typ{ \sortint } \}$.
@@ -430,6 +437,7 @@ then $\varphi$ and $\conv( \varphi )$ are equisatisfiable.
 \end{theorem}
 
 \section{Evaluation}
+\label{sec:evaluation}
 
 In this section, we evaluate both 
 the overall impact of the encoding introduced in the previous section, and
@@ -469,7 +477,7 @@ The configuration {\bf cvc4+f} runs heuristic instantiation and the finite model
 The last configuration {\bf cvc4+i} incorporates techniques for automating inductive reasoning in SMT~\cite{reynolds-kuncak-2015}.
 %All configurations of \cvc incorporate techniques for conflict-based instantiation~\cite{} ..?
 
-\begin{figure}
+\begin{figure}[t]
 \centering
 {
 \begin{tabular}{|l|cc|cc|cc|cc|l|cc|cc|cc|cc|}
@@ -541,8 +549,21 @@ with the latter configuration finding significantly more instances (331 to 112).
 We have seen a satisfiability-preserving translation $\conv$ that significantly improves the effectiveness of known SMT techniques
 for finding counterexamples for formulas involving recursive function definitions.
 For convienience, the translation $\conv$ has been implemented in the latest development version of \cvc~\cite{ReyEtAl-1-RR-13}.
+Function definitions $\forallf{f} \vec x. \varphi$ can be written in using the $\definefunreccmd$ command, 
+proposed in the draft of SMT version 2.5~\cite{}.
+For instance, the input from Example~\ref{ex:translation} could be encoded as:
 
+\begin{verbatim}
+(define-fun-rec s ((x Int)) Int (ite (<= x 0) 0 (s (- x 1))))
+(assert (> (s x) 100))
+(check-sat)
+\end{verbatim}
 
+When reading this input, 
+\cvc adds the (annotated) quantified formula $\forallf{s} x. s( x ) \teq \lite( x \leq 0, 0, s( x-1 ) )$ to its list of assertions,
+which after rewriting becomes $\forallf{s} x. \lite( x \leq 0, s( x ) \teq 0, s( x ) \teq s( x-1 ) )$.
+If \cvc is in finite model finding mode for recursive functions is enabled (using the command line parameter ``--fmf-fun"),
+then it will replace its list of known assertions based on the conversion $\conv$ before checking for satisfiability.
 
 \section{Conclusion}
 \label{sec:conclusion}
@@ -555,7 +576,7 @@ For convienience, the translation $\conv$ has been implemented in the latest dev
 \def\ackname{Acknowledgment}
 \paragraph{%\footnotesize
 \ackname.}
-
+We would like to thank Damien Busato-Gaston and Emmanouil Koukoutos for providing the initial set of benchmarks used in the evaluation.
 This research is partially supported by the Inria technological development
 action \relax{Contrexemples Utilisables par Isabelle et Coq} (CUIC).
 
