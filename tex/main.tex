@@ -127,11 +127,32 @@ To do.
 
 \section{Introduction}
 \label{sec:introduction}
-To do.
+
+  * why model finding?
+  * but SMT solvers better at proving
+    * a single universal quantifier in an axiom is enough to put it off track
+      (``maybe unsat'')
+
+  * quantifiers in recursive fun defs
+
+  * intuitively, finite quantification suffices:
+    * if we make sure all needed values are there
+    * if well-founded (assumed!)
+
+  * nasty example (not well-founded)
+    * f x = f x + 1
+
+  * how we do it
+
+  * show that it works also for example with weird recursion schemes
+
 
 \section{Related Work}
 
-Leon, Nitpick, others?
+Alloy (and Alloy idiom by Kuncak \& Jackson)
+The model finder for KIV based on Alloy
+Nitpick
+Leon
 
 \subsection{Model Finding for Quantified Formulas in SMT}
 
