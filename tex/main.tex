@@ -102,6 +102,12 @@
 \newcommand{\definefunreccmd}{\con{define}\text{-}\con{fun}\text{-}\con{rec}}
 \newcommand{\definefunsreccmd}{\con{define}\text{-}\con{funs}\text{-}\con{rec}}
 
+\newcommand{\Mo}{\mathbf{I}}
+
+\newcommand{\euf}{\ensuremath{\mathrm{E}}\xspace}
+\newcommand{\ari}{\ensuremath{\mathrm{A}}\xspace}
+
+
 %\input{scalalistings}
 %\input{smtlib2listings}
 \usepackage{program}
@@ -193,6 +199,22 @@ an (infix) equality predicate $\teq$ of type $\sigma \times \sigma$ for each $\s
 and standard boolean connectives ($\neg$, $\wedge$, $\vee$, $\lite$, etc.).
 %and a function $\lite$ of type $\Bool \times \sigma \times \sigma$ for each $\sigma \in \ssorts{\Sigma}$.
 We will write $t\typ{\tau}$ to denote a term $t$ of type~$\tau$.
+We write $\terms( t )$ to denote the set of subterms in $t$.
+%We write $\functerms^\Sigma( t )$ to denote the set of $f$-applications in $t$ such that $f \in \sfundefs{\Sigma}$.
+
+A \emph{theory} is a pair $T = (\Sigma, \Mo)$ where 
+$\Sigma$ is a signature and  $\Mo$ is a class of $\Sigma$-interpretations,
+the \emph{models} of $T$.
+A $\Sigma$-formula $\varphi$ is 
+\emph{$T$-satisfiable} (resp., \emph{$T$-unsatisfiable}) 
+if it is satisfied by some (resp., no) interpretation in $\Mo$.
+Formulas $\varphi$ and $\psi$ are \emph{equisatisfiable} if
+$\varphi$ is $T$-satisfiable if and only if $\psi$ is $T$-satisfiable.
+%For a given signature $\Sigma$
+%the \emph{theory of equality with uninterpreted functions} \euf
+%consists of the set of all $\Sigma$-interpretations.
+%Informally, we refer to the sort and function symbols in this theory 
+%as \emph{uninterpreted}.
 
 In this paper, we associate quantified formulas with the uninterpreted functions whose semantics they define.
 We will write $\forallf{f} \vec x. \varphi$ to denote a quantified formula that is defines the semantics of uninterpreted function $f$.
@@ -202,9 +224,6 @@ denoting that the quantified formula does not define the semantics of an uninter
 When $f$ is not $\fnull$, we will refer to $\forallf{f} \vec x. \varphi$ as a \emph{function definition} (for $f$).
 We will write $\forall \vec x. \varphi$ as shorthand for $\forallf{\fnull} \vec x. \varphi$,
 and $\exists \vec x. \varphi$ as shorthand for $\neg \forall \vec x. \neg \varphi$.
-
-\ajr{theories, models, equisatisfiable, etc.}
-
 
 \begin{definition}
 A formula $\varphi$ \emph{well-defined with respect to functions} $S$ if it is of the form:
@@ -222,8 +241,6 @@ where $\sfundefs{\Sigma}$ is the set of \emph{defined} function symbols,
 and $\sfunndefs{\Sigma}$ are the others,
 and consider $\Sigma$-formulas that are well-defined with respect to functions $\sfundefs{\Sigma}$.
 
-We write $\terms( t )$ to denote the set of subterms in $t$.
-%We write $\functerms^\Sigma( t )$ to denote the set of $f$-applications in $t$ such that $f \in \sfundefs{\Sigma}$.
 
 \section{Model Finding for Recursive Functions in SMT}
 \label{sec:model-finding-rec-fun}
@@ -259,8 +276,8 @@ In the remainder of the section, we fix a signature $\Sigma$.
 Say that $\Sigma$-formula $\varphi$ is well-defined with respect to functions $\sfundefs{\Sigma}$, 
 and the definitions in $\sfundefs{\Sigma}$ are logically consistent.
 We may translate $\varphi$ into a equisatisfiable formula $\psi$ for which known model-finding procedures~\cite{GeDeM-CAV-09, ReyEtAl-1-RR-13} are applicable.
-In particular, this section presents a method for constructing an extended signature $\extendsig( \Sigma )$,
-and a $\extendsig( \Sigma )$-formula $\psi$ such that $\varphi$ and $\psi$ are equisatisfiable.
+In particular, this section presents a method for constructing an extended signature $\extendsig{ \Sigma }$,
+and a $\extendsig{ \Sigma }$-formula $\psi$ such that $\varphi$ and $\psi$ are equisatisfiable.
 The intuition behind this translation is use an uninterpreted type to abstract the set of \emph{relevant} tuples for each recursive function $f$,
 and restrict the quantification of the function definition for $f$ to a variable of this type.
 Informally, the relevant tuples $\vec t$ of a function $f$ are the ones for which the interpretation of $f( \vec t )$ is relevant to the satisfiability of $\varphi$.
@@ -426,8 +443,8 @@ and $105$ otherwise.
 Notice that $\M$ is \emph{not} a model for the original formula~(\ref{eq:ex-before}),
 since $\M$ interprets e.g. $s( -1 )$ and $s( 15 )$ as $105$.
 However, under the assumption that function definitions in $\sfundefs{\Sigma}$ are logically consistent, 
-we claim that $\conv(\varphi)$ is equisatisfiable to $\varphi$.
-The intuition is that the interpretation of a term such as $s( -1 )$ is not relevant to the satisfiability of~(\ref{eq:ex-before}).
+we claim that $\conv(\varphi)$ is equisatisfiable to $\varphi$, for all $\varphi$.
+The intuition is that the interpretation of a term such as $s( -1 )$ in the previous example is not relevant to the satisfiability of formula~(\ref{eq:ex-before}).
 \ajr{add invariants, proofs}
 
 \begin{theorem}
@@ -444,7 +461,7 @@ the overall impact of the encoding introduced in the previous section, and
 the performance of individual SMT techniques for benchmarks in the encoding.
 
 For benchmarks, we gathered a set of 245 benchmarks from two sources, which we will refer to as {\bf isa} and {\bf leon}.
-The first ({\bf isa}) consists of the 79 benchmarks from the Isaplanner benchmark suite~\cite{DBLP:conf/itp/JohanssonDB10} that did not contain higher-order functions.
+The first ({\bf isa}) consists of the 79 benchmarks from the Isaplanner benchmark suite~\cite{DBLP:conf/itp/JohanssonDB10} that do not contain higher-order functions.
 The benchmarks have been used recently as challenge problems for a variety of inductive theorem provers.
 These benchmarks heavily involve recursive functions, and are limited to the combined theory of uninterpreted functions and inductive datatypes.
 The second ({\bf leon}) consists of 166 benchmarks from the Leon repository~\footnote{Available at \url{https://github.com/epfl-lara/leon}.},
@@ -534,7 +551,7 @@ including 10 that were unsolved by {\bf cvc4+f}.
 Moreover, the translation $\conv$ helps \ziii for unsatisfiable responses as well,
 as we see \ziii solves a total of 209 whereas it solves only 187 before the translation.
 This number is 2 fewer than {\bf cvc4}, which solves 211 unsatisfiable.
-Thus, in most cases the translation $\conv$ does not seriously degrade performance for unsatisfiable benchmark,
+Thus, in most cases the translation $\conv$ does not significantly degrade performance for unsatisfiable benchmarks,
 and in some cases may actually aid the solver for determining unsatisfiability
 \footnote{The exception here is {\bf cvc4+i}, which makes use of type information associated with quantified formulas for inductive arguments.}.
 
@@ -543,7 +560,7 @@ for conjectures involving recursive functions whose definitions are logically co
 Both {\bf z3} and {\bf cvc4+f} were able to find a large number of counterexamples after the translation,
 with the latter configuration finding significantly more instances (331 to 112).
 
-\section{Front-End Support for Recursive Function Definitions}
+\section{Front-End Support for Recursive Function Definitions in CVC4}
 \label{sec:front-end}
 
 We have seen a satisfiability-preserving translation $\conv$ that significantly improves the effectiveness of known SMT techniques
@@ -551,7 +568,7 @@ for finding counterexamples for formulas involving recursive function definition
 For convienience, the translation $\conv$ has been implemented in the latest development version of \cvc~\cite{ReyEtAl-1-RR-13}.
 Function definitions $\forallf{f} \vec x. \varphi$ can be written in using the $\definefunreccmd$ command, 
 proposed in the draft of SMT version 2.5~\cite{}.
-For instance, the input from Example~\ref{ex:translation} could be encoded as:
+For instance, the input from Example~\ref{ex:translation} can be written as:
 
 \begin{verbatim}
 (define-fun-rec s ((x Int)) Int (ite (<= x 0) 0 (s (- x 1))))
