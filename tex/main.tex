@@ -55,7 +55,10 @@
 \newcommand{\cc}[1]{#1^*}
 \newcommand{\terms}{\mathbf{T}}
 %\newcommand{\functerms}{\mathbf{DFT}}
+\newcommand{\vars}{\mathbf{V}}
 \newcommand{\M}{\mathcal{M}}
+\newcommand{\I}{\mathcal{I}}
+\newcommand{\J}{\mathcal{J}}
 \def\AIF{\qtab\keyword{if}\ }
 \def\THEN{\ \keyword{then}\ }
 \def\AELSE{\untab\qtab\keyword{else}\ }
@@ -170,7 +173,7 @@ Thus, want SMT solver to check satisfiability the assumption that recursive func
 
 In this paper, we make the following contributions:
 \begin{itemize}
-\item[-] We define a satisfiability-preserving translation method for formulas containing recursive function definitions
+\item[-] We define a satisfiability-preserving translation method for a class of formulas containing recursive function definitions
 that produces formulas for which existing model finding techniques~\cite{GeDeM-CAV-09, ReyEtAl-1-RR-13} are applicable.
 \item[-] We provide experimental evidence that this translation improves the effectiveness of SMT solvers \cvc and \ziii for finding counterexamples to verification conditions.
 \item[-] We detail front-end support for recursive function definitions and this translation in the SMT solver \cvc.
@@ -224,11 +227,9 @@ the \emph{theory of equality with uninterpreted functions} \euf
 consists of the set of all $\Sigma$-interpretations.
 We refer to the sort and function symbols in this theory as \emph{uninterpreted}.
 
-In this paper, we associate quantified formulas with the uninterpreted functions whose semantics they define.
-We will write $\forallf{f} \vec x. \varphi$ to denote a quantified formula that is defines the semantics of uninterpreted function $f$.
-For consistency, we consider only quantified formulas of this form, 
-and allow $f$ to be a distinguished constant $\fnull$, 
-denoting that the quantified formula does not define the semantics of an uninterpreted function.
+%In this paper, we associate quantified formulas with uninterpreted functions (informally, those whose semantics they define).
+In this paper, we consider \emph{annotated quantifed formulas} of the form $\forallf{f} \vec x. \varphi$, 
+where $f$ is an uninterpreted function from $\sfuns{\Sigma}$, or the distinguished constant $\fnull$.
 When $f$ is not $\fnull$, we will refer to $\forallf{f} \vec x. \varphi$ as a \emph{function definition} (for $f$).
 We will write $\forall \vec x. \varphi$ as shorthand for $\forallf{\fnull} \vec x. \varphi$,
 and $\exists \vec x. \varphi$ as shorthand for $\neg \forall \vec x. \neg \varphi$.
@@ -246,7 +247,6 @@ and $\psi$ contains no function definitions.
 Given a signature $\Sigma$, 
 we will commonly parition its function symbols $\sfuns{\Sigma}$ into $\sfundefs{\Sigma} \mathrel{\uplus} \sfunndefs{\Sigma}$,
 where $\sfundefs{\Sigma}$ is the set of \emph{defined} function symbols,
-and $\sfunndefs{\Sigma}$ are the others,
 and consider $\Sigma$-formulas that are well-defined with respect to functions $\sfundefs{\Sigma}$.
 
 A set of function definitions $\{ \varphi_1, \ldots, \varphi_n \}$ 
@@ -332,14 +332,14 @@ $\conv_0( t\typ{\tau}, p )$ :
   \item[] $\mathsf{else}$ $\mathsf{if}$ $t \equiv \forallf{f} \vec x. t_1$
     \begin{itemize}
       \item[] $\mathsf{let} ( r_1, D_1 ) = \conv_0( t_1, p )$;
-      \item[] $\mathsf{if}$ $f \equiv \fnull$
-      \begin{itemize}
-        \item[] $\mathsf{return}$ $( \forall \vec x. r_1, \forall \vec x. D_1 )$
-      \end{itemize}
-      \item[] else
+      \item[] $\mathsf{if}$ $f \in \sfundefs{\Sigma}$
       \begin{itemize}
         %\item[] $\mathsf{assert}( D_1 = \emptyset )$;
         \item[] $\mathsf{return}$ $( \forall y\typ{\fargsort{f}}. ( r_1 [ \vecfarg{f}( y ) / \vec x ] ), \emptyset )$
+      \end{itemize}
+      \item[] else
+      \begin{itemize}
+        \item[] $\mathsf{return}$ $( \forall \vec x. r_1, \forall \vec x. D_1 )$
       \end{itemize}
     \end{itemize}
    \item[] $\mathsf{else}$
@@ -351,7 +351,7 @@ $\conv_0( t\typ{\tau}, p )$ :
 \vspace{-2ex}
 \caption{A translation procedure $\conv$ for a $\Sigma$-formula that is well-defined with respect to a set of well-specified function definitions $\sfundefs{\Sigma}$.
 In the subprocedure $\conv_0$, the procedure $\pol( \boolop, i, p )$ returns the polarity of the $i^{th}$ child of a $\boolop$-application having polarity $p$,
-where $\boolop$ is an (interpreted) predicate.
+where $\boolop$ is an interpreted predicate.
 }
 \label{fig:encoding}
 \end{figure}
@@ -359,7 +359,7 @@ where $\boolop$ is an (interpreted) predicate.
 In more detail, 
 say our signature $\Sigma$ contains a set of defined function symbols $\sfundefs{\Sigma} \subseteq \sfuns{\Sigma}$.
 We extend the signature of $\Sigma$ to a signature $\extendsig{\Sigma}$ containing the following additional definitions.
-For each $f \in \sfundefs{\Sigma}$ of type $\tau_1 \times \ldots \tau_n \rightarrow \tau$, 
+For each $f \in \sfundefs{\Sigma}$ of type $\tau_1 \times \ldots \times \tau_n \rightarrow \tau$, 
 the signature $\extendsig{\Sigma}$ includes:
 \begin{enumerate}
 \item[-] an uninterpreted type $\fargsort{f}$, and
@@ -398,21 +398,26 @@ It $t$ has no polarity,
 then we return the union of $D_1 \cup \ldots \cup D_n$.
 
 In the case that $t$ is a quantified formula $\forallf{f} \vec x. t_1$, it recursively calls $\conv$ on its body with the same polarity.
-In the case that $t$ is not a function definition, 
-the resulting quantified formula is reconstructed with the term $r_1$ returned by the recursive call,
-and a quantified prefix is appended to the formula $D_1$ returned by the recursive call.
-In the case that $t$ is a function definition,
+In the case that $t$ is a function definition of a function in $\sfundefs{\Sigma}$,
 we instead construct a quantified formula over a single variable $y$ of type $\fargsort{f}$,
 and replace all occurrences of $\vec x$ in $r_1$ with $\vecfarg{f}( y )$.
 In this case, since function definitions are a top-level conjunct, by case analysis on the return values of $\conv$, we know that $D_1$ is empty.
+In the case that $t$ is not a function definition, 
+the resulting quantified formula is reconstructed with the term $r_1$ returned by the recursive call,
+and a quantified prefix is appended to the formula $D_1$ returned by the recursive call.
+
+Otherwise, $t$ is either an application of an uninterpreted predicate, or a term of a type other than $\Bool$.
+In this case, the second component of our return value contains a constraint of the form $\exists z\typ{\fargsort{f}}. ( \vecfarg{f}( z ) \teq \vec t )$
+for each subterm $f( \vec t )$ of $t$ such that $f$ is a function in $\sfundefs{\Sigma}$.
+When such constraints are asserted positively, this indicates that the tuple of uninterpreted functions $\vecfarg{f}$ must include $\vec t$ in its range.
 
 We demonstrate this translation with an example.
 
 \begin{example}
 \label{ex:translation}
-Consider the (combined) signature $\Sigma = \Sigmalia \cup \Sigma_u$,
-where $\ssorts{\Sigma_u} = \{ \sortint \}$ and 
-$\sfuns{\Sigma_u} = \{ s\typ{ \sortint \rightarrow \sortint }, c\typ{ \sortint } \}$.
+Consider the (combined) signature of linear arithmetic and uninterpreted functions $\Sigma = \Sigmalia \cup \Sigma_{\euf}$,
+where $\ssorts{\Sigma_{\euf}} = \{ \sortint \}$ and 
+$\sfuns{\Sigma_{\euf}} = \{ s\typ{ \sortint \rightarrow \sortint }, c\typ{ \sortint } \}$.
 Consider the $\Sigma$-formula $\varphi$:
 \begin{eqnarray} \label{eq:ex-before}
 \forall_{s} x\typ{\sortint}. ite( x \leq 0, s(x) \teq 0, s( x ) \teq x + s( x-1 ) ) \wedge s( c ) > 100
@@ -445,7 +450,7 @@ $\square$
 \end{example}
 
 It is important to note that the translation $\conv$ does not preserve the models of $\varphi$.
-One model $\M$ for formula~(\ref{eq:ex-after}) in the previous example interprets 
+One model $\I$ for formula~(\ref{eq:ex-after}) in the previous example interprets 
 $\fargsort{s}$ as a finite set of elements $\{ u_0, \ldots, u_{14} \}$,
 $\farg{s}$ as a finite map mapping containing $u_i \mapsto i$ for $i = 0, \ldots, 14$,
 $c$ as $14$, 
@@ -455,27 +460,50 @@ and $s$ as the (almost constant) function:
 \end{eqnarray}
 In other words, $s$ is a function mapping $x$ to the sum of all positive integers between $0$ and $x$ when $0 \leq x \leq 13$,
 and $105$ otherwise.
-Notice that $\M$ is \emph{not} a model for the original formula~(\ref{eq:ex-before}),
-since $\M$ interprets e.g. $s( -1 )$ and $s( 15 )$ as $105$.
+Notice that $\I$ is \emph{not} a model for the original formula~(\ref{eq:ex-before}),
+since $\I$ interprets e.g. $s( -1 )$ and $s( 15 )$ as $105$.
 However, under the assumption that function definitions in $\sfundefs{\Sigma}$ are well-specified, 
 we claim that $\conv(\varphi)$ is equisatisfiable to $\varphi$ for any input $\varphi$.
 The intuition is that the interpretation of a term such as $s( -1 )$ in the previous example is not relevant to the satisfiability of formula~(\ref{eq:ex-before}).
 Thus, a satisfiable (resp. unsatisfiable) response from an SMT solver on input $\conv( \varphi )$ implies the existence (resp. non-existence) of a model for $\varphi$.
 Moreover, information in models for $\conv( \varphi )$ contains relevant information regarding the models of $\varphi$.
-For instance, the model $\M$ for formula~(\ref{eq:ex-after}) described above interprets $c$ as $14$, 
+For instance, the model $\I$ for formula~(\ref{eq:ex-after}) described above interprets $c$ as $14$, 
 while there exists a model of formula~(\ref{eq:ex-before}) also interprets $c$ as $14$.
-In fact, we claim that there exists a model of $\varphi$ that coincides with a model of $\conv( \varphi )$ on its interpretation of all functions in $\sfuns{\Sigma}$ 
+In fact, we claim that there exists a model of $\varphi$ that coincides with each model of $\conv( \varphi )$ on its interpretation of all functions in $\sfuns{\Sigma}$ 
 other than those in $\sfundefs{\Sigma}$, i.e. $\{ s \}$ in the previous example.
 From a practical point of view, this is in fact a non-issue, as $s$ is the very function that was explicitly defined by the user,
 and hence already has an intended interpretation.
 
 \ajr{add invariants, proofs}
 
+%\begin{lemma}
+%Let $\M$ be a model satisfying $\conv( \varphi )$, and
+%%and let $\conv( \varphi )^\ast$ be the quantifier-free formula obtained by 
+%let $M$ be a set of literals such that $\M \models M$ and $M \models_p \conv( \varphi )$.
+%For each assignment $\sigma$ over $\vars{ M }$,
+%each $f( \vec t ) \in \terms( M \sigma )$ where $f \in \sfundefs{\Sigma}$, 
+%there exists a formula of the form $\exists z\typ{\fargsort{f}}. ( \vecfarg{f}( z ) \teq \vec t )$ in $M \sigma$.
+%\end{lemma}
+
 \begin{theorem}
 If $\varphi$ be a $\Sigma$-formula that is well-defined with respect to functions $\sfundefs{\Sigma}$,
 and the set of function definitions corresponding to functions in $\sfundefs{\Sigma}$ is well-specified,
 then $\varphi$ and $\conv( \varphi )$ are equisatisfiable.
 \end{theorem}
+\begin{proof}
+(Sketch)  First, we show that if $\varphi$ has a model $\I$, then $\conv( \varphi )$ has a model $\J$.
+Let $\J$ be the $\extendsig{\Sigma}$-interpretation that interprets all sorts $\sigma \in \ssorts{\Sigma}$ as $\sigma^\I$,
+all functions $f \in \sfuns{\Sigma}$ as $f^\I$,
+and for each function $f$ of type $\tau_1 \times \ldots \tau_n \rightarrow \tau$ in $\sfundefs{\Sigma}$, 
+interprets $\fargsort{f}$ as a tuple of values of type $\tau_1^\I \times \ldots \times \tau_n^\I$,
+and each $\farg{f}^i$ as the $i^{th}$ projection on such tuples for each $i = 1, \ldots, n$.
+Note that $\J$ satisfies \emph{every} constraint of the form $\exists z\typ{\fargsort{f}}. ( \vecfarg{f}( z ) \teq \vec t )$,
+since by our construction of $\J$ there exists a $z$ such that $z^\J = \vec t^\J$.
+Since $\I$ satisfies $\varphi$ and due to our construction of $\conv( \varphi )$, we conclude $\J$ is a model of $\conv( \varphi )$.
+
+Second, we show that if $\conv( \varphi )$ has a model $\I$, then $\varphi$ has a model $\J$.
+
+\end{proof}
 
 \section{Evaluation}
 \label{sec:evaluation}
@@ -605,7 +633,7 @@ When reading this input,
 which after rewriting becomes $\forallf{s} x. \lite( x \leq 0, s( x ) \teq 0, s( x ) \teq s( x-1 ) )$.
 If \cvc is in finite model finding mode for recursive functions is enabled (using the command line parameter ``--fmf-fun"),
 then it will replace its list of known assertions based on the conversion $\conv$ before checking for satisfiability.
-We stress that this option is model-sound only if the functions provided in the input are well-specified.
+Note that this option is model-sound only if the functions provided in the input are well-specified.
 
 \section{Conclusion}
 \label{sec:conclusion}
