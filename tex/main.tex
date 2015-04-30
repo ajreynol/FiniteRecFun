@@ -206,7 +206,7 @@ We assume that signatures always include a Boolean type $\Bool$ and constants
 $\ltrue$ and $\lfalse$ of that type (respectively, for true and false), 
 an (infix) equality predicate $\teq$ of type $\sigma \times \sigma$ for each $\sigma \in \ssorts{\Sigma}$,
 and standard boolean connectives ($\neg$, $\wedge$, $\vee$, $\lite$, etc.).
-%and a function $\lite$ of type $\Bool \times \sigma \times \sigma$ for each $\sigma \in \ssorts{\Sigma}$.
+and a function $\lite$ of type $\Bool \times \sigma \times \sigma \rightarrow \lite$ for each $\sigma \in \ssorts{\Sigma}$.
 We will write $t\typ{\tau}$ to denote a term $t$ of type~$\tau$.
 We write $\terms( t )$ to denote the set of subterms in $t$.
 %We write $\functerms^\Sigma( t )$ to denote the set of $f$-applications in $t$ such that $f \in \sfundefs{\Sigma}$.
@@ -219,11 +219,10 @@ A $\Sigma$-formula $\varphi$ is
 if it is satisfied by some (resp., no) interpretation in $\Mo$.
 Formulas $\varphi$ and $\psi$ are \emph{equisatisfiable} if
 $\varphi$ is $T$-satisfiable if and only if $\psi$ is $T$-satisfiable.
-%For a given signature $\Sigma$
-%the \emph{theory of equality with uninterpreted functions} \euf
-%consists of the set of all $\Sigma$-interpretations.
-%Informally, we refer to the sort and function symbols in this theory 
-%as \emph{uninterpreted}.
+For a given signature $\Sigma$
+the \emph{theory of equality with uninterpreted functions} \euf
+consists of the set of all $\Sigma$-interpretations.
+We refer to the sort and function symbols in this theory as \emph{uninterpreted}.
 
 In this paper, we associate quantified formulas with the uninterpreted functions whose semantics they define.
 We will write $\forallf{f} \vec x. \varphi$ to denote a quantified formula that is defines the semantics of uninterpreted function $f$.
@@ -250,6 +249,13 @@ where $\sfundefs{\Sigma}$ is the set of \emph{defined} function symbols,
 and $\sfunndefs{\Sigma}$ are the others,
 and consider $\Sigma$-formulas that are well-defined with respect to functions $\sfundefs{\Sigma}$.
 
+A set of function definitions $\{ \varphi_1, \ldots, \varphi_n \}$ 
+is \emph{well-specified (in $T$)} if $\varphi_1 \wedge \ldots \wedge \varphi_n$ is $T$-satisfiable.
+For instance, $\{ \forallf{f} \vec x. f( x ) \teq 0 \}$ is well-specified,
+whereas $\{ \forallf{f} x. f( x ) \teq f( x ) + 1 \}$ is not. 
+Note that a well-specified function definition need not specify a terminating function, e.g.
+$\{ \forallf{f} x^\sortint. f( x ) \teq f( x - 1 ) \}$ or even $\{ \forallf{f} x. f( x ) \teq f( x ) \}$ are well-specified.
+\ajr{possibly revise}
 
 \section{Model Finding for Recursive Functions in SMT}
 \label{sec:model-finding-rec-fun}
@@ -265,8 +271,8 @@ The techniques in~\cite{ReyEtAl-1-RR-13} can be used for finding finite models f
 fixed finite interpretation (such as fixed-width bitvectors, datatype enumerations, etc.).
 For instance, 
 finite model finding techniques can find a model for
-the formula $\forall x\typ{\tau} y\typ{\tau} z\typ{\tau}. x \teq y \vee y \teq z \vee x \teq z$
-where the uninterpreted type $\tau$ is interpreted as a set of (at most) two elements.
+the formula $\forall x\typ{\tau} y\typ{\tau}. \neg x \teq y \vee f( x ) \teq f( y )$
+where the uninterpreted type $\tau$ is interpreted as a finite set, and $f$ as injective finite map.
 
 Unfortunately, these fragments do not coincide with the vast majority of quantified formulas that correspond to recursive function definitions.
 In particular, the fragments in~\cite{GeDeM-CAV-09} are not applicable when the argument of a recursive function is used in various ways (e.g. within an arithmetic expression), 
@@ -278,12 +284,12 @@ nor does finite model finding apply (since $x$ is of type $\sortint$).
 Here, we advocate an approach that translates formulas involving function definitions (such as the one mentioned in the previous paragraph)
 into equisatisfiable formulas where the techniques~\cite{GeDeM-CAV-09, ReyEtAl-1-RR-13} are applicable.
 
-\subsection{A Translation for Function Definitions}
+\subsection{A Translation for Well-Specified Function Definitions}
 \label{sec:encoding}
 
 In the remainder of the section, we fix a signature $\Sigma$.
 Say that $\Sigma$-formula $\varphi$ is well-defined with respect to functions $\sfundefs{\Sigma}$, 
-and the definitions in $\sfundefs{\Sigma}$ are logically consistent.
+and the set of function definitions corresponding to $\sfundefs{\Sigma}$ are well-specified.
 %We may translate $\varphi$ into a equisatisfiable formula $\psi$ for which known model-finding procedures~\cite{GeDeM-CAV-09, ReyEtAl-1-RR-13} are applicable.
 This section presents a method for constructing an extended signature $\extendsig{ \Sigma }$,
 and a $\extendsig{ \Sigma }$-formula $\psi$ such that $\varphi$ and $\psi$ are equisatisfiable.
@@ -343,7 +349,7 @@ $\conv_0( t\typ{\tau}, p )$ :
  \end{itemize}
 \end{enumerate}
 \vspace{-2ex}
-\caption{A translation procedure $\conv$ for a $\Sigma$-formula that is well-defined with respect to function definitions.
+\caption{A translation procedure $\conv$ for a $\Sigma$-formula that is well-defined with respect to a set of well-specified function definitions $\sfundefs{\Sigma}$.
 In the subprocedure $\conv_0$, the procedure $\pol( \boolop, i, p )$ returns the polarity of the $i^{th}$ child of a $\boolop$-application having polarity $p$,
 where $\boolop$ is an (interpreted) predicate.
 }
@@ -451,7 +457,7 @@ In other words, $s$ is a function mapping $x$ to the sum of all positive integer
 and $105$ otherwise.
 Notice that $\M$ is \emph{not} a model for the original formula~(\ref{eq:ex-before}),
 since $\M$ interprets e.g. $s( -1 )$ and $s( 15 )$ as $105$.
-However, under the assumption that function definitions in $\sfundefs{\Sigma}$ are logically consistent, 
+However, under the assumption that function definitions in $\sfundefs{\Sigma}$ are well-specified, 
 we claim that $\conv(\varphi)$ is equisatisfiable to $\varphi$ for any input $\varphi$.
 The intuition is that the interpretation of a term such as $s( -1 )$ in the previous example is not relevant to the satisfiability of formula~(\ref{eq:ex-before}).
 Thus, a satisfiable (resp. unsatisfiable) response from an SMT solver on input $\conv( \varphi )$ implies the existence (resp. non-existence) of a model for $\varphi$.
@@ -467,7 +473,7 @@ and hence already has an intended interpretation.
 
 \begin{theorem}
 If $\varphi$ be a $\Sigma$-formula that is well-defined with respect to functions $\sfundefs{\Sigma}$,
-and function definitions in $\sfundefs{\Sigma}$ are logically consistent,
+and the set of function definitions corresponding to functions in $\sfundefs{\Sigma}$ is well-specified,
 then $\varphi$ and $\conv( \varphi )$ are equisatisfiable.
 \end{theorem}
 
@@ -547,11 +553,11 @@ The results are divided into benchmarks before and after the translation $\conv$
 First, we note that in no cases did a configuration answer differently across the two encodings.
 In other words, there were no cases in which \ziii or \cvc answered e.g. ``unsatisfiable" on a benchmark $\varphi$
 and ``satisfiable" on its corresponding benchmark $\conv( \varphi )$, or vice versa.
-This provides confirming evidence that the translation $\conv$ is \emph{sound},
+This provides confirming evidence that the translation $\conv$ is \emph{refutation-sound},
 as we did not find a case where $\conv( \varphi )$ was unsatisfiable when $\varphi$ was satisfiable.
-It also provides confirming evidence that the translation is \emph{complete} for this set of benchmarks,
+It also provides confirming evidence that the translation is \emph{model-sound} for this set of benchmarks,
 as we did not find a case where $\conv( \varphi )$ was satisfiable when $\varphi$ was unsatisfiable.
-This is to be expected, since the functions in our benchmark sets are intended to be logically consistent.
+This is to be expected, since the functions in our benchmark sets are expected to be well-specified (and in fact, terminating).
 
 Examining the first encoding in isolation (the first nine columns),
 the number of satisfiable responses from all configurations is quite low.
@@ -574,7 +580,7 @@ and in some cases may actually aid the solver for determining unsatisfiability
 \footnote{The exception here is {\bf cvc4+i}, which makes use of type information associated with quantified formulas for inductive arguments.}.
 
 We conclude from this evaluation that the translation $\conv$ enables SMT solvers to find counterexamples 
-for conjectures involving recursive functions whose definitions are logically consistent.
+for conjectures involving recursive functions whose definitions are well-specified.
 Both {\bf z3} and {\bf cvc4+f} were able to find a large number of counterexamples after the translation,
 with the latter configuration finding significantly more instances (331 to 112).
 
@@ -599,6 +605,7 @@ When reading this input,
 which after rewriting becomes $\forallf{s} x. \lite( x \leq 0, s( x ) \teq 0, s( x ) \teq s( x-1 ) )$.
 If \cvc is in finite model finding mode for recursive functions is enabled (using the command line parameter ``--fmf-fun"),
 then it will replace its list of known assertions based on the conversion $\conv$ before checking for satisfiability.
+We stress that this option is model-sound only if the functions provided in the input are well-specified.
 
 \section{Conclusion}
 \label{sec:conclusion}
