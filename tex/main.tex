@@ -455,8 +455,9 @@ we claim that $\conv(\varphi)$ is equisatisfiable to $\varphi$ for any input $\v
 The intuition is that the interpretation of a term such as $s( -1 )$ in the previous example is not relevant to the satisfiability of formula~(\ref{eq:ex-before}).
 Thus, a satisfiable (resp. unsatisfiable) response from an SMT solver on input $\conv( \varphi )$ implies the existence (resp. non-existence) of a model for $\varphi$.
 Moreover, information in models for $\conv( \varphi )$ contains relevant information regarding the models of $\varphi$.
-For instance, the model $\M$ for formula~(\ref{eq:ex-after}) described above interprets $c$ as $14$.
-In fact, we claim that there exists a model of $\varphi$ that coincides with $\M$ on its interpretation of all functions in $\sfuns{\Sigma}$ 
+For instance, the model $\M$ for formula~(\ref{eq:ex-after}) described above interprets $c$ as $14$, 
+while there exists a model of formula~(\ref{eq:ex-before}) also interprets $c$ as $14$.
+In fact, we claim that there exists a model of $\varphi$ that coincides with a model of $\conv( \varphi )$ on its interpretation of all functions in $\sfuns{\Sigma}$ 
 other than those in $\sfundefs{\Sigma}$, i.e. $\{ s \}$ in the previous example.
 From a practical point of view, this is in fact a non-issue, as $s$ is the very function that was explicitly defined by the user,
 and hence already has an intended interpretation.
