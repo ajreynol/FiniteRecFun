@@ -499,7 +499,10 @@ interprets $\fargsort{f}$ as a tuple of values of type $\tau_1^\I \times \ldots 
 and each $\farg{f}^i$ as the $i^{th}$ projection on such tuples for each $i = 1, \ldots, n$.
 Note that $\J$ satisfies \emph{every} constraint of the form $\exists z\typ{\fargsort{f}}. ( \vecfarg{f}( z ) \teq \vec t )$,
 since by our construction of $\J$ there exists a $z$ such that $z^\J = \vec t^\J$.
-Since $\I$ satisfies $\varphi$ and due to our construction of $\conv( \varphi )$, we conclude $\J$ is a model of $\conv( \varphi )$.
+By case analysis it follows that $\conv_0$ maintains the invariant that
+if $\conv_0( t\typ{\Bool}, \ptrue )$ returns $( r\typ{\Bool}, D )$,
+then $\I$ satisfies $t$ if and only if $\J$ satisfies $r$.
+Thus, we conclude $\J$ is a model of $\conv( \varphi )$.
 
 Second, we show that if $\conv( \varphi )$ has a model $\I$, then $\varphi$ has a model $\J$.
 
