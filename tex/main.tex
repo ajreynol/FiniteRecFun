@@ -165,7 +165,15 @@ Thus, want SMT solver to check satisfiability the assumption that recursive func
 
 \paragraph{Contributions}
 
-\ajr{(1) Encoding, (2) Evaluation, (3) Front-end support for define-funs-rec in \cvc}
+%\ajr{(1) Encoding, (2) Evaluation, (3) Front-end support for define-funs-rec in \cvc}
+
+In this paper, we make the following contributions:
+\begin{itemize}
+\item[-] We define a satisfiability-preserving translation method for formulas containing recursive function definitions
+that produces formulas for which existing model finding techniques~\cite{GeDeM-CAV-09, ReyEtAl-1-RR-13} are applicable.
+\item[-] We provide experimental evidence that this translation improves the effectiveness of SMT solvers \cvc and \ziii for finding counterexamples to verification conditions.
+\item[-] We detail front-end support for recursive function definitions and this translation in the SMT solver \cvc.
+\end{itemize}
 
 \section{Related Work}
 
@@ -443,8 +451,16 @@ and $105$ otherwise.
 Notice that $\M$ is \emph{not} a model for the original formula~(\ref{eq:ex-before}),
 since $\M$ interprets e.g. $s( -1 )$ and $s( 15 )$ as $105$.
 However, under the assumption that function definitions in $\sfundefs{\Sigma}$ are logically consistent, 
-we claim that $\conv(\varphi)$ is equisatisfiable to $\varphi$, for all $\varphi$.
+we claim that $\conv(\varphi)$ is equisatisfiable to $\varphi$ for any input $\varphi$.
 The intuition is that the interpretation of a term such as $s( -1 )$ in the previous example is not relevant to the satisfiability of formula~(\ref{eq:ex-before}).
+Thus, a satisfiable (resp. unsatisfiable) response from an SMT solver on input $\conv( \varphi )$ implies the existence (resp. non-existence) of a model for $\varphi$.
+Moreover, information in models for $\conv( \varphi )$ contains relevant information regarding the models of $\varphi$.
+For instance, the model $\M$ for formula~(\ref{eq:ex-after}) described above interprets $c$ as $14$.
+In fact, we claim that there exists a model of $\varphi$ that coincides with $\M$ on its interpretation of all functions in $\sfuns{\Sigma}$ 
+other than those in $\sfundefs{\Sigma}$, i.e. $\{ s \}$ in the previous example.
+From a practical point of view, this is in fact a non-issue, as $s$ is the very function that was explicitly defined by the user,
+and hence already has an intended interpretation.
+
 \ajr{add invariants, proofs}
 
 \begin{theorem}
@@ -565,7 +581,7 @@ with the latter configuration finding significantly more instances (331 to 112).
 
 We have seen a satisfiability-preserving translation $\conv$ that significantly improves the effectiveness of known SMT techniques
 for finding counterexamples for formulas involving recursive function definitions.
-For convienience, the translation $\conv$ has been implemented in the latest development version of \cvc~\cite{ReyEtAl-1-RR-13}.
+For convienience, the translation $\conv$ has been implemented in the latest development version of \cvc~\cite{ReyEtAl-1-RR-13} (version 1.5 pre-release).
 Function definitions $\forallf{f} \vec x. \varphi$ can be written in using the $\definefunreccmd$ command, 
 proposed in the draft of SMT version 2.5~\cite{}.
 For instance, the input from Example~\ref{ex:translation} can be written as:
