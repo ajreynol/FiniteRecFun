@@ -169,8 +169,6 @@ Thus, want SMT solver to check satisfiability the assumption that recursive func
 
 \paragraph{Contributions}
 
-%\ajr{(1) Encoding, (2) Evaluation, (3) Front-end support for define-funs-rec in \cvc}
-
 In this paper, we make the following contributions:
 \begin{itemize}
 \item[-] We define a satisfiability-preserving translation method for a class of formulas containing recursive function definitions
@@ -207,13 +205,18 @@ a set $\ssorts{\Sigma}$ of type symbols and
 a set $\sfuns{\Sigma}$ of function symbols.
 We assume that signatures always include a Boolean type $\Bool$ and constants 
 $\ltrue$ and $\lfalse$ of that type (respectively, for true and false), 
-an (infix) equality predicate $\teq$ of type $\sigma \times \sigma$ for each $\sigma \in \ssorts{\Sigma}$,
+an (infix) equality predicate $\teq$ of type $\tau \times \tau$ for each $\tau \in \ssorts{\Sigma}$,
 and standard boolean connectives ($\neg$, $\wedge$, $\vee$, $\lite$, etc.).
-and a function $\lite$ of type $\Bool \times \sigma \times \sigma \rightarrow \lite$ for each $\sigma \in \ssorts{\Sigma}$.
+and a function $\lite$ of type $\Bool \times \tau \times \tau \rightarrow \tau$ for each $\tau \in \ssorts{\Sigma}$.
 We will write $t\typ{\tau}$ to denote a term $t$ of type~$\tau$.
 We write $\terms( t )$ to denote the set of subterms in $t$.
 %We write $\functerms^\Sigma( t )$ to denote the set of $f$-applications in $t$ such that $f \in \sfundefs{\Sigma}$.
 
+A \emph{$\Sigma$-interpretation $\I$} %is a mathematical structure that maps
+each $\tau \in \ssorts{\Sigma}$ to a non-empty set $\tau^\I$,
+the \emph{domain} of $\tau$ in $\I$;
+each $f$ of type $\tau_1 \cdots \tau_n \rightarrow \tau$ in $\sfuns{\Sigma}$ 
+to a total function $f^\I$ of type $\tau_1^\I \times \cdots \times \tau_n^\I \rightarrow \tau^\I$.
 A \emph{theory} is a pair $T = (\Sigma, \Mo)$ where 
 $\Sigma$ is a signature and  $\Mo$ is a class of $\Sigma$-interpretations,
 the \emph{models} of $T$.
@@ -230,18 +233,21 @@ We refer to the sort and function symbols in this theory as \emph{uninterpreted}
 %In this paper, we associate quantified formulas with uninterpreted functions (informally, those whose semantics they define).
 In this paper, we consider \emph{annotated quantifed formulas} of the form $\forallf{f} \vec x. \varphi$, 
 where $f$ is an uninterpreted function from $\sfuns{\Sigma}$, or the distinguished constant $\fnull$.
-When $f$ is not $\fnull$, we will refer to $\forallf{f} \vec x. \varphi$ as a \emph{function definition} (for $f$).
+An annotated quantified formula $\forallf{f} \vec x. \varphi$ is a \emph{function definition (for $f$)} if 
+$f$ is a non-$\fnull$ function of type $\tau_1 \times \ldots \times \tau_n \rightarrow \tau$, 
+$\vec x$ is a tuple of $n$ variables of type $\tau_1, \ldots, \tau_n$
+and $\forallf{f} \vec x. \varphi$ is eqvuivalent to $\forall \vec x. f( \vec x ) \teq t$ for some $t$.
 We will write $\forall \vec x. \varphi$ as shorthand for $\forallf{\fnull} \vec x. \varphi$,
 and $\exists \vec x. \varphi$ as shorthand for $\neg \forall \vec x. \neg \varphi$.
 
 \begin{definition}
-A formula $\varphi$ \emph{well-defined with respect to functions} $S$ if it is of the form:
+A formula $\varphi$ is \emph{well-defined with respect to functions} $\{ f_1, \ldots, f_n \}$ if it is of the form:
 \begin{eqnarray} \label{eq:wdf}
 (\forallf{f_1} \vec x_1. \varphi_1) \wedge \ldots \wedge (\forallf{f_n} \vec x_n. \varphi_n) \wedge \psi
 \end{eqnarray}
-where $f_1, \ldots, f_n$ are distinct, 
-$S = \{ f_1, \ldots, f_n \}$,
+where $f_1, \ldots, f_n$ are not $\fnull$ and distinct, 
 and $\psi$ contains no function definitions.
+We will commonly call $\psi$ the \emph{conjecture} of $\varphi$.
 \end{definition}
 
 Given a signature $\Sigma$, 
@@ -255,7 +261,7 @@ For instance, $\{ \forallf{f} \vec x. f( x ) \teq 0 \}$ is well-specified,
 whereas $\{ \forallf{f} x. f( x ) \teq f( x ) + 1 \}$ is not. 
 Note that a well-specified function definition need not specify a terminating function, e.g.
 $\{ \forallf{f} x^\sortint. f( x ) \teq f( x - 1 ) \}$ or even $\{ \forallf{f} x. f( x ) \teq f( x ) \}$ are well-specified.
-\ajr{possibly revise}
+\ajr{revise}
 
 \section{Model Finding for Recursive Functions in SMT}
 \label{sec:model-finding-rec-fun}
