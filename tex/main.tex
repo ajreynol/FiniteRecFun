@@ -97,7 +97,8 @@
 
 \newcommand{\rem}[1]{\textcolor{red}{[#1]}}
 \newcommand{\ajr}[1]{\rem{#1 --ajr}}
-
+\newcommand{\jb}[1]{\rem{#1 --jb}}
+\newcommand{\ct}[1]{\rem{#1 --ct}}
 
 \newcommand{\vthinspace}{\kern+0.083333em}
 \newcommand{\typ}[1]{^{\vthinspace #1}}
@@ -118,7 +119,11 @@
 \begin{document}
 
 %%% I added (Co) -- hope you like it --JB
-\title{Model Finding for (Co)recursive Functions in SMT}
+\title{Model Finding for (Co)recursive Functions in SMT\thanks{
+This research is partially supported by the Inria technological development
+action \relax{Contrexemples Utilisables par Isabelle et Coq} (CUIC).
+}
+}
 
 \author {Andrew Reynolds\inst{1} \and Jasmin Christian Blanchette\inst{2,3} \and Cesare Tinelli \inst{4}}
 \authorrunning {A. Reynolds \and J. C. Blanchette \and C. Tinelli}
@@ -179,7 +184,7 @@ that produces formulas for which existing model finding techniques~\cite{GeDeM-C
 
 \section{Related Work}
 
-first-order model finders: SEM, MACE/Mace, Paradox, iProver
+first-order model finders: SEM, MACE/Mace, Paradox, FMDarwin, iProver
   either direct search or reduction to SAT
 
 Alloy (and Alloy idiom by Kuncak \& Jackson), Kodkod
@@ -206,7 +211,7 @@ a set $\sfuns{\Sigma}$ of function symbols.
 We assume that signatures always include a Boolean type $\Bool$ and constants 
 $\ltrue$ and $\lfalse$ of that type (respectively, for true and false), 
 an (infix) equality predicate $\teq$ of type $\tau \times \tau$ for each $\tau \in \ssorts{\Sigma}$,
-and standard boolean connectives ($\neg$, $\wedge$, $\vee$, $\lite$, etc.).
+and standard boolean connectives ($\neg$, $\wedge$, $\vee$, etc.).
 and a function $\lite$ of type $\Bool \times \tau \times \tau \rightarrow \tau$ for each $\tau \in \ssorts{\Sigma}$.
 We will write $t\typ{\tau}$ to denote a term $t$ of type~$\tau$.
 We write $\terms( t )$ to denote the set of subterms in $t$.
@@ -236,7 +241,7 @@ where $f$ is an uninterpreted function from $\sfuns{\Sigma}$, or the distinguish
 An annotated quantified formula $\forallf{f} \vec x. \varphi$ is a \emph{function definition (for $f$)} if 
 $f$ is a non-$\fnull$ function of type $\tau_1 \times \ldots \times \tau_n \rightarrow \tau$, 
 $\vec x$ is a tuple of $n$ variables of type $\tau_1, \ldots, \tau_n$
-and $\forallf{f} \vec x. \varphi$ is eqvuivalent to $\forall \vec x. f( \vec x ) \teq t$ for some $t$.
+and $\forallf{f} \vec x. \varphi$ is equivalent to $\forall \vec x. f( \vec x ) \teq t$ for some $t$.
 We will write $\forall \vec x. \varphi$ as shorthand for $\forallf{\fnull} \vec x. \varphi$,
 and $\exists \vec x. \varphi$ as shorthand for $\neg \forall \vec x. \neg \varphi$.
 
@@ -248,6 +253,8 @@ A formula $\varphi$ is \emph{well-defined with respect to functions} $\{ f_1, \l
 where $f_1, \ldots, f_n$ are not $\fnull$ and distinct, 
 and $\psi$ contains no function definitions.
 We will commonly call $\psi$ the \emph{conjecture} of $\varphi$.
+\ct{Don't we need additional restrictions on the $\varphi_i$'s here?
+(E.g., they are quantifier-free, or perhaps existential or containing only let binders.)}
 \end{definition}
 
 Given a signature $\Sigma$, 
@@ -268,7 +275,7 @@ $\{ \forallf{f} x^\sortint. f( x ) \teq f( x - 1 ) \}$ or even $\{ \forallf{f} x
 
 Recent techniques~\cite{GeDeM-CAV-09, ReyEtAl-1-RR-13} 
 have focused on finding models for quantified formulas in SMT.
-A instatiation-based procedure is shown in~\cite{GeDeM-CAV-09} to be complete for formulas in the \emph{essentially uninterpreted} fragment.
+A instantiation-based procedure is shown in~\cite{GeDeM-CAV-09} to be complete for formulas in the \emph{essentially uninterpreted} fragment.
 This fragment is limited to universally quantified formulas where all occurrences of variables occur as direct subchildren of uninterpreted functions.
 For instance, the formula $\forall x\typ{\sortint}. f( x ) \teq g( x ) + 5$ 
 is in the essentially uninterpreted fragment since all occurrences of $x$ occur beneath uninterpreted functions $f$ and $g$.
@@ -288,7 +295,7 @@ is not in the essentially uninterpreted fragment (since $x$ occurs as a child of
 nor does finite model finding apply (since $x$ is of type $\sortint$).
 
 Here, we advocate an approach that translates formulas involving function definitions (such as the one mentioned in the previous paragraph)
-into equisatisfiable formulas where the techniques~\cite{GeDeM-CAV-09, ReyEtAl-1-RR-13} are applicable.
+into equisatisfiable \ct{to be defined} formulas where the techniques~\cite{GeDeM-CAV-09, ReyEtAl-1-RR-13} are applicable.
 
 \subsection{A Translation for Well-Specified Function Definitions}
 \label{sec:encoding}
@@ -299,7 +306,7 @@ and the set of function definitions corresponding to $\sfundefs{\Sigma}$ are wel
 %We may translate $\varphi$ into a equisatisfiable formula $\psi$ for which known model-finding procedures~\cite{GeDeM-CAV-09, ReyEtAl-1-RR-13} are applicable.
 This section presents a method for constructing an extended signature $\extendsig{ \Sigma }$,
 and a $\extendsig{ \Sigma }$-formula $\psi$ such that $\varphi$ and $\psi$ are equisatisfiable.
-The intuition behind this translation is use an uninterpreted type to abstract the set of \emph{relevant} tuples for each recursive function $f$,
+The intuition behind this translation is to use an uninterpreted type \ct{to be defined} to abstract the set of \emph{relevant} tuples for each recursive function $f$,
 and restrict the quantification of the function definition for $f$ to a variable of this type.
 Informally, the relevant tuples $\vec t$ of a function $f$ are the ones for which the interpretation of $f( \vec t )$ is relevant to the satisfiability of $\varphi$.
 
@@ -628,21 +635,24 @@ We have seen a satisfiability-preserving translation $\conv$ that significantly 
 for finding counterexamples for formulas involving recursive function definitions.
 For convienience, the translation $\conv$ has been implemented in the latest development version of \cvc~\cite{ReyEtAl-1-RR-13} (version 1.5 pre-release).
 Function definitions $\forallf{f} \vec x. \varphi$ can be written in using the $\definefunreccmd$ command, 
-proposed in the draft of SMT version 2.5~\cite{}.
-For instance, the input from Example~\ref{ex:translation} can be written as:
+from Cersion 2.5~\cite{} of the SMT-LIB standard.
+For instance, the formula $\varphi$ in Example~\ref{ex:translation} 
+can be written as:
 
+{\small
 \begin{verbatim}
 (define-fun-rec s ((x Int)) Int (ite (<= x 0) 0 (s (- x 1))))
 (assert (> (s x) 100))
 (check-sat)
 \end{verbatim}
+}
 
 When reading this input, 
 \cvc adds the (annotated) quantified formula $\forallf{s} x. s( x ) \teq \lite( x \leq 0, 0, s( x-1 ) )$ to its list of assertions,
 which after rewriting becomes $\forallf{s} x. \lite( x \leq 0, s( x ) \teq 0, s( x ) \teq s( x-1 ) )$.
-If \cvc is in finite model finding mode for recursive functions is enabled (using the command line parameter ``--fmf-fun"),
+If \cvc's finite model finding mode for recursive functions is enabled (using the command line parameter ``--fmf-fun"),
 then it will replace its list of known assertions based on the conversion $\conv$ before checking for satisfiability.
-Note that this option is model-sound only if the functions provided in the input are well-specified.
+Note that this option is model-sound \ct{define?} only if the functions provided in the input are well-specified.
 
 \section{Conclusion}
 \label{sec:conclusion}
@@ -656,9 +666,6 @@ Note that this option is model-sound only if the functions provided in the input
 \paragraph{%\footnotesize
 \ackname.}
 We would like to thank Damien Busato-Gaston and Emmanouil Koukoutos for providing the initial set of benchmarks used in the evaluation.
-This research is partially supported by the Inria technological development
-action \relax{Contrexemples Utilisables par Isabelle et Coq} (CUIC).
-
 }
 
 
