@@ -1,21 +1,7 @@
-%%%%%%%%%%%%%%%%%%%%%%% file typeinst.tex %%%%%%%%%%%%%%%%%%%%%%%%%
-%
-% This is the LaTeX source for the instructions to authors using
-% the LaTeX document class 'llncs.cls' for contributions to
-% the Lecture Notes in Computer Sciences series.
-% http://www.springer.com/lncs       Springer Heidelberg 2006/05/04
-%
-% It may be used as a template for your own input - copy it
-% to a new file with a new name and use it as the basis
-% for your article.
-%
-% NB: the document class 'llncs' has its own and detailed documentation, see
-% ftp://ftp.springer.de/data/pubftp/pub/tex/latex/llncs/latex2e/llncsdoc.pdf
-%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-
 \documentclass[runningheads,a4paper]{llncs}
+\usepackage[T1]{fontenc}
+\usepackage[scaled=.82]{beramono}
+\usepackage[scaled=.86]{helvet}
 \usepackage{mathptmx}
 \usepackage{listings}
 \usepackage{colonequals}
@@ -52,8 +38,13 @@
 
 \newcommand{\con}[1]{\mathsf{#1}}
 
+\renewcommand\vec[1]{\overline{#1}}
+
 \let\oldSigma=\Sigma
 \def\Sigma{\mathrm{\oldSigma}}
+
+\let\oldneg=\neg
+\def\neg{\oldneg\:}
 
 \newcommand{\cvc}{\textsc{cvc}{\small 4}\xspace}
 \newcommand{\cvciii}{\textsc{cvc}{\small 3}\xspace}
@@ -101,7 +92,7 @@
 \newcommand{\lite}{\con{ite}}
 
 \newcommand{\boolop}{\oplus}
-\newcommand{\forallf}[1]{\forall_{#1}}
+\newcommand{\forallf}[1]{\forall_{\!#1\:}}
 \newcommand{\fnull}{\emptyset}
 \newcommand{\farg}[1]{a_{#1}}
 \newcommand{\vecfarg}[1]{\vec{a}_{#1}}
@@ -123,8 +114,10 @@
 
 \newcommand{\Mo}{{\mathcal{\!J\!}}}
 
-\newcommand{\euf}{\ensuremath{\mathrm{E}}\xspace}
-\newcommand{\ari}{\ensuremath{\mathrm{A}}\xspace}
+%\newcommand{\euf}{\ensuremath{\mathrm{E}}\xspace}
+\newcommand{\euf}{\ensuremath{\mathcalx{E}}\xspace}
+%\newcommand{\ari}{\ensuremath{\mathrm{A}}\xspace}
+\newcommand{\ari}{\ensuremath{\mathcalx{A}}\xspace}
 
 
 %\input{scalalistings}
@@ -225,10 +218,10 @@ a set $\ssorts{\Sigma}$ of type symbols (or sorts) and
 a set $\sfuns{\Sigma}$ of function symbols.
 We assume that signatures always include a Boolean type $\Bool$ and constants 
 $\ltrue$ (truth) and $\lfalse$ (falsity) of that type,
-an infix equality predicate $\teq$ of type $\tau \times \tau \to \Bool$
+an infix equality predicate ${\teq} : \tau \times \tau \to \Bool$
 for each $\tau \in \ssorts{\Sigma}$,
 standard boolean connectives ($\neg$, $\wedge$, $\vee$, etc.),
-and a function $\lite$ of type $\Bool \times \tau \times \tau \rightarrow \tau$ for each $\tau \in \ssorts{\Sigma}$.
+and a function $\lite : \Bool \times \tau \times \tau \rightarrow \tau$ for each $\tau \in \ssorts{\Sigma}$.
 We write $t\typ{\tau}$ to denote a term $t$ of type~$\tau$ and
 $\terms( t )$ to denote the set of subterms in $t$.
 %We write $\functerms^\Sigma( t )$ to denote the set of $f$-applications in $t$ such that $f \in \sfundefs{\Sigma}$.
@@ -236,36 +229,41 @@ $\terms( t )$ to denote the set of subterms in $t$.
 A \emph{$\Sigma$-interpretation $\I$} %is a mathematical structure that
 maps each $\tau \in \ssorts{\Sigma}$ to a nonempty set $\tau^\I$,
 the \emph{domain} of~$\tau$ in $\I$,
-and each $\con{f}$ of type $\tau_1 \times \cdots \times \tau_n \rightarrow \tau$ in
+and each $\con{f} : \tau_1 \times \cdots \times \tau_n \rightarrow \tau$ in
 $\sfuns{\Sigma}$ 
-to a total function $f^\I$ of type $\tau_1^\I \times \cdots \times \tau_n^\I \rightarrow \tau^\I$.
+to a total function $\con{f}^\I : \tau_1^\I \times \cdots \times \tau_n^\I \rightarrow \tau^\I$.
 A \emph{theory} is a pair $T = (\Sigma, \Mo)$ where 
 $\Sigma$ is a signature and  $\Mo$ is a class of $\Sigma$-interpretations,
 the \emph{models} of $T$.
 A $\Sigma$-formula $\varphi$ is 
-\emph{$T$-satisfiable} (resp., \emph{$T$-unsatisfiable}) 
-if it is satisfied by some (resp., no) interpretation in $\Mo$.
+\emph{$T$-satisfiable}
+if it is satisfied by some interpretation in $\Mo$;
+otherwise, it is \emph{$T$-unsatisfiable}.
 Formulas $\varphi$ and $\psi$ are \emph{equisatisfiable} if
 $\varphi$ is $T$-satisfiable if and only if $\psi$ is $T$-satisfiable.
-For a given signature $\Sigma$
+Given a signature $\Sigma$,
 the \emph{theory of equality with uninterpreted functions} \euf
 consists of the set of all $\Sigma$-interpretations.
-We refer to the sort and function symbols in this theory as \emph{uninterpreted}.
+We refer to the type and function symbols in this theory as \emph{uninterpreted}.
 
 %In this paper, we associate quantified formulas with uninterpreted functions (informally, those whose semantics they define).
-In this paper, we consider \emph{annotated quantifed formulas} of the form $\forallf{f} \vec x. \varphi$, 
-where $f$ is an uninterpreted function from $\sfuns{\Sigma}$, or the distinguished constant $\fnull$.
-An annotated quantified formula $\forallf{f} \vec x. \varphi$ is a \emph{function definition (for $f$)} if 
-$f$ is a non-$\fnull$ function of type $\tau_1 \times \ldots \times \tau_n \rightarrow \tau$, 
-$\vec x$ is a tuple of $n$ variables of type $\tau_1, \ldots, \tau_n$
-and $\forallf{f} \vec x. \varphi$ is equivalent to $\forall \vec x. f( \vec x ) \teq t$ for some $t$.
-We will write $\forall \vec x. \varphi$ as shorthand for $\forallf{\fnull} \vec x. \varphi$,
-and $\exists \vec x. \varphi$ as shorthand for $\neg \forall \vec x. \neg \varphi$.
+In this paper, we consider \emph{annotated quantifed formulas} of the form
+$\forallf{a} \vec x.\; \varphi$, where the annotation~$a$ is either
+an uninterpreted function $\con{f} \in \sfuns{\Sigma}$ or the special symbol
+$\fnull$.
+Given $\con{f} : \tau_1 \times \ldots \times \tau_n \rightarrow \tau$,
+an annotated
+quantified formula $\forallf{\con{f}} \vec x.\; \varphi$ is a \emph{function definition}
+(\,\emph{for $\con{f}$}\vthinspace) if $\vec x$ is a tuple of variables of type
+$\tau_1, \ldots, \tau_n$ and $\forallf{\con{f}} \vec x.\; \varphi$ is equivalent to
+$\forall \vec x.\;\, \con{f}( \vec x ) \teq t$ for some $t$. We will write $\forall \vec
+x. \varphi$ as shorthand for $\forallf{\fnull} \vec x.\; \varphi$, and $\exists
+\vec x. \varphi$ as shorthand for $\neg \forall \vec x.\; \neg \varphi$.
 
 \begin{definition}
 A formula $\varphi$ is \emph{well-defined with respect to functions} $\{ f_1, \ldots, f_n \}$ if it is of the form:
 \begin{eqnarray} \label{eq:wdf}
-(\forallf{f_1} \vec x_1. \varphi_1) \wedge \ldots \wedge (\forallf{f_n} \vec x_n. \varphi_n) \wedge \psi
+(\forallf{f_1} \vec x_1.\; \varphi_1) \wedge \ldots \wedge (\forallf{f_n} \vec x_n.\; \varphi_n) \wedge \psi
 \end{eqnarray}
 where $f_1, \ldots, f_n$ are not $\fnull$ and distinct, 
 and $\psi$ contains no function definitions.
@@ -281,10 +279,10 @@ and consider $\Sigma$-formulas that are well-defined with respect to functions $
 
 A set of function definitions $\{ \varphi_1, \ldots, \varphi_n \}$ 
 is \emph{well-specified (in $T$)} if $\varphi_1 \wedge \ldots \wedge \varphi_n$ is $T$-satisfiable.
-For instance, $\{ \forallf{f} \vec x. f( x ) \teq 0 \}$ is well-specified,
-whereas $\{ \forallf{f} x. f( x ) \teq f( x ) + 1 \}$ is not. 
+For instance, $\{ \forallf{\con{f}} \vec x.\;\, \con{f}( x ) \teq 0 \}$ is well-specified,
+whereas $\{ \forallf{\con{f}} x.\;\, \con{f}( x ) \teq \con{f}( x ) + 1 \}$ is not. 
 Note that a well-specified function definition need not specify a terminating function, e.g.
-$\{ \forallf{f} x^\sortint. f( x ) \teq f( x - 1 ) \}$ or even $\{ \forallf{f} x. f( x ) \teq f( x ) \}$ are well-specified.
+$\{ \forallf{\con{f}} x^\sortint.\;\, \con{f}( x ) \teq \con{f}( x - 1 ) \}$ or even $\{ \forallf{\con{f}} x.\;\, \con{f}( x ) \teq \con{f}( x ) \}$ are well-specified.
 \ajr{revise}
 
 \section{Model Finding for Recursive Functions in SMT}
@@ -294,20 +292,20 @@ Recent techniques~\cite{GeDeM-CAV-09, ReyEtAl-1-RR-13}
 have focused on finding models for quantified formulas in SMT.
 A instantiation-based procedure is shown in~\cite{GeDeM-CAV-09} to be complete for formulas in the \emph{essentially uninterpreted} fragment.
 This fragment is limited to universally quantified formulas where all occurrences of variables occur as direct subchildren of uninterpreted functions.
-For instance, the formula $\forall x\typ{\sortint}. f( x ) \teq g( x ) + 5$ 
-is in the essentially uninterpreted fragment since all occurrences of $x$ occur beneath uninterpreted functions $f$ and $g$.
+For instance, the formula $\forall x\typ{\sortint}.\;\, \con{f}( x ) \teq g( x ) + 5$ 
+is in the essentially uninterpreted fragment since all occurrences of $x$ occur beneath uninterpreted functions $\con{f}$ and $g$.
 Other syntactic criteria are identified in this paper that extend this fragment slightly, including cases when variables occur as arguments of arithmetic predicates.
 The techniques in~\cite{ReyEtAl-1-RR-13} can be used for finding finite models for quantified formulas over uninterpreted types as well as types having a 
 fixed finite interpretation (such as fixed-width bitvectors, datatype enumerations, etc.).
 For instance, 
 finite model finding techniques can find a model for
-the formula $\forall x\typ{\tau} y\typ{\tau}. \neg x \teq y \vee f( x ) \teq f( y )$
-where the uninterpreted type $\tau$ is interpreted as a finite set, and $f$ as injective finite map.
+the formula $\forall x\typ{\tau} y\typ{\tau}.\;\, \neg x \teq y \vee \con{f}( x ) \teq \con{f}( y )$
+where the uninterpreted type $\tau$ is interpreted as a finite set, and $\con{f}$ as injective finite map.
 
 Unfortunately, these fragments do not coincide with the vast majority of quantified formulas that correspond to recursive function definitions.
 In particular, the fragments in~\cite{GeDeM-CAV-09} are not applicable when the argument of a recursive function is used in various ways (e.g. within an arithmetic expression), 
 while the fragment in~\cite{ReyEtAl-1-RR-13} is not applicable for functions over infinite domains such as the integers.
-So, for instance, the quantified formula $\forall x\typ{\sortint}. \lite( p \leq 0, p( x ) \teq 0, p( x ) \teq 2 * p( x - 1 ) )$ 
+So, for instance, the quantified formula $\forall x\typ{\sortint}.\;\, \lite( p \leq 0, p( x ) \teq 0, p( x ) \teq 2 * p( x - 1 ) )$ 
 is not in the essentially uninterpreted fragment (since $x$ occurs as a child of $-$),
 nor does finite model finding apply (since $x$ is of type $\sortint$).
 
@@ -323,9 +321,9 @@ and the set of function definitions corresponding to $\sfundefs{\Sigma}$ are wel
 %We may translate $\varphi$ into a equisatisfiable formula $\psi$ for which known model-finding procedures~\cite{GeDeM-CAV-09, ReyEtAl-1-RR-13} are applicable.
 This section presents a method for constructing an extended signature $\extendsig{ \Sigma }$,
 and a $\extendsig{ \Sigma }$-formula $\psi$ such that $\varphi$ and $\psi$ are equisatisfiable.
-The intuition behind this translation is to use an uninterpreted type \ct{to be defined} to abstract the set of \emph{relevant} tuples for each recursive function $f$,
-and restrict the quantification of the function definition for $f$ to a variable of this type.
-Informally, the relevant tuples $\vec t$ of a function $f$ are the ones for which the interpretation of $f( \vec t )$ is relevant to the satisfiability of $\varphi$.
+The intuition behind this translation is to use an uninterpreted type \ct{to be defined} to abstract the set of \emph{relevant} tuples for each recursive function $\con{f}$,
+and restrict the quantification of the function definition for $\con{f}$ to a variable of this type.
+Informally, the relevant tuples $\vec t$ of a function $\con{f}$ are the ones for which the interpretation of $\con{f}( \vec t )$ is relevant to the satisfiability of $\varphi$.
 
 \begin{figure}[t]
 \begin{enumerate}
@@ -359,22 +357,22 @@ $\conv_0( t\typ{\tau}, p )$ :
         \item[] $\mathsf{return}$ $( r_1 \boolop \ldots \boolop r_n, D_1 \cup \ldots \cup D_n )$
       \end{itemize}
     \end{itemize}
-  \item[] $\mathsf{else}$ $\mathsf{if}$ $t \equiv \forallf{f} \vec x. t_1$
+  \item[] $\mathsf{else}$ $\mathsf{if}$ $t \equiv \forallf{\con{f}} \vec x.\;\, t_1$
     \begin{itemize}
       \item[] $\mathsf{let} ( r_1, D_1 ) = \conv_0( t_1, p )$;
-      \item[] $\mathsf{if}$ $f \in \sfundefs{\Sigma}$
+      \item[] $\mathsf{if}$ $\con{f} \in \sfundefs{\Sigma}$
       \begin{itemize}
         %\item[] $\mathsf{assert}( D_1 = \emptyset )$;
-        \item[] $\mathsf{return}$ $( \forall y\typ{\fargsort{f}}. ( r_1 [ \vecfarg{f}( y ) / \vec x ] ), \emptyset )$
+        \item[] $\mathsf{return}$ $( \forall y\typ{\fargsort{\con{f}}}.\;\, ( r_1 [ \vecfarg{\con{f}}( y ) / \vec x ] ), \emptyset )$
       \end{itemize}
       \item[] else
       \begin{itemize}
-        \item[] $\mathsf{return}$ $( \forall \vec x. r_1, \forall \vec x. D_1 )$
+        \item[] $\mathsf{return}$ $( \forall \vec x.\; r_1, \forall \vec x.\; D_1 )$
       \end{itemize}
     \end{itemize}
    \item[] $\mathsf{else}$
    \begin{itemize}
-     \item[] $\mathsf{return}$ $( t, \{ \exists z\typ{\fargsort{f}}. ( \vecfarg{f}( z ) \teq \vec t ) \mid f( \vec t ) \in \terms( t ), f \in \sfundefs{\Sigma} \} )$
+     \item[] $\mathsf{return}$ $( t, \{ \exists z\typ{\fargsort{\con{f}}}. ( \vecfarg{f}( z ) \teq \vec t ) \mid f( \vec t ) \in \terms( t ), f \in \sfundefs{\Sigma} \} )$
    \end{itemize}
  \end{itemize}
 \end{enumerate}
@@ -389,26 +387,26 @@ where $\boolop$ is an interpreted predicate.
 In more detail, 
 say our signature $\Sigma$ contains a set of defined function symbols $\sfundefs{\Sigma} \subseteq \sfuns{\Sigma}$.
 We extend the signature of $\Sigma$ to a signature $\extendsig{\Sigma}$ containing the following additional definitions.
-For each $f \in \sfundefs{\Sigma}$ of type $\tau_1 \times \ldots \times \tau_n \rightarrow \tau$, 
+For each $\con{f} \in \sfundefs{\Sigma}$ of type $\tau_1 \times \ldots \times \tau_n \rightarrow \tau$, 
 the signature $\extendsig{\Sigma}$ includes:
 \begin{enumerate}
-\item[-] an uninterpreted type $\fargsort{f}$, and
-\item[-] a vector of $n$ uninterpreted functions $\farg{f}^1$, $\ldots$, $\farg{f}^n$ of type $(\fargsort{f} \rightarrow \tau_1)$, $\ldots$, $(\fargsort{f} \rightarrow \tau_n)$.
+\item[-] an uninterpreted type $\fargsort{\con{f}}$, and
+\item[-] a vector of $n$ uninterpreted functions $\farg{\con{f}}^1$, $\ldots$, $\farg{\con{f}}^n$ of type $(\fargsort{\con{f}} \rightarrow \tau_1)$, $\ldots$, $(\fargsort{\con{f}} \rightarrow \tau_n)$.
 \end{enumerate}
-%The interpretation of uninterpreted sort $\fargsort{f}$ will denote the elements (tuples) on which the function $f$ is applied.
-%The role of the uninterpreted functions $\farg{f}^1$, $\ldots$, $\farg{f}^n$ will be discussed more in the following.
+%The interpretation of uninterpreted sort $\fargsort{\con{f}}$ will denote the elements (tuples) on which the function $\con{f}$ is applied.
+%The role of the uninterpreted functions $\farg{\con{f}}^1$, $\ldots$, $\farg{\con{f}}^n$ will be discussed more in the following.
 
 Given the extended signature, we run the procedure $\conv$ in Figure~\ref{fig:encoding} on $\varphi$.
 This calls the subprocedure $\conv_0$, which takes two arguments: the term $t$ to translate, and a \emph{polarity} $p$ (either $\ptrue$, $\pfalse$, or $\pnone$).
 It returns a pair of the form $( r, D )$, where $r$ is a term of type $\tau$, and $D$ is a set of formulas.
-%The role of $D$ is to ensure that the (restricted) function definition for $f$ includes certain tuples in its domain, which we explain more in the following.
+%The role of $D$ is to ensure that the (restricted) function definition for $\con{f}$ includes certain tuples in its domain, which we explain more in the following.
 At a high level, the translation modifies $\varphi$ in two ways.
-First, it restricts the quantification on function definitions for $f$ to the corresponding uninterpreted type $\fargsort{f}$.
-Second, it augments $\varphi$ with additional constraints of the form $\exists z\typ{\fargsort{f}}. ( \vecfarg{f}( z ) \teq \vec t )$
-which ensure that this restriction for the defintion $f$ covers all relevant tuples of terms,
-namely the ones for which an $f$-application exists and is relevant to the satisfiability of the current branch of $\varphi$.
+First, it restricts the quantification on function definitions for $\con{f}$ to the corresponding uninterpreted type $\fargsort{\con{f}}$.
+Second, it augments $\varphi$ with additional constraints of the form $\exists z\typ{\fargsort{\con{f}}}. ( \vecfarg{\con{f}}( z ) \teq \vec t )$
+which ensure that this restriction for the defintion $\con{f}$ covers all relevant tuples of terms,
+namely the ones for which an $\con{f}$-application exists and is relevant to the satisfiability of the current branch of $\varphi$.
 
-In the case that $t$ is an application of (interpreted) predicate $\boolop$ (e.g. a boolean connective, or equality),
+In the case that $t$ is an application of (interpreted) predicate $\boolop$ (e.g., a boolean connective, or equality),
 we recursively call $\conv$ on its subchildren $t_i$ and polarity $\pol( \boolop, i, p )$, where $\pol$ is defined as\footnote{The negation $\neg p$ of polarity $p$ is 
 $\pfalse$ if $p$ is $\ptrue$,
 $\ptrue$ if $p$ is $\pfalse$, and
@@ -427,19 +425,19 @@ we construct a disjunction of the result of the recursive calls with the negatio
 It $t$ has no polarity,
 then we return the union of $D_1 \cup \ldots \cup D_n$.
 
-In the case that $t$ is a quantified formula $\forallf{f} \vec x. t_1$, it recursively calls $\conv$ on its body with the same polarity.
+In the case that $t$ is a quantified formula $\forallf{\con{f}} \vec x.\; t_1$, it recursively calls $\conv$ on its body with the same polarity.
 In the case that $t$ is a function definition of a function in $\sfundefs{\Sigma}$,
-we instead construct a quantified formula over a single variable $y$ of type $\fargsort{f}$,
-and replace all occurrences of $\vec x$ in $r_1$ with $\vecfarg{f}( y )$.
+we instead construct a quantified formula over a single variable $y$ of type $\fargsort{\con{f}}$,
+and replace all occurrences of $\vec x$ in $r_1$ with $\vecfarg{\con{f}}( y )$.
 In this case, since function definitions are a top-level conjunct, by case analysis on the return values of $\conv$, we know that $D_1$ is empty.
 In the case that $t$ is not a function definition, 
 the resulting quantified formula is reconstructed with the term $r_1$ returned by the recursive call,
 and a quantified prefix is appended to the formula $D_1$ returned by the recursive call.
 
 Otherwise, $t$ is either an application of an uninterpreted predicate, or a term of a type other than $\Bool$.
-In this case, the second component of our return value contains a constraint of the form $\exists z\typ{\fargsort{f}}. ( \vecfarg{f}( z ) \teq \vec t )$
-for each subterm $f( \vec t )$ of $t$ such that $f$ is a function in $\sfundefs{\Sigma}$.
-When such constraints are asserted positively, this indicates that the tuple of uninterpreted functions $\vecfarg{f}$ must include $\vec t$ in its range.
+In this case, the second component of our return value contains a constraint of the form $\exists z\typ{\fargsort{\con{f}}}. ( \vecfarg{\con{f}}( z ) \teq \vec t )$
+for each subterm $\con{f}( \vec t )$ of $t$ such that $\con{f}$ is a function in $\sfundefs{\Sigma}$.
+When such constraints are asserted positively, this indicates that the tuple of uninterpreted functions $\vecfarg{\con{f}}$ must include $\vec t$ in its range.
 
 We demonstrate this translation with an example.
 
@@ -450,7 +448,7 @@ where $\ssorts{\Sigma_{\euf}} = \{ \sortint \}$ and
 $\sfuns{\Sigma_{\euf}} = \{ s\typ{ \sortint \rightarrow \sortint }, c\typ{ \sortint } \}$.
 Consider the $\Sigma$-formula $\varphi$:
 \begin{eqnarray} \label{eq:ex-before}
-\forall_{s} x\typ{\sortint}. ite( x \leq 0, s(x) \teq 0, s( x ) \teq x + s( x-1 ) ) \wedge s( c ) > 100
+\forall_{s} x\typ{\sortint}.\; \lite( x \leq 0, s(x) \teq 0, s( x ) \teq x + s( x-1 ) ) \wedge s( c ) > 100
 \end{eqnarray} 
 Here, $s$ is a function that returns the sum of positive numbers between $0$ and its argument $x$.
 The formula $\varphi$ is well-defined with respect to functions $\sfundefs{\Sigma_u}$,
@@ -463,7 +461,7 @@ and the uninterpreted function $\farg{s}$ of type $\fargsort{s} \rightarrow \sor
 The result of $\conv( \varphi, \ptrue )$ is the pair $( \psi, \emptyset )$, where after simplification, $\psi$ is the $\extendsig{\Sigma}$-formula:
 \begin{eqnarray} \label{eq:ex-after}
 \begin{split}
-\forall y\typ{\fargsort{s}}. ite( & \farg{s}( y ) \leq 0,  \\
+\forall y\typ{\fargsort{s}}.\;\, \lite( & \farg{s}( y ) \leq 0,  \\
  & s(\farg{s}( y )) \teq 0, \\
  & s(\farg{s}( y )) \teq \farg{s}( y ) + s( \farg{s}( y )-1 ) ) \\
  & \wedge \exists z\typ{\fargsort{s}}. \farg{s}( z ) \teq \farg{s}( y )-1 )
@@ -491,7 +489,7 @@ and $s$ as the (almost constant) function:
 In other words, $s$ is a function mapping $x$ to the sum of all positive integers between $0$ and $x$ when $0 \leq x \leq 13$,
 and $105$ otherwise.
 Notice that $\I$ is \emph{not} a model for the original formula~(\ref{eq:ex-before}),
-since $\I$ interprets e.g. $s( -1 )$ and $s( 15 )$ as $105$.
+since $\I$ interprets e.g.\ $s( -1 )$ and $s( 15 )$ as $105$.
 However, under the assumption that function definitions in $\sfundefs{\Sigma}$ are well-specified, 
 we claim that $\conv(\varphi)$ is equisatisfiable to $\varphi$ for any input $\varphi$.
 The intuition is that the interpretation of a term such as $s( -1 )$ in the previous example is not relevant to the satisfiability of formula~(\ref{eq:ex-before}).
@@ -512,8 +510,8 @@ and hence already has an intended interpretation.
 %%and let $\conv( \varphi )^\ast$ be the quantifier-free formula obtained by 
 %let $M$ be a set of literals such that $\M \models M$ and $M \models_p \conv( \varphi )$.
 %For each assignment $\sigma$ over $\vars{ M }$,
-%each $f( \vec t ) \in \terms( M \sigma )$ where $f \in \sfundefs{\Sigma}$, 
-%there exists a formula of the form $\exists z\typ{\fargsort{f}}. ( \vecfarg{f}( z ) \teq \vec t )$ in $M \sigma$.
+%each $\con{f}( \vec t ) \in \terms( M \sigma )$ where $\con{f} \in \sfundefs{\Sigma}$, 
+%there exists a formula of the form $\exists z\typ{\fargsort{\con{f}}}. ( \vecfarg{\con{f}}( z ) \teq \vec t )$ in $M \sigma$.
 %\end{lemma}
 
 \begin{theorem}
@@ -524,11 +522,11 @@ then $\varphi$ and $\conv( \varphi )$ are equisatisfiable.
 \begin{proof}
 (Sketch)  First, we show that if $\varphi$ has a model $\I$, then $\conv( \varphi )$ has a model $\J$.
 Let $\J$ be the $\extendsig{\Sigma}$-interpretation that interprets all types $\tau \in \ssorts{\Sigma}$ as $\tau^\I$,
-all functions $f \in \sfuns{\Sigma}$ as $f^\I$,
-and for each function $f$ of type $\tau_1 \times \ldots \tau_n \rightarrow \tau$ in $\sfundefs{\Sigma}$, 
-interprets $\fargsort{f}$ as a tuple of values of type $\tau_1^\I \times \ldots \times \tau_n^\I$,
-and each $\farg{f}^i$ as the $i^{th}$ projection on such tuples for each $i = 1, \ldots, n$.
-Note that $\J$ satisfies \emph{every} constraint of the form $\exists z\typ{\fargsort{f}}. ( \vecfarg{f}( z ) \teq \vec t )$,
+all functions $\con{f} \in \sfuns{\Sigma}$ as $\con{f}^\I$,
+and for each function $\con{f}$ of type $\tau_1 \times \ldots \tau_n \rightarrow \tau$ in $\sfundefs{\Sigma}$, 
+interprets $\fargsort{\con{f}}$ as a tuple of values of type $\tau_1^\I \times \ldots \times \tau_n^\I$,
+and each $\farg{\con{f}}^i$ as the $i^{th}$ projection on such tuples for each $i = 1, \ldots, n$.
+Note that $\J$ satisfies \emph{every} constraint of the form $\exists z\typ{\fargsort{\con{f}}}. ( \vecfarg{\con{f}}( z ) \teq \vec t )$,
 since by our construction of $\J$ there exists a $z$ such that $z^\J = \vec t^\J$.
 By case analysis it follows that $\conv_0$ maintains the invariant that
 if $\conv_0( t\typ{\Bool}, \ptrue )$ returns $( r\typ{\Bool}, D )$,
@@ -613,7 +611,7 @@ before and after the translation $\conv$.}
 The results are shown in Figure~\ref{fig:results}.
 The results are divided into benchmarks before and after the translation $\conv$.
 First, we note that in no cases did a configuration answer differently across the two encodings.
-In other words, there were no cases in which \ziii or \cvc answered e.g. ``unsatisfiable" on a benchmark $\varphi$
+In other words, there were no cases in which \ziii or \cvc answered e.g.\ ``unsatisfiable" on a benchmark $\varphi$
 and ``satisfiable" on its corresponding benchmark $\conv( \varphi )$, or vice versa.
 This provides confirming evidence that the translation $\conv$ is \emph{refutation-sound},
 as we did not find a case where $\conv( \varphi )$ was unsatisfiable when $\varphi$ was satisfiable.
@@ -638,8 +636,9 @@ Moreover, the translation $\conv$ helps \ziii for unsatisfiable responses as wel
 as we see \ziii solves a total of 209 whereas it solves only 187 before the translation.
 This number is 2 fewer than {\bf cvc4}, which solves 211 unsatisfiable.
 Thus, in most cases the translation $\conv$ does not significantly degrade performance for unsatisfiable benchmarks,
-and in some cases may actually aid the solver for determining unsatisfiability
-\footnote{The exception here is {\bf cvc4+i}, which makes use of type information associated with quantified formulas for inductive arguments.}.
+and in some cases may actually aid the solver for determining unsatisfiability.%
+\footnote{The exception here is {\bf cvc4+i}, which makes use of type
+information associated with quantified formulas for inductive arguments.}
 
 We conclude from this evaluation that the translation $\conv$ enables SMT solvers to find counterexamples 
 for conjectures involving recursive functions whose definitions are well-specified.
@@ -652,7 +651,7 @@ with the latter configuration finding significantly more instances (331 to 112).
 We have seen a satisfiability-preserving translation $\conv$ that significantly improves the effectiveness of known SMT techniques
 for finding counterexamples for formulas involving recursive function definitions.
 For convienience, the translation $\conv$ has been implemented in the latest development version of \cvc~\cite{ReyEtAl-1-RR-13} (version 1.5 pre-release).
-Function definitions $\forallf{f} \vec x. \varphi$ can be written in using the $\definefunreccmd$ command, 
+Function definitions $\forallf{\con{f}} \vec x.\; \varphi$ can be written in using the $\definefunreccmd$ command, 
 from Cersion 2.5~\cite{} of the SMT-LIB standard.
 For instance, the formula $\varphi$ in Example~\ref{ex:translation} 
 can be written as:
@@ -666,8 +665,8 @@ can be written as:
 }
 
 When reading this input, 
-\cvc adds the (annotated) quantified formula $\forallf{s} x. s( x ) \teq \lite( x \leq 0, 0, s( x-1 ) )$ to its list of assertions,
-which after rewriting becomes $\forallf{s} x. \lite( x \leq 0, s( x ) \teq 0, s( x ) \teq s( x-1 ) )$.
+\cvc adds the (annotated) quantified formula $\forallf{s} x.\;\, s( x ) \teq \lite( x \leq 0, 0, s( x-1 ) )$ to its list of assertions,
+which after rewriting becomes $\forallf{s} x.\;\, \lite( x \leq 0, s( x ) \teq 0, s( x ) \teq s( x-1 ) )$.
 If \cvc's finite model finding mode for recursive functions is enabled (using the command line parameter ``--fmf-fun"),
 then it will replace its list of known assertions based on the conversion $\conv$ before checking for satisfiability.
 Note that this option is model-sound \ct{define?} only if the functions provided in the input are well-specified.
