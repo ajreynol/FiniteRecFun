@@ -293,8 +293,6 @@ if it is satisfied by some interpretation in $\Mo$;
 otherwise, it is \emph{$T$-unsatisfiable}.
 A formula $\varphi$ entails $\psi$, written $\varphi \models_T \psi$,
 if all interpretations in $\Mo$ that satisfy $\varphi$ also satisfy $\psi$.
-Formulas $\varphi$ and $\psi$ are \emph{equisatisfiable} if
-$\varphi$ is $T$-satisfiable if and only if $\psi$ is $T$-satisfiable.
 Given a signature $\Sigma$,
 the \emph{theory of equality with uninterpreted functions} \euf
 consists of the set of all $\Sigma$-interpretations.
@@ -381,9 +379,8 @@ whose definitions are admissible.
 %We may translate $\varphi$ into a equisatisfiable formula $\psi$ for which known model-finding procedures~\cite{GeDeM-CAV-09, ReyEtAl-1-RR-13} are applicable.
 This section presents a method for constructing an extended signature
 $\extendsig{ \Sigma }$ and a $\extendsig{ \Sigma }$-formula $\psi$ such that
-$\varphi$ and $\psi$ are equisatisfiable.
-\jb{Equisatisfiability as defined in Sect.\ 2 requires the same $\Sigma$ and
-the same $T$ for both formulas, which isn't the case here.}
+$\psi$ is satisfiable if and only if $\varphi$ is satisfiable---i.e.,
+$\varphi$ and $\psi$ are \emph{equisatisfiable}.
 The intuition behind this translation
 is to use an uninterpreted type \ct{to be defined} to abstract the set of
 \relax{relevant} tuples for each recursive function $\con{f}$ and restrict the
@@ -576,36 +573,50 @@ $\fargsort{\con{s}}$. Moreover, all occurrences of $a$ in this formula are benea
 applications of the uninterpreted function $\farg{\con{s}}$, implying that the
 formula is in the essentially uninterpreted fragment,
 for which Ge and de Moura \cite{GeDeM-CAV-09} provide a complete instantiation
-procedure. We observe that both
-\cvc and \ziii run indefinitely on formula~(\ref{eq:ex-before}), and both
-produce a model for formula~(\ref{eq:ex-after}) in $<0.1$ second.\xend
+procedure. Both
+%%% Added "apparently". Or are we sure?
+\cvc and \ziii apparently run indefinitely on formula~(\ref{eq:ex-before}), and both
+produce a model for formula~(\ref{eq:ex-after}) within 100 milliseconds.\xend
 \end{example}
 
-It is important to note that the translation $\conv$ does not preserve the models of $\varphi$.
+The translation $\conv$ does not preserve the models of $\varphi$.
 One model $\I$ for formula~(\ref{eq:ex-after}) in the previous example interprets 
 $\fargsort{\con{s}}$ as a finite set of elements $\{ u_0, \ldots, u_{14} \}$,
-$\farg{\con{s}}$ as a finite map mapping containing $u_i \mapsto i$ for $i = 0, \ldots, 14$,
-$c$ as $14$, 
-and $s$ as the (almost constant) function:
+$\farg{\con{s}}$ as a finite map $u_i \mapsto i$ for $i = 0, \ldots, 14$,
+$\con{c}$ as $14$, 
+and $\con{s}$ as the (almost constant) function:
+%
+%% TYPESETTING: \mathbin and to make it fit nicely
 \begin{equation} \label{eq:approx-interp}
-\lambda x\typ{Int}. \lite\bigl( x \teq 0, 0, \lite( x \teq 1, 1, \lite( x \teq 2, 3, \ldots, \lite( x \teq 13, 91, 105 ) \ldots )\bigr)
+\lambda x : \sortint.\,\, \lite( x \mathbin{\teq} 0,\, 0,\,
+  \lite( x \mathbin{\teq} 1,\, 1,\,
+    \lite( x \mathbin{\teq} 2,\, 3,\,
+      \lite(\ldots,\; \lite( x \mathbin{\teq} 13,\, 91,\, 105 )\negvthinspace \ldots ))))
 \end{equation}
-In other words, $s$ is a function mapping $x$ to the sum of all positive integers between $0$ and $x$ when $0 \leq x \leq 13$,
-and $105$ otherwise.
-Notice that $\I$ is \emph{not} a model for the original formula~(\ref{eq:ex-before}),
-since $\I$ interprets e.g.\ $\con{s}( -1 )$ and $\con{s}( 15 )$ as $105$.
-However, under the assumption that function definitions in $\sfundefs{\Sigma}$ are admissible, 
-we claim that $\conv(\varphi)$ is equisatisfiable to $\varphi$ for any input $\varphi$.
-The intuition is that the interpretation of a term such as $\con{s}( -1 )$ in the previous example is not relevant to the satisfiability of formula~(\ref{eq:ex-before}).
-Thus, a satisfiable (resp. unsatisfiable) response from an SMT solver on input $\conv( \varphi )$ implies the existence (resp.\ nonexistence) of a model for $\varphi$.
-Moreover, information in models for $\conv( \varphi )$ contains relevant information regarding the models of $\varphi$.
-For example, the model $\I$ for formula~(\ref{eq:ex-after}) described above interprets $c$ as $14$, 
-while there exists a model of formula~(\ref{eq:ex-before}) also interprets $c$ as $14$.
-In fact, we claim that there exists a model of $\varphi$ that coincides with each model of $\conv( \varphi )$ on its interpretation of all functions in $\sfuns{\Sigma}$ 
-other than those in $\sfundefs{\Sigma}$, i.e. $\{ s \}$ in the previous example.
-From a practical point of view, this is not an issue, because
-$s$ is the very function that was explicitly defined by the user,
-and hence already has an intended interpretation.
+%
+In other words, $\const{s}$ is interpreted as a function mapping $x$ to the sum
+of all positive integers between $0$ and $x$ when $0 \leq x \leq 13$, and $105$
+otherwise.
+The interpretation $\I$, restricted to $\Sigma$, is {not} a model for the original formula~(\ref{eq:ex-before}),
+since $\I$ wrongly interprets $\con{s}( x )$ as $105$ when $x < 0$ or $x > 14$.
+
+However, under the assumption that the function definitions in
+$\sfundefs{\Sigma}$ are admissible, we claim that $\conv(\varphi)$ is
+equisatisfiable to $\varphi$ for any input $\varphi$. The intuition is that the
+interpretation of a term such as $\con{s}( -1 )$ in the previous example is not
+relevant to the satisfiability of formula~(\ref{eq:ex-before}). Thus, a
+satisfiable (resp. unsatisfiable) response from an SMT solver on input $\conv(
+\varphi )$ implies the existence (resp.\ nonexistence) of a model for
+$\varphi$. Moreover, information in models for $\conv( \varphi )$ contains
+relevant information regarding the models of $\varphi$. For example, the model
+$\I$ for formula~(\ref{eq:ex-after}) described above interprets $c$ as $14$,
+while there exists a model of formula~(\ref{eq:ex-before}) also interprets $c$
+as $14$. In fact, we claim that there exists a model of $\varphi$ that
+coincides with each model of $\conv( \varphi )$ on its interpretation of all
+functions in $\sfuns{\Sigma}$ other than those in $\sfundefs{\Sigma}$, i.e. $\{
+s \}$ in the previous example. From a practical point of view, this is not an
+issue, because $s$ is the very function that was explicitly defined by the
+user, and hence already has an intended interpretation.
 
 \begin{theorem}
 If $\varphi$ is a $\Sigma$-formula that is in definitional form with respect to $\sfundefs{\Sigma}$,
