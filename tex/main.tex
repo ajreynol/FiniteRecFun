@@ -46,6 +46,7 @@
 \newcommand\pneg{-}
 
 \newcommand{\con}[1]{\mathsf{#1}}
+\let\const=\con
 
 \renewcommand\vec[1]{\overline{#1}}
 
@@ -56,6 +57,11 @@
 
 \let\oldneg=\neg
 \def\neg{\oldneg\:}
+
+\let\oldvee=\vee
+\def\vee{\mathrel{\oldvee}}
+\let\oldwedge=\wedge
+\def\wedge{\mathrel{\oldwedge}}
 
 \newcommand{\cvc}{\textsc{cvc}{\small 4}\xspace}
 \newcommand{\cvciii}{\textsc{cvc}{\small 3}\xspace}
@@ -88,7 +94,7 @@
 \newcommand{\sfuns}[1]{#1^\mathrm{f}}
 \newcommand{\sfundefs}[1]{#1^\mathrm{df}}
 \newcommand{\sfunndefs}[1]{#1^\mathrm{nf}}
-\newcommand{\sortint}{\mathrm{Int}}
+\newcommand{\sortint}{\ty{Int}}
 
 \newcommand{\pnone}{\con{none}}
 \newcommand{\ptrue}{\con{pos}}
@@ -97,7 +103,8 @@
 
 %\newtheorem{remark}{Remark}
 
-\newcommand{\Bool}{\con{Bool}}
+\newcommand\ty[1]{\con{#1}}
+\newcommand{\Bool}{\ty{Bool}}
 \newcommand{\ltrue}{\top}
 \newcommand{\lfalse}{\bot}
 \newcommand{\lite}{\con{ite}}
@@ -114,7 +121,7 @@
 \newcommand{\fargx}[2]{\concret^{\vthinspace#2}_{\vthinspace#1}}
 \newcommand{\fargsort}[1]{\upsilon_{\vthinspace#1}}
 
-\newcommand{\Sigmalia}{\Sigma_{LIA}}
+\newcommand{\Sigmalia}{\Sigma_{\mathcalx{LIA}}}
 \newcommand{\extendsig}[1]{\mathcalx{E}( #1 )}
 
 \newcommand{\rem}[1]{\textcolor{red}{[#1]}}
@@ -223,7 +230,7 @@ Unfortunately, these fragments cannot accommodate the vast majority of
 quantified formulas that correspond to recursive function definitions.
 In particular, the fragments in~\cite{GeDeM-CAV-09} are not applicable when the argument of a recursive function is used in various ways (e.g. within an arithmetic expression), 
 while the fragment in~\cite{ReyEtAl-1-RR-13} is not applicable for functions over infinite domains such as the integers.
-So, for instance, the quantified formula $\forall x\typ{\sortint}.\;\, \lite( p \leq 0, p( x ) \teq 0, p( x ) \teq 2 * p( x - 1 ) )$ 
+So, for instance, the quantified formula $\forall x : {\sortint}.\;\, \lite( p \leq 0, p( x ) \teq 0, p( x ) \teq 2 * p( x - 1 ) )$ 
 is not in the essentially uninterpreted fragment (since $x$ occurs as a child of $-$),
 nor does finite model finding apply (since $x$ is of type $\sortint$).
 
@@ -331,7 +338,7 @@ there exists a model for $\varphi \wedge \forallf{f_1} \vec x. \varphi_1 \wedge 
 
 For instance, the set $\{ \forallf{f} \vec x. f( x ) \teq 0 \}$ is admissible.
 A set of admissible function definitions can include definitions of non-terminating functions, e.g.
-$\{ \forallf{f} x^\sortint. f( x ) \teq f( x - 1 ) \}$ or even $\{ \forallf{f} x. f( x ) \teq f( x ) \}$ are admissible.
+$\{ \forallf{f} x : \sortint.\;\, f( x ) \teq f( x - 1 ) \}$ or even $\{ \forallf{f} x. f( x ) \teq f( x ) \}$ are admissible.
 On the other hand, the set $\{ \forallf{f} x. f( x ) \teq f( x ) + 1 \}$ is not admissible, 
 since the empty set of formulas is closed under function expansion with respect to this set,
 and there is no model satisfying $\forallf{f} x. f( x ) \teq f( x ) + 1$.
@@ -408,7 +415,7 @@ $\conv_0( t\typ{\tau},\, p )$ $=$
    \item[] $\mathsf{if}$ $\tau = \Bool$ and $t = \boolop(t_1,\ldots,t_n)$ $\mathsf{then}$
     \begin{itemize}
       \item[] $\mathsf{let}$ $( t'_i,\, \chi_i ) = \conv_0( t_i,\, \pol( \boolop,\, i,\, p ) )$ $\mathsf{for}$ $i = 1, \ldots, n$ $\mathsf{in}$
-      \item[] $\mathsf{let}$ $\chi = \chi_1 \mathrel\wedge \cdots \mathrel\wedge \chi_n$ $\mathsf{in}$
+      \item[] $\mathsf{let}$ $\chi = \chi_1 \wedge \cdots \wedge \chi_n$ $\mathsf{in}$
       \item[] $\mathsf{if}$ $p = \ptrue$ $\mathsf{then}$
       \begin{itemize}
         \item[] \return \bigtuple{$\boolop(t'_1, \ldots, t'_n) ) \wedge \chi,\, \true$}
@@ -466,13 +473,13 @@ relevant to the satisfiability of the current branch of $\varphi$.
 it up?}
 
 If $t$ is an application of an interpreted predicate $\boolop
-\in \{{\neg}, {\land}, {\lor}, {\teq}, {\lite}\}$,
+\in \{{\neg}, {\wedge}, {\vee}, {\teq}, {\lite}\}$,
 we recursively call $\conv$ on the arguments $t_i$ and polarity $\pol( \boolop,
 i, p )$, where $\pol$ is defined as
 \begin{equation*}
 \pol( \boolop, i, p ) =
 \begin{cases}
-p & \text{if either $\boolop \in \{{\land}, {\lor}\}$ or $\boolop = \lite$ and $i \in \{2, 3\}$} \\[-\jot]
+p & \text{if either $\boolop \in \{{\wedge}, {\vee}\}$ or $\boolop = \lite$ and $i \in \{2, 3\}$} \\[-\jot]
 \pneg p & \text{if $\boolop = {\neg}$} \\[-\jot]
 \pnone & \text{otherwise}
 \end{cases}
@@ -509,12 +516,13 @@ in its range.
 
 \begin{example}
 \label{ex:translation}
-Consider the (combined) signature of linear arithmetic and uninterpreted functions $\Sigma = \Sigmalia \cup \Sigma_{\euf}$,
-where $\ssorts{\Sigma_{\euf}} = \{ \sortint \}$ and 
-$\sfuns{\Sigma_{\euf}} = \{ s\typ{ \sortint \rightarrow \sortint }, c\typ{ \sortint } \}$.
-Consider the $\Sigma$-formula $\varphi$:
+Consider the combined signature of linear arithmetic and uninterpreted
+functions $\Sigma = \Sigmalia \cup \Sigma_{\euf}$, where
+$\ssorts{\Sigma_{\euf}} = \{ \sortint \}$ and
+$\sfuns{\Sigma_{\euf}} = \{ \con{s} : { \sortint \rightarrow \sortint },\, \const{c} : { \sortint } \}$.
+Let $\varphi$ be the $\Sigma$-formula
 \begin{equation} \label{eq:ex-before}
-\forall_{s} x\typ{\sortint}.\; \lite( x \leq 0, s(x) \teq 0, s( x ) \teq x + s( x-1 ) ) \wedge s( c ) > 100
+\forallf{\con{s}} x : {\sortint}.\;\, \lite( x \leq 0,\, s(x) \teq 0,\, s( x ) \teq x + s( x-1 ) ) \wedge s( c ) > 100
 \end{equation} 
 %
 Here, $s$ is a function that returns the sum of positive numbers between $0$
