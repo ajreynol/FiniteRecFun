@@ -786,24 +786,24 @@ The last configuration {\bench cvc4+i} incorporates techniques for automating in
 \centering
 \begin{tabular}{l@{\kern1.5em}r@{\kern0.375em}r@{\kern1.5em}r@{\kern0.375em}r@{\kern1.5em}r@{\kern0.375em}r@{\kern1.5em}r@{\kern0.375em}r}
   & \multicolumn{2}{c@{\kern1.5em}}{{\bench z3}}     & \multicolumn{2}{c@{\kern1.5em}}{{\bench cvc4}}     & \multicolumn{2}{c@{\kern1.5em}}{{\bench cvc4+f}}     & \multicolumn{2}{c@{\kern1.5em}}{{\bench cvc4+i}}
-\\[-.25\jot]
-  & \hfill u \hfill & \hfill s \hfill
-  & \hfill u \hfill & \hfill s \hfill
-  & \hfill u \hfill & \hfill s \hfill
-  & \hfill u \hfill & \hfill s \hfill
+\\[-1pt]
+  & \hfill $\varphi$ \hfill & $\conv(\varphi)$\!\!
+  & \hfill $\varphi$ \hfill & $\conv(\varphi)$\!\!
+  & \hfill $\varphi$ \hfill & $\conv(\varphi)$\!\!
+  & \hfill $\varphi$ \hfill & $\conv(\varphi)$\!\!
 \\
 \midrule
-{\bench isa} & 14  & 0 & 15  & 0 & 15  & 0 & {\win 61}  & 0
+{\bench isa} & 14  & 15 & 15  & 15 & 15  & 15 & {\win 61}  & 14
 \\
-{\bench leon}  & 73  & 0 & 80  & 0 & 80  & 0 & {\win 96}  & 0
+{\bench leon}  & 73  & 78 & 80  & 80 & 80  & 76 & {\win 96}  & 78
 \\
-{\bench isa+m} & 17  & 0 & 18  & 0 & 18  & 0 & {\win 44}  & 0
+{\bench isa+m} & 17  & 18 & 18  & 18 & 18  & 18 & {\win 44}  & 17
 \\
-{\bench leon+m\phantom{w}}  & 83  & {\win 11}  & 103 & 6 & 104 & 6 & {\win 117} & 6
+{\bench leon+m\phantom{w}}  & 83  & 98 & 103 & 98 & 104 & 95 & {\win 117} & 98
 \\[\jot]
-Total & 187 & {\win \phantom{0}11}  & 216 & \phantom{00}6 & 217 & \phantom{00}6 & {\win 318} & \phantom{00}6
+Total & 187 & 209 & 216 & 211 & 217 & 204 & {\win 318} & 217
 \end{tabular}
-\caption{\,Number of unsat (u) and sat (s) responses on original benchmarks}
+\caption{\,Number of ``unsatisfiable'' responses on benchmarks without and with translation with $\conv$}
 \label{fig:results}
 \end{figure}
 
@@ -813,26 +813,27 @@ Total & 187 & {\win \phantom{0}11}  & 216 & \phantom{00}6 & 217 & \phantom{00}6 
 \centering
 \begin{tabular}{l@{\kern1.5em}r@{\kern0.375em}r@{\kern1.5em}r@{\kern0.375em}r@{\kern1.5em}r@{\kern0.375em}r@{\kern1.5em}r@{\kern0.375em}r}
   & \multicolumn{2}{c@{\kern0.375em}}{{\bench z3}}     & \multicolumn{2}{c@{\kern0.375em}}{{\bench cvc4}}     & \multicolumn{2}{c@{\kern0.375em}}{{\bench cvc4+f}}     & \multicolumn{2}{c@{\kern0.375em}}{{\bench cvc4+i}}
-\\[-.25\jot]
-  & \hfill u \hfill & \hfill s \hfill
-  & \hfill u \hfill & \hfill s \hfill
-  & \hfill u \hfill & \hfill s \hfill
-  & \hfill u \hfill & \hfill s \hfill
+\\[-1pt]
+  & \hfill $\varphi$ \hfill & $\conv(\varphi)$\!\!
+  & \hfill $\varphi$ \hfill & $\conv(\varphi)$\!\!
+  & \hfill $\varphi$ \hfill & $\conv(\varphi)$\!\!
+  & \hfill $\varphi$ \hfill & $\conv(\varphi)$\!\!
 \\
 \midrule
-{\bench isa+w} & 15  & 0 & 15  & 0 & 15  & 0 & 14  & 0
+{\bench isa} & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0
 \\
-{\bench leon+w}  & 78  & 2 & 80  & 0 & 76  & {\win 9} & 78  & 0
+{\bench leon}  & 0 & 2 & 0 & 0 & 0 & {\win 9} & 0 & 0
 \\
-{\bench isa+mw}  & 18  & 35  & 18  & 0 & 18  & {\win 153} & 17  & 0
+{\bench isa+m} & 0 & 35 & 0 & 0 & 0 & {\win 153} & 0 & 0
 \\
-{\bench leon+mw} & 98  & 75  & 98  & 6 & 95  & {\win 169} & 98  & 6
+{\bench leon+m}  & 11  & 75 & 6 & 6 & 6 & {\win 169} & 6 & 6
 \\[\jot]
-Total & 209 & 112 & 211 & \phantom{00}6 & 204 & {\win 331} & 207 & \phantom{00}6
+Total & \phantom{0}11  & 112 & \phantom{00}6 & \phantom{00}6 & \phantom{00}6 & {\win 331} & \phantom{00}6 & \phantom{00}6
 \end{tabular}
 
+
 }
-\caption{\,Number of unsat (u) and sat (s) responses on translated benchmarks}
+\caption{\,Number of ``satisfiable'' responses on benchmarks without and with translation with $\conv$}
 \label{fig:results}
 \end{figure}
 
