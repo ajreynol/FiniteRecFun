@@ -480,35 +480,32 @@ p & \text{if either $\boolop \in \{{\land}, {\lor}\}$ or $\boolop = \lite$ and $
 The negation $\pneg p$ of a polarity $p$ is $\pfalse$ if $p$ is $\ptrue$, $\ptrue$
 if $p$ is $\pfalse$, and $\pnone$ if $p$ is $\pnone$.
 
-If $t$ has positive polarity, we construct a conjunction of the result of the
-recursive calls with the formulas in $D = D_1 \mathrel\cup \cdots \mathrel\cup
-D_n$. Similarly, if $t$ has negative polarity, we construct a disjunction of
-the result of the recursive calls with the negation of formulas $D_1, \ldots,
-D_n$. It $t$ has no polarity, then we return the union of $D_1 \cup \ldots \cup
-D_n$.
+If $t$ has positive polarity, $\conv_0$ adds the constraint $\chi$ derived from
+the subterms as a conjunction. Dually, if $t$ has negative polarity, the
+function constructs a disjunction with the negated constraint. It $t$ has no
+known polarity, the constrained $\chi$ is simply returned to the caller.
 
-If $t$ is a quantified formula $\forallf{\con{f}} \vec x.\; t_1$, it
-recursively calls $\conv$ on its body with the same polarity. If $t$ is a
-function definition of a function in $\sfundefs{\Sigma}$, we instead construct
-a quantified formula over a single variable $y$ of type $\fargsort{\con{f}}$,
-and replace all occurrences of $\vec x$ in $t'_1$ with $\vecfarg{\con{f}}( y )$.
-In this case, since function definitions are a top-level conjunct, by case
-analysis on the return values of $\conv$, we know that $D_1$ is empty. In the
-case that $t$ is not a function definition, the resulting quantified formula is
-reconstructed with the term $t'_1$ returned by the recursive call, and a
-quantified prefix is appended to the formula $D_1$ returned by the recursive
-call.
+If $t$ is a quantified formula, $\conv_0$ recursively calls itself on the body
+with the same polarity. If $t$ is a function definition of a function in
+$\sfundefs{\Sigma}$, $\conv_0$ constructs a quantified formula over a single variable
+$y$ of type $\fargsort{\con{f}}$ and replaces all occurrences of $\vec x$ in
+$t'_1$ with $\vecfarg{\con{f}}( y )$.Since function definitions
+are a top-level conjunct, %by case analysis on the return values of $\conv$,
+we know that $\chi$ is simply $\true$.
+If $t$ is not a function definition, the resulting
+quantified formula is reconstructed with the body $u'$ returned by the
+recursive call, and a quantifier is prefixed to the constraint $\chi$
+returned by the call.
 
-Otherwise, $t$ is either an application of an uninterpreted predicate, or a
-term of a type other than $\Bool$. In this case, the second component of our
-return value contains a constraint of the form $\exists
-z\typ{\fargsort{\con{f}}}. ( \vecfarg{\con{f}}( z ) \teq \vec t )$ for each
-subterm $\con{f}( \vec t )$ of $t$ such that $\con{f}$ is a function in
-$\sfundefs{\Sigma}$. When such constraints are asserted positively, this
-indicates that the tuple of uninterpreted functions $\vecfarg{\con{f}}$ must
-include $\vec t$ in its range.
+Otherwise, $t$ is either an application of an uninterpreted predicate or a term
+of a type other than $\Bool$. The returned constraint is a conjunction of
+formulas of the form $\exists z\typ{\fargsort{\con{f}}}.\;\, \vecfarg{\con{f}}(
+z ) \teq \vec t$ for each subterm $\con{f}( \vec t )$ of $t$ such that $\con{f}
+\in \sfundefs{\Sigma}$. Such constraints, when asserted positively, ensure that
+the tuple of uninterpreted functions $\vecfarg{\con{f}}$ must include $\vec t$
+in its range.
 
-We demonstrate this translation with an example.
+%We demonstrate this translation with an example.
 
 \begin{example}
 \label{ex:translation}
