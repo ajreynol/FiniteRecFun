@@ -199,11 +199,9 @@ arithmetic predicates. The techniques in~Reynolds et al.\
 formulas over uninterpreted types as well as types having a fixed finite
 interpretation, such as fixed-width bitvectors and enumerated datatypes.
 Finite model finding techniques can
-find a model for the formula $\forall x\typ{\tau} y\typ{\tau}.\;\, \neg x \teq
-y \vee \con{f}( x ) \teq \con{f}( y )$ where the uninterpreted type $\tau$ is
+find a model for the formula $\forall x\typ{\tau} y\typ{\tau}.\;\, x \teq
+y \vee \neg \con{f}( x ) \teq \con{f}( y )$ where the uninterpreted type $\tau$ is
 interpreted as a finite set and $\con{f}$ as injective finite map.
-\jb{Weird example. This formula is a tautology of EUF! Maybe you put the
-negation at the right place?}
 
 Unfortunately, these fragments cannot accommodate the vast majority of
 quantified formulas that correspond to recursive function definitions.
@@ -272,8 +270,8 @@ Given $\con{f} : \tau_1 \times \ldots \times \tau_n \rightarrow \tau$,
 an annotated
 quantified formula $\forallf{\con{f}} \vec x.\; \varphi$ is a \emph{function definition}
 (\,\emph{for $\con{f}$}\vthinspace) if $\vec x$ is a tuple of variables of type
-$\tau_1, \ldots, \tau_n$ and $\forallf{\con{f}} \vec x.\; \varphi$ is equivalent to
-$\forall \vec x.\;\, \con{f}( \vec x ) \teq t$ for some $t$. We write $\forall \vec
+$\tau_1, \ldots, \tau_n$ and $\varphi$ is a (quantifier-free) formula equivalent to
+$\con{f}( \vec x ) \teq t$ for some $t$. We write $\forall \vec
 x.\; \varphi$ as shorthand for $\forallf{\fnull} \vec x.\; \varphi$, and $\exists
 \vec x. \varphi$ as shorthand for $\neg \forall \vec x.\; \neg \varphi$.
 For a formula $\varphi$, 
@@ -294,8 +292,9 @@ A formula $\varphi$ is in \emph{definitional form with respect to} functions $\{
 where $\con{f}_1, \ldots, \con{f}_n$ are not $\fnull$ and distinct, 
 and $\psi$ contains no function definitions.
 We call $\psi$ the \emph{conjecture} of $\varphi$.
-\ct{Don't we need additional restrictions on the $\varphi_i$'s here?
-(E.g., they are quantifier-free, or perhaps existential or containing only let binders.)}
+%\ct{Don't we need additional restrictions on the $\varphi_i$'s here?
+%(E.g., they are quantifier-free, or perhaps existential or containing only let binders.)}
+% Now fixed above -ajr
 \end{definition}
 
 Given a signature $\Sigma$,
@@ -303,15 +302,6 @@ we distinguish the subset of \emph{defined} function symbols $\sfundefs{\Sigma}
 \subseteq \sfuns{\Sigma}$.
 We consider $\Sigma$-formulas that are in definitional form with respect to
 functions $\sfundefs{\Sigma}$.
-
-
-%A set of function definitions $\{ \varphi_1, \ldots, \varphi_n \}$ 
-%is \emph{well-specified (in $T$)} if $\varphi_1 \wedge \ldots \wedge \varphi_n$ is $T$-satisfiable.
-%For instance, $\{ \forallf{f} \vec x. f( x ) \teq 0 \}$ is well-specified,
-%whereas $\{ \forallf{f} x. f( x ) \teq f( x ) + 1 \}$ is not. 
-%Note that a well-specified function definition need not specify a terminating function, e.g.
-%$\{ \forallf{f} x^\sortint. f( x ) \teq f( x - 1 ) \}$ or even $\{ \forallf{f} x. f( x ) \teq f( x ) \}$ are well-specified.
-%\ajr{revise}
 
 \begin{definition}
 Given a set of function definitions $\mathcal{D} = \{ \forallf{f_1} \vec x. \varphi_1, \ldots, \forallf{f_n} \vec x. \varphi_n \}$,
@@ -323,14 +313,14 @@ The set $\mathcal{D}$ is \emph{admissible} if whenever there exists a model for 
 there exists a model for $\varphi \wedge \forallf{f_1} \vec x. \varphi_1 \wedge \ldots \wedge \forallf{f_n} \vec x. \varphi_n$.
 \end{definition}
 
-For instance, the set $\{ \forallf{f} \vec x. f( x ) \teq 0 \}$ is well-specified.
-A set of well-specified function definitions need be terminating, e.g.
-$\{ \forallf{f} x^\sortint. f( x ) \teq f( x - 1 ) \}$ or even $\{ \forallf{f} x. f( x ) \teq f( x ) \}$ are well-specified.
-On the other hand, the set $\{ \forallf{f} x. f( x ) \teq f( x ) + 1 \}$ is not well-specified, 
+For instance, the set $\{ \forallf{f} \vec x. f( x ) \teq 0 \}$ is admissible.
+A set of admissible function definitions can include definitions of non-terminating functions, e.g.
+$\{ \forallf{f} x^\sortint. f( x ) \teq f( x - 1 ) \}$ or even $\{ \forallf{f} x. f( x ) \teq f( x ) \}$ are admissible.
+On the other hand, the set $\{ \forallf{f} x. f( x ) \teq f( x ) + 1 \}$ is not admissible, 
 since the empty set of formulas is closed under function expansion with respect to this set,
 and there is no model satisfying $\forallf{f} x. f( x ) \teq f( x ) + 1$.
 Consider the set $\{ \forallf{f} x. f( x ) \teq f( x ), \forallf{g}. \lite( \neg f( x ) \teq 5, g( x ) \teq g( x ) + 1, g( x ) \teq f( x ) ) \}$.
-While this set has a model where $f$ and $g$ are interpreted as the constant $5$, it is not well-specified
+While this set has a model where $f$ and $g$ are interpreted as the constant $5$, it is not admissible
 since the formula $f( 0 ) \teq 4$ is closed under function expansion with respect to this set,
 but there exists no interpretation satisfying both $f( 0 ) \teq 4$ and $\forallf{g}. \lite( \neg f( x ) \teq 5, g( x ) \teq g( x ) + 1, g( x ) \teq f( x ) )$.
 
@@ -573,12 +563,12 @@ then $\I$ satisfies $t$ if and only if $\J$ satisfies $r$.
 Thus, we conclude $\J$ is a model of $\conv( \varphi )$.
 
 Second, we show that if $\conv( \varphi )$ is satisfied by a $\extendsig{\Sigma}$-interpretation $\I$, then $\varphi$ is satisfied by $\Sigma$-interpretation $\J$.
-Since $\varphi$ is well-defined with respect to functions defined by $\mathcal{D}$, we know $\varphi$ is of the form $\mathcal{D} \wedge \varphi_0$.
+Since $\varphi$ is in definitional form with respect to functions defined by $\mathcal{D}$, we know $\varphi$ is of the form $\mathcal{D} \wedge \varphi_0$.
 We first argue that $\I$ satisfies a $\Sigma$-formula $\psi$ that is closed under function expansion with respect to $\mathcal{D}$,
 and where $\psi$ entails $\varphi_0$.
 
 Since there exists a model for $\psi$ that is closed under function expansion with respect to $\mathcal{D}$, 
-then since $\mathcal{D}$ is well-specified,
+then since $\mathcal{D}$ is admissible,
 by definition there exists a model for $\psi \wedge \mathcal{D}$, which entails $\mathcal{D} \wedge \varphi_0$, which is $\varphi$.
 \end{proof}
 
@@ -586,7 +576,7 @@ Let us revisit the translated formula~(\ref{eq:ex-after}) from Example~\ref{ex:t
 This formula is unsatisfiable if and only if formula~(\ref{eq:ex-before}) is unsatisfiable since $\fargsort{f}$ can be interpreted as $\sortint$,
 and $\farg{f}$ can be interpreted as the identity function.
 Conversely, we claim formula~(\ref{eq:ex-after}) is satisfiable if and only if formula~(\ref{eq:ex-before}) is satisfiable,
-noting that the set $\{ \forall_{s} x\typ{\sortint}. ite( x \leq 0, s(x) \teq 0, s( x ) \teq x + s( x-1 ) ) \}$ is well-specified.
+noting that the set $\{ \forall_{s} x\typ{\sortint}. ite( x \leq 0, s(x) \teq 0, s( x ) \teq x + s( x-1 ) ) \}$ is admissble.
 As stated in the proof of the previous theorem, 
 the reason is that any model of formula~(\ref{eq:ex-after}) must satisfy a formula that is closed under function expansion,
 hence implying that formula~(\ref{eq:ex-before}) has a model.
@@ -597,12 +587,12 @@ that any model of formula~(\ref{eq:ex-after}) satisfying $s( c ) > 100$ also sat
 Similarly, the nested existential $\exists z. \farg{s}( z ) \teq \farg{s}( y )-1 )$
 ensures that this constraint is enforced recursively.
 %Given a model $\I$ of formula~(\ref{eq:ex-after}) that interprets $c$ as $14$, it is easy to see that $\I$ also satisfies the formula:
-%\begin{eqnarray}
-%\begin{split}
-%s( c ) > 100 \wedge & \displaystyle\bigwedge\limits_{i=0}^{13} ( \neg c-i \leq 0 \wedge s( c-i ) \teq i + s( c-i-1 ) ) \\
-%                    & \wedge c-14 \leq 0 \wedge s( c-14 ) \teq 0
-%\end{split}
-%\end{eqnarray}
+\begin{eqnarray}
+\begin{split}
+s( c ) > 100 \wedge & \displaystyle\bigwedge\limits_{i=0}^{13} ( \neg c-i \leq 0 \wedge s( c-i ) \teq i + s( c-i-1 ) ) \\
+                    & \wedge c-14 \leq 0 \wedge s( c-14 ) \teq 0
+\end{split}
+\end{eqnarray}
 
 \section{Evaluation}
 \label{sec:evaluation}
@@ -737,7 +727,7 @@ When reading this input,
 which after rewriting becomes $\forallf{s} x.\;\, \lite( x \leq 0, s( x ) \teq 0, s( x ) \teq s( x-1 ) )$.
 If \cvc's finite model finding mode for recursive functions is enabled (using the command line parameter ``--fmf-fun"),
 then it will replace its list of known assertions based on the conversion $\conv$ before checking for satisfiability.
-%If the functions provided in the input are well-specified, 
+%If the functions provided in the input are admissible, 
 %then a ``satisfiable" response from the solver implies that a model exists for the original formula.
 Accordingly, the solver will output an approximation of the interpretation for recursive function definitions,
 that is, it may output the interpretation~(\ref{eq:approx-interp}) from Section~\ref{sec:encoding} for $s$.
