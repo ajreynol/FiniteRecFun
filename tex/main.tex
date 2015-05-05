@@ -1,5 +1,7 @@
 \documentclass[runningheads,a4paper]{llncs}
 \usepackage[T1]{fontenc}
+\usepackage{amsmath}
+\usepackage{amssymb}
 \usepackage[scaled=.82]{beramono}
 \usepackage[scaled=.86]{helvet}
 \usepackage{mathptmx}
@@ -7,12 +9,23 @@
 \usepackage{colonequals}
 %\usepackage{mathpartir}
 \usepackage{xspace}
-\usepackage{amssymb}
 \setcounter{tocdepth}{3}
 \usepackage{graphicx}
 \usepackage{stmaryrd}
 \usepackage{cite}
-\usepackage{hyperref}
+\usepackage[
+   a4paper,
+   pdftex,
+   pdftitle={Model Finding for Recursive Functions in SMT},
+   pdfauthor={Andrew Reynolds, Jasmin Christian Blanchette, and Cesare Tinelli},
+   pdfkeywords={},
+   pdfborder={0 0 0},
+   draft=false,
+   bookmarksnumbered,
+   bookmarks,
+   bookmarksdepth=2,
+   bookmarksopenlevel=2,
+   bookmarksopen]{hyperref}
 \usepackage{framed}
 
 % http://mirror.switch.ch/ftp/mirror/tex/macros/latex/contrib/xcolor/xcolor.pdf
@@ -27,6 +40,8 @@
 %\newfloat{alg}{ht}{loa}
 %\floatname{alg}{Algorithm}
 
+\spnewtheorem*{proofsketch}{Proof sketch}{\itshape}{\rmfamily}
+
 \usepackage{url}
 \urldef{\mailsa}\path|firstname.lastname@epfl.ch|
 \newcommand{\keywords}[1]{\par\addvspace\baselineskip
@@ -37,8 +52,6 @@
 
 %\newcommand\return{$\mathsf{return}$\xspace}
 \newcommand\return{}
-
-\newcommand\xend{{\hfill$\scriptstyle\blacksquare$}}
 
 %\newcommand\bigtuple[1]{$(${#1}$)$}
 \newcommand\bigtuple[1]{$\bigl<${#1}$\bigr>$}
@@ -168,6 +181,9 @@
 %\input{scalalistings}
 %\input{smtlib2listings}
 \usepackage{program}
+
+\newcommand\xend{{\hfill$\scriptstyle\blacksquare$}}
+\renewcommand\qed{{\hfill$\squareforqed$}}
 
 \begin{document}
 
@@ -313,7 +329,7 @@ In this paper, we consider \emph{annotated quantifed formulas} of the form
 $\forallf{a} \vec x.\; \varphi$, where the annotation~$a$ is either
 an uninterpreted function $\con{f} \in \sfuns{\Sigma}$ or the special symbol
 $\fnull$.
-Given $\con{f} : \tau_1 \times \ldots \times \tau_n \rightarrow \tau$,
+Given $\con{f} : \tau_1 \times \cdots \times \tau_n \rightarrow \tau$,
 an annotated
 quantified formula $\forallf{\con{f}} \vec x.\; \varphi$ is a \emph{function definition}
 (\,\emph{for $\con{f}$}\vthinspace) if $\vec x$ is a tuple of variables of type
@@ -354,7 +370,7 @@ functions $\sfundefs{\Sigma}$.
 Given a set of function definitions $\DDD = \{ \forallf{f_1} \vec x.\; \varphi_1, \ldots, \forallf{f_n} \vec x.\; \varphi_n \}$,
 a formula $\varphi$ is \emph{closed under function expansion with respect to $\DDD$} if
 \begin{eqnarray}
-\varphi \models_T \displaystyle\bigwedge\limits_{i=1}^n \{ \varphi_i[ \vec t / \vec x ] \mid f_i( \vec t ) \in \terms( \varphi ) \}
+\varphi \models_T \bigwedge_{i=1}^n \{ \varphi_i[ \vec t / \vec x ] \mid f_i( \vec t ) \in \terms( \varphi ) \}
 \end{eqnarray}
 The set $\DDD$ is \emph{admissible} if whenever there exists a model for $\varphi$ that is closed under function expansion,
 there exists a model for $\varphi \wedge \forallf{f_1} \vec x.\; \varphi_1 \wedge \ldots \wedge \forallf{f_n} \vec x.\; \varphi_n$.
@@ -403,7 +419,7 @@ satisfiability of $\varphi$.
 In more detail,
 suppose our signature $\Sigma$ contains a set of defined function symbols $\sfundefs{\Sigma} \subseteq \sfuns{\Sigma}$.
 We extend the signature of $\Sigma$ to a signature $\extendsig{\Sigma}$ containing the following additional definitions.
-For each $\con{f} : \tau_1 \times \ldots \times \tau_n \rightarrow \tau \in \sfundefs{\Sigma}$,
+For each $\con{f} : \tau_1 \times \cdots \times \tau_n \rightarrow \tau \in \sfundefs{\Sigma}$,
 the signature $\extendsig{\Sigma}$ includes
 \begin{itemize}
 \item an uninterpreted \emph{abstract type} $\fargsort{\con{f}}$;
@@ -634,19 +650,19 @@ functions in $\sfuns{\Sigma} - \sfundefs{\Sigma}$, i.e., $\{
 %issue, because $s$ is the very function that was explicitly defined by the
 %user, and hence already has an intended interpretation.
 
-\begin{theorem}
+\begin{theorem}\label{thm:equi}
 If $\varphi$ is a\/ $\Sigma$-formula that is in definitional form with respect to\/
 $\sfundefs{\Sigma}$
 and the set of function definitions\/ $\DDD$ corresponding to functions in
 $\sfundefs{\Sigma}$ is admissible, then\/ $\varphi$ and\/ $\conv( \varphi )$ are
 equisatisfiable.
 \end{theorem}
-\begin{proof}
-(Sketch)  First, we show that if $\varphi$ is satisfied by $\Sigma$-interpretation $\I$, then $\conv( \varphi )$ is satisfied by a $\extendsig{\Sigma}$-interpretation $\J$.
+\begin{proofsketch}
+First, we show that if $\varphi$ is satisfied by $\Sigma$-interpretation $\I$, then $\conv( \varphi )$ is satisfied by a $\extendsig{\Sigma}$-interpretation $\J$.
 Let $\J$ be the $\extendsig{\Sigma}$-interpretation that interprets all types $\tau \in \ssorts{\Sigma}$ as $\tau^\I$,
 all functions $\con{f} \in \sfuns{\Sigma}$ as $\con{f}^\I$,
-and for each function $\con{f}$ of type $\tau_1 \times \ldots \tau_n \rightarrow \tau$ in $\sfundefs{\Sigma}$,
-interprets $\fargsort{\con{f}}$ as a tuple of values of type $\tau_1^\I \times \ldots \times \tau_n^\I$,
+and for each function $\con{f}$ of type $\tau_1 \times \cdots \tau_n \rightarrow \tau$ in $\sfundefs{\Sigma}$,
+interprets $\fargsort{\con{f}}$ as a tuple of values of type $\tau_1^\I \times \cdots \times \tau_n^\I$,
 and each $\fargx{\con{f}}{i}$ as the $i^{th}$ projection on such tuples for each $i = 1, \ldots, n$.
 Note that $\J$ satisfies \emph{every} constraint of the form $\exists a : {\fargsort{\con{f}}}. ( \vecfarg{\con{f}}( a ) \teq \vec t )$,
 since by our construction of $\J$ there exists an $a$ such that $a^\J = \vec t^\J$.
@@ -655,44 +671,61 @@ if $\conv_0( t\typ{\Bool}, \ppos )$ returns $( r\typ{\Bool}, D )$,
 then $\I$ satisfies $t$ if and only if $\J$ satisfies $r$.
 Thus, we conclude $\J$ is a model of $\conv( \varphi )$.
 
-Second, we show that if $\conv( \varphi )$ is satisfied by a $\extendsig{\Sigma}$-interpretation $\I$, then $\varphi$ is satisfied by $\Sigma$-interpretation $\J$.
-Since $\varphi$ is in definitional form with respect to the functions defined by $\DDD$, we know $\varphi$ is of the form $\DDD \wedge \varphi_0$.
-We first argue that $\I$ satisfies a $\Sigma$-formula $\psi$ that is closed under function expansion with respect to $\DDD$,
-and where $\psi$ entails $\varphi_0$.
+Second, we show that if $\conv( \varphi )$ is satisfied by a
+$\extendsig{\Sigma}$-interpretation $\I$, then $\varphi$ is satisfied by
+$\Sigma$-interpretation $\J$. Since $\varphi$ is in definitional form with
+respect to the functions defined by $\DDD$, we know $\varphi$ is of the form
+$\DDD \wedge \varphi_0$. We first argue that $\I$ satisfies a $\Sigma$-formula
+$\psi$ that is closed under function expansion with respect to $\DDD$, and
+where $\psi$ entails $\varphi_0$.
 
-Since there exists a model for $\psi$ that is closed under function expansion with respect to $\DDD$,
-then since $\DDD$ is admissible,
-by definition there exists a model for $\psi \wedge \DDD$, which entails $\DDD \wedge \varphi_0$, which is $\varphi$.
-\end{proof}
+Since there exists a model for $\psi$ that is closed under function expansion
+with respect to $\DDD$, then since $\DDD$ is admissible, by definition there
+exists a model for $\psi \wedge \DDD$, which entails $\DDD \wedge \varphi_0$,
+which is $\varphi$.
+\qed
+\end{proofsketch}
 
-Let us revisit the translated formula~(\ref{eq:ex-after}) from Example~\ref{ex:translation}.
-This formula is unsatisfiable if and only if formula~(\ref{eq:ex-before}) is unsatisfiable since $\fargsort{f}$ can be interpreted as $\sortint$,
-and $\farg{f}$ can be interpreted as the identity function.
-Conversely, we claim formula~(\ref{eq:ex-after}) is satisfiable if and only if formula~(\ref{eq:ex-before}) is satisfiable,
-noting that the set $\{ \forallf{\con{s}} x\typ{\sortint}.\;\, \lite\bigl( x \leq 0, \con{s}(x) \teq 0, \con{s}( x ) \teq x + \con{s}( x-1 ) \bigr) \}$ is admissble.
-As stated in the proof of the previous theorem,
-the reason is that any model of formula~(\ref{eq:ex-after}) must satisfy a formula that is closed under function expansion,
-hence implying that formula~(\ref{eq:ex-before}) has a model.
-In more detail, let $\varphi_s$ be the formula $\forallf{\con{s}} x.\;\, \lite\bigl( x \leq 0, \con{s}(x) \teq 0, \con{s}( x ) \teq x + \con{s}( x-1 ) \bigr)$.
-The rightmost conjunct
-$\exists a : {\fargsort{\con{s}}}. \farg{\con{s}}( a ) \teq \con{c}$ ensures
-that any model of formula~(\ref{eq:ex-after}) satisfying $\con{s}( \con{c} ) > 100$ also satisfies $\varphi_{\con{s}}[\con{c}/x]$.
-Similarly, the nested existential $\exists a.\;\, \farg{\con{s}}( a ) \teq \farg{\con{s}}( y )-1$
-ensures that this constraint is enforced recursively.
-Given a model $\I$ of formula~(\ref{eq:ex-after}) that interprets $c$ as $14$,
-it is easy to see that $\I$ must satisfy the formula:
-\begin{eqnarray} \label{eq:fun-closure}
+\begin{example}
+Let us revisit the translated formula~(\ref{eq:ex-after}) from
+Example~\ref{ex:translation}. This formula is unsatisfiable if and only if
+formula~(\ref{eq:ex-before}) is unsatisfiable since $\fargsort{f}$ can be
+interpreted as $\sortint$, and $\farg{f}$ can be interpreted as the identity
+function. Conversely, we claim formula~(\ref{eq:ex-after}) is satisfiable if
+and only if formula~(\ref{eq:ex-before}) is satisfiable, noting that the set
+$\{ \forallf{\con{s}} x\typ{\sortint}.\;\, \lite\bigl( x \leq 0, \con{s}(x)
+\teq 0, \con{s}( x ) \teq x + \con{s}( x-1 ) \bigr) \}$ is admissble.
+As stated
+in the proof of Theorem~\ref{thm:equi}, the reason is that any model of
+formula~(\ref{eq:ex-after}) must satisfy a formula that is closed under
+function expansion, hence implying that formula~(\ref{eq:ex-before}) has a
+model. In more detail, let $\varphi_\con{s}$ be the formula $\forallf{\con{s}} x.\;\,
+\lite\bigl( x \leq 0, \con{s}(x) \teq 0, \con{s}( x ) \teq x + \con{s}( x-1 )
+\bigr)$. The rightmost conjunct $\exists a : {\fargsort{\con{s}}}.
+\farg{\con{s}}( a ) \teq \con{c}$ ensures that any model of
+formula~(\ref{eq:ex-after}) satisfying $\con{s}( \con{c} ) > 100$ also
+satisfies $\varphi_{\con{s}}[\con{c}/x]$. Similarly, the nested existential
+$\exists a.\;\, \farg{\con{s}}( a ) \teq \farg{\con{s}}( y )-1$ ensures that
+this constraint is enforced recursively. Given a model $\I$ of
+formula~(\ref{eq:ex-after}) that interprets $\con{c}$ as $14$, it is easy to see that
+$\I$ must satisfy the following formula $\psi$:
+%
+\begin{equation} \label{eq:fun-closure}
 \begin{split}
-\psi := \con{s}( c ) > 100 \wedge & \displaystyle\bigwedge\limits_{i=0}^{13} ( \neg (c-i \leq 0) \wedge \con{s}( c-i ) \teq i + \con{s}( c-i-1 ) ) \\
-                            & \wedge c-14 \leq 0 \wedge \con{s}( c-14 ) \teq 0
+& \con{s}( \con{c} ) > 100 \wedge %\displaystyle
+  \bigwedge\nolimits_{\vthinspace i=0}^{\!13} \bigl( \neg (\con{c}-i \leq 0) \wedge \con{s}( \con{c}-i ) \teq i + \con{s}( \con{c}-i-1 ) \bigr) \\[-\jot]
+{\wedge}\; & \con{c}-14 \leq 0 \wedge \con{s}( \con{c}-14 ) \teq 0
 \end{split}
-\end{eqnarray}
-Notice that $\psi$ is closed under function expansion,
-since it contains the $s$-applications that are equivalent to $\con{s}( c-i )$ for $i = 0, \ldots, 14$, and
-entails $\varphi_s[c-i/x]$ for $i = 0, \ldots, 14$.
-Since $\varphi_s$ is an admissible definition,
-this implies there exists a model for $\psi \wedge \varphi_s$,
-which implies there exists a model for formula~(\ref{eq:ex-before}).
+\end{equation}
+%
+This formula is closed under function expansion,
+since it contains the $\con{s}$ applications corresponding to
+$\con{s}( \con{c}-i )$ for $i = 0, \ldots, 14$. The formula also
+entails $\varphi_\con{s}[\con{c}-i/x]$ for $i = 0, \ldots, 14$.
+Since $\varphi_\con{s}$ is an admissible definition,
+there must exist a model for $\psi \wedge \varphi_\con{s}$,
+which means that there exists a model for formula~(\ref{eq:ex-before}).\xend
+\end{example}
 
 \section{Evaluation}
 \label{sec:evaluation}
