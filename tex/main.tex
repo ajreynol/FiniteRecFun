@@ -383,9 +383,9 @@ the signature $\extendsig{\Sigma}$ includes
 %The interpretation of uninterpreted sort $\fargsort{\con{f}}$ will denote the elements (tuples) on which the function $\con{f}$ is applied.
 %The role of the uninterpreted functions $\farg{\con{f}}^1$, $\ldots$, $\farg{\con{f}}^n$ will be discussed more in the following.
 
-The procedure $\conv$ translates the $\Sigma$-formula
+The function $\conv$ translates the $\Sigma$-formula
 $\varphi$ into an $\extendsig{\Sigma}$-formula. It relies
-on the subprocedure $\conv_0$, which takes two arguments:\ the term $t$
+on the auxiliary function $\conv_0$, which takes two arguments:\ the term $t$
 to translate and a \emph{polarity} $p$, which is either $\ptrue$, $\pfalse$, or
 $\pnone$. It returns a pair $( t'\negvthinspace,\, \chi )$, where $t'$ is a term of
 type $\tau$ and $\chi$ is an additional constraint.
@@ -394,15 +394,12 @@ constraint is encoded directly in $t'$ and $\chi$ is simply $\true$.
 
 \jb{Merge para above with para below}
 
-A translation procedure $\conv$ for a $\Sigma$-formula that is in definitional
+A translation function $\conv$ for a $\Sigma$-formula that is in definitional
 form with respect to a set of admissible function definitions
-$\sfundefs{\Sigma}$. In the auxiliary procedure $\conv_0$, the procedure $\pol(
+$\sfundefs{\Sigma}$. In the auxiliary function $\conv_0$, the function $\pol(
 \boolop, i, p )$ returns the polarity of the $i${th} argument of a
 $\boolop$ application having polarity $p$, where $\boolop$ is an interpreted
 predicate.
-
-\jb{what happens with quantifiers other than $\forallf{f}$?}
-\jb{transform ``procedure'' into equation / functional program?}
 
 \begin{enumerate}
 %\begin{framed}
