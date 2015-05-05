@@ -88,6 +88,9 @@
 \let\oldwedge=\wedge
 \def\wedge{\mathrel{\oldwedge}}
 
+\newcommand\win{\bf}
+\newcommand\bench{\ttfamily}
+
 %\newcommand{\cvc}{\textsc{cvc}{\small 4}\xspace}
 %\newcommand{\cvciii}{\textsc{cvc}{\small 3}\xspace}
 %\newcommand{\ziii}{\textsc{z}{\small 3}\xspace}
@@ -734,39 +737,39 @@ In this section, we evaluate both
 the overall impact of the encoding introduced in the previous section, and
 the performance of individual SMT techniques for benchmarks in the encoding.
 
-For benchmarks, we gathered a set of 245 benchmarks from two sources, which we will refer to as {\bf isa} and {\bf leon}.
-The first ({\bf isa}) consists of the 79 benchmarks from the Isaplanner benchmark suite~\cite{DBLP:conf/itp/JohanssonDB10} that do not contain higher-order functions.
+For benchmarks, we gathered a set of 245 benchmarks from two sources, which we will refer to as {\bench isa} and {\bench leon}.
+The first ({\bench isa}) consists of the 79 benchmarks from the Isaplanner benchmark suite~\cite{DBLP:conf/itp/JohanssonDB10} that do not contain higher-order functions.
 The benchmarks have been used recently as challenge problems for a variety of inductive theorem provers.
 These benchmarks heavily involve recursive functions, and are limited to the combined theory of uninterpreted functions and inductive datatypes.
-The second ({\bf leon}) consists of 166 benchmarks from the Leon repository~\footnote{Available at \url{https://github.com/epfl-lara/leon}.},
+The second ({\bench leon}) consists of 166 benchmarks from the Leon repository~\footnote{Available at \url{https://github.com/epfl-lara/leon}.},
 which were constructed from verification conditions from simple Scala programs.
 These benchmarks also heavily involve recursive functions over inductive datatypes,
 and also cover a wide variety of theories, including bitvectors, arrays, and linear and non-linear arithmetic.
 Each of the 245 benchmarks are of the form described in formula~(\ref{eq:wdf}) from Section~\ref{sec:prelim},
 in particular they each are a conjoined list of function definitions followed by a (negated) conjecture.
-A majority of these benchmarks are unsatisfiable, although a handful of the benchmarks in the {\bf leon} set are satisfiable.
+A majority of these benchmarks are unsatisfiable, although a handful of the benchmarks in the {\bench leon} set are satisfiable.
 
 For each of these 245 benchmarks, we considered (up to) three randomly selected mutated forms of its conjecture $\psi$.
 In particular, we considered unique conjectures that are obtained as a result of swapping a subterm of $\psi$ at one position
 with another of the same type at another position.
 Note that benchmarks created in this way have a high likelihood of having small and easy-to-find counterexamples.
-In total, we considered 213 mutated forms of conjectures from {\bf isa}, and 427 mutated forms of conjectures from {\bf leon}.
-We will call these sets {\bf isa+m} and {\bf leon+m} respectively.
+In total, we considered 213 mutated forms of conjectures from {\bench isa}, and 427 mutated forms of conjectures from {\bench leon}.
+We will call these sets {\bench isa+m} and {\bench leon+m} respectively.
 
 In total, our benchmark set consisted of 885 benchmarks (640 mutants plus the original 245).
 We considered these 885 benchmarks both before and after the translation $\conv$ as described in Section~\ref{sec:encoding}.
-We will denote the latter encoding using the suffix {\bf w}.
-For example, {\bf isa+w} contains 79 benchmarks that are the results of
-applying $\conv$ to each of the 79 benchmarks in {\bf isa}.
+We will denote the latter encoding using the suffix {\bench w}.
+For example, {\bench isa+w} contains 79 benchmarks that are the results of
+applying $\conv$ to each of the 79 benchmarks in {\bench isa}.
 
 For solvers, we considered the SMT solver \ziii~\cite{de-moura-bjoerner-2008},
 which runs both heuristic methods for quantifier instantiation~\cite{DBLP:conf/cade/MouraB07},
 as well as methods for finding models for quantified formulas~\cite{GeDeM-CAV-09}.
-We also considered three configurations of \cvc~\cite{barrett-et-al-2011} which we will refer to as {\bf cvc4}, {\bf cvc4+f} and {\bf cvc4+i}.
-The default configuration {\bf cvc4} runs heuristic quantifier instantiation,
+We also considered three configurations of \cvc~\cite{barrett-et-al-2011} which we will refer to as {\bench cvc4}, {\bench cvc4+f} and {\bench cvc4+i}.
+The default configuration {\bench cvc4} runs heuristic quantifier instantiation,
 but does not include techniques for finding models.
-The configuration {\bf cvc4+f} runs heuristic instantiation and the finite model finding procedure described in~\cite{ReyEtAl-1-RR-13, reynolds-et-al-2013}.
-The last configuration {\bf cvc4+i} incorporates techniques for automating inductive reasoning in SMT~\cite{reynolds-kuncak-2015}.
+The configuration {\bench cvc4+f} runs heuristic instantiation and the finite model finding procedure described in~\cite{ReyEtAl-1-RR-13, reynolds-et-al-2013}.
+The last configuration {\bench cvc4+i} incorporates techniques for automating inductive reasoning in SMT~\cite{reynolds-kuncak-2015}.
 %All configurations of \cvc incorporate techniques for conflict-based instantiation~\cite{} ..?
 
 \begin{figure}[t]
@@ -774,21 +777,21 @@ The last configuration {\bf cvc4+i} incorporates techniques for automating induc
 {
 \begin{tabular}{|l|cc|cc|cc|cc|l|cc|cc|cc|cc|}
 \hline
-  & \multicolumn{2}{c|}{{\bf z3}}     & \multicolumn{2}{c|}{{\bf cvc4}}     & \multicolumn{2}{c|}{{\bf cvc4+f}}     & \multicolumn{2}{c|}{{\bf cvc4+i}}     & & \multicolumn{2}{c|}{{\bf z3}}     & \multicolumn{2}{c|}{{\bf cvc4}}     & \multicolumn{2}{c|}{{\bf cvc4+f}}     & \multicolumn{2}{c|}{{\bf cvc4+i}}
+  & \multicolumn{2}{c|}{{\bench z3}}     & \multicolumn{2}{c|}{{\bench cvc4}}     & \multicolumn{2}{c|}{{\bench cvc4+f}}     & \multicolumn{2}{c|}{{\bench cvc4+i}}     & & \multicolumn{2}{c|}{{\bench z3}}     & \multicolumn{2}{c|}{{\bench cvc4}}     & \multicolumn{2}{c|}{{\bench cvc4+f}}     & \multicolumn{2}{c|}{{\bench cvc4+i}}
 \\
   & u & s & u & s & u & s & u & s & & u & s & u & s & u & s & u & s
 \\
 \hline
-{\bf isa} & 14  & 0 & 15  & 0 & 15  & 0 & {\bf 61}  & 0 & {\bf isa+w} & 15  & 0 & 15  & 0 & 15  & 0 & 14  & 0
+{\bench isa} & 14  & 0 & 15  & 0 & 15  & 0 & {\win 61}  & 0 & {\bench isa+w} & 15  & 0 & 15  & 0 & 15  & 0 & 14  & 0
 \\
-{\bf leon}  & 73  & 0 & 80  & 0 & 80  & 0 & {\bf 96}  & 0 & {\bf leon+w}  & 78  & 2 & 80  & 0 & 76  & {\bf 9} & 78  & 0
+{\bench leon}  & 73  & 0 & 80  & 0 & 80  & 0 & {\win 96}  & 0 & {\bench leon+w}  & 78  & 2 & 80  & 0 & 76  & {\win 9} & 78  & 0
 \\
-{\bf isa+m} & 17  & 0 & 18  & 0 & 18  & 0 & {\bf 44}  & 0 & {\bf isa+mw}  & 18  & 35  & 18  & 0 & 18  & {\bf 153} & 17  & 0
+{\bench isa+m} & 17  & 0 & 18  & 0 & 18  & 0 & {\win 44}  & 0 & {\bench isa+mw}  & 18  & 35  & 18  & 0 & 18  & {\win 153} & 17  & 0
 \\
-{\bf leon+m}  & 83  & 11  & 103 & 6 & 104 & 6 & {\bf 117} & 6 & {\bf leon+mw} & 98  & 75  & 98  & 6 & 95  & {\bf 169} & 98  & 6
+{\bench leon+m}  & 83  & 11  & 103 & 6 & 104 & 6 & {\win 117} & 6 & {\bench leon+mw} & 98  & 75  & 98  & 6 & 95  & {\win 169} & 98  & 6
 \\
 \hline
-{\bf total} & 187 & 11  & 216 & 6 & 217 & 6 & {\bf 318} & 6 & {\bf total} & 209 & 112 & 211 & 6 & 204 & {\bf 331} & 207 & 6
+{\bench total} & 187 & 11  & 216 & 6 & 217 & 6 & {\win 318} & 6 & {\bench total} & 209 & 112 & 211 & 6 & 204 & {\win 331} & 207 & 6
 \\
 \hline
 \end{tabular}
@@ -812,28 +815,28 @@ This is to be expected, since the functions in our benchmark sets are expected t
 
 Examining the first encoding in isolation (the first nine columns),
 the number of satisfiable responses from all configurations is quite low.
-In total, {\bf z3} manages to find only 11 benchmarks to be satisfiable,
+In total, {\bench z3} manages to find only 11 benchmarks to be satisfiable,
 whereas each configuration of \cvc only finds 6.
 This confirms the shortcomings of existing SMT techniques for finding counterexamples for benchmarks containing recursive functions.
 In terms of number of unsatisfiable responses,
-the configuration {\bf cvc4+i} is the clear winner, finding 318 total benchmarks to be unsatisfiable.
+the configuration {\bench cvc4+i} is the clear winner, finding 318 total benchmarks to be unsatisfiable.
 
 Now, examining the second encoding (the latter nine columns),
 we see that using the translation $\conv$ drastically improves the ability of configurations for answering satisfiable.
-In total, {\bf cvc4+f} finds 331 of the 885 benchmarks to be satisfiable, including 9 benchmarks in the original {\bf leon} benchmark set.
-The performance of {\bf z3} for counterexamples also improves drastically, as it solves 112 satisfiable,
-including 10 that were unsolved by {\bf cvc4+f}.
+In total, {\bench cvc4+f} finds 331 of the 885 benchmarks to be satisfiable, including 9 benchmarks in the original {\bench leon} benchmark set.
+The performance of {\bench z3} for counterexamples also improves drastically, as it solves 112 satisfiable,
+including 10 that were unsolved by {\bench cvc4+f}.
 Moreover, the translation $\conv$ helps \ziii for unsatisfiable responses as well,
 as we see \ziii solves a total of 209 whereas it solves only 187 before the translation.
-This number is 2 fewer than {\bf cvc4}, which solves 211 unsatisfiable.
+This number is 2 fewer than {\bench cvc4}, which solves 211 unsatisfiable.
 Thus, in most cases the translation $\conv$ does not significantly degrade performance for unsatisfiable benchmarks,
 and in some cases may actually aid the solver for determining unsatisfiability.%
-\footnote{The exception here is {\bf cvc4+i}, which makes use of type
+\footnote{The exception here is {\bench cvc4+i}, which makes use of type
 information associated with quantified formulas for inductive arguments.}
 
 We conclude from this evaluation that the translation $\conv$ enables SMT solvers to find counterexamples
 for conjectures involving recursive functions whose definitions are admissible.
-Both {\bf z3} and {\bf cvc4+f} were able to find a large number of counterexamples after the translation,
+Both {\bench z3} and {\bench cvc4+f} were able to find a large number of counterexamples after the translation,
 with the latter configuration finding significantly more instances (331 to 112).
 
 \section{Front-End Support %for Recursive Function Definitions
