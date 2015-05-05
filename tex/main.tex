@@ -423,16 +423,13 @@ $\conv_0( t\typ{\tau},\, p )$ :
   \item[] $\mathsf{else}$ $\mathsf{if}$ $t = \forallf{\con{f}} \vec x.\;\, u$ $\mathsf{then}$
     \begin{itemize}
       \item[] $\mathsf{let}$ $( u',\, \chi ) = \conv_0( u,\, p )$;
-      \item[] $\mathsf{if}$ $\con{f} \in \sfundefs{\Sigma}$ $\mathsf{then}$
-      \begin{itemize}
-        %\item[] $\mathsf{assert}( \chi = \true )$;
-        \item[] $\mathsf{return}$ $( \forall y\typ{\fargsort{\con{f}}}.\; u' [ \vecfarg{\con{f}}( y ) / \vec x ],\, \true )$
-\jb{looks fishy -- I need to look at it again}
-      \end{itemize}
-      \item[] $\mathsf{else}$
-      \begin{itemize}
-        \item[] $\mathsf{return}$ $( \forall \vec x.\; u',\, \forall \vec x.\; \chi )$
-      \end{itemize}
+      %\item[] $\mathsf{assert}( \chi = \true )$;
+      \item[] $\mathsf{return}$ $( \forall y\typ{\fargsort{\con{f}}}.\; u' [ \vecfarg{\con{f}}( y ) / \vec x ],\, \true )$
+    \end{itemize}
+  \item[] $\mathsf{else}$ $\mathsf{if}$ $t = \forall \vec x.\;\, u$ $\mathsf{then}$
+    \begin{itemize}
+      \item[] $\mathsf{let}$ $( u',\, \chi ) = \conv_0( u,\, p )$;
+      \item[] $\mathsf{return}$ $( \forall \vec x.\; u',\, \forall \vec x.\; \chi )$
     \end{itemize}
    \item[] $\mathsf{else}$
    \begin{itemize}
