@@ -784,13 +784,12 @@ The last configuration {\bench cvc4+i} incorporates techniques for automating in
 \begin{figure}[t]
 \centering
 {
-\begin{tabular}{|l|cc|cc|cc|cc|l|cc|cc|cc|cc|}
-\hline
-  & \multicolumn{2}{c|}{{\bench z3}}     & \multicolumn{2}{c|}{{\bench cvc4}}     & \multicolumn{2}{c|}{{\bench cvc4+f}}     & \multicolumn{2}{c|}{{\bench cvc4+i}}     & & \multicolumn{2}{c|}{{\bench z3}}     & \multicolumn{2}{c|}{{\bench cvc4}}     & \multicolumn{2}{c|}{{\bench cvc4+f}}     & \multicolumn{2}{c|}{{\bench cvc4+i}}
-\\
+\begin{tabular}{l@{\kern0.5em}rr@{\kern0.5em}rr@{\kern0.5em}rr@{\kern0.5em}rr@{\kern0.5em}l@{\kern0.5em}rr@{\kern0.5em}rr@{\kern0.5em}rr@{\kern0.5em}rr}
+  & \multicolumn{2}{c@{\kern0.5em}}{{\bench z3}}     & \multicolumn{2}{c@{\kern0.5em}}{{\bench cvc4}}     & \multicolumn{2}{c@{\kern0.5em}}{{\bench cvc4+f}}     & \multicolumn{2}{c@{\kern0.5em}}{{\bench cvc4+i}}     & & \multicolumn{2}{c@{\kern0.5em}}{{\bench z3}}     & \multicolumn{2}{c@{\kern0.5em}}{{\bench cvc4}}     & \multicolumn{2}{c@{\kern0.5em}}{{\bench cvc4+f}}     & \multicolumn{2}{c@{\kern0.5em}}{{\bench cvc4+i}}
+\\[-.25\jot]
   & u & s & u & s & u & s & u & s & & u & s & u & s & u & s & u & s
 \\
-\hline
+\midrule
 {\bench isa} & 14  & 0 & 15  & 0 & 15  & 0 & {\win 61}  & 0 & {\bench isa+w} & 15  & 0 & 15  & 0 & 15  & 0 & 14  & 0
 \\
 {\bench leon}  & 73  & 0 & 80  & 0 & 80  & 0 & {\win 96}  & 0 & {\bench leon+w}  & 78  & 2 & 80  & 0 & 76  & {\win 9} & 78  & 0
@@ -799,10 +798,7 @@ The last configuration {\bench cvc4+i} incorporates techniques for automating in
 \\
 {\bench leon+m}  & 83  & 11  & 103 & 6 & 104 & 6 & {\win 117} & 6 & {\bench leon+mw} & 98  & 75  & 98  & 6 & 95  & {\win 169} & 98  & 6
 \\
-\hline
-{\bench total} & 187 & 11  & 216 & 6 & 217 & 6 & {\win 318} & 6 & {\bench total} & 209 & 112 & 211 & 6 & 204 & {\win 331} & 207 & 6
-\\
-\hline
+Total & 187 & 11  & 216 & 6 & 217 & 6 & {\win 318} & 6 & Total & 209 & 112 & 211 & 6 & 204 & {\win 331} & 207 & 6
 \end{tabular}
 \\
 }
