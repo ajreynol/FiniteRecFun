@@ -16,7 +16,7 @@
 
 
 \documentclass[runningheads,a4paper]{llncs}
-\usepackage{times}
+\usepackage{mathptmx}
 \usepackage{listings}
 \usepackage{colonequals}
 %\usepackage{mathpartir}
@@ -46,6 +46,10 @@
 \newcommand{\keywords}[1]{\par\addvspace\baselineskip
 \noindent\keywordname\enspace\ignorespaces#1}
 
+\DeclareFontFamily{OT1}{pzc}{}
+\DeclareFontShape{OT1}{pzc}{m}{it}{<-> s * [1.10] pzcmi7t}{}
+\DeclareMathAlphabet{\mathcalx}{OT1}{pzc}{m}{it}
+
 \newcommand{\con}[1]{\mathsf{#1}}
 
 \let\oldSigma=\Sigma
@@ -60,20 +64,21 @@
 %%% I'm trying to avoid bold whenever it can be avoided (except for headings
 %%% etc.) --JB
 %\newcommand{\terms}{\mathbf{T}}
-\newcommand{\terms}{\mathcal{T}}
+\newcommand{\terms}{\mathcalx{T}}
 
 %\newcommand{\functerms}{\mathbf{DFT}}
 \newcommand{\vars}{\mathbf{V}}
-\newcommand{\M}{\mathcal{M}}
-\newcommand{\I}{\mathcal{J}} %%% there's no difference, right? --JB
-\newcommand{\J}{\mathcal{J}}
+\newcommand{\M}{\mathcalx{M}}
+\newcommand{\I}{\mathcalx{J}} %%% there's no difference, right? --JB
+%% (I find \mathcalx{I} ugly, with its two horizontal bars, hence the J)
+\newcommand{\J}{\mathcalx{J}}
 \def\AIF{\qtab\keyword{if}\ }
 \def\THEN{\ \keyword{then}\ }
 \def\AELSE{\untab\qtab\keyword{else}\ }
 \def\FI{\untab}
 \def\RETURN{\keyword{return}\ }
 \def\ENDPROC{\untab}
-\newcommand{\conv}{\mathcal{W}}
+\newcommand{\conv}{\mathcalx{W}}
 
 %\newcommand{\ssorts}[1]{#1^\mathrm{s}}
 \newcommand{\ssorts}[1]{#1^\mathrm{y}}
@@ -103,7 +108,7 @@
 \newcommand{\fargsort}[1]{\upsilon_{#1}}
 
 \newcommand{\Sigmalia}{\Sigma_{LIA}}
-\newcommand{\extendsig}[1]{\mathcal{E}( #1 )}
+\newcommand{\extendsig}[1]{\mathcalx{E}( #1 )}
 
 \newcommand{\rem}[1]{\textcolor{red}{[#1]}}
 \newcommand{\ajr}[1]{\rem{#1 --ajr}}
@@ -116,7 +121,7 @@
 \newcommand{\definefunreccmd}{\con{define}\text{-}\con{fun}\text{-}\con{rec}}
 \newcommand{\definefunsreccmd}{\con{define}\text{-}\con{funs}\text{-}\con{rec}}
 
-\newcommand{\Mo}{\mathbf{I}}
+\newcommand{\Mo}{{\mathcal{\!J\!}}}
 
 \newcommand{\euf}{\ensuremath{\mathrm{E}}\xspace}
 \newcommand{\ari}{\ensuremath{\mathrm{A}}\xspace}
@@ -216,7 +221,7 @@ in smt : z3, cvc4 (briefly, text in main section gives detail)
 \label{sec:prelim}
 
 A \emph{signature} $\Sigma$ consists of 
-a set $\ssorts{\Sigma}$ of type symbols (sorts) and
+a set $\ssorts{\Sigma}$ of type symbols (or sorts) and
 a set $\sfuns{\Sigma}$ of function symbols.
 We assume that signatures always include a Boolean type $\Bool$ and constants 
 $\ltrue$ (truth) and $\lfalse$ (falsity) of that type,
@@ -224,14 +229,15 @@ an infix equality predicate $\teq$ of type $\tau \times \tau \to \Bool$
 for each $\tau \in \ssorts{\Sigma}$,
 standard boolean connectives ($\neg$, $\wedge$, $\vee$, etc.),
 and a function $\lite$ of type $\Bool \times \tau \times \tau \rightarrow \tau$ for each $\tau \in \ssorts{\Sigma}$.
-We write $t\typ{\tau}$ to denote a term $t$ of type~$\tau$.
-We write $\terms( t )$ to denote the set of subterms in $t$.
+We write $t\typ{\tau}$ to denote a term $t$ of type~$\tau$ and
+$\terms( t )$ to denote the set of subterms in $t$.
 %We write $\functerms^\Sigma( t )$ to denote the set of $f$-applications in $t$ such that $f \in \sfundefs{\Sigma}$.
 
-A \emph{$\Sigma$-interpretation $\I$} %is a mathematical structure that maps
-each $\tau \in \ssorts{\Sigma}$ to a non-empty set $\tau^\I$,
-the \emph{domain} of $\tau$ in $\I$;
-each $f$ of type $\tau_1 \cdots \tau_n \rightarrow \tau$ in $\sfuns{\Sigma}$ 
+A \emph{$\Sigma$-interpretation $\I$} %is a mathematical structure that
+maps each $\tau \in \ssorts{\Sigma}$ to a nonempty set $\tau^\I$,
+the \emph{domain} of~$\tau$ in $\I$,
+and each $\con{f}$ of type $\tau_1 \times \cdots \times \tau_n \rightarrow \tau$ in
+$\sfuns{\Sigma}$ 
 to a total function $f^\I$ of type $\tau_1^\I \times \cdots \times \tau_n^\I \rightarrow \tau^\I$.
 A \emph{theory} is a pair $T = (\Sigma, \Mo)$ where 
 $\Sigma$ is a signature and  $\Mo$ is a class of $\Sigma$-interpretations,
@@ -489,13 +495,14 @@ since $\I$ interprets e.g. $s( -1 )$ and $s( 15 )$ as $105$.
 However, under the assumption that function definitions in $\sfundefs{\Sigma}$ are well-specified, 
 we claim that $\conv(\varphi)$ is equisatisfiable to $\varphi$ for any input $\varphi$.
 The intuition is that the interpretation of a term such as $s( -1 )$ in the previous example is not relevant to the satisfiability of formula~(\ref{eq:ex-before}).
-Thus, a satisfiable (resp. unsatisfiable) response from an SMT solver on input $\conv( \varphi )$ implies the existence (resp. non-existence) of a model for $\varphi$.
+Thus, a satisfiable (resp. unsatisfiable) response from an SMT solver on input $\conv( \varphi )$ implies the existence (resp.\ nonexistence) of a model for $\varphi$.
 Moreover, information in models for $\conv( \varphi )$ contains relevant information regarding the models of $\varphi$.
 For instance, the model $\I$ for formula~(\ref{eq:ex-after}) described above interprets $c$ as $14$, 
 while there exists a model of formula~(\ref{eq:ex-before}) also interprets $c$ as $14$.
 In fact, we claim that there exists a model of $\varphi$ that coincides with each model of $\conv( \varphi )$ on its interpretation of all functions in $\sfuns{\Sigma}$ 
 other than those in $\sfundefs{\Sigma}$, i.e. $\{ s \}$ in the previous example.
-From a practical point of view, this is in fact a non-issue, as $s$ is the very function that was explicitly defined by the user,
+From a practical point of view, this is not an issue, because
+$s$ is the very function that was explicitly defined by the user,
 and hence already has an intended interpretation.
 
 \ajr{add invariants, proofs}
