@@ -48,16 +48,24 @@
 
 \newcommand{\con}[1]{\mathsf{#1}}
 
+\let\oldSigma=\Sigma
+\def\Sigma{\mathrm{\oldSigma}}
+
 \newcommand{\cvc}{\textsc{cvc}{\small 4}\xspace}
 \newcommand{\cvciii}{\textsc{cvc}{\small 3}\xspace}
 \newcommand{\ziii}{\textsc{z}{\small 3}\xspace}
 \newcommand{\teq}{\approx}
 \newcommand{\cc}[1]{#1^*}
-\newcommand{\terms}{\mathbf{T}}
+
+%%% I'm trying to avoid bold whenever it can be avoided (except for headings
+%%% etc.) --JB
+%\newcommand{\terms}{\mathbf{T}}
+\newcommand{\terms}{\mathcal{T}}
+
 %\newcommand{\functerms}{\mathbf{DFT}}
 \newcommand{\vars}{\mathbf{V}}
 \newcommand{\M}{\mathcal{M}}
-\newcommand{\I}{\mathcal{I}}
+\newcommand{\I}{\mathcal{J}} %%% there's no difference, right? --JB
 \newcommand{\J}{\mathcal{J}}
 \def\AIF{\qtab\keyword{if}\ }
 \def\THEN{\ \keyword{then}\ }
@@ -67,7 +75,9 @@
 \def\ENDPROC{\untab}
 \newcommand{\conv}{\mathcal{W}}
 
-\newcommand{\ssorts}[1]{#1^\mathrm{s}}
+%\newcommand{\ssorts}[1]{#1^\mathrm{s}}
+\newcommand{\ssorts}[1]{#1^\mathrm{y}}
+
 \newcommand{\sfuns}[1]{#1^\mathrm{f}}
 \newcommand{\sfundefs}[1]{#1^\mathrm{df}}
 \newcommand{\sfunndefs}[1]{#1^\mathrm{nf}}
@@ -119,9 +129,9 @@
 \begin{document}
 
 %%% I added (Co) -- hope you like it --JB
-\title{Model Finding for (Co)recursive Functions in SMT\thanks{
+\title{Model Finding for (Co)recursive Functions in SMT\thanks{%
 This research is partially supported by the Inria technological development
-action \relax{Contrexemples Utilisables par Isabelle et Coq} (CUIC).
+action ``Contre-exemples Utilisables par Isabelle et Coq'' (CUIC).
 }
 }
 
@@ -206,14 +216,15 @@ in smt : z3, cvc4 (briefly, text in main section gives detail)
 \label{sec:prelim}
 
 A \emph{signature} $\Sigma$ consists of 
-a set $\ssorts{\Sigma}$ of type symbols and
+a set $\ssorts{\Sigma}$ of type symbols (sorts) and
 a set $\sfuns{\Sigma}$ of function symbols.
 We assume that signatures always include a Boolean type $\Bool$ and constants 
-$\ltrue$ and $\lfalse$ of that type (respectively, for true and false), 
-an (infix) equality predicate $\teq$ of type $\tau \times \tau$ for each $\tau \in \ssorts{\Sigma}$,
-and standard boolean connectives ($\neg$, $\wedge$, $\vee$, etc.).
+$\ltrue$ (truth) and $\lfalse$ (falsity) of that type,
+an infix equality predicate $\teq$ of type $\tau \times \tau \to \Bool$
+for each $\tau \in \ssorts{\Sigma}$,
+standard boolean connectives ($\neg$, $\wedge$, $\vee$, etc.),
 and a function $\lite$ of type $\Bool \times \tau \times \tau \rightarrow \tau$ for each $\tau \in \ssorts{\Sigma}$.
-We will write $t\typ{\tau}$ to denote a term $t$ of type~$\tau$.
+We write $t\typ{\tau}$ to denote a term $t$ of type~$\tau$.
 We write $\terms( t )$ to denote the set of subterms in $t$.
 %We write $\functerms^\Sigma( t )$ to denote the set of $f$-applications in $t$ such that $f \in \sfundefs{\Sigma}$.
 
