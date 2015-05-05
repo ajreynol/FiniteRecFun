@@ -782,14 +782,15 @@ The last configuration {\bench cvc4+i} incorporates techniques for automating in
 %All configurations of \cvc incorporate techniques for conflict-based instantiation~\cite{} ..?
 
 \begin{figure}[t]
-\noindent\hbox{}{\hfill
-\begin{tabular}{l@{\kern0.5em}rr@{\kern0.5em}rr@{\kern0.5em}rr@{\kern0.5em}rr}
-  & \multicolumn{2}{c@{\kern0.5em}}{{\bench z3}}     & \multicolumn{2}{c@{\kern0.5em}}{{\bench cvc4}}     & \multicolumn{2}{c@{\kern0.5em}}{{\bench cvc4+f}}     & \multicolumn{2}{c@{\kern0.5em}}{{\bench cvc4+i}}
+\normalsize
+\centering
+\begin{tabular}{l@{\kern1.5em}r@{\kern0.375em}r@{\kern1.5em}r@{\kern0.375em}r@{\kern1.5em}r@{\kern0.375em}r@{\kern1.5em}r@{\kern0.375em}r}
+  & \multicolumn{2}{c@{\kern1.5em}}{{\bench z3}}     & \multicolumn{2}{c@{\kern1.5em}}{{\bench cvc4}}     & \multicolumn{2}{c@{\kern1.5em}}{{\bench cvc4+f}}     & \multicolumn{2}{c@{\kern1.5em}}{{\bench cvc4+i}}
 \\[-.25\jot]
-  & \multicolumn{1}{c}{u} & s
-  & u & s
-  & u & s
-  & u & s
+  & \hfill u \hfill & \hfill s \hfill
+  & \hfill u \hfill & \hfill s \hfill
+  & \hfill u \hfill & \hfill s \hfill
+  & \hfill u \hfill & \hfill s \hfill
 \\
 \midrule
 {\bench isa} & 14  & 0 & 15  & 0 & 15  & 0 & {\win 61}  & 0
@@ -798,14 +799,25 @@ The last configuration {\bench cvc4+i} incorporates techniques for automating in
 \\
 {\bench isa+m} & 17  & 0 & 18  & 0 & 18  & 0 & {\win 44}  & 0
 \\
-{\bench leon+m}  & 83  & 11  & 103 & 6 & 104 & 6 & {\win 117} & 6
-\\
-Total & 187 & 11  & 216 & 6 & 217 & 6 & {\win 318} & 6
-\end{tabular}\hfill\hfill
-\begin{tabular}{l@{\kern0.5em}rr@{\kern0.5em}rr@{\kern0.5em}rr@{\kern0.5em}rr}
-  & \multicolumn{2}{c@{\kern0.5em}}{{\bench z3}}     & \multicolumn{2}{c@{\kern0.5em}}{{\bench cvc4}}     & \multicolumn{2}{c@{\kern0.5em}}{{\bench cvc4+f}}     & \multicolumn{2}{c@{\kern0.5em}}{{\bench cvc4+i}}
+{\bench leon+m\phantom{w}}  & 83  & {\win 11}  & 103 & 6 & 104 & 6 & {\win 117} & 6
+\\[\jot]
+Total & 187 & {\win \phantom{0}11}  & 216 & \phantom{00}6 & 217 & \phantom{00}6 & {\win 318} & \phantom{00}6
+\end{tabular}
+\caption{\,Number of unsat (u) and sat (s) responses on original benchmarks}
+\label{fig:results}
+\end{figure}
+
+\begin{figure}[t]
+\normalsize
+{
+\centering
+\begin{tabular}{l@{\kern1.5em}r@{\kern0.375em}r@{\kern1.5em}r@{\kern0.375em}r@{\kern1.5em}r@{\kern0.375em}r@{\kern1.5em}r@{\kern0.375em}r}
+  & \multicolumn{2}{c@{\kern0.375em}}{{\bench z3}}     & \multicolumn{2}{c@{\kern0.375em}}{{\bench cvc4}}     & \multicolumn{2}{c@{\kern0.375em}}{{\bench cvc4+f}}     & \multicolumn{2}{c@{\kern0.375em}}{{\bench cvc4+i}}
 \\[-.25\jot]
-  & u & s & u & s & u & s & u & s
+  & \hfill u \hfill & \hfill s \hfill
+  & \hfill u \hfill & \hfill s \hfill
+  & \hfill u \hfill & \hfill s \hfill
+  & \hfill u \hfill & \hfill s \hfill
 \\
 \midrule
 {\bench isa+w} & 15  & 0 & 15  & 0 & 15  & 0 & 14  & 0
@@ -815,13 +827,12 @@ Total & 187 & 11  & 216 & 6 & 217 & 6 & {\win 318} & 6
 {\bench isa+mw}  & 18  & 35  & 18  & 0 & 18  & {\win 153} & 17  & 0
 \\
 {\bench leon+mw} & 98  & 75  & 98  & 6 & 95  & {\win 169} & 98  & 6
-\\
-Total & 209 & 112 & 211 & 6 & 204 & {\win 331} & 207 & 6
-\end{tabular}\hfill\hbox{}
+\\[\jot]
+Total & 209 & 112 & 211 & \phantom{00}6 & 204 & {\win 331} & 207 & \phantom{00}6
+\end{tabular}
 
 }
-\caption{\,Number of unsat (u) and sat (s) responses for of all configurations on benchmarks
-before and after the translation $\conv$}
+\caption{\,Number of unsat (u) and sat (s) responses on translated benchmarks}
 \label{fig:results}
 \end{figure}
 
