@@ -80,8 +80,8 @@
 \newcommand{\sortint}{\mathrm{Int}}
 
 \newcommand{\pnone}{\con{none}}
-\newcommand{\ptrue}{\con{true}}
-\newcommand{\pfalse}{\con{false}}
+\newcommand{\ptrue}{\con{pos}}
+\newcommand{\pfalse}{\con{neg}}
 \newcommand{\pol}{\con{pol}}
 
 %\newtheorem{remark}{Remark}
@@ -91,12 +91,17 @@
 \newcommand{\lfalse}{\bot}
 \newcommand{\lite}{\con{ite}}
 
+%\newcommand\concret{\con{a}}
+%\newcommand\concret{\con{c}}
+\newcommand\concret{\gamma} %%% from the abstract interpretation literature
+
 \newcommand{\boolop}{\oplus}
 \newcommand{\forallf}[1]{\forall_{\!#1\:}}
 \newcommand{\fnull}{\emptyset}
-\newcommand{\farg}[1]{a_{#1}}
-\newcommand{\vecfarg}[1]{\vec{a}_{#1}}
-\newcommand{\fargsort}[1]{\upsilon_{#1}}
+\newcommand{\vecfarg}[1]{\vec{\concret}_{\vthinspace#1}}
+\newcommand{\farg}[1]{\concret_{\vthinspace#1}}
+\newcommand{\fargx}[2]{\concret^{\vthinspace#2}_{\vthinspace#1}}
+\newcommand{\fargsort}[1]{\upsilon_{\vthinspace#1}}
 
 \newcommand{\Sigmalia}{\Sigma_{LIA}}
 \newcommand{\extendsig}[1]{\mathcalx{E}( #1 )}
@@ -333,7 +338,7 @@ $\varphi$ and $\psi$ are equisatisfiable.
 the same $T$ for both formulas, which isn't the case here.}
 The intuition behind this translation
 is to use an uninterpreted type \ct{to be defined} to abstract the set of
-\emph{relevant} tuples for each recursive function $\con{f}$ and restrict the
+\relax{relevant} tuples for each recursive function $\con{f}$ and restrict the
 quantification of the function definition for $\con{f}$ to a variable of this
 type. Informally, the relevant tuples $\vec t$ of a function $\con{f}$ are the
 ones for which the interpretation of $\con{f}( \vec t )$ is relevant to the
@@ -399,26 +404,36 @@ where $\boolop$ is an interpreted predicate.
 \end{figure}
 
 In more detail, 
-say our signature $\Sigma$ contains a set of defined function symbols $\sfundefs{\Sigma} \subseteq \sfuns{\Sigma}$.
+suppose our signature $\Sigma$ contains a set of defined function symbols $\sfundefs{\Sigma} \subseteq \sfuns{\Sigma}$.
 We extend the signature of $\Sigma$ to a signature $\extendsig{\Sigma}$ containing the following additional definitions.
-For each $\con{f} \in \sfundefs{\Sigma}$ of type $\tau_1 \times \ldots \times \tau_n \rightarrow \tau$, 
-the signature $\extendsig{\Sigma}$ includes:
-\begin{enumerate}
-\item[-] an uninterpreted type $\fargsort{\con{f}}$, and
-\item[-] a vector of $n$ uninterpreted functions $\farg{\con{f}}^1$, $\ldots$, $\farg{\con{f}}^n$ of type $(\fargsort{\con{f}} \rightarrow \tau_1)$, $\ldots$, $(\fargsort{\con{f}} \rightarrow \tau_n)$.
-\end{enumerate}
+For each $\con{f} : \tau_1 \times \ldots \times \tau_n \rightarrow \tau \in \sfundefs{\Sigma}$,
+the signature $\extendsig{\Sigma}$ includes
+\begin{itemize}
+\item an uninterpreted \emph{abstract type} $\fargsort{\con{f}}$;
+\item $n$ uninterpreted \emph{concretization functions} $\fargx{\con{f}}{1} : \fargsort{\con{f}} \rightarrow \tau_1$, \ldots, $\fargx{\con{f}}{n} : \fargsort{\con{f}} \rightarrow \tau_n$.
+\end{itemize}
 %The interpretation of uninterpreted sort $\fargsort{\con{f}}$ will denote the elements (tuples) on which the function $\con{f}$ is applied.
 %The role of the uninterpreted functions $\farg{\con{f}}^1$, $\ldots$, $\farg{\con{f}}^n$ will be discussed more in the following.
 
-Given the extended signature, we run the procedure $\conv$ in Figure~\ref{fig:encoding} on $\varphi$.
-This calls the subprocedure $\conv_0$, which takes two arguments: the term $t$ to translate, and a \emph{polarity} $p$ (either $\ptrue$, $\pfalse$, or $\pnone$).
-It returns a pair of the form $( r, D )$, where $r$ is a term of type $\tau$, and $D$ is a set of formulas.
-%The role of $D$ is to ensure that the (restricted) function definition for $\con{f}$ includes certain tuples in its domain, which we explain more in the following.
-At a high level, the translation modifies $\varphi$ in two ways.
-First, it restricts the quantification on function definitions for $\con{f}$ to the corresponding uninterpreted type $\fargsort{\con{f}}$.
-Second, it augments $\varphi$ with additional constraints of the form $\exists z\typ{\fargsort{\con{f}}}. ( \vecfarg{\con{f}}( z ) \teq \vec t )$
-which ensure that this restriction for the defintion $\con{f}$ covers all relevant tuples of terms,
-namely the ones for which an $\con{f}$-application exists and is relevant to the satisfiability of the current branch of $\varphi$.
+The procedure $\conv$ in Figure~\ref{fig:encoding} translates the $\Sigma$-formula
+$\varphi$ into an $\extendsig{\Sigma}$-formula.
+This calls the subprocedure $\conv_0$, which takes two arguments:\ the term $t$
+to translate and a \emph{polarity} $p$ (either $\ptrue$, $\pfalse$, or
+$\pnone$). It returns a pair $( r,\, D )$, where $r$ is a term of
+type $\tau$ and $D$ is a set of formulas.
+\jb{Explain r and D here briefly.}
+%The role of $D$ is to ensure that
+%the (restricted) function definition for $\con{f}$ includes certain tuples in
+%its domain, which we explain more in the following.
+
+The translation modifies $\varphi$ in two main ways. First, it restricts the
+quantification on function definitions for $\con{f}$ to the corresponding
+uninterpreted type $\fargsort{\con{f}}$ and inserts appropriate . Second, it augments $\varphi$ with
+additional constraints of the form $\exists z\typ{\fargsort{\con{f}}}. (
+\vecfarg{\con{f}}( z ) \teq \vec t )$ which ensure that this restriction for
+the defintion $\con{f}$ covers all relevant tuples of terms, namely the ones
+for which an $\con{f}$-application exists and is relevant to the satisfiability
+of the current branch of $\varphi$.
 
 In the case that $t$ is an application of (interpreted) predicate $\boolop$ (e.g., a boolean connective, or equality),
 we recursively call $\conv$ on its subchildren $t_i$ and polarity $\pol( \boolop, i, p )$, where $\pol$ is defined as\footnote{The negation $\neg p$ of polarity $p$ is 
@@ -539,7 +554,7 @@ Let $\J$ be the $\extendsig{\Sigma}$-interpretation that interprets all types $\
 all functions $\con{f} \in \sfuns{\Sigma}$ as $\con{f}^\I$,
 and for each function $\con{f}$ of type $\tau_1 \times \ldots \tau_n \rightarrow \tau$ in $\sfundefs{\Sigma}$, 
 interprets $\fargsort{\con{f}}$ as a tuple of values of type $\tau_1^\I \times \ldots \times \tau_n^\I$,
-and each $\farg{\con{f}}^i$ as the $i^{th}$ projection on such tuples for each $i = 1, \ldots, n$.
+and each $\fargx{\con{f}}{i}$ as the $i^{th}$ projection on such tuples for each $i = 1, \ldots, n$.
 Note that $\J$ satisfies \emph{every} constraint of the form $\exists z\typ{\fargsort{\con{f}}}. ( \vecfarg{\con{f}}( z ) \teq \vec t )$,
 since by our construction of $\J$ there exists a $z$ such that $z^\J = \vec t^\J$.
 By case analysis it follows that $\conv_0$ maintains the invariant that
