@@ -307,17 +307,28 @@ title. (What other subsections are planned?)}
 
 Recent techniques~\cite{GeDeM-CAV-09, ReyEtAl-1-RR-13} 
 have focused on finding models for quantified formulas in SMT.
-\cite{GeDeM-CAV-09}
-A instantiation-based procedure is shown in~ to be complete for formulas in the \emph{essentially uninterpreted} fragment.
-This fragment is limited to universally quantified formulas where all occurrences of variables occur as direct subchildren of uninterpreted functions.
-For example, the formula $\forall x\typ{\sortint}.\;\, \con{f}( x ) \teq g( x ) + 5$ 
-is in the essentially uninterpreted fragment since all occurrences of $x$ occur beneath uninterpreted functions $\con{f}$ and $g$.
-Other syntactic criteria are identified in this paper that extend this fragment slightly, including cases when variables occur as arguments of arithmetic predicates.
-The techniques in~\cite{ReyEtAl-1-RR-13} can be used for finding finite models for quantified formulas over uninterpreted types as well as types having a 
-fixed finite interpretation (such as fixed-width bitvectors, datatype enumerations, etc.).
-For example, finite model finding techniques can find a model for
-the formula $\forall x\typ{\tau} y\typ{\tau}.\;\, \neg x \teq y \vee \con{f}( x ) \teq \con{f}( y )$
-where the uninterpreted type $\tau$ is interpreted as a finite set, and $\con{f}$ as injective finite map.
+Ge and de Moura \cite{GeDeM-CAV-09} presented a complete instantiation-based
+procedure for formulas in the \emph{essentially uninterpreted} fragment.
+This fragment is limited to universally quantified formulas where all
+occurrences of variables occur as direct subterms of uninterpreted
+functions. For example, the formula $\forall x%\typ{\sortint} --- the sort is not important, right?
+.\;\, \con{f}( x )
+\teq \con{g}( x ) + 5$ is in the essentially uninterpreted fragment.
+% since all
+% occurrences of $x$ occur beneath uninterpreted functions $\con{f}$ and
+% $\con{g}$.
+Other syntactic criteria are identified in this paper that extend
+this fragment slightly, including cases when variables occur as arguments of
+arithmetic predicates. The techniques in~Reynolds et al.\
+\cite{ReyEtAl-1-RR-13} can be used for finding finite models for quantified
+formulas over uninterpreted types as well as types having a fixed finite
+interpretation, such as fixed-width bitvectors and enumerated datatypes.
+Finite model finding techniques can
+find a model for the formula $\forall x\typ{\tau} y\typ{\tau}.\;\, \neg x \teq
+y \vee \con{f}( x ) \teq \con{f}( y )$ where the uninterpreted type $\tau$ is
+interpreted as a finite set and $\con{f}$ as injective finite map.
+\jb{Weird example. This formula is a tautology of EUF! Maybe you put the
+negation at the right place?}
 
 Unfortunately, these fragments do not coincide with the vast majority of quantified formulas that correspond to recursive function definitions.
 In particular, the fragments in~\cite{GeDeM-CAV-09} are not applicable when the argument of a recursive function is used in various ways (e.g. within an arithmetic expression), 
@@ -700,7 +711,8 @@ Note that this option is model-sound \ct{define?} only if the functions provided
 \def\ackname{Acknowledgment}
 \paragraph{%\footnotesize
 \ackname.}
-We would like to thank Damien Busato-Gaston and Emmanouil Koukoutos for providing the initial set of benchmarks used in the evaluation.
+We would like to thank Damien Busato-Gaston and Emmanouil Koukoutos for
+providing the initial set of benchmarks used in the evaluation.
 }
 
 
