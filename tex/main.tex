@@ -143,15 +143,14 @@
 
 \begin{document}
 
-%%% I added (Co) -- hope you like it --JB
-\title{Model Finding for (Co)recursive Functions in SMT\thanks{%
+\title{Model Finding for Recursive Functions in SMT\thanks{%
 This research is partially supported by the Inria technological development
 action ``Contre-exemples Utilisables par Isabelle et Coq'' (CUIC).
 }
 }
 
 \author {Andrew Reynolds\inst{1} \and Jasmin Christian Blanchette\inst{2,3} \and Cesare Tinelli \inst{4}}
-\authorrunning {A. Reynolds \and J. C. Blanchette \and C. Tinelli}
+\authorrunning {A. Reynolds, J. C. Blanchette, C. Tinelli}
 \institute{
 \'Ecole Polytechnique F\'ed\'erale de Lausanne (EPFL), Switzerland
 \and
@@ -614,7 +613,7 @@ Let us revisit the translated formula~(\ref{eq:ex-after}) from Example~\ref{ex:t
 This formula is unsatisfiable if and only if formula~(\ref{eq:ex-before}) is unsatisfiable since $\fargsort{f}$ can be interpreted as $\sortint$,
 and $\farg{f}$ can be interpreted as the identity function.
 Conversely, we claim formula~(\ref{eq:ex-after}) is satisfiable if and only if formula~(\ref{eq:ex-before}) is satisfiable,
-noting that the set $\{ \forall_{s} x\typ{\sortint}. ite( x \leq 0, s(x) \teq 0, s( x ) \teq x + s( x-1 ) ) \}$ is admissble.
+noting that the set $\{ \forall_{s} x\typ{\sortint}.\;\, \lite( x \leq 0, s(x) \teq 0, s( x ) \teq x + s( x-1 ) ) \}$ is admissble.
 As stated in the proof of the previous theorem, 
 the reason is that any model of formula~(\ref{eq:ex-after}) must satisfy a formula that is closed under function expansion,
 hence implying that formula~(\ref{eq:ex-before}) has a model.
@@ -748,7 +747,8 @@ for conjectures involving recursive functions whose definitions are admissible.
 Both {\bf z3} and {\bf cvc4+f} were able to find a large number of counterexamples after the translation,
 with the latter configuration finding significantly more instances (331 to 112).
 
-\section{Front-End Support for Recursive Function Definitions in CVC4}
+\section{Front-End Support %for Recursive Function Definitions
+  in CVC4}
 \label{sec:front-end}
 
 We have seen a satisfiability-preserving translation $\conv$ that significantly improves the effectiveness of known SMT techniques
