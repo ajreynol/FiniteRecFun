@@ -36,12 +36,17 @@
 \DeclareFontShape{OT1}{pzc}{m}{it}{<-> s * [1.10] pzcmi7t}{}
 \DeclareMathAlphabet{\mathcalx}{OT1}{pzc}{m}{it}
 
+%\newcommand\pneg{\neg}
+\newcommand\pneg{-}
+
 \newcommand{\con}[1]{\mathsf{#1}}
 
 \renewcommand\vec[1]{\overline{#1}}
 
 \let\oldSigma=\Sigma
 \def\Sigma{\mathrm{\oldSigma}}
+
+\def\Chi{\mathrm{X}}
 
 \let\oldneg=\neg
 \def\neg{\oldneg\:}
@@ -95,7 +100,7 @@
 %\newcommand\concret{\con{c}}
 \newcommand\concret{\gamma} %%% from the abstract interpretation literature
 
-\newcommand{\boolop}{\oplus}
+\newcommand{\boolop}{\con{b}}
 \newcommand{\forallf}[1]{\forall_{\!#1\:}}
 \newcommand{\fnull}{\emptyset}
 \newcommand{\vecfarg}[1]{\vec{\concret}_{\vthinspace#1}}
@@ -345,65 +350,6 @@ type. Informally, the relevant tuples $\vec t$ of a function $\con{f}$ are the
 ones for which the interpretation of $\con{f}( \vec t )$ is relevant to the
 satisfiability of $\varphi$.
 
-\begin{figure}[t]
-\begin{enumerate}
-%\begin{framed}
-\item[\ ] 
-$\conv( \varphi )$ : 
- \begin{itemize}
-   \item[] $\mathsf{let}$ $( \psi, D ) = \conv( \varphi, \ptrue )$;
-   %\item[] $\mathsf{assert}( D = \emptyset )$;
-   \item[] $\mathsf{return}$ $\psi$
-  \end{itemize}
-\end{enumerate}
-\begin{enumerate}
-%\begin{framed}
-\item[\ ] 
-$\conv_0( t\typ{\tau}, p )$ : 
- \begin{itemize}
-   \item[] $\mathsf{if}$ $\tau \equiv \Bool$ and $t \equiv t_1 \boolop \ldots \boolop t_n$ :
-    \begin{itemize}
-      \item[] $\mathsf{let}$ $( r_i, D_i ) = \conv_0( t_i, \pol( \boolop, i, p ) )$ for $i = 1, \ldots, n$;
-      \item[] $\mathsf{if}$ $p = \ptrue$
-      \begin{itemize}
-        \item[] $\mathsf{return}$ $( ( r_1 \boolop \ldots \boolop r_n ) \wedge D_1 \wedge \ldots \wedge D_n, \emptyset )$
-      \end{itemize}
-      \item[] $\mathsf{else}$ $\mathsf{if}$ $p = \pfalse$
-      \begin{itemize}
-        \item[] $\mathsf{return}$ $( ( r_1 \boolop \ldots \boolop r_n ) \vee \neg D_1 \vee \ldots \vee \neg D_n, \emptyset )$
-      \end{itemize}
-      \item[] $\mathsf{else}$
-      \begin{itemize}
-        \item[] $\mathsf{return}$ $( r_1 \boolop \ldots \boolop r_n, D_1 \cup \ldots \cup D_n )$
-      \end{itemize}
-    \end{itemize}
-  \item[] $\mathsf{else}$ $\mathsf{if}$ $t \equiv \forallf{\con{f}} \vec x.\;\, t_1$
-    \begin{itemize}
-      \item[] $\mathsf{let} ( r_1, D_1 ) = \conv_0( t_1, p )$;
-      \item[] $\mathsf{if}$ $\con{f} \in \sfundefs{\Sigma}$
-      \begin{itemize}
-        %\item[] $\mathsf{assert}( D_1 = \emptyset )$;
-        \item[] $\mathsf{return}$ $( \forall y\typ{\fargsort{\con{f}}}.\;\, ( r_1 [ \vecfarg{\con{f}}( y ) / \vec x ] ), \emptyset )$
-      \end{itemize}
-      \item[] else
-      \begin{itemize}
-        \item[] $\mathsf{return}$ $( \forall \vec x.\; r_1, \forall \vec x.\; D_1 )$
-      \end{itemize}
-    \end{itemize}
-   \item[] $\mathsf{else}$
-   \begin{itemize}
-     \item[] $\mathsf{return}$ $( t, \{ \exists z\typ{\fargsort{\con{f}}}. ( \vecfarg{f}( z ) \teq \vec t ) \mid f( \vec t ) \in \terms( t ), f \in \sfundefs{\Sigma} \} )$
-   \end{itemize}
- \end{itemize}
-\end{enumerate}
-\vspace{-2ex}
-\caption{A translation procedure $\conv$ for a $\Sigma$-formula that is in definitional form with respect to a set of admissible function definitions $\sfundefs{\Sigma}$.
-In the subprocedure $\conv_0$, the procedure $\pol( \boolop, i, p )$ returns the polarity of the $i^{th}$ child of a $\boolop$-application having polarity $p$,
-where $\boolop$ is an interpreted predicate.
-}
-\label{fig:encoding}
-\end{figure}
-
 In more detail, 
 suppose our signature $\Sigma$ contains a set of defined function symbols $\sfundefs{\Sigma} \subseteq \sfuns{\Sigma}$.
 We extend the signature of $\Sigma$ to a signature $\extendsig{\Sigma}$ containing the following additional definitions.
@@ -416,12 +362,78 @@ the signature $\extendsig{\Sigma}$ includes
 %The interpretation of uninterpreted sort $\fargsort{\con{f}}$ will denote the elements (tuples) on which the function $\con{f}$ is applied.
 %The role of the uninterpreted functions $\farg{\con{f}}^1$, $\ldots$, $\farg{\con{f}}^n$ will be discussed more in the following.
 
-The procedure $\conv$ in Figure~\ref{fig:encoding} translates the $\Sigma$-formula
-$\varphi$ into an $\extendsig{\Sigma}$-formula.
-This calls the subprocedure $\conv_0$, which takes two arguments:\ the term $t$
+The procedure $\conv$ translates the $\Sigma$-formula
+$\varphi$ into an $\extendsig{\Sigma}$-formula. It relies
+on the subprocedure $\conv_0$, which takes two arguments:\ the term $t$
 to translate and a \emph{polarity} $p$, which is either $\ptrue$, $\pfalse$, or
-$\pnone$. It returns a pair $( t'\negvthinspace,\, D )$, where $t'$ is a term of
-type $\tau$ and $D$ is a set of formulas encoding additional constraints.
+$\pnone$. It returns a pair $( t'\negvthinspace,\, \Chi )$, where $t'$ is a term of
+type $\tau$ and $\Chi$ is a set of formulas encoding additional constraints.
+These constraints are necessary if the polarity is $\pnone$; otherwise, $\Chi$
+is always the empty set.
+
+\jb{Merge para above with para below}
+
+A translation procedure $\conv$ for a $\Sigma$-formula that is in definitional
+form with respect to a set of admissible function definitions
+$\sfundefs{\Sigma}$. In the auxiliary procedure $\conv_0$, the procedure $\pol(
+\boolop, i, p )$ returns the polarity of the $i${th} argument of a
+$\boolop$ application having polarity $p$, where $\boolop$ is an interpreted
+predicate.
+
+
+\begin{enumerate}
+%\begin{framed}
+\item[\ ] 
+$\conv_0( t\typ{\tau},\, p )$ : 
+ \begin{itemize}
+   \item[] $\mathsf{if}$ $\tau = \Bool$ and $t = \boolop(t_1,\ldots,t_n)$:
+    \begin{itemize}
+      \item[] $\mathsf{let}$ $( r_i,\, \Chi_i ) = \conv_0( t_i,\, \pol( \boolop,\, i,\, p ) )$ for $i = 1, \ldots, n$;
+      \item[] $\mathsf{let}$ $\Chi = \Chi_1 \mathrel\cup \cdots \mathrel\cup \Chi_n$;
+      \item[] $\mathsf{let}$ $\chi = \bigwedge \Chi$;
+      \item[] $\mathsf{if}$ $p = \ptrue$
+      \begin{itemize}
+        \item[] $\mathsf{return}$ $( ( r_1 \boolop \ldots \boolop r_n ) \wedge \chi,\, \emptyset )$
+      \end{itemize}
+      \item[] $\mathsf{else}$ $\mathsf{if}$ $p = \pfalse$
+      \begin{itemize}
+        \item[] $\mathsf{return}$ $( ( r_1 \boolop \ldots \boolop r_n ) \vee \neg \chi,\, \emptyset )$
+      \end{itemize}
+      \item[] $\mathsf{else}$
+      \begin{itemize}
+        \item[] $\mathsf{return}$ $( r_1 \boolop \ldots \boolop r_n,\, \Chi )$
+      \end{itemize}
+    \end{itemize}
+  \item[] $\mathsf{else}$ $\mathsf{if}$ $t \equiv \forallf{\con{f}} \vec x.\;\, t_1$
+    \begin{itemize}
+      \item[] $\mathsf{let}$ $( r_1,\, D_1 ) = \conv_0( t_1,\, p )$;
+      \item[] $\mathsf{if}$ $\con{f} \in \sfundefs{\Sigma}$
+      \begin{itemize}
+        %\item[] $\mathsf{assert}( D_1 = \emptyset )$;
+        \item[] $\mathsf{return}$ $( \forall y\typ{\fargsort{\con{f}}}.\;\, ( r_1 [ \vecfarg{\con{f}}( y ) / \vec x ] ),\, \emptyset )$
+      \end{itemize}
+      \item[] else
+      \begin{itemize}
+        \item[] $\mathsf{return}$ $( \forall \vec x.\; r_1,\, \forall \vec x.\; D_1 )$
+      \end{itemize}
+    \end{itemize}
+   \item[] $\mathsf{else}$
+   \begin{itemize}
+     \item[] $\mathsf{return}$ $( t,\, \{ \exists z\typ{\fargsort{\con{f}}}. ( \vecfarg{f}( z ) \teq \vec t ) \mid f( \vec t ) \in \terms( t ),\, f \in \sfundefs{\Sigma} \} )$
+   \end{itemize}
+ \end{itemize}
+\end{enumerate}
+\begin{enumerate}
+%\begin{framed}
+\item[\ ] 
+$\conv( \varphi )$ : 
+ \begin{itemize}
+   \item[] $\mathsf{let}$ $( \psi,\, \_ ) = \conv_0( \varphi,\, \ptrue )$;
+   %\item[] $\mathsf{assert}( D = \emptyset )$;
+   \item[] $\mathsf{return}$ $\psi$
+  \end{itemize}
+\end{enumerate}
+
 %The role of $D$ is to ensure that
 %the (restricted) function definition for $\con{f}$ includes certain tuples in
 %its domain, which we explain more in the following.
@@ -444,19 +456,20 @@ i, p )$, where $\pol$ is defined as
 \begin{equation*}
 \pol( \boolop, i, p ) =
 \begin{cases}
-\pnone & \text{if $\boolop = {\teq}$ or $(\boolop, i) = (\lite, 0)$} \\
-\neg p & \text{if $\boolop = {\neg}$} \\
-p & \text{otherwise}
+p & \text{if either $\boolop \in \{{\land}, {\lor}\}$ or $\boolop = \lite$ and $i \in \{2, 3\}$} \\[-\jot]
+\pneg p & \text{if $\boolop = {\neg}$} \\[-\jot]
+\pnone & \text{otherwise}
 \end{cases}
 \end{equation*}
-The negation $\neg p$ of polarity $p$ is $\pfalse$ if $p$ is $\ptrue$, $\ptrue$
+The negation $\pneg p$ of a polarity $p$ is $\pfalse$ if $p$ is $\ptrue$, $\ptrue$
 if $p$ is $\pfalse$, and $\pnone$ if $p$ is $\pnone$.
 
 If $t$ has positive polarity, we construct a conjunction of the result of the
-recursive calls with formulas $D_1, \ldots, D_n$. Similarly, if $t$ has
-negative polarity, we construct a disjunction of the result of the recursive
-calls with the negation of formulas $D_1, \ldots, D_n$. It $t$ has no polarity,
-then we return the union of $D_1 \cup \ldots \cup D_n$.
+recursive calls with the formulas in $D = D_1 \mathrel\cup \cdots \mathrel\cup
+D_n$. Similarly, if $t$ has negative polarity, we construct a disjunction of
+the result of the recursive calls with the negation of formulas $D_1, \ldots,
+D_n$. It $t$ has no polarity, then we return the union of $D_1 \cup \ldots \cup
+D_n$.
 
 If $t$ is a quantified formula $\forallf{\con{f}} \vec x.\; t_1$, it
 recursively calls $\conv$ on its body with the same polarity. If $t$ is a
