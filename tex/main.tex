@@ -733,21 +733,30 @@ which means that there exists a model for formula~(\ref{eq:ex-before}).\xend
 \section{Evaluation}
 \label{sec:evaluation}
 
-In this section, we evaluate both
-the overall impact of the encoding introduced in the previous section, and
-the performance of individual SMT techniques for benchmarks in the encoding.
+In this section, we evaluate both the overall impact of the encoding introduced
+in the previous section, and the performance of individual SMT techniques for
+benchmarks in the encoding.
 
-For benchmarks, we gathered a set of 245 benchmarks from two sources, which we will refer to as {\bench isa} and {\bench leon}.
-The first ({\bench isa}) consists of the 79 benchmarks from the Isaplanner benchmark suite~\cite{DBLP:conf/itp/JohanssonDB10} that do not contain higher-order functions.
-The benchmarks have been used recently as challenge problems for a variety of inductive theorem provers.
-These benchmarks heavily involve recursive functions, and are limited to the combined theory of uninterpreted functions and inductive datatypes.
-The second ({\bench leon}) consists of 166 benchmarks from the Leon repository~\footnote{Available at \url{https://github.com/epfl-lara/leon}.},
-which were constructed from verification conditions from simple Scala programs.
-These benchmarks also heavily involve recursive functions over inductive datatypes,
-and also cover a wide variety of theories, including bitvectors, arrays, and linear and non-linear arithmetic.
-Each of the 245 benchmarks are of the form described in formula~(\ref{eq:wdf}) from Section~\ref{sec:prelim},
-in particular they each are a conjoined list of function definitions followed by a (negated) conjecture.
-A majority of these benchmarks are unsatisfiable, although a handful of the benchmarks in the {\bench leon} set are satisfiable.
+We gathered a set of 245 benchmarks from two sources, which we will refer to as
+{\bench isa} and {\bench leon}. The first ({\bench isa}) consists of the 79
+benchmarks from the Isaplanner benchmark
+suite~\cite{DBLP:conf/itp/JohanssonDB10} that do not contain higher-order
+functions. The benchmarks have been used recently as challenge problems for a
+variety of inductive theorem provers. These benchmarks heavily involve
+recursive functions, and are limited to the combined theory of uninterpreted
+functions and inductive datatypes. The second ({\bench leon}) consists of 166
+benchmarks from the Leon repository,\footnote{%Available at
+\url{https://github.com/epfl-lara/leon}} which were constructed from
+verification conditions from simple Scala programs. These benchmarks also
+heavily involve recursive functions over inductive datatypes, and also cover a
+wide variety of theories, including bitvectors, arrays, and linear and
+non-linear arithmetic. Each of the 245 benchmarks are of the form described in
+formula~(\ref{eq:wdf}) from Section~\ref{sec:prelim}.
+% in particular they each
+%are a conjoined list of function definitions followed by a (negated)
+%conjecture.
+A majority of these benchmarks are unsatisfiable, although a
+handful of the benchmarks in the {\bench leon} set are satisfiable.
 
 For each of these 245 benchmarks, we considered (up to) three randomly selected mutated forms of its conjecture $\psi$.
 In particular, we considered unique conjectures that are obtained as a result of swapping a subterm of $\psi$ at one position
@@ -797,8 +806,8 @@ The last configuration {\bench cvc4+i} incorporates techniques for automating in
 \end{tabular}
 \\
 }
-\caption{Number of unsat and sat responses for of all configurations on benchmarks
-before and after the translation $\conv$.}
+\caption{\,Number of unsat (u) and sat (s) responses for of all configurations on benchmarks
+before and after the translation $\conv$}
 \label{fig:results}
 \end{figure}
 
