@@ -286,18 +286,29 @@ and consider $\Sigma$-formulas that are in definitional form with respect to fun
 
 A set of function definitions $\{ \varphi_1, \ldots, \varphi_n \}$ 
 is \emph{admissible} (\emph{in $T$}) if $\varphi_1 \wedge \ldots \wedge \varphi_n$ is $T$-satisfiable.
-For example, $\{ \forallf{\con{f}} \vec x.\;\, \con{f}( x ) \teq 0 \}$ is admissible,
-whereas $\{ \forallf{\con{f}} x.\;\, \con{f}( x ) \teq \con{f}( x ) + 1 \}$ is not. 
-Note that an admissible function definition need not specify a terminating function, e.g.
-$\{ \forallf{\con{f}} x^\sortint.\;\, \con{f}( x ) \teq \con{f}( x - 1 ) \}$ or even $\{ \forallf{\con{f}} x.\;\, \con{f}( x ) \teq \con{f}( x ) \}$ are admissible.
+For example, $\{ \forallf{\con{f}} x.\;\, \con{f}( x ) \teq 0 \}$
+and $\{ \forallf{\con{f}} x.\;\, \con{f}( x ) \teq \con{f}( x ) \}$ are admissible,
+whereas $\{ \forallf{\con{f}} x.\;\, \con{f}( x ) \teq \con{f}( x ) + 1 \}$ is not.
 \ajr{revise}
 
-\section{Model Finding for Recursive Functions in SMT}
+\jb{TODO: Jasmin: Identify fragments: terminating recursive functions, etc.}
+
+%Terminating function specifications are always admissible, but also some
+%nonterminating
+%An admissible function definition need not specify a terminating function, e.g.
+%$\{ \forallf{\con{f}} x^\sortint.\;\, \con{f}( x ) \teq \con{f}( x - 1 ) \}$ or even $\{ \forallf{\con{f}} x.\;\, \con{f}( x ) \teq \con{f}( x ) \}$ are admissible.
+
+%\section{Model Finding for Recursive Functions in SMT}
+\section{Model Finding for (Co)recursive Functions in SMT}
 \label{sec:model-finding-rec-fun}
+
+\jb{Break up big section into several? Or at least rename it to avoid repeating the
+title. (What other subsections are planned?)}
 
 Recent techniques~\cite{GeDeM-CAV-09, ReyEtAl-1-RR-13} 
 have focused on finding models for quantified formulas in SMT.
-A instantiation-based procedure is shown in~\cite{GeDeM-CAV-09} to be complete for formulas in the \emph{essentially uninterpreted} fragment.
+\cite{GeDeM-CAV-09}
+A instantiation-based procedure is shown in~ to be complete for formulas in the \emph{essentially uninterpreted} fragment.
 This fragment is limited to universally quantified formulas where all occurrences of variables occur as direct subchildren of uninterpreted functions.
 For example, the formula $\forall x\typ{\sortint}.\;\, \con{f}( x ) \teq g( x ) + 5$ 
 is in the essentially uninterpreted fragment since all occurrences of $x$ occur beneath uninterpreted functions $\con{f}$ and $g$.
@@ -696,7 +707,7 @@ We would like to thank Damien Busato-Gaston and Emmanouil Koukoutos for providin
 
 {
 \bibliographystyle{abbrv}
-\bibliography{main}
+\bibliography{bib}
 }
 
 \end{document}
