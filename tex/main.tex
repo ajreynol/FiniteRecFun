@@ -450,7 +450,7 @@ $\conv_0( t\typ{\tau},\, p )$ $=$
     \end{itemize}
    \item[] $\mathsf{else}$
    \begin{itemize}
-     \item[] \return \bigtuple{$t,\, \bigwedge\, \{ \exists z : \fargsort{\con{f}}.\; \vecfarg{\con{f}}( z ) \teq \vec t \mid \con{f}( \vec t ) \in \terms( t ),\, \con{f} \in \sfundefs{\Sigma} \}$}
+     \item[] \return \bigtuple{$t,\, \bigwedge\, \{ \exists a : \fargsort{\con{f}}.\; \vecfarg{\con{f}}( a ) \teq \vec t \mid \con{f}( \vec t ) \in \terms( t ),\, \con{f} \in \sfundefs{\Sigma} \}$}
    \end{itemize}
  \end{itemize}
 \end{enumerate}
@@ -473,7 +473,7 @@ The translation modifies $\varphi$ in two main ways. First, it restricts the
 quantification on function definitions for $\con{f}$ to the corresponding
 uninterpreted type $\fargsort{\con{f}}$ and inserts appropriate coercions
 $\fargx{\con{f}}{i}$. Second, it augments $\varphi$ with additional constraints
-$\exists z : \fargsort{\con{f}}.\;\, \vecfarg{\con{f}}( z ) \teq \vec t$; these
+$\exists a : \fargsort{\con{f}}.\;\, \vecfarg{\con{f}}( a ) \teq \vec t$; these
 ensure that the restricted definition for $\con{f}$ covers all relevant tuples
 of terms, namely the ones for which an $\con{f}$ application exists and is
 relevant to the satisfiability of the current branch of $\varphi$.
@@ -514,8 +514,8 @@ returned by the call.
 
 Otherwise, $t$ is either an application of an uninterpreted predicate or a term
 of a type other than $\Bool$. The returned constraint is a conjunction of
-formulas of the form $\exists z\typ{\fargsort{\con{f}}}.\;\, \vecfarg{\con{f}}(
-z ) \teq \vec t$ for each subterm $\con{f}( \vec t )$ of $t$ such that $\con{f}
+formulas of the form $\exists a : {\fargsort{\con{f}}}.\;\, \vecfarg{\con{f}}(
+a ) \teq \vec t$ for each subterm $\con{f}( \vec t )$ of $t$ such that $\con{f}
 \in \sfundefs{\Sigma}$. Such constraints, when asserted positively, ensure that
 the tuple of uninterpreted functions $\vecfarg{\con{f}}$ must include $\vec t$
 in its range.
@@ -548,12 +548,17 @@ $\fargsort{s}$ and the uninterpreted function $\farg{\con{s}}$ of type $\fargsor
 $\extendsig{\Sigma}$-formula
 %
 \begin{equation} \label{eq:ex-after}
-\!\begin{aligned}[t]
-  & \bigl(\forall a : \fargsort{s}.\;\, \lite\bigl( \farg{\con{s}}( a ) \leq 0,\;
-     \con{s}(\farg{\con{s}}( a )) \teq 0,\;
-     \con{s}(\farg{\con{s}}( a )) \teq \farg{\con{s}}( a ) + \con{s}( \farg{\con{s}}( a )-1 ) \bigr) \\[-\jot]
- & {} \wedge \exists z\typ{\fargsort{s}}. \farg{\con{s}}( z ) \teq \farg{\con{s}}( a )-1 ) \\[-\jot]
- & {} \wedge ( \con{s}( c ) > 100 \wedge \exists z\typ{\fargsort{s}}. \farg{\con{s}}( z ) \teq c )
+\!\begin{aligned}[c]
+  & \phantom{{\wedge}\; }\bigl(
+    \!\begin{aligned}[t]
+      \forall a : \fargsort{s}.\; & \phantom{{\wedge}\;}\lite\bigl( \farg{\con{s}}( a ) \leq 0,\;
+        \con{s}(\farg{\con{s}}( a )) \teq 0,\;
+        \con{s}(\farg{\con{s}}( a )) \teq \farg{\con{s}}( a ) + \con{s}( \farg{\con{s}}( a )-1 ) \bigr)
+\\[-\jot]
+      {\wedge}\; & \exists a : {\fargsort{s}}.\;\, \farg{\con{s}}( a ) \teq \farg{\con{s}}( a )-1 \bigr)
+\end{aligned}
+\\[-\jot]
+ & {\wedge}\; \bigl( \con{s}( c ) > 100 \wedge \exists a : {\fargsort{s}}.\;\, \farg{\con{s}}( a ) \teq \con{c} \bigr)
 \end{aligned}
 \end{equation}
 %
@@ -606,8 +611,8 @@ all functions $\con{f} \in \sfuns{\Sigma}$ as $\con{f}^\I$,
 and for each function $\con{f}$ of type $\tau_1 \times \ldots \tau_n \rightarrow \tau$ in $\sfundefs{\Sigma}$, 
 interprets $\fargsort{\con{f}}$ as a tuple of values of type $\tau_1^\I \times \ldots \times \tau_n^\I$,
 and each $\fargx{\con{f}}{i}$ as the $i^{th}$ projection on such tuples for each $i = 1, \ldots, n$.
-Note that $\J$ satisfies \emph{every} constraint of the form $\exists z\typ{\fargsort{\con{f}}}. ( \vecfarg{\con{f}}( z ) \teq \vec t )$,
-since by our construction of $\J$ there exists a $z$ such that $z^\J = \vec t^\J$.
+Note that $\J$ satisfies \emph{every} constraint of the form $\exists a : {\fargsort{\con{f}}}. ( \vecfarg{\con{f}}( a ) \teq \vec t )$,
+since by our construction of $\J$ there exists an $a$ such that $a^\J = \vec t^\J$.
 By case analysis it follows that $\conv_0$ maintains the invariant that
 if $\conv_0( t\typ{\Bool}, \ptrue )$ returns $( r\typ{\Bool}, D )$,
 then $\I$ satisfies $t$ if and only if $\J$ satisfies $r$.
@@ -633,9 +638,9 @@ the reason is that any model of formula~(\ref{eq:ex-after}) must satisfy a formu
 hence implying that formula~(\ref{eq:ex-before}) has a model.
 In more detail, let $\varphi_s$ be the formula $\forallf{\con{s}} x.\;\, \lite\bigl( x \leq 0, \con{s}(x) \teq 0, \con{s}( x ) \teq x + \con{s}( x-1 ) \bigr)$.
 The rightmost conjunct 
-$\exists z : {\fargsort{\con{s}}}. \farg{\con{s}}( z ) \teq \con{c}$ ensures 
+$\exists a : {\fargsort{\con{s}}}. \farg{\con{s}}( a ) \teq \con{c}$ ensures 
 that any model of formula~(\ref{eq:ex-after}) satisfying $\con{s}( \con{c} ) > 100$ also satisfies $\varphi_{\con{s}}[\con{c}/x]$.
-Similarly, the nested existential $\exists z.\;\, \farg{\con{s}}( z ) \teq \farg{\con{s}}( y )-1$
+Similarly, the nested existential $\exists a.\;\, \farg{\con{s}}( a ) \teq \farg{\con{s}}( y )-1$
 ensures that this constraint is enforced recursively.
 Given a model $\I$ of formula~(\ref{eq:ex-after}) that interprets $c$ as $14$, 
 it is easy to see that $\I$ must satisfy the formula:
