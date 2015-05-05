@@ -32,6 +32,12 @@
 \newcommand{\keywords}[1]{\par\addvspace\baselineskip
 \noindent\keywordname\enspace\ignorespaces#1}
 
+%\newcommand\return{$\mathsf{return}$\xspace}
+\newcommand\return{}
+
+%\newcommand\bigtuple[1]{$(${#1}$)$}
+\newcommand\bigtuple[1]{$\bigl<${#1}$\bigr>$}
+
 \DeclareFontFamily{OT1}{pzc}{}
 \DeclareFontShape{OT1}{pzc}{m}{it}{<-> s * [1.10] pzcmi7t}{}
 \DeclareMathAlphabet{\mathcalx}{OT1}{pzc}{m}{it}
@@ -401,50 +407,50 @@ predicate.
 \begin{enumerate}
 %\begin{framed}
 \item[\ ] 
-$\conv_0( t\typ{\tau},\, p )$ : 
+$\conv_0( t\typ{\tau},\, p )$ $=$
  \begin{itemize}
    \item[] $\mathsf{if}$ $\tau = \Bool$ and $t = \boolop(t_1,\ldots,t_n)$ $\mathsf{then}$
     \begin{itemize}
-      \item[] $\mathsf{let}$ $( t'_i,\, \chi_i ) = \conv_0( t_i,\, \pol( \boolop,\, i,\, p ) )$ for $i = 1, \ldots, n$;
-      \item[] $\mathsf{let}$ $\chi = \chi_1 \mathrel\wedge \cdots \mathrel\wedge \chi_n$;
+      \item[] $\mathsf{let}$ $( t'_i,\, \chi_i ) = \conv_0( t_i,\, \pol( \boolop,\, i,\, p ) )$ $\mathsf{for}$ $i = 1, \ldots, n$ $\mathsf{in}$
+      \item[] $\mathsf{let}$ $\chi = \chi_1 \mathrel\wedge \cdots \mathrel\wedge \chi_n$ $\mathsf{in}$
       \item[] $\mathsf{if}$ $p = \ptrue$ $\mathsf{then}$
       \begin{itemize}
-        \item[] $\mathsf{return}$ $( \boolop(t'_1, \ldots, t'_n) ) \wedge \chi,\, \true )$
+        \item[] \return \bigtuple{$\boolop(t'_1, \ldots, t'_n) ) \wedge \chi,\, \true$}
       \end{itemize}
       \item[] $\mathsf{else}$ $\mathsf{if}$ $p = \pfalse$ $\mathsf{then}$
       \begin{itemize}
-        \item[] $\mathsf{return}$ $( \boolop(t'_1, \ldots, t'_n) \vee \neg \chi,\, \true )$
+        \item[] \return \bigtuple{$\boolop(t'_1, \ldots, t'_n) \vee \neg \chi,\, \true$}
       \end{itemize}
       \item[] $\mathsf{else}$
       \begin{itemize}
-        \item[] $\mathsf{return}$ $( \boolop(t'_1, \ldots, t'_n),\, \chi )$
+        \item[] \return \bigtuple{$\boolop(t'_1, \ldots, t'_n),\, \chi$}
       \end{itemize}
     \end{itemize}
   \item[] $\mathsf{else}$ $\mathsf{if}$ $t = \forallf{\con{f}} \vec x.\;\, u$ $\mathsf{then}$
     \begin{itemize}
-      \item[] $\mathsf{let}$ $( u',\, \chi ) = \conv_0( u,\, p )$;
+      \item[] $\mathsf{let}$ $( u',\, \chi ) = \conv_0( u,\, p )$ $\mathsf{in}$
       %\item[] $\mathsf{assert}( \chi = \true )$;
-      \item[] $\mathsf{return}$ $( \forall y\typ{\fargsort{\con{f}}}.\; u' [ \vecfarg{\con{f}}( y ) / \vec x ],\, \true )$
+      \item[] \return \bigtuple{$\forall y\typ{\fargsort{\con{f}}}.\; u' [ \vecfarg{\con{f}}( y ) / \vec x ],\, \true$}
     \end{itemize}
   \item[] $\mathsf{else}$ $\mathsf{if}$ $t = \forall \vec x.\;\, u$ $\mathsf{then}$
     \begin{itemize}
-      \item[] $\mathsf{let}$ $( u',\, \chi ) = \conv_0( u,\, p )$;
-      \item[] $\mathsf{return}$ $( \forall \vec x.\; u',\, \forall \vec x.\; \chi )$
+      \item[] $\mathsf{let}$ $( u',\, \chi ) = \conv_0( u,\, p )$ $\mathsf{in}$
+      \item[] \return \bigtuple{$\forall \vec x.\; u',\, \forall \vec x.\; \chi$}
     \end{itemize}
    \item[] $\mathsf{else}$
    \begin{itemize}
-     \item[] $\mathsf{return}$ $( t,\, \bigwedge\, \{ \exists z : \fargsort{\con{f}}.\; \vecfarg{\con{f}}( z ) \teq \vec t \mid \con{f}( \vec t ) \in \terms( t ),\, \con{f} \in \sfundefs{\Sigma} \} )$
+     \item[] \return \bigtuple{$t,\, \bigwedge\, \{ \exists z : \fargsort{\con{f}}.\; \vecfarg{\con{f}}( z ) \teq \vec t \mid \con{f}( \vec t ) \in \terms( t ),\, \con{f} \in \sfundefs{\Sigma} \}$}
    \end{itemize}
  \end{itemize}
 \end{enumerate}
 \begin{enumerate}
 %\begin{framed}
 \item[\ ] 
-$\conv( \varphi )$ : 
+$\conv( \varphi )$ $=$
  \begin{itemize}
-   \item[] $\mathsf{let}$ $( \psi,\, \_ ) = \conv_0( \varphi,\, \ptrue )$;
+   \item[] $\mathsf{let}$ $( \psi,\, \_ ) = \conv_0( \varphi,\, \ptrue )$ $\mathsf{in}$
    %\item[] $\mathsf{assert}( D = \emptyset )$;
-   \item[] $\mathsf{return}$ $\psi$
+   \item[] \return $\psi$
   \end{itemize}
 \end{enumerate}
 
