@@ -264,7 +264,6 @@ the \emph{theory of equality with uninterpreted functions} \euf
 consists of the set of all $\Sigma$-interpretations.
 We refer to the type and function symbols in this theory as \emph{uninterpreted}.
 
-%In this paper, we associate quantified formulas with uninterpreted functions (informally, those whose semantics they define).
 In this paper, we consider \emph{annotated quantifed formulas} of the form
 $\forallf{a} \vec x.\; \varphi$, where the annotation~$a$ is either
 an uninterpreted function $\con{f} \in \sfuns{\Sigma}$ or the special symbol
@@ -277,6 +276,8 @@ $\tau_1, \ldots, \tau_n$ and $\forallf{\con{f}} \vec x.\; \varphi$ is equivalent
 $\forall \vec x.\;\, \con{f}( \vec x ) \teq t$ for some $t$. We write $\forall \vec
 x.\; \varphi$ as shorthand for $\forallf{\fnull} \vec x.\; \varphi$, and $\exists
 \vec x. \varphi$ as shorthand for $\neg \forall \vec x.\; \neg \varphi$.
+For a formula $\varphi$, 
+we write $\varphi[\vec t/\vec x]$ to denote the result of replacing all occurrences of $\vec x$ with $\vec t$.
 
 \begin{definition}%
 \rm
@@ -303,12 +304,36 @@ we distinguish the subset of \emph{defined} function symbols $\sfundefs{\Sigma}
 We consider $\Sigma$-formulas that are in definitional form with respect to
 functions $\sfundefs{\Sigma}$.
 
-A set of function definitions $\{ \varphi_1, \ldots, \varphi_n \}$ 
-is \emph{admissible} (\emph{in $T$}) if $\varphi_1 \wedge \ldots \wedge \varphi_n$ is $T$-satisfiable.
-For example, $\{ \forallf{\con{f}} x.\;\, \con{f}( x ) \teq 0 \}$
-and $\{ \forallf{\con{f}} x.\;\, \con{f}( x ) \teq \con{f}( x ) \}$ are admissible,
-whereas $\{ \forallf{\con{f}} x.\;\, \con{f}( x ) \teq \con{f}( x ) + 1 \}$ is not.
-\ajr{revise}
+
+%A set of function definitions $\{ \varphi_1, \ldots, \varphi_n \}$ 
+%is \emph{well-specified (in $T$)} if $\varphi_1 \wedge \ldots \wedge \varphi_n$ is $T$-satisfiable.
+%For instance, $\{ \forallf{f} \vec x. f( x ) \teq 0 \}$ is well-specified,
+%whereas $\{ \forallf{f} x. f( x ) \teq f( x ) + 1 \}$ is not. 
+%Note that a well-specified function definition need not specify a terminating function, e.g.
+%$\{ \forallf{f} x^\sortint. f( x ) \teq f( x - 1 ) \}$ or even $\{ \forallf{f} x. f( x ) \teq f( x ) \}$ are well-specified.
+%\ajr{revise}
+
+\begin{definition}
+Given a set of function definitions $\mathcal{D} = \{ \forallf{f_1} \vec x. \varphi_1, \ldots, \forallf{f_n} \vec x. \varphi_n \}$,
+a formula $\varphi$ is \emph{closed under function expansion with respect to $\mathcal{D}$} if
+\begin{eqnarray}
+\varphi \text{ entails } \displaystyle\bigwedge\limits_{i=1}^n \{ \varphi_i[ \vec t / \vec x ] \mid f_i( \vec t ) \in \terms( \varphi ) \}
+\end{eqnarray}
+The set $\mathcal{D}$ is \emph{admissible} if whenever there exists a model for $\varphi$ that is closed under function expansion,
+there exists a model for $\varphi \wedge \forallf{f_1} \vec x. \varphi_1 \wedge \ldots \wedge \forallf{f_n} \vec x. \varphi_n$.
+\end{definition}
+
+For instance, the set $\{ \forallf{f} \vec x. f( x ) \teq 0 \}$ is well-specified.
+A set of well-specified function definitions need be terminating, e.g.
+$\{ \forallf{f} x^\sortint. f( x ) \teq f( x - 1 ) \}$ or even $\{ \forallf{f} x. f( x ) \teq f( x ) \}$ are well-specified.
+On the other hand, the set $\{ \forallf{f} x. f( x ) \teq f( x ) + 1 \}$ is not well-specified, 
+since the empty set of formulas is closed under function expansion with respect to this set,
+and there is no model satisfying $\forallf{f} x. f( x ) \teq f( x ) + 1$.
+Consider the set $\{ \forallf{f} x. f( x ) \teq f( x ), \forallf{g}. \lite( \neg f( x ) \teq 5, g( x ) \teq g( x ) + 1, g( x ) \teq f( x ) ) \}$.
+While this set has a model where $f$ and $g$ are interpreted as the constant $5$, it is not well-specified
+since the formula $f( 0 ) \teq 4$ is closed under function expansion with respect to this set,
+but there exists no interpretation satisfying both $f( 0 ) \teq 4$ and $\forallf{g}. \lite( \neg f( x ) \teq 5, g( x ) \teq g( x ) + 1, g( x ) \teq f( x ) )$.
+
 
 \jb{TODO: Jasmin: Identify fragments: terminating recursive functions, etc.}
 
@@ -497,7 +522,7 @@ $\fargsort{s}$ as a finite set of elements $\{ u_0, \ldots, u_{14} \}$,
 $\farg{s}$ as a finite map mapping containing $u_i \mapsto i$ for $i = 0, \ldots, 14$,
 $c$ as $14$, 
 and $s$ as the (almost constant) function:
-\begin{equation}
+\begin{equation} \label{eq:approx-interp}
 \lambda x\typ{Int}. \lite( x \teq 0, 0, \lite( x \teq 1, 1, \lite( x \teq 2, 3, \ldots, \lite( x \teq 13, 91, 105 ) \ldots )
 \end{equation}
 In other words, $s$ is a function mapping $x$ to the sum of all positive integers between $0$ and $x$ when $0 \leq x \leq 13$,
@@ -529,12 +554,12 @@ and hence already has an intended interpretation.
 %\end{lemma}
 
 \begin{theorem}
-If $\varphi$ be a $\Sigma$-formula that is in definitional form with respect to functions $\sfundefs{\Sigma}$,
-and the set of function definitions corresponding to functions in $\sfundefs{\Sigma}$ is admissible,
+If $\varphi$ is a $\Sigma$-formula that is in definitional form with respect to functions $\sfundefs{\Sigma}$,
+and the set of function definitions $\mathcal{D}$ corresponding to functions in $\sfundefs{\Sigma}$ is admissible,
 then $\varphi$ and $\conv( \varphi )$ are equisatisfiable.
 \end{theorem}
 \begin{proof}
-(Sketch)  First, we show that if $\varphi$ has a model $\I$, then $\conv( \varphi )$ has a model $\J$.
+(Sketch)  First, we show that if $\varphi$ is satisfied by $\Sigma$-interpretation $\I$, then $\conv( \varphi )$ is satisfied by a $\extendsig{\Sigma}$-interpretation $\J$.
 Let $\J$ be the $\extendsig{\Sigma}$-interpretation that interprets all types $\tau \in \ssorts{\Sigma}$ as $\tau^\I$,
 all functions $\con{f} \in \sfuns{\Sigma}$ as $\con{f}^\I$,
 and for each function $\con{f}$ of type $\tau_1 \times \ldots \tau_n \rightarrow \tau$ in $\sfundefs{\Sigma}$, 
@@ -547,9 +572,37 @@ if $\conv_0( t\typ{\Bool}, \ptrue )$ returns $( r\typ{\Bool}, D )$,
 then $\I$ satisfies $t$ if and only if $\J$ satisfies $r$.
 Thus, we conclude $\J$ is a model of $\conv( \varphi )$.
 
-Second, we show that if $\conv( \varphi )$ has a model $\I$, then $\varphi$ has a model $\J$.
+Second, we show that if $\conv( \varphi )$ is satisfied by a $\extendsig{\Sigma}$-interpretation $\I$, then $\varphi$ is satisfied by $\Sigma$-interpretation $\J$.
+Since $\varphi$ is well-defined with respect to functions defined by $\mathcal{D}$, we know $\varphi$ is of the form $\mathcal{D} \wedge \varphi_0$.
+We first argue that $\I$ satisfies a $\Sigma$-formula $\psi$ that is closed under function expansion with respect to $\mathcal{D}$,
+and where $\psi$ entails $\varphi_0$.
 
+Since there exists a model for $\psi$ that is closed under function expansion with respect to $\mathcal{D}$, 
+then since $\mathcal{D}$ is well-specified,
+by definition there exists a model for $\psi \wedge \mathcal{D}$, which entails $\mathcal{D} \wedge \varphi_0$, which is $\varphi$.
 \end{proof}
+
+Let us revisit the translated formula~(\ref{eq:ex-after}) from Example~\ref{ex:translation}.
+This formula is unsatisfiable if and only if formula~(\ref{eq:ex-before}) is unsatisfiable since $\fargsort{f}$ can be interpreted as $\sortint$,
+and $\farg{f}$ can be interpreted as the identity function.
+Conversely, we claim formula~(\ref{eq:ex-after}) is satisfiable if and only if formula~(\ref{eq:ex-before}) is satisfiable,
+noting that the set $\{ \forall_{s} x\typ{\sortint}. ite( x \leq 0, s(x) \teq 0, s( x ) \teq x + s( x-1 ) ) \}$ is well-specified.
+As stated in the proof of the previous theorem, 
+the reason is that any model of formula~(\ref{eq:ex-after}) must satisfy a formula that is closed under function expansion,
+hence implying that formula~(\ref{eq:ex-before}) has a model.
+In more detail, let $\varphi_s$ be the formula $\forall_{s} x. ite( x \leq 0, s(x) \teq 0, s( x ) \teq x + s( x-1 ) )$.
+The rightmost conjunct 
+$\exists z\typ{\fargsort{s}}. \farg{s}( z ) \teq c$ ensures 
+that any model of formula~(\ref{eq:ex-after}) satisfying $s( c ) > 100$ also satisfies $\varphi_s[c/x]$.
+Similarly, the nested existential $\exists z. \farg{s}( z ) \teq \farg{s}( y )-1 )$
+ensures that this constraint is enforced recursively.
+%Given a model $\I$ of formula~(\ref{eq:ex-after}) that interprets $c$ as $14$, it is easy to see that $\I$ also satisfies the formula:
+%\begin{eqnarray}
+%\begin{split}
+%s( c ) > 100 \wedge & \displaystyle\bigwedge\limits_{i=0}^{13} ( \neg c-i \leq 0 \wedge s( c-i ) \teq i + s( c-i-1 ) ) \\
+%                    & \wedge c-14 \leq 0 \wedge s( c-14 ) \teq 0
+%\end{split}
+%\end{eqnarray}
 
 \section{Evaluation}
 \label{sec:evaluation}
@@ -684,7 +737,18 @@ When reading this input,
 which after rewriting becomes $\forallf{s} x.\;\, \lite( x \leq 0, s( x ) \teq 0, s( x ) \teq s( x-1 ) )$.
 If \cvc's finite model finding mode for recursive functions is enabled (using the command line parameter ``--fmf-fun"),
 then it will replace its list of known assertions based on the conversion $\conv$ before checking for satisfiability.
-Note that this option is model-sound \ct{define?} only if the functions provided in the input are admissible.
+%If the functions provided in the input are well-specified, 
+%then a ``satisfiable" response from the solver implies that a model exists for the original formula.
+Accordingly, the solver will output an approximation of the interpretation for recursive function definitions,
+that is, it may output the interpretation~(\ref{eq:approx-interp}) from Section~\ref{sec:encoding} for $s$.
+
+Notice the option ``--fmf-fun" effectively instructs the SMT solver to assume that the functions provided by the user are admissible.
+If this option is used for a set of functions definitions that is \emph{not} admissible, then the solver is not model-sound, that is, 
+it may return ``satisfiable" for unsatisfiable inputs.
+As such,
+this option targets users who wish to determine the satisfiability of inputs that involving function definitions that are known to be consistent,
+whereas it does not target users who wish to check the consistency of a set of function definitions.
+
 
 \section{Related Work}
 
@@ -705,6 +769,7 @@ Nitpick
 Leon
 
 in smt : z3, cvc4 (briefly, text in main section gives detail)
+
 
 \section{Conclusion}
 \label{sec:conclusion}
