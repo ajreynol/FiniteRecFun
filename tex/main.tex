@@ -115,7 +115,7 @@
 \newcommand{\Mo}{{\mathcal{\!J\!}}}
 
 %\newcommand{\euf}{\ensuremath{\mathrm{E}}\xspace}
-\newcommand{\euf}{\ensuremath{\mathcalx{E}}\xspace}
+\newcommand{\euf}{\ensuremath{\mathcalx{UF}}\xspace}
 %\newcommand{\ari}{\ensuremath{\mathrm{A}}\xspace}
 \newcommand{\ari}{\ensuremath{\mathcalx{A}}\xspace}
 
@@ -180,6 +180,44 @@ To do.
 Thus, want SMT solver to check satisfiability the assumption that recursive functions are consistent (where this needs to be defined precisely).
 }
 
+Recent techniques~\cite{GeDeM-CAV-09, ReyEtAl-1-RR-13} 
+have focused on finding models for quantified formulas in SMT.
+Ge and de Moura \cite{GeDeM-CAV-09} presented a complete instantiation-based
+procedure for formulas in the \emph{essentially uninterpreted} fragment.
+This fragment is limited to universally quantified formulas where all
+occurrences of variables occur as direct subterms of uninterpreted
+functions. For example, the formula $\forall x%\typ{\sortint} --- the sort is not important, right?
+.\;\, \con{f}( x )
+\teq \con{g}( x ) + 5$ is in the essentially uninterpreted fragment.
+% since all
+% occurrences of $x$ occur beneath uninterpreted functions $\con{f}$ and
+% $\con{g}$.
+Other syntactic criteria are identified in this paper that extend
+this fragment slightly, including cases when variables occur as arguments of
+arithmetic predicates. The techniques in~Reynolds et al.\
+\cite{ReyEtAl-1-RR-13} can be used for finding finite models for quantified
+formulas over uninterpreted types as well as types having a fixed finite
+interpretation, such as fixed-width bitvectors and enumerated datatypes.
+Finite model finding techniques can
+find a model for the formula $\forall x\typ{\tau} y\typ{\tau}.\;\, \neg x \teq
+y \vee \con{f}( x ) \teq \con{f}( y )$ where the uninterpreted type $\tau$ is
+interpreted as a finite set and $\con{f}$ as injective finite map.
+\jb{Weird example. This formula is a tautology of EUF! Maybe you put the
+negation at the right place?}
+
+Unfortunately, these fragments cannot accommodate the vast majority of
+quantified formulas that correspond to recursive function definitions.
+In particular, the fragments in~\cite{GeDeM-CAV-09} are not applicable when the argument of a recursive function is used in various ways (e.g. within an arithmetic expression), 
+while the fragment in~\cite{ReyEtAl-1-RR-13} is not applicable for functions over infinite domains such as the integers.
+So, for instance, the quantified formula $\forall x\typ{\sortint}.\;\, \lite( p \leq 0, p( x ) \teq 0, p( x ) \teq 2 * p( x - 1 ) )$ 
+is not in the essentially uninterpreted fragment (since $x$ occurs as a child of $-$),
+nor does finite model finding apply (since $x$ is of type $\sortint$).
+
+Here, we advocate an approach that translates formulas involving function
+definitions (such as the one mentioned in the previous paragraph)
+into equisatisfiable \ct{to be defined} formulas where the
+techniques~\cite{GeDeM-CAV-09, ReyEtAl-1-RR-13} are applicable.
+
 \paragraph{Contributions}
 
 In this paper, we make the following contributions:
@@ -189,26 +227,6 @@ that produces formulas for which existing model finding techniques~\cite{GeDeM-C
 \item[-] We provide experimental evidence that this translation improves the effectiveness of SMT solvers \cvc and \ziii for finding counterexamples to verification conditions.
 \item[-] We detail front-end support for recursive function definitions and this translation in the SMT solver \cvc.
 \end{itemize}
-
-\section{Related Work}
-
-first-order model finders: SEM, MACE/Mace, Paradox, FMDarwin, iProver
-  either direct search or reduction to SAT
-
-Alloy (and Alloy idiom by Kuncak \& Jackson), Kodkod
-
-The model finder for KIV based on Alloy
-
-Refute
-  * unsound handling of datatypes
-
-Nitpick
-  * inductive / coinductive predicates
-  * quotient types
-
-Leon
-
-in smt : z3, cvc4 (briefly, text in main section gives detail)
 
 \section{Preliminaries}
 \label{sec:prelim}
@@ -280,9 +298,10 @@ We call $\psi$ the \emph{conjecture} of $\varphi$.
 \end{definition}
 
 Given a signature $\Sigma$,
-we partition its function symbols $\sfuns{\Sigma}$ into $\sfundefs{\Sigma} \mathrel{\uplus} \sfunndefs{\Sigma}$,
-where $\sfundefs{\Sigma}$ is the set of \emph{defined} function symbols,
-and consider $\Sigma$-formulas that are in definitional form with respect to functions $\sfundefs{\Sigma}$.
+we distinguish the subset of \emph{defined} function symbols $\sfundefs{\Sigma}
+\subseteq \sfuns{\Sigma}$.
+We consider $\Sigma$-formulas that are in definitional form with respect to
+functions $\sfundefs{\Sigma}$.
 
 A set of function definitions $\{ \varphi_1, \ldots, \varphi_n \}$ 
 is \emph{admissible} (\emph{in $T$}) if $\varphi_1 \wedge \ldots \wedge \varphi_n$ is $T$-satisfiable.
@@ -298,61 +317,27 @@ whereas $\{ \forallf{\con{f}} x.\;\, \con{f}( x ) \teq \con{f}( x ) + 1 \}$ is n
 %An admissible function definition need not specify a terminating function, e.g.
 %$\{ \forallf{\con{f}} x^\sortint.\;\, \con{f}( x ) \teq \con{f}( x - 1 ) \}$ or even $\{ \forallf{\con{f}} x.\;\, \con{f}( x ) \teq \con{f}( x ) \}$ are admissible.
 
-%\section{Model Finding for Recursive Functions in SMT}
-\section{Model Finding for (Co)recursive Functions in SMT}
-\label{sec:model-finding-rec-fun}
-
-\jb{Break up big section into several? Or at least rename it to avoid repeating the
-title. (What other subsections are planned?)}
-
-Recent techniques~\cite{GeDeM-CAV-09, ReyEtAl-1-RR-13} 
-have focused on finding models for quantified formulas in SMT.
-Ge and de Moura \cite{GeDeM-CAV-09} presented a complete instantiation-based
-procedure for formulas in the \emph{essentially uninterpreted} fragment.
-This fragment is limited to universally quantified formulas where all
-occurrences of variables occur as direct subterms of uninterpreted
-functions. For example, the formula $\forall x%\typ{\sortint} --- the sort is not important, right?
-.\;\, \con{f}( x )
-\teq \con{g}( x ) + 5$ is in the essentially uninterpreted fragment.
-% since all
-% occurrences of $x$ occur beneath uninterpreted functions $\con{f}$ and
-% $\con{g}$.
-Other syntactic criteria are identified in this paper that extend
-this fragment slightly, including cases when variables occur as arguments of
-arithmetic predicates. The techniques in~Reynolds et al.\
-\cite{ReyEtAl-1-RR-13} can be used for finding finite models for quantified
-formulas over uninterpreted types as well as types having a fixed finite
-interpretation, such as fixed-width bitvectors and enumerated datatypes.
-Finite model finding techniques can
-find a model for the formula $\forall x\typ{\tau} y\typ{\tau}.\;\, \neg x \teq
-y \vee \con{f}( x ) \teq \con{f}( y )$ where the uninterpreted type $\tau$ is
-interpreted as a finite set and $\con{f}$ as injective finite map.
-\jb{Weird example. This formula is a tautology of EUF! Maybe you put the
-negation at the right place?}
-
-Unfortunately, these fragments cannot accommodate the vast majority of
-quantified formulas that correspond to recursive function definitions.
-In particular, the fragments in~\cite{GeDeM-CAV-09} are not applicable when the argument of a recursive function is used in various ways (e.g. within an arithmetic expression), 
-while the fragment in~\cite{ReyEtAl-1-RR-13} is not applicable for functions over infinite domains such as the integers.
-So, for instance, the quantified formula $\forall x\typ{\sortint}.\;\, \lite( p \leq 0, p( x ) \teq 0, p( x ) \teq 2 * p( x - 1 ) )$ 
-is not in the essentially uninterpreted fragment (since $x$ occurs as a child of $-$),
-nor does finite model finding apply (since $x$ is of type $\sortint$).
-
-Here, we advocate an approach that translates formulas involving function definitions (such as the one mentioned in the previous paragraph)
-into equisatisfiable \ct{to be defined} formulas where the techniques~\cite{GeDeM-CAV-09, ReyEtAl-1-RR-13} are applicable.
-
-\subsection{A Translation for Well-Specified Function Definitions}
+%\section{A Translation for Admissible Function Definitions}
+%\section{A Translation for Function Definitions}
+\section{The Translation}
 \label{sec:encoding}
 
-In the remainder of the section, we fix a signature $\Sigma$.
-Say that $\Sigma$-formula $\varphi$ is in definitional form with respect to functions $\sfundefs{\Sigma}$, 
-and the set of function definitions corresponding to $\sfundefs{\Sigma}$ are admissible.
+Let us fix a signature $\Sigma$, a $\Sigma$-formula
+$\varphi$ in definitional form with respect to functions $\sfundefs{\Sigma}$,
+whose definitions are admissible.
 %We may translate $\varphi$ into a equisatisfiable formula $\psi$ for which known model-finding procedures~\cite{GeDeM-CAV-09, ReyEtAl-1-RR-13} are applicable.
-This section presents a method for constructing an extended signature $\extendsig{ \Sigma }$,
-and a $\extendsig{ \Sigma }$-formula $\psi$ such that $\varphi$ and $\psi$ are equisatisfiable.
-The intuition behind this translation is to use an uninterpreted type \ct{to be defined} to abstract the set of \emph{relevant} tuples for each recursive function $\con{f}$,
-and restrict the quantification of the function definition for $\con{f}$ to a variable of this type.
-Informally, the relevant tuples $\vec t$ of a function $\con{f}$ are the ones for which the interpretation of $\con{f}( \vec t )$ is relevant to the satisfiability of $\varphi$.
+This section presents a method for constructing an extended signature
+$\extendsig{ \Sigma }$ and a $\extendsig{ \Sigma }$-formula $\psi$ such that
+$\varphi$ and $\psi$ are equisatisfiable.
+\jb{Equisatisfiability as defined in Sect.\ 2 requires the same $\Sigma$ and
+the same $T$ for both formulas, which isn't the case here.}
+The intuition behind this translation
+is to use an uninterpreted type \ct{to be defined} to abstract the set of
+\emph{relevant} tuples for each recursive function $\con{f}$ and restrict the
+quantification of the function definition for $\con{f}$ to a variable of this
+type. Informally, the relevant tuples $\vec t$ of a function $\con{f}$ are the
+ones for which the interpretation of $\con{f}( \vec t )$ is relevant to the
+satisfiability of $\varphi$.
 
 \begin{figure}[t]
 \begin{enumerate}
@@ -700,6 +685,26 @@ which after rewriting becomes $\forallf{s} x.\;\, \lite( x \leq 0, s( x ) \teq 0
 If \cvc's finite model finding mode for recursive functions is enabled (using the command line parameter ``--fmf-fun"),
 then it will replace its list of known assertions based on the conversion $\conv$ before checking for satisfiability.
 Note that this option is model-sound \ct{define?} only if the functions provided in the input are admissible.
+
+\section{Related Work}
+
+first-order model finders: SEM, MACE/Mace, Paradox, FMDarwin, iProver
+  either direct search or reduction to SAT
+
+Alloy (and Alloy idiom by Kuncak \& Jackson), Kodkod
+
+The model finder for KIV based on Alloy
+
+Refute
+  * unsound handling of datatypes
+
+Nitpick
+  * inductive / coinductive predicates
+  * quotient types
+
+Leon
+
+in smt : z3, cvc4 (briefly, text in main section gives detail)
 
 \section{Conclusion}
 \label{sec:conclusion}
