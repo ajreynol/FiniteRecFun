@@ -785,8 +785,34 @@ The last configuration {\bench cvc4+i} incorporates techniques for automating in
 \normalsize
 \centering
 \begin{tabular}{l@{\kern1.5em}r@{\kern0.375em}r@{\kern1.5em}r@{\kern0.375em}r@{\kern1.5em}r@{\kern0.375em}r@{\kern1.5em}r@{\kern0.375em}r}
+  & \multicolumn{2}{c@{\kern0.375em}}{{\bench z3}}     & \multicolumn{2}{c@{\kern0.375em}}{{\bench cvc4}}     & \multicolumn{2}{c@{\kern0.375em}}{{\bench cvc4+f}}     & \multicolumn{2}{c@{\kern0.375em}}{{\bench cvc4+i}}
+\\%[-1pt]
+  & \hfill $\varphi$ \hfill & $\conv(\varphi)$\!\!
+  & \hfill $\varphi$ \hfill & $\conv(\varphi)$\!\!
+  & \hfill $\varphi$ \hfill & $\conv(\varphi)$\!\!
+  & \hfill $\varphi$ \hfill & $\conv(\varphi)$\!\!
+\\
+\midrule
+{\bench isa} & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0
+\\
+{\bench leon}  & 0 & 2 & 0 & 0 & 0 & {\win 9} & 0 & 0
+\\
+{\bench isa+m} & 0 & 35 & 0 & 0 & 0 & {\win 153} & 0 & 0
+\\
+{\bench leon+m}  & 11  & 75 & 6 & 6 & 6 & {\win 169} & 6 & 6
+\\[\jot]
+Total & \phantom{0}11  & 112 & \phantom{00}6 & \phantom{00}6 & \phantom{00}6 & {\win 331} & \phantom{00}6 & \phantom{00}6
+\end{tabular}
+\caption{\,Number of ``satisfiable'' responses on benchmarks without and with translation with $\conv$}
+\label{fig:sat}
+\end{figure}
+
+\begin{figure}[t]
+\normalsize
+\centering
+\begin{tabular}{l@{\kern1.5em}r@{\kern0.375em}r@{\kern1.5em}r@{\kern0.375em}r@{\kern1.5em}r@{\kern0.375em}r@{\kern1.5em}r@{\kern0.375em}r}
   & \multicolumn{2}{c@{\kern1.5em}}{{\bench z3}}     & \multicolumn{2}{c@{\kern1.5em}}{{\bench cvc4}}     & \multicolumn{2}{c@{\kern1.5em}}{{\bench cvc4+f}}     & \multicolumn{2}{c@{\kern1.5em}}{{\bench cvc4+i}}
-\\[-1pt]
+\\%[-1pt]
   & \hfill $\varphi$ \hfill & $\conv(\varphi)$\!\!
   & \hfill $\varphi$ \hfill & $\conv(\varphi)$\!\!
   & \hfill $\varphi$ \hfill & $\conv(\varphi)$\!\!
@@ -804,44 +830,16 @@ The last configuration {\bench cvc4+i} incorporates techniques for automating in
 Total & 187 & 209 & 216 & 211 & 217 & 204 & {\win 318} & 217
 \end{tabular}
 \caption{\,Number of ``unsatisfiable'' responses on benchmarks without and with translation with $\conv$}
-\label{fig:results}
+\label{fig:unsat}
 \end{figure}
 
-\begin{figure}[t]
-\normalsize
-{
-\centering
-\begin{tabular}{l@{\kern1.5em}r@{\kern0.375em}r@{\kern1.5em}r@{\kern0.375em}r@{\kern1.5em}r@{\kern0.375em}r@{\kern1.5em}r@{\kern0.375em}r}
-  & \multicolumn{2}{c@{\kern0.375em}}{{\bench z3}}     & \multicolumn{2}{c@{\kern0.375em}}{{\bench cvc4}}     & \multicolumn{2}{c@{\kern0.375em}}{{\bench cvc4+f}}     & \multicolumn{2}{c@{\kern0.375em}}{{\bench cvc4+i}}
-\\[-1pt]
-  & \hfill $\varphi$ \hfill & $\conv(\varphi)$\!\!
-  & \hfill $\varphi$ \hfill & $\conv(\varphi)$\!\!
-  & \hfill $\varphi$ \hfill & $\conv(\varphi)$\!\!
-  & \hfill $\varphi$ \hfill & $\conv(\varphi)$\!\!
-\\
-\midrule
-{\bench isa} & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0
-\\
-{\bench leon}  & 0 & 2 & 0 & 0 & 0 & {\win 9} & 0 & 0
-\\
-{\bench isa+m} & 0 & 35 & 0 & 0 & 0 & {\win 153} & 0 & 0
-\\
-{\bench leon+m}  & 11  & 75 & 6 & 6 & 6 & {\win 169} & 6 & 6
-\\[\jot]
-Total & \phantom{0}11  & 112 & \phantom{00}6 & \phantom{00}6 & \phantom{00}6 & {\win 331} & \phantom{00}6 & \phantom{00}6
-\end{tabular}
-
-
-}
-\caption{\,Number of ``satisfiable'' responses on benchmarks without and with translation with $\conv$}
-\label{fig:results}
-\end{figure}
-
-The results are shown in Figure~\ref{fig:results}.
-The results are divided into benchmarks before and after the translation $\conv$.
+The results are shown in Figures \ref{fig:sat} and \ref{fig:sat}.
+The results are divided into benchmarks triggering ``unsatisfiable'' and ``satisfiable''
+responses and further into benchmarks before and after the translation $\conv$.
+\jb{rephrase}
 First, we note that in no cases did a configuration answer differently across the two encodings.
-In other words, there were no cases in which \ziii or \cvc answered e.g.\ ``unsatisfiable" on a benchmark $\varphi$
-and ``satisfiable" on its corresponding benchmark $\conv( \varphi )$, or vice versa.
+In other words, there were no cases in which \ziii or \cvc answered e.g.\ ``unsatisfiable'' on a benchmark $\varphi$
+and ``satisfiable'' on its corresponding benchmark $\conv( \varphi )$, or vice versa.
 This provides confirming evidence that the translation $\conv$ is \emph{refutation-sound},
 as we did not find a case where $\conv( \varphi )$ was unsatisfiable when $\varphi$ was satisfiable.
 It also provides confirming evidence that the translation is \emph{model-sound} for this set of benchmarks,
