@@ -49,7 +49,7 @@
 \DeclareSymbolFont{letters}{OML}{txmi}{m}{it}
 
 %\newcommand\pneg{\neg}
-\newcommand\pneg{-}
+\newcommand\pnegate{-}
 
 \newcommand{\con}[1]{\mathsf{#1}}
 \let\const=\con
@@ -102,9 +102,9 @@
 \newcommand{\sfunndefs}[1]{#1^\mathrm{nf}}
 \newcommand{\sortint}{\ty{Int}}
 
-\newcommand{\pnone}{\con{none}}
-\newcommand{\ptrue}{\con{pos}}
-\newcommand{\pfalse}{\con{neg}}
+\newcommand{\pnone}{\con{apolar}}
+\newcommand{\ppos}{\con{pos}}
+\newcommand{\pneg}{\con{neg}}
 \newcommand{\pol}{\con{pol}}
 
 %\newtheorem{remark}{Remark}
@@ -400,11 +400,11 @@ the signature $\extendsig{\Sigma}$ includes
 The function $\conv$ translates the $\Sigma$-formula
 $\varphi$ into an $\extendsig{\Sigma}$-formula. It relies
 on the auxiliary function $\conv_0$, which takes two arguments:\ the term $t$
-to translate and a \emph{polarity} $p$, which is either $\ptrue$, $\pfalse$, or
+to translate and a \emph{polarity} $p$, which is either $\ppos$, $\pneg$, or
 $\pnone$. It returns a pair $( t'\negvthinspace,\, \chi )$, where $t'$ is a term of
 type $\tau$ and $\chi$ is an additional constraint.
 This constraint is necessary if the polarity is $\pnone$; otherwise, any necessary
-constraint is encoded directly in $t'$ and $\chi$ is simply $\true$.
+constraint is encoded directly in $t'$ and $\chi$ is simply $\ltrue$.
 
 \jb{Merge para above with para below}
 
@@ -424,13 +424,13 @@ $\conv_0( t\typ{\tau},\, p )$ $=$
     \begin{itemize}
       \item[] $\mathsf{let}$ $( t'_i,\, \chi_i ) = \conv_0( t_i,\, \pol( \boolop,\, i,\, p ) )$ $\mathsf{for}$ $i = 1, \ldots, n$ $\mathsf{in}$
       \item[] $\mathsf{let}$ $\chi = \chi_1 \wedge \cdots \wedge \chi_n$ $\mathsf{in}$
-      \item[] $\mathsf{if}$ $p = \ptrue$ $\mathsf{then}$
+      \item[] $\mathsf{if}$ $p = \ppos$ $\mathsf{then}$
       \begin{itemize}
-        \item[] \return \bigtuple{$\boolop(t'_1, \ldots, t'_n) ) \wedge \chi,\, \true$}
+        \item[] \return \bigtuple{$\boolop(t'_1, \ldots, t'_n) ) \wedge \chi,\, \ltrue$}
       \end{itemize}
-      \item[] $\mathsf{else}$ $\mathsf{if}$ $p = \pfalse$ $\mathsf{then}$
+      \item[] $\mathsf{else}$ $\mathsf{if}$ $p = \pneg$ $\mathsf{then}$
       \begin{itemize}
-        \item[] \return \bigtuple{$\boolop(t'_1, \ldots, t'_n) \vee \neg \chi,\, \true$}
+        \item[] \return \bigtuple{$\boolop(t'_1, \ldots, t'_n) \vee \neg \chi,\, \ltrue$}
       \end{itemize}
       \item[] $\mathsf{else}$
       \begin{itemize}
@@ -440,8 +440,8 @@ $\conv_0( t\typ{\tau},\, p )$ $=$
   \item[] $\mathsf{else}$ $\mathsf{if}$ $t = \forallf{\con{f}} \vec x.\;\, u$ $\mathsf{then}$
     \begin{itemize}
       \item[] $\mathsf{let}$ $( u',\, \chi ) = \conv_0( u,\, p )$ $\mathsf{in}$
-      %\item[] $\mathsf{assert}( \chi = \true )$;
-      \item[] \return \bigtuple{$\forall y\typ{\fargsort{\con{f}}}.\; u' [ \vecfarg{\con{f}}( y ) / \vec x ],\, \true$}
+      %\item[] $\mathsf{assert}( \chi = \ltrue )$;
+      \item[] \return \bigtuple{$\forall y\typ{\fargsort{\con{f}}}.\; u' [ \vecfarg{\con{f}}( y ) / \vec x ],\, \ltrue$}
     \end{itemize}
   \item[] $\mathsf{else}$ $\mathsf{if}$ $t = \forall \vec x.\;\, u$ $\mathsf{then}$
     \begin{itemize}
@@ -459,7 +459,7 @@ $\conv_0( t\typ{\tau},\, p )$ $=$
 \item[\ ] 
 $\conv( \varphi )$ $=$
  \begin{itemize}
-   \item[] $\mathsf{let}$ $( \psi,\, \_ ) = \conv_0( \varphi,\, \ptrue )$ $\mathsf{in}$
+   \item[] $\mathsf{let}$ $( \psi,\, \_ ) = \conv_0( \varphi,\, \ppos )$ $\mathsf{in}$
    %\item[] $\mathsf{assert}( D = \emptyset )$;
    \item[] \return $\psi$
   \end{itemize}
@@ -488,12 +488,12 @@ i, p )$, where $\pol$ is defined as
 \pol( \boolop, i, p ) =
 \begin{cases}
 p & \text{if either $\boolop \in \{{\wedge}, {\vee}\}$ or $\boolop = \lite$ and $i \in \{2, 3\}$} \\[-\jot]
-\pneg p & \text{if $\boolop = {\neg}$} \\[-\jot]
+\pnegate p & \text{if $\boolop = {\neg}$} \\[-\jot]
 \pnone & \text{otherwise}
 \end{cases}
 \end{equation*}
-The negation $\pneg p$ of a polarity $p$ is $\pfalse$ if $p$ is $\ptrue$, $\ptrue$
-if $p$ is $\pfalse$, and $\pnone$ if $p$ is $\pnone$.
+The negation $\pnegate p$ of a polarity $p$ is $\pneg$ if $p$ is $\ppos$, $\ppos$
+if $p$ is $\pneg$, and $\pnone$ if $p$ is $\pnone$.
 
 If $t$ has positive polarity, $\conv_0$ adds the constraint $\chi$ derived from
 the subterms as a conjunction. Dually, if $t$ has negative polarity, the
@@ -506,7 +506,7 @@ $\sfundefs{\Sigma}$, $\conv_0$ constructs a quantified formula over a single var
 $y$ of type $\fargsort{\con{f}}$ and replaces all occurrences of $\vec x$ in
 $t'_1$ with $\vecfarg{\con{f}}( y )$.Since function definitions
 are a top-level conjunct, %by case analysis on the return values of $\conv$,
-we know that $\chi$ is simply $\true$.
+we know that $\chi$ is simply $\ltrue$.
 If $t$ is not a function definition, the resulting
 quantified formula is reconstructed with the body $u'$ returned by the
 recursive call, and a quantifier is prefixed to the constraint $\chi$
@@ -543,8 +543,8 @@ equal to $14$. Due to the universal quantifier,
 current SMT techniques~\cite{GeDeM-CAV-09, ReyEtAl-1-RR-13} are unable to find
 a model for this formula. The signature $\extendsig{\Sigma}$ includes the type
 $\fargsort{s}$ and the uninterpreted function $\farg{\con{s}}$ of type $\fargsort{s}
-\rightarrow \sortint$. The result of $\conv( \varphi,\, \ptrue )$ is the pair $(
-\psi,\, \true )$, where (after simplification) $\psi$ is the
+\rightarrow \sortint$. The result of $\conv( \varphi,\, \ppos )$ is the pair $(
+\psi,\, \ltrue )$, where (after simplification) $\psi$ is the
 $\extendsig{\Sigma}$-formula
 %
 \begin{equation} \label{eq:ex-after}
@@ -614,7 +614,7 @@ and each $\fargx{\con{f}}{i}$ as the $i^{th}$ projection on such tuples for each
 Note that $\J$ satisfies \emph{every} constraint of the form $\exists a : {\fargsort{\con{f}}}. ( \vecfarg{\con{f}}( a ) \teq \vec t )$,
 since by our construction of $\J$ there exists an $a$ such that $a^\J = \vec t^\J$.
 By case analysis it follows that $\conv_0$ maintains the invariant that
-if $\conv_0( t\typ{\Bool}, \ptrue )$ returns $( r\typ{\Bool}, D )$,
+if $\conv_0( t\typ{\Bool}, \ppos )$ returns $( r\typ{\Bool}, D )$,
 then $\I$ satisfies $t$ if and only if $\J$ satisfies $r$.
 Thus, we conclude $\J$ is a model of $\conv( \varphi )$.
 
