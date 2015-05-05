@@ -581,19 +581,8 @@ From a practical point of view, this is not an issue, because
 $s$ is the very function that was explicitly defined by the user,
 and hence already has an intended interpretation.
 
-\ajr{add invariants, proofs}
-
-%\begin{lemma}
-%Let $\M$ be a model satisfying $\conv( \varphi )$, and
-%%and let $\conv( \varphi )^\ast$ be the quantifier-free formula obtained by 
-%let $M$ be a set of literals such that $\M \models M$ and $M \models_p \conv( \varphi )$.
-%For each assignment $\sigma$ over $\vars{ M }$,
-%each $\con{f}( \vec t ) \in \terms( M \sigma )$ where $\con{f} \in \sfundefs{\Sigma}$, 
-%there exists a formula of the form $\exists z\typ{\fargsort{\con{f}}}. ( \vecfarg{\con{f}}( z ) \teq \vec t )$ in $M \sigma$.
-%\end{lemma}
-
 \begin{theorem}
-If $\varphi$ is a $\Sigma$-formula that is in definitional form with respect to functions $\sfundefs{\Sigma}$,
+If $\varphi$ is a $\Sigma$-formula that is in definitional form with respect to $\sfundefs{\Sigma}$,
 and the set of function definitions $\mathcal{D}$ corresponding to functions in $\sfundefs{\Sigma}$ is admissible,
 then $\varphi$ and $\conv( \varphi )$ are equisatisfiable.
 \end{theorem}
@@ -612,7 +601,7 @@ then $\I$ satisfies $t$ if and only if $\J$ satisfies $r$.
 Thus, we conclude $\J$ is a model of $\conv( \varphi )$.
 
 Second, we show that if $\conv( \varphi )$ is satisfied by a $\extendsig{\Sigma}$-interpretation $\I$, then $\varphi$ is satisfied by $\Sigma$-interpretation $\J$.
-Since $\varphi$ is in definitional form with respect to functions defined by $\mathcal{D}$, we know $\varphi$ is of the form $\mathcal{D} \wedge \varphi_0$.
+Since $\varphi$ is in definitional form with respect to the functions defined by $\mathcal{D}$, we know $\varphi$ is of the form $\mathcal{D} \wedge \varphi_0$.
 We first argue that $\I$ satisfies a $\Sigma$-formula $\psi$ that is closed under function expansion with respect to $\mathcal{D}$,
 and where $\psi$ entails $\varphi_0$.
 
@@ -635,13 +624,20 @@ $\exists z\typ{\fargsort{s}}. \farg{s}( z ) \teq c$ ensures
 that any model of formula~(\ref{eq:ex-after}) satisfying $s( c ) > 100$ also satisfies $\varphi_s[c/x]$.
 Similarly, the nested existential $\exists z. \farg{s}( z ) \teq \farg{s}( y )-1 )$
 ensures that this constraint is enforced recursively.
-%Given a model $\I$ of formula~(\ref{eq:ex-after}) that interprets $c$ as $14$, it is easy to see that $\I$ also satisfies the formula:
-\begin{eqnarray}
+Given a model $\I$ of formula~(\ref{eq:ex-after}) that interprets $c$ as $14$, 
+it is easy to see that $\I$ must satisfy the formula:
+\begin{eqnarray} \label{eq:fun-closure}
 \begin{split}
-s( c ) > 100 \wedge & \displaystyle\bigwedge\limits_{i=0}^{13} ( \neg c-i \leq 0 \wedge s( c-i ) \teq i + s( c-i-1 ) ) \\
-                    & \wedge c-14 \leq 0 \wedge s( c-14 ) \teq 0
+\psi := s( c ) > 100 \wedge & \displaystyle\bigwedge\limits_{i=0}^{13} ( \neg (c-i \leq 0) \wedge s( c-i ) \teq i + s( c-i-1 ) ) \\
+                            & \wedge c-14 \leq 0 \wedge s( c-14 ) \teq 0
 \end{split}
 \end{eqnarray}
+Notice that $\psi$ is closed under function expansion, 
+since it contains the $s$-applications that are equivalent to $s( c-i )$ for $i = 0, \ldots, 14$, and
+entails $\varphi_s[c-i/x]$ for $i = 0, \ldots, 14$.
+Since $\varphi_s$ is an admissible definition,
+this implies there exists a model for $\psi \wedge \varphi_s$,
+which implies there exists a model for formula~(\ref{eq:ex-before}).
 
 \section{Evaluation}
 \label{sec:evaluation}
