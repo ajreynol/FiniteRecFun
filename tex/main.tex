@@ -220,11 +220,14 @@ To do.
     * productive
 
 
-\ajr{Demand for recursive functions in SMT (new draft includes define-funs-rec).  Usually not interested in showing logical consistency, there exist other tools that check e.g. termination. 
-Thus, want SMT solver to check satisfiability the assumption that recursive functions are consistent (where this needs to be defined precisely).
+\ajr{Demand for recursive functions in SMT (new draft includes
+define-funs-rec). Usually not interested in showing logical consistency, there
+exist other tools that check e.g. termination.
+Thus, want SMT solver to check satisfiability the assumption that recursive
+functions are consistent (where this needs to be defined precisely).
 }
 
-Recent techniques~\cite{GeDeM-CAV-09, ReyEtAl-1-RR-13} 
+Recent techniques~\cite{GeDeM-CAV-09, ReyEtAl-1-RR-13}
 have focused on finding models for quantified formulas in SMT.
 Ge and de Moura \cite{GeDeM-CAV-09} presented a complete instantiation-based
 procedure for formulas in the \emph{essentially uninterpreted} fragment.
@@ -249,9 +252,9 @@ interpreted as a finite set and $\con{f}$ as injective finite map.
 
 Unfortunately, these fragments cannot accommodate the vast majority of
 quantified formulas that correspond to recursive function definitions.
-In particular, the fragments in~\cite{GeDeM-CAV-09} are not applicable when the argument of a recursive function is used in various ways (e.g. within an arithmetic expression), 
+In particular, the fragments in~\cite{GeDeM-CAV-09} are not applicable when the argument of a recursive function is used in various ways (e.g. within an arithmetic expression),
 while the fragment in~\cite{ReyEtAl-1-RR-13} is not applicable for functions over infinite domains such as the integers.
-So, for instance, the quantified formula $\forall x : {\sortint}.\;\, \lite\bigl( p \leq 0, p( x ) \teq 0, p( x ) \teq 2 * p( x - 1 ) \bigr)$ 
+So, for instance, the quantified formula $\forall x : {\sortint}.\;\, \lite\bigl( p \leq 0, p( x ) \teq 0, p( x ) \teq 2 * p( x - 1 ) \bigr)$
 is not in the essentially uninterpreted fragment (since $x$ occurs as a child of $-$),
 nor does finite model finding apply (since $x$ is of type $\sortint$).
 
@@ -273,10 +276,10 @@ that produces formulas for which existing model finding techniques~\cite{GeDeM-C
 \section{Preliminaries}
 \label{sec:prelim}
 
-A \emph{signature} $\Sigma$ consists of 
+A \emph{signature} $\Sigma$ consists of
 a set $\ssorts{\Sigma}$ of type symbols (or sorts) and
 a set $\sfuns{\Sigma}$ of function symbols.
-We assume that signatures always include a Boolean type $\Bool$ and constants 
+We assume that signatures always include a Boolean type $\Bool$ and constants
 $\ltrue$ (truth) and $\lfalse$ (falsity) of that type,
 an infix equality predicate ${\teq} : \tau \times \tau \to \Bool$
 for each $\tau \in \ssorts{\Sigma}$,
@@ -290,12 +293,12 @@ A \emph{$\Sigma$-interpretation $\I$} %is a mathematical structure that
 maps each $\tau \in \ssorts{\Sigma}$ to a nonempty set $\tau^\I$,
 the \emph{domain} of~$\tau$ in $\I$,
 and each $\con{f} : \tau_1 \times \cdots \times \tau_n \rightarrow \tau$ in
-$\sfuns{\Sigma}$ 
+$\sfuns{\Sigma}$
 to a total function $\con{f}^\I : \tau_1^\I \times \cdots \times \tau_n^\I \rightarrow \tau^\I$.
-A \emph{theory} is a pair $T = (\Sigma, \Mo)$ where 
+A \emph{theory} is a pair $T = (\Sigma, \Mo)$ where
 $\Sigma$ is a signature and  $\Mo$ is a class of $\Sigma$-interpretations,
 the \emph{models} of $T$.
-A $\Sigma$-formula $\varphi$ is 
+A $\Sigma$-formula $\varphi$ is
 \emph{$T$-satisfiable}
 if it is satisfied by some interpretation in $\Mo$;
 otherwise, it is \emph{$T$-unsatisfiable}.
@@ -318,7 +321,7 @@ $\tau_1, \ldots, \tau_n$ and $\varphi$ is a (quantifier-free) formula equivalent
 $\con{f}( \vec x ) \teq t$ for some $t$. We write $\forall \vec
 x.\; \varphi$ as shorthand for $\forallf{\fnull} \vec x.\; \varphi$, and $\exists
 \vec x. \varphi$ as shorthand for $\neg \forall \vec x.\; \neg \varphi$.
-For a formula $\varphi$, 
+For a formula $\varphi$,
 we write $\varphi[\vec t/\vec x]$ to denote the result of replacing all occurrences of $\vec x$ with $\vec t$.
 
 \begin{definition}%
@@ -333,7 +336,7 @@ A formula $\varphi$ is in \emph{definitional form with respect to} functions $\{
 (\forallf{\con{f}_1} \vec x_1.\; \varphi_1) \wedge \ldots \wedge (\forallf{\con{f}_n} \vec x_n.\; \varphi_n) \wedge \psi
 \end{equation}
 %
-where $\con{f}_1, \ldots, \con{f}_n$ are not $\fnull$ and distinct, 
+where $\con{f}_1, \ldots, \con{f}_n$ are not $\fnull$ and distinct,
 and $\psi$ contains no function definitions.
 We call $\psi$ the \emph{conjecture} of $\varphi$.
 %\ct{Don't we need additional restrictions on the $\varphi_i$'s here?
@@ -360,7 +363,7 @@ there exists a model for $\varphi \wedge \forallf{f_1} \vec x.\; \varphi_1 \wedg
 For instance, the set $\{ \forallf{\con{f}} \vec x.\; \con{f}( x ) \teq 0 \}$ is admissible.
 A set of admissible function definitions can include definitions of non-terminating functions, e.g.
 $\{ \forallf{\con{f}} x : \sortint.\;\, \con{f}( x ) \teq \con{f}( x - 1 ) \}$ or even $\{ \forallf{\con{f}} x.\;\, \con{f}( x ) \teq \con{f}( x ) \}$ are admissible.
-On the other hand, the set $\{ \forallf{\con{f}} x.\;\, \con{f}( x ) \teq \con{f}( x ) + 1 \}$ is not admissible, 
+On the other hand, the set $\{ \forallf{\con{f}} x.\;\, \con{f}( x ) \teq \con{f}( x ) + 1 \}$ is not admissible,
 since the empty set of formulas is closed under function expansion with respect to this set,
 and there is no model satisfying $\forallf{\con{f}} x.\;\, \con{f}( x ) \teq \con{f}( x ) + 1$.
 Consider the set $\{ \forallf{\con{f}} x.\;\, \con{f}( x ) \teq \con{f}( x ), \forallf{\con{g}}.\;\, \lite\bigl( \neg \con{f}( x ) \teq 5, \con{g}( x ) \teq \con{g}( x ) + 1, \con{g}( x ) \teq \con{f}( x ) \bigr) \}$.
@@ -397,7 +400,7 @@ type. Informally, the relevant tuples $\vec t$ of a function $\con{f}$ are the
 ones for which the interpretation of $\con{f}( \vec t )$ is relevant to the
 satisfiability of $\varphi$.
 
-In more detail, 
+In more detail,
 suppose our signature $\Sigma$ contains a set of defined function symbols $\sfundefs{\Sigma} \subseteq \sfuns{\Sigma}$.
 We extend the signature of $\Sigma$ to a signature $\extendsig{\Sigma}$ containing the following additional definitions.
 For each $\con{f} : \tau_1 \times \ldots \times \tau_n \rightarrow \tau \in \sfundefs{\Sigma}$,
@@ -429,7 +432,7 @@ predicate.
 
 \begin{enumerate}
 %\begin{framed}
-\item[\ ] 
+\item[\ ]
 $\conv_0( t\typ{\tau},\, p )$ $=$
  \begin{itemize}
    \item[] $\mathsf{if}$ $\tau = \Bool$ and $t = \boolop(t_1,\ldots,t_n)$ $\mathsf{then}$
@@ -468,7 +471,7 @@ $\conv_0( t\typ{\tau},\, p )$ $=$
 \end{enumerate}
 \begin{enumerate}
 %\begin{framed}
-\item[\ ] 
+\item[\ ]
 $\conv( \varphi )$ $=$
  \begin{itemize}
    \item[] $\mathsf{let}$ $( \psi,\, \_ ) = \conv_0( \varphi,\, \ppos )$ $\mathsf{in}$
@@ -544,7 +547,7 @@ Let $\varphi$ be the $\Sigma$-formula
 \begin{equation} \label{eq:ex-before}
 \forallf{\con{s}} n : {\sortint}.\;\, \lite\bigl( n \leq 0,\; \con{s}(n) \teq 0,\;
   \con{s}( n ) \teq n + \con{s}( n - 1 ) \bigr) \wedge \con{s}( \con{c} ) > 100
-\end{equation} 
+\end{equation}
 %
 Here, $\const{s}$ is a function that returns the sum of the positive integers
 up to $n$. The formula $\varphi$ is in definitional form with
@@ -588,10 +591,10 @@ produce a model for formula~(\ref{eq:ex-after}) within 100 milliseconds.\xend
 \end{example}
 
 The translation $\conv$ does not preserve the models of $\varphi$.
-One model $\I$ for formula~(\ref{eq:ex-after}) in the previous example interprets 
+One model $\I$ for formula~(\ref{eq:ex-after}) in the previous example interprets
 $\fargsort{\con{s}}$ as a finite set of elements $\{ u_0, \ldots, u_{14} \}$,
 $\farg{\con{s}}$ as a finite map $u_i \mapsto i$ for $i = 0, \ldots, 14$,
-$\con{c}$ as $14$, 
+$\con{c}$ as $14$,
 and $\con{s}$ as the (almost constant) function:
 %
 %% TYPESETTING: \mathbin and to make it fit nicely
@@ -642,7 +645,7 @@ equisatisfiable.
 (Sketch)  First, we show that if $\varphi$ is satisfied by $\Sigma$-interpretation $\I$, then $\conv( \varphi )$ is satisfied by a $\extendsig{\Sigma}$-interpretation $\J$.
 Let $\J$ be the $\extendsig{\Sigma}$-interpretation that interprets all types $\tau \in \ssorts{\Sigma}$ as $\tau^\I$,
 all functions $\con{f} \in \sfuns{\Sigma}$ as $\con{f}^\I$,
-and for each function $\con{f}$ of type $\tau_1 \times \ldots \tau_n \rightarrow \tau$ in $\sfundefs{\Sigma}$, 
+and for each function $\con{f}$ of type $\tau_1 \times \ldots \tau_n \rightarrow \tau$ in $\sfundefs{\Sigma}$,
 interprets $\fargsort{\con{f}}$ as a tuple of values of type $\tau_1^\I \times \ldots \times \tau_n^\I$,
 and each $\fargx{\con{f}}{i}$ as the $i^{th}$ projection on such tuples for each $i = 1, \ldots, n$.
 Note that $\J$ satisfies \emph{every} constraint of the form $\exists a : {\fargsort{\con{f}}}. ( \vecfarg{\con{f}}( a ) \teq \vec t )$,
@@ -657,7 +660,7 @@ Since $\varphi$ is in definitional form with respect to the functions defined by
 We first argue that $\I$ satisfies a $\Sigma$-formula $\psi$ that is closed under function expansion with respect to $\DDD$,
 and where $\psi$ entails $\varphi_0$.
 
-Since there exists a model for $\psi$ that is closed under function expansion with respect to $\DDD$, 
+Since there exists a model for $\psi$ that is closed under function expansion with respect to $\DDD$,
 then since $\DDD$ is admissible,
 by definition there exists a model for $\psi \wedge \DDD$, which entails $\DDD \wedge \varphi_0$, which is $\varphi$.
 \end{proof}
@@ -667,16 +670,16 @@ This formula is unsatisfiable if and only if formula~(\ref{eq:ex-before}) is uns
 and $\farg{f}$ can be interpreted as the identity function.
 Conversely, we claim formula~(\ref{eq:ex-after}) is satisfiable if and only if formula~(\ref{eq:ex-before}) is satisfiable,
 noting that the set $\{ \forallf{\con{s}} x\typ{\sortint}.\;\, \lite\bigl( x \leq 0, \con{s}(x) \teq 0, \con{s}( x ) \teq x + \con{s}( x-1 ) \bigr) \}$ is admissble.
-As stated in the proof of the previous theorem, 
+As stated in the proof of the previous theorem,
 the reason is that any model of formula~(\ref{eq:ex-after}) must satisfy a formula that is closed under function expansion,
 hence implying that formula~(\ref{eq:ex-before}) has a model.
 In more detail, let $\varphi_s$ be the formula $\forallf{\con{s}} x.\;\, \lite\bigl( x \leq 0, \con{s}(x) \teq 0, \con{s}( x ) \teq x + \con{s}( x-1 ) \bigr)$.
-The rightmost conjunct 
-$\exists a : {\fargsort{\con{s}}}. \farg{\con{s}}( a ) \teq \con{c}$ ensures 
+The rightmost conjunct
+$\exists a : {\fargsort{\con{s}}}. \farg{\con{s}}( a ) \teq \con{c}$ ensures
 that any model of formula~(\ref{eq:ex-after}) satisfying $\con{s}( \con{c} ) > 100$ also satisfies $\varphi_{\con{s}}[\con{c}/x]$.
 Similarly, the nested existential $\exists a.\;\, \farg{\con{s}}( a ) \teq \farg{\con{s}}( y )-1$
 ensures that this constraint is enforced recursively.
-Given a model $\I$ of formula~(\ref{eq:ex-after}) that interprets $c$ as $14$, 
+Given a model $\I$ of formula~(\ref{eq:ex-after}) that interprets $c$ as $14$,
 it is easy to see that $\I$ must satisfy the formula:
 \begin{eqnarray} \label{eq:fun-closure}
 \begin{split}
@@ -684,7 +687,7 @@ it is easy to see that $\I$ must satisfy the formula:
                             & \wedge c-14 \leq 0 \wedge \con{s}( c-14 ) \teq 0
 \end{split}
 \end{eqnarray}
-Notice that $\psi$ is closed under function expansion, 
+Notice that $\psi$ is closed under function expansion,
 since it contains the $s$-applications that are equivalent to $\con{s}( c-i )$ for $i = 0, \ldots, 14$, and
 entails $\varphi_s[c-i/x]$ for $i = 0, \ldots, 14$.
 Since $\varphi_s$ is an admissible definition,
@@ -694,7 +697,7 @@ which implies there exists a model for formula~(\ref{eq:ex-before}).
 \section{Evaluation}
 \label{sec:evaluation}
 
-In this section, we evaluate both 
+In this section, we evaluate both
 the overall impact of the encoding introduced in the previous section, and
 the performance of individual SMT techniques for benchmarks in the encoding.
 
@@ -704,7 +707,7 @@ The benchmarks have been used recently as challenge problems for a variety of in
 These benchmarks heavily involve recursive functions, and are limited to the combined theory of uninterpreted functions and inductive datatypes.
 The second ({\bf leon}) consists of 166 benchmarks from the Leon repository~\footnote{Available at \url{https://github.com/epfl-lara/leon}.},
 which were constructed from verification conditions from simple Scala programs.
-These benchmarks also heavily involve recursive functions over inductive datatypes, 
+These benchmarks also heavily involve recursive functions over inductive datatypes,
 and also cover a wide variety of theories, including bitvectors, arrays, and linear and non-linear arithmetic.
 Each of the 245 benchmarks are of the form described in formula~(\ref{eq:wdf}) from Section~\ref{sec:prelim},
 in particular they each are a conjoined list of function definitions followed by a (negated) conjecture.
@@ -723,11 +726,11 @@ We will denote the latter encoding using the suffix {\bf w}.
 For example, {\bf isa+w} contains 79 benchmarks that are the results of
 applying $\conv$ to each of the 79 benchmarks in {\bf isa}.
 
-For solvers, we considered the SMT solver \ziii~\cite{de-moura-bjoerner-2008}, 
+For solvers, we considered the SMT solver \ziii~\cite{de-moura-bjoerner-2008},
 which runs both heuristic methods for quantifier instantiation~\cite{DBLP:conf/cade/MouraB07},
 as well as methods for finding models for quantified formulas~\cite{GeDeM-CAV-09}.
 We also considered three configurations of \cvc~\cite{barrett-et-al-2011} which we will refer to as {\bf cvc4}, {\bf cvc4+f} and {\bf cvc4+i}.
-The default configuration {\bf cvc4} runs heuristic quantifier instantiation, 
+The default configuration {\bf cvc4} runs heuristic quantifier instantiation,
 but does not include techniques for finding models.
 The configuration {\bf cvc4+f} runs heuristic instantiation and the finite model finding procedure described in~\cite{ReyEtAl-1-RR-13, reynolds-et-al-2013}.
 The last configuration {\bf cvc4+i} incorporates techniques for automating inductive reasoning in SMT~\cite{reynolds-kuncak-2015}.
@@ -737,28 +740,28 @@ The last configuration {\bf cvc4+i} incorporates techniques for automating induc
 \centering
 {
 \begin{tabular}{|l|cc|cc|cc|cc|l|cc|cc|cc|cc|}
-\hline                                                                
-  & \multicolumn{2}{c|}{{\bf z3}}     & \multicolumn{2}{c|}{{\bf cvc4}}     & \multicolumn{2}{c|}{{\bf cvc4+f}}     & \multicolumn{2}{c|}{{\bf cvc4+i}}     & & \multicolumn{2}{c|}{{\bf z3}}     & \multicolumn{2}{c|}{{\bf cvc4}}     & \multicolumn{2}{c|}{{\bf cvc4+f}}     & \multicolumn{2}{c|}{{\bf cvc4+i}}     
-\\                                                                    
-  & u & s & u & s & u & s & u & s & & u & s & u & s & u & s & u & s 
-\\                                                                    
-\hline                                                                    
+\hline
+  & \multicolumn{2}{c|}{{\bf z3}}     & \multicolumn{2}{c|}{{\bf cvc4}}     & \multicolumn{2}{c|}{{\bf cvc4+f}}     & \multicolumn{2}{c|}{{\bf cvc4+i}}     & & \multicolumn{2}{c|}{{\bf z3}}     & \multicolumn{2}{c|}{{\bf cvc4}}     & \multicolumn{2}{c|}{{\bf cvc4+f}}     & \multicolumn{2}{c|}{{\bf cvc4+i}}
+\\
+  & u & s & u & s & u & s & u & s & & u & s & u & s & u & s & u & s
+\\
+\hline
 {\bf isa} & 14  & 0 & 15  & 0 & 15  & 0 & {\bf 61}  & 0 & {\bf isa+w} & 15  & 0 & 15  & 0 & 15  & 0 & 14  & 0
-\\                                                                  
+\\
 {\bf leon}  & 73  & 0 & 80  & 0 & 80  & 0 & {\bf 96}  & 0 & {\bf leon+w}  & 78  & 2 & 80  & 0 & 76  & {\bf 9} & 78  & 0
-\\                                                                   
+\\
 {\bf isa+m} & 17  & 0 & 18  & 0 & 18  & 0 & {\bf 44}  & 0 & {\bf isa+mw}  & 18  & 35  & 18  & 0 & 18  & {\bf 153} & 17  & 0
-\\                                                                  
+\\
 {\bf leon+m}  & 83  & 11  & 103 & 6 & 104 & 6 & {\bf 117} & 6 & {\bf leon+mw} & 98  & 75  & 98  & 6 & 95  & {\bf 169} & 98  & 6
-\\                                                                  
-\hline                                                             
+\\
+\hline
 {\bf total} & 187 & 11  & 216 & 6 & 217 & 6 & {\bf 318} & 6 & {\bf total} & 209 & 112 & 211 & 6 & 204 & {\bf 331} & 207 & 6
-\\                                                                                            
-\hline                                                                                            
+\\
+\hline
 \end{tabular}
 \\
 }
-\caption{Number of unsat and sat responses for of all configurations on benchmarks 
+\caption{Number of unsat and sat responses for of all configurations on benchmarks
 before and after the translation $\conv$.}
 \label{fig:results}
 \end{figure}
@@ -782,7 +785,7 @@ This confirms the shortcomings of existing SMT techniques for finding counterexa
 In terms of number of unsatisfiable responses,
 the configuration {\bf cvc4+i} is the clear winner, finding 318 total benchmarks to be unsatisfiable.
 
-Now, examining the second encoding (the latter nine columns), 
+Now, examining the second encoding (the latter nine columns),
 we see that using the translation $\conv$ drastically improves the ability of configurations for answering satisfiable.
 In total, {\bf cvc4+f} finds 331 of the 885 benchmarks to be satisfiable, including 9 benchmarks in the original {\bf leon} benchmark set.
 The performance of {\bf z3} for counterexamples also improves drastically, as it solves 112 satisfiable,
@@ -795,7 +798,7 @@ and in some cases may actually aid the solver for determining unsatisfiability.%
 \footnote{The exception here is {\bf cvc4+i}, which makes use of type
 information associated with quantified formulas for inductive arguments.}
 
-We conclude from this evaluation that the translation $\conv$ enables SMT solvers to find counterexamples 
+We conclude from this evaluation that the translation $\conv$ enables SMT solvers to find counterexamples
 for conjectures involving recursive functions whose definitions are admissible.
 Both {\bf z3} and {\bf cvc4+f} were able to find a large number of counterexamples after the translation,
 with the latter configuration finding significantly more instances (331 to 112).
@@ -807,9 +810,9 @@ with the latter configuration finding significantly more instances (331 to 112).
 We have seen a satisfiability-preserving translation $\conv$ that significantly improves the effectiveness of known SMT techniques
 for finding counterexamples for formulas involving recursive function definitions.
 For convienience, the translation $\conv$ has been implemented in the latest development version of \cvc~\cite{ReyEtAl-1-RR-13} (version 1.5 pre-release).
-Function definitions $\forallf{\con{f}} \vec x.\; \varphi$ can be written in using the $\definefunreccmd$ command, 
+Function definitions $\forallf{\con{f}} \vec x.\; \varphi$ can be written in using the $\definefunreccmd$ command,
 from Version 2.5~\cite{} of the SMT-LIB standard.
-For example, the formula $\varphi$ in Example~\ref{ex:translation} 
+For example, the formula $\varphi$ in Example~\ref{ex:translation}
 can be written as:
 
 {\small
@@ -820,18 +823,18 @@ can be written as:
 \end{verbatim}
 }
 
-When reading this input, 
+When reading this input,
 \cvc adds the (annotated) quantified formula $\forallf{\con{s}} x.\;\, \con{s}( x ) \teq \lite\bigl( x \leq 0, 0, \con{s}( x-1 )\bigr)$ to its list of assertions,
 which after rewriting becomes $\forallf{\con{s}} x.\;\, \lite\bigl( x \leq 0, \con{s}( x ) \teq 0, \con{s}( x ) \teq \con{s}( x-1 ) \bigr)$.
 If \cvc's finite model finding mode for recursive functions is enabled (using the command line parameter ``--fmf-fun"),
 then it will replace its list of known assertions based on the conversion $\conv$ before checking for satisfiability.
-%If the functions provided in the input are admissible, 
+%If the functions provided in the input are admissible,
 %then a ``satisfiable" response from the solver implies that a model exists for the original formula.
 Accordingly, the solver will output an approximation of the interpretation for recursive function definitions,
 that is, it may output the interpretation~(\ref{eq:approx-interp}) from Section~\ref{sec:encoding} for $s$.
 
 Notice the option ``--fmf-fun" effectively instructs the SMT solver to assume that the functions provided by the user are admissible.
-If this option is used for a set of functions definitions that is \emph{not} admissible, then the solver is not model-sound, that is, 
+If this option is used for a set of functions definitions that is \emph{not} admissible, then the solver is not model-sound, that is,
 it may return ``satisfiable" for unsatisfiable inputs.
 As such,
 this option targets users who wish to determine the satisfiability of inputs that involving function definitions that are known to be consistent,
