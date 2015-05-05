@@ -32,6 +32,9 @@
 \newcommand{\keywords}[1]{\par\addvspace\baselineskip
 \noindent\keywordname\enspace\ignorespaces#1}
 
+%\newcommand{\DDD}{\mathcalx{D}}
+\newcommand\DDD{\Delta}
+
 %\newcommand\return{$\mathsf{return}$\xspace}
 \newcommand\return{}
 
@@ -58,6 +61,9 @@
 
 \let\oldSigma=\Sigma
 \def\Sigma{\mathrm{\oldSigma}}
+
+\let\oldDelta=\Delta
+\def\Delta{\mathrm{\oldDelta}}
 
 \def\Chi{\mathrm{X}}
 
@@ -107,8 +113,8 @@
 \newcommand{\ssorts}[1]{#1^\mathrm{y}}
 
 \newcommand{\sfuns}[1]{#1^\mathrm{f}}
-\newcommand{\sfundefs}[1]{#1^\mathrm{df}}
-\newcommand{\sfunndefs}[1]{#1^\mathrm{nf}}
+\newcommand{\sfundefs}[1]{#1^\mathrm{def}}
+%\newcommand{\sfunndefs}[1]{#1^\mathrm{nf}}
 \newcommand{\sortint}{\ty{Int}}
 
 \newcommand{\pnone}{\con{apolar}}
@@ -342,12 +348,12 @@ We consider $\Sigma$-formulas that are in definitional form with respect to
 functions $\sfundefs{\Sigma}$.
 
 \begin{definition}
-Given a set of function definitions $\mathcal{D} = \{ \forallf{f_1} \vec x.\; \varphi_1, \ldots, \forallf{f_n} \vec x.\; \varphi_n \}$,
-a formula $\varphi$ is \emph{closed under function expansion with respect to $\mathcal{D}$} if
+Given a set of function definitions $\DDD = \{ \forallf{f_1} \vec x.\; \varphi_1, \ldots, \forallf{f_n} \vec x.\; \varphi_n \}$,
+a formula $\varphi$ is \emph{closed under function expansion with respect to $\DDD$} if
 \begin{eqnarray}
 \varphi \models_T \displaystyle\bigwedge\limits_{i=1}^n \{ \varphi_i[ \vec t / \vec x ] \mid f_i( \vec t ) \in \terms( \varphi ) \}
 \end{eqnarray}
-The set $\mathcal{D}$ is \emph{admissible} if whenever there exists a model for $\varphi$ that is closed under function expansion,
+The set $\DDD$ is \emph{admissible} if whenever there exists a model for $\varphi$ that is closed under function expansion,
 there exists a model for $\varphi \wedge \forallf{f_1} \vec x.\; \varphi_1 \wedge \ldots \wedge \forallf{f_n} \vec x.\; \varphi_n$.
 \end{definition}
 
@@ -628,8 +634,8 @@ functions in $\sfuns{\Sigma} - \sfundefs{\Sigma}$, i.e., $\{
 \begin{theorem}
 If $\varphi$ is a\/ $\Sigma$-formula that is in definitional form with respect to\/
 $\sfundefs{\Sigma}$
-and the set of function definitions $\mathcal{D}$ corresponding to functions in
-$\sfundefs{\Sigma}$ is admissible, then $\varphi$ and $\conv( \varphi )$ are
+and the set of function definitions\/ $\DDD$ corresponding to functions in
+$\sfundefs{\Sigma}$ is admissible, then\/ $\varphi$ and\/ $\conv( \varphi )$ are
 equisatisfiable.
 \end{theorem}
 \begin{proof}
@@ -647,13 +653,13 @@ then $\I$ satisfies $t$ if and only if $\J$ satisfies $r$.
 Thus, we conclude $\J$ is a model of $\conv( \varphi )$.
 
 Second, we show that if $\conv( \varphi )$ is satisfied by a $\extendsig{\Sigma}$-interpretation $\I$, then $\varphi$ is satisfied by $\Sigma$-interpretation $\J$.
-Since $\varphi$ is in definitional form with respect to the functions defined by $\mathcal{D}$, we know $\varphi$ is of the form $\mathcal{D} \wedge \varphi_0$.
-We first argue that $\I$ satisfies a $\Sigma$-formula $\psi$ that is closed under function expansion with respect to $\mathcal{D}$,
+Since $\varphi$ is in definitional form with respect to the functions defined by $\DDD$, we know $\varphi$ is of the form $\DDD \wedge \varphi_0$.
+We first argue that $\I$ satisfies a $\Sigma$-formula $\psi$ that is closed under function expansion with respect to $\DDD$,
 and where $\psi$ entails $\varphi_0$.
 
-Since there exists a model for $\psi$ that is closed under function expansion with respect to $\mathcal{D}$, 
-then since $\mathcal{D}$ is admissible,
-by definition there exists a model for $\psi \wedge \mathcal{D}$, which entails $\mathcal{D} \wedge \varphi_0$, which is $\varphi$.
+Since there exists a model for $\psi$ that is closed under function expansion with respect to $\DDD$, 
+then since $\DDD$ is admissible,
+by definition there exists a model for $\psi \wedge \DDD$, which entails $\DDD \wedge \varphi_0$, which is $\varphi$.
 \end{proof}
 
 Let us revisit the translated formula~(\ref{eq:ex-after}) from Example~\ref{ex:translation}.
