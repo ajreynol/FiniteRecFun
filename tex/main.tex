@@ -69,9 +69,16 @@
 \let\oldwedge=\wedge
 \def\wedge{\mathrel{\oldwedge}}
 
-\newcommand{\cvc}{\textsc{cvc}{\small 4}\xspace}
-\newcommand{\cvciii}{\textsc{cvc}{\small 3}\xspace}
-\newcommand{\ziii}{\textsc{z}{\small 3}\xspace}
+%\newcommand{\cvc}{\textsc{cvc}{\small 4}\xspace}
+%\newcommand{\cvciii}{\textsc{cvc}{\small 3}\xspace}
+%\newcommand{\ziii}{\textsc{z}{\small 3}\xspace}
+
+%%% @ANDY, @CESARE: I hope you'll forgive me these. I find the above fonts
+%%% distracting. --JB
+\newcommand\cvc{CVC4\xspace}
+\newcommand\cvciii{CVC3\xspace}
+\newcommand\ziii{Z3\xspace}
+
 \newcommand{\teq}{\approx}
 \newcommand{\cc}[1]{#1^*}
 
@@ -542,7 +549,7 @@ satisfiable with a model that interprets $\const{c}$ as an integer greater than 
 equal to $14$. Due to the universal quantifier,
 current SMT techniques~\cite{GeDeM-CAV-09, ReyEtAl-1-RR-13} are unable to find
 a model for this formula. The signature $\extendsig{\Sigma}$ includes the type
-$\fargsort{s}$ and the uninterpreted function $\farg{\con{s}}$ of type $\fargsort{s}
+$\fargsort{\con{s}}$ and the uninterpreted function $\farg{\con{s}}$ of type $\fargsort{\con{s}}
 \rightarrow \sortint$. The result of $\conv( \varphi,\, \ppos )$ is the pair $(
 \psi,\, \ltrue )$, where (after simplification) $\psi$ is the
 $\extendsig{\Sigma}$-formula
@@ -551,31 +558,32 @@ $\extendsig{\Sigma}$-formula
 \!\begin{aligned}[c]
   & \phantom{{\wedge}\; }\bigl(
     \!\begin{aligned}[t]
-      \forall a : \fargsort{s}.\; & \phantom{{\wedge}\;}\lite\bigl( \farg{\con{s}}( a ) \leq 0,\;
+      \forall a : \fargsort{\con{s}}.\; & \phantom{{\wedge}\;}\lite\bigl( \farg{\con{s}}( a ) \leq 0,\;
         \con{s}(\farg{\con{s}}( a )) \teq 0,\;
         \con{s}(\farg{\con{s}}( a )) \teq \farg{\con{s}}( a ) + \con{s}( \farg{\con{s}}( a )-1 ) \bigr)
 \\[-\jot]
-      {\wedge}\; & \exists a : {\fargsort{s}}.\;\, \farg{\con{s}}( a ) \teq \farg{\con{s}}( a )-1 \bigr)
+      & {\wedge}\; \exists a : {\fargsort{\con{s}}}.\;\, \farg{\con{s}}( a ) \teq \farg{\con{s}}( a )-1 \bigr)
 \end{aligned}
 \\[-\jot]
- & {\wedge}\; \bigl( \con{s}( c ) > 100 \wedge \exists a : {\fargsort{s}}.\;\, \farg{\con{s}}( a ) \teq \con{c} \bigr)
+ & {\wedge}\; \bigl( \con{s}( c ) > 100 \wedge \exists a : {\fargsort{\con{s}}}.\;\, \farg{\con{s}}( a ) \teq \con{c} \bigr)
 \end{aligned}
 \end{equation}
 %
 The universal quantification in the resulting formula is over an uninterpreted
-type $\fargsort{s}$, thus enabling finite model finding
-techniques~\cite{ReyEtAl-1-RR-13} to search for a finite interpretation for
-$\fargsort{s}$. Moreover, all occurrences of $a$ in this formula are beneath
+type $\fargsort{\con{s}}$, thus enabling the finite model finding
+techniques by Reynolds et al.\ \cite{ReyEtAl-1-RR-13} to search for a finite interpretation for
+$\fargsort{\con{s}}$. Moreover, all occurrences of $a$ in this formula are beneath
 applications of the uninterpreted function $\farg{\con{s}}$, implying that the
-formula is in the essentially uninterpreted fragment of~\cite{GeDeM-CAV-09},
-for which there exists a complete instantiation procedure. We observe that both
+formula is in the essentially uninterpreted fragment,
+for which Ge and de Moura \cite{GeDeM-CAV-09} provide a complete instantiation
+procedure. We observe that both
 \cvc and \ziii run indefinitely on formula~(\ref{eq:ex-before}), and both
 produce a model for formula~(\ref{eq:ex-after}) in $<0.1$ second.\xend
 \end{example}
 
 It is important to note that the translation $\conv$ does not preserve the models of $\varphi$.
 One model $\I$ for formula~(\ref{eq:ex-after}) in the previous example interprets 
-$\fargsort{s}$ as a finite set of elements $\{ u_0, \ldots, u_{14} \}$,
+$\fargsort{\con{s}}$ as a finite set of elements $\{ u_0, \ldots, u_{14} \}$,
 $\farg{\con{s}}$ as a finite map mapping containing $u_i \mapsto i$ for $i = 0, \ldots, 14$,
 $c$ as $14$, 
 and $s$ as the (almost constant) function:
