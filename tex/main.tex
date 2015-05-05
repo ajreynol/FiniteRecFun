@@ -111,6 +111,7 @@
 \newcommand{\jb}[1]{\rem{#1 --jb}}
 \newcommand{\ct}[1]{\rem{#1 --ct}}
 
+\newcommand{\negvthinspace}{\kern-0.083333em}
 \newcommand{\vthinspace}{\kern+0.083333em}
 \newcommand{\typ}[1]{^{\vthinspace #1}}
 
@@ -419,21 +420,22 @@ The procedure $\conv$ in Figure~\ref{fig:encoding} translates the $\Sigma$-formu
 $\varphi$ into an $\extendsig{\Sigma}$-formula.
 This calls the subprocedure $\conv_0$, which takes two arguments:\ the term $t$
 to translate and a \emph{polarity} $p$ (either $\ptrue$, $\pfalse$, or
-$\pnone$). It returns a pair $( r,\, D )$, where $r$ is a term of
-type $\tau$ and $D$ is a set of formulas.
-\jb{Explain r and D here briefly.}
+$\pnone$). It returns a pair $( t'\negvthinspace,\, D )$, where $t'$ is a term of
+type $\tau$ and $D$ is a set of formulas encoding additional constraints.
 %The role of $D$ is to ensure that
 %the (restricted) function definition for $\con{f}$ includes certain tuples in
 %its domain, which we explain more in the following.
 
 The translation modifies $\varphi$ in two main ways. First, it restricts the
 quantification on function definitions for $\con{f}$ to the corresponding
-uninterpreted type $\fargsort{\con{f}}$ and inserts appropriate . Second, it augments $\varphi$ with
-additional constraints of the form $\exists z\typ{\fargsort{\con{f}}}. (
-\vecfarg{\con{f}}( z ) \teq \vec t )$ which ensure that this restriction for
-the defintion $\con{f}$ covers all relevant tuples of terms, namely the ones
-for which an $\con{f}$-application exists and is relevant to the satisfiability
-of the current branch of $\varphi$.
+uninterpreted type $\fargsort{\con{f}}$ and inserts appropriate coercions
+$\fargx{\con{f}}{i}$. Second, it augments $\varphi$ with additional constraints
+$\exists z : \fargsort{\con{f}}.\;\, \vecfarg{\con{f}}( z ) \teq \vec t$; these
+ensure that the restricted definition for $\con{f}$ covers all relevant tuples
+of terms, namely the ones for which an $\con{f}$ application exists and is
+relevant to the satisfiability of the current branch of $\varphi$.
+\jb{what does ``current branch of'' mean? can we drop it / rephrase it / vague
+it up?}
 
 In the case that $t$ is an application of (interpreted) predicate $\boolop$ (e.g., a boolean connective, or equality),
 we recursively call $\conv$ on its subchildren $t_i$ and polarity $\pol( \boolop, i, p )$, where $\pol$ is defined as\footnote{The negation $\neg p$ of polarity $p$ is 
