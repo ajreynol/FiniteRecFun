@@ -381,10 +381,10 @@ The procedure $\conv$ translates the $\Sigma$-formula
 $\varphi$ into an $\extendsig{\Sigma}$-formula. It relies
 on the subprocedure $\conv_0$, which takes two arguments:\ the term $t$
 to translate and a \emph{polarity} $p$, which is either $\ptrue$, $\pfalse$, or
-$\pnone$. It returns a pair $( t'\negvthinspace,\, \Chi )$, where $t'$ is a term of
-type $\tau$ and $\Chi$ is a set of formulas encoding additional constraints.
-These constraints are necessary if the polarity is $\pnone$; otherwise, $\Chi$
-is always the empty set.
+$\pnone$. It returns a pair $( t'\negvthinspace,\, \chi )$, where $t'$ is a term of
+type $\tau$ and $\chi$ is an additional constraint.
+This constraint is necessary if the polarity is $\pnone$; otherwise, any necessary
+constraint is encoded directly in $t'$ and $\chi$ is simply $\true$.
 
 \jb{Merge para above with para below}
 
@@ -395,46 +395,48 @@ $\sfundefs{\Sigma}$. In the auxiliary procedure $\conv_0$, the procedure $\pol(
 $\boolop$ application having polarity $p$, where $\boolop$ is an interpreted
 predicate.
 
+\jb{what happens with quantifiers other than $\forallf{f}$?}
+\jb{transform ``procedure'' into equation / functional program?}
 
 \begin{enumerate}
 %\begin{framed}
 \item[\ ] 
 $\conv_0( t\typ{\tau},\, p )$ : 
  \begin{itemize}
-   \item[] $\mathsf{if}$ $\tau = \Bool$ and $t = \boolop(t_1,\ldots,t_n)$:
+   \item[] $\mathsf{if}$ $\tau = \Bool$ and $t = \boolop(t_1,\ldots,t_n)$ $\mathsf{then}$
     \begin{itemize}
-      \item[] $\mathsf{let}$ $( t'_i,\, \Chi_i ) = \conv_0( t_i,\, \pol( \boolop,\, i,\, p ) )$ for $i = 1, \ldots, n$;
-      \item[] $\mathsf{let}$ $\Chi = \Chi_1 \mathrel\cup \cdots \mathrel\cup \Chi_n$;
-      \item[] $\mathsf{let}$ $\chi = \bigwedge \Chi$;
-      \item[] $\mathsf{if}$ $p = \ptrue$
+      \item[] $\mathsf{let}$ $( t'_i,\, \chi_i ) = \conv_0( t_i,\, \pol( \boolop,\, i,\, p ) )$ for $i = 1, \ldots, n$;
+      \item[] $\mathsf{let}$ $\chi = \chi_1 \mathrel\wedge \cdots \mathrel\wedge \chi_n$;
+      \item[] $\mathsf{if}$ $p = \ptrue$ $\mathsf{then}$
       \begin{itemize}
-        \item[] $\mathsf{return}$ $( \boolop(t'_1, \ldots, t'_n) ) \wedge \chi,\, \emptyset )$
+        \item[] $\mathsf{return}$ $( \boolop(t'_1, \ldots, t'_n) ) \wedge \chi,\, \true )$
       \end{itemize}
-      \item[] $\mathsf{else}$ $\mathsf{if}$ $p = \pfalse$
+      \item[] $\mathsf{else}$ $\mathsf{if}$ $p = \pfalse$ $\mathsf{then}$
       \begin{itemize}
-        \item[] $\mathsf{return}$ $( \boolop(t'_1, \ldots, t'_n) \vee \neg \chi,\, \emptyset )$
+        \item[] $\mathsf{return}$ $( \boolop(t'_1, \ldots, t'_n) \vee \neg \chi,\, \true )$
       \end{itemize}
       \item[] $\mathsf{else}$
       \begin{itemize}
-        \item[] $\mathsf{return}$ $( \boolop(t'_1, \ldots, t'_n),\, \Chi )$
+        \item[] $\mathsf{return}$ $( \boolop(t'_1, \ldots, t'_n),\, \chi )$
       \end{itemize}
     \end{itemize}
-  \item[] $\mathsf{else}$ $\mathsf{if}$ $t \equiv \forallf{\con{f}} \vec x.\;\, t_1$
+  \item[] $\mathsf{else}$ $\mathsf{if}$ $t = \forallf{\con{f}} \vec x.\;\, u$ $\mathsf{then}$
     \begin{itemize}
-      \item[] $\mathsf{let}$ $( t'_1,\, D_1 ) = \conv_0( t_1,\, p )$;
-      \item[] $\mathsf{if}$ $\con{f} \in \sfundefs{\Sigma}$
+      \item[] $\mathsf{let}$ $( u',\, \chi ) = \conv_0( u,\, p )$;
+      \item[] $\mathsf{if}$ $\con{f} \in \sfundefs{\Sigma}$ $\mathsf{then}$
       \begin{itemize}
-        %\item[] $\mathsf{assert}( D_1 = \emptyset )$;
-        \item[] $\mathsf{return}$ $( \forall y\typ{\fargsort{\con{f}}}.\;\, ( t'_1 [ \vecfarg{\con{f}}( y ) / \vec x ] ),\, \emptyset )$
+        %\item[] $\mathsf{assert}( \chi = \true )$;
+        \item[] $\mathsf{return}$ $( \forall y\typ{\fargsort{\con{f}}}.\; u' [ \vecfarg{\con{f}}( y ) / \vec x ],\, \true )$
+\jb{looks fishy -- I need to look at it again}
       \end{itemize}
-      \item[] else
+      \item[] $\mathsf{else}$
       \begin{itemize}
-        \item[] $\mathsf{return}$ $( \forall \vec x.\; t'_1,\, \forall \vec x.\; D_1 )$
+        \item[] $\mathsf{return}$ $( \forall \vec x.\; u',\, \forall \vec x.\; \chi )$
       \end{itemize}
     \end{itemize}
    \item[] $\mathsf{else}$
    \begin{itemize}
-     \item[] $\mathsf{return}$ $( t,\, \{ \exists z\typ{\fargsort{\con{f}}}. ( \vecfarg{f}( z ) \teq \vec t ) \mid f( \vec t ) \in \terms( t ),\, f \in \sfundefs{\Sigma} \} )$
+     \item[] $\mathsf{return}$ $( t,\, \bigwedge\, \{ \exists z : \fargsort{\con{f}}.\; \vecfarg{\con{f}}( z ) \teq \vec t \mid \con{f}( \vec t ) \in \terms( t ),\, \con{f} \in \sfundefs{\Sigma} \} )$
    \end{itemize}
  \end{itemize}
 \end{enumerate}
