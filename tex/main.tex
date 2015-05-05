@@ -256,33 +256,40 @@ an annotated
 quantified formula $\forallf{\con{f}} \vec x.\; \varphi$ is a \emph{function definition}
 (\,\emph{for $\con{f}$}\vthinspace) if $\vec x$ is a tuple of variables of type
 $\tau_1, \ldots, \tau_n$ and $\forallf{\con{f}} \vec x.\; \varphi$ is equivalent to
-$\forall \vec x.\;\, \con{f}( \vec x ) \teq t$ for some $t$. We will write $\forall \vec
-x. \varphi$ as shorthand for $\forallf{\fnull} \vec x.\; \varphi$, and $\exists
+$\forall \vec x.\;\, \con{f}( \vec x ) \teq t$ for some $t$. We write $\forall \vec
+x.\; \varphi$ as shorthand for $\forallf{\fnull} \vec x.\; \varphi$, and $\exists
 \vec x. \varphi$ as shorthand for $\neg \forall \vec x.\; \neg \varphi$.
 
-\begin{definition}
-A formula $\varphi$ is \emph{well-defined with respect to functions} $\{ f_1, \ldots, f_n \}$ if it is of the form:
-\begin{eqnarray} \label{eq:wdf}
-(\forallf{f_1} \vec x_1.\; \varphi_1) \wedge \ldots \wedge (\forallf{f_n} \vec x_n.\; \varphi_n) \wedge \psi
-\end{eqnarray}
-where $f_1, \ldots, f_n$ are not $\fnull$ and distinct, 
+\begin{definition}%
+\rm
+A formula $\varphi$ is in \emph{definitional form with respect to} functions $\{
+\con{f}_1, \ldots, \con{f}_n \}$ if it is of the form
+%
+%\kern-\abovedisplayskip
+%\kern+\abovedisplayshortskip
+%
+\begin{equation} \label{eq:wdf}
+(\forallf{\con{f}_1} \vec x_1.\; \varphi_1) \wedge \ldots \wedge (\forallf{\con{f}_n} \vec x_n.\; \varphi_n) \wedge \psi
+\end{equation}
+%
+where $\con{f}_1, \ldots, \con{f}_n$ are not $\fnull$ and distinct, 
 and $\psi$ contains no function definitions.
-We will commonly call $\psi$ the \emph{conjecture} of $\varphi$.
+We call $\psi$ the \emph{conjecture} of $\varphi$.
 \ct{Don't we need additional restrictions on the $\varphi_i$'s here?
 (E.g., they are quantifier-free, or perhaps existential or containing only let binders.)}
 \end{definition}
 
-Given a signature $\Sigma$, 
-we will commonly parition its function symbols $\sfuns{\Sigma}$ into $\sfundefs{\Sigma} \mathrel{\uplus} \sfunndefs{\Sigma}$,
+Given a signature $\Sigma$,
+we partition its function symbols $\sfuns{\Sigma}$ into $\sfundefs{\Sigma} \mathrel{\uplus} \sfunndefs{\Sigma}$,
 where $\sfundefs{\Sigma}$ is the set of \emph{defined} function symbols,
-and consider $\Sigma$-formulas that are well-defined with respect to functions $\sfundefs{\Sigma}$.
+and consider $\Sigma$-formulas that are in definitional form with respect to functions $\sfundefs{\Sigma}$.
 
 A set of function definitions $\{ \varphi_1, \ldots, \varphi_n \}$ 
-is \emph{well-specified (in $T$)} if $\varphi_1 \wedge \ldots \wedge \varphi_n$ is $T$-satisfiable.
-For instance, $\{ \forallf{\con{f}} \vec x.\;\, \con{f}( x ) \teq 0 \}$ is well-specified,
+is \emph{admissible} (\emph{in $T$}) if $\varphi_1 \wedge \ldots \wedge \varphi_n$ is $T$-satisfiable.
+For example, $\{ \forallf{\con{f}} \vec x.\;\, \con{f}( x ) \teq 0 \}$ is admissible,
 whereas $\{ \forallf{\con{f}} x.\;\, \con{f}( x ) \teq \con{f}( x ) + 1 \}$ is not. 
-Note that a well-specified function definition need not specify a terminating function, e.g.
-$\{ \forallf{\con{f}} x^\sortint.\;\, \con{f}( x ) \teq \con{f}( x - 1 ) \}$ or even $\{ \forallf{\con{f}} x.\;\, \con{f}( x ) \teq \con{f}( x ) \}$ are well-specified.
+Note that an admissible function definition need not specify a terminating function, e.g.
+$\{ \forallf{\con{f}} x^\sortint.\;\, \con{f}( x ) \teq \con{f}( x - 1 ) \}$ or even $\{ \forallf{\con{f}} x.\;\, \con{f}( x ) \teq \con{f}( x ) \}$ are admissible.
 \ajr{revise}
 
 \section{Model Finding for Recursive Functions in SMT}
@@ -292,13 +299,12 @@ Recent techniques~\cite{GeDeM-CAV-09, ReyEtAl-1-RR-13}
 have focused on finding models for quantified formulas in SMT.
 A instantiation-based procedure is shown in~\cite{GeDeM-CAV-09} to be complete for formulas in the \emph{essentially uninterpreted} fragment.
 This fragment is limited to universally quantified formulas where all occurrences of variables occur as direct subchildren of uninterpreted functions.
-For instance, the formula $\forall x\typ{\sortint}.\;\, \con{f}( x ) \teq g( x ) + 5$ 
+For example, the formula $\forall x\typ{\sortint}.\;\, \con{f}( x ) \teq g( x ) + 5$ 
 is in the essentially uninterpreted fragment since all occurrences of $x$ occur beneath uninterpreted functions $\con{f}$ and $g$.
 Other syntactic criteria are identified in this paper that extend this fragment slightly, including cases when variables occur as arguments of arithmetic predicates.
 The techniques in~\cite{ReyEtAl-1-RR-13} can be used for finding finite models for quantified formulas over uninterpreted types as well as types having a 
 fixed finite interpretation (such as fixed-width bitvectors, datatype enumerations, etc.).
-For instance, 
-finite model finding techniques can find a model for
+For example, finite model finding techniques can find a model for
 the formula $\forall x\typ{\tau} y\typ{\tau}.\;\, \neg x \teq y \vee \con{f}( x ) \teq \con{f}( y )$
 where the uninterpreted type $\tau$ is interpreted as a finite set, and $\con{f}$ as injective finite map.
 
@@ -316,8 +322,8 @@ into equisatisfiable \ct{to be defined} formulas where the techniques~\cite{GeDe
 \label{sec:encoding}
 
 In the remainder of the section, we fix a signature $\Sigma$.
-Say that $\Sigma$-formula $\varphi$ is well-defined with respect to functions $\sfundefs{\Sigma}$, 
-and the set of function definitions corresponding to $\sfundefs{\Sigma}$ are well-specified.
+Say that $\Sigma$-formula $\varphi$ is in definitional form with respect to functions $\sfundefs{\Sigma}$, 
+and the set of function definitions corresponding to $\sfundefs{\Sigma}$ are admissible.
 %We may translate $\varphi$ into a equisatisfiable formula $\psi$ for which known model-finding procedures~\cite{GeDeM-CAV-09, ReyEtAl-1-RR-13} are applicable.
 This section presents a method for constructing an extended signature $\extendsig{ \Sigma }$,
 and a $\extendsig{ \Sigma }$-formula $\psi$ such that $\varphi$ and $\psi$ are equisatisfiable.
@@ -377,7 +383,7 @@ $\conv_0( t\typ{\tau}, p )$ :
  \end{itemize}
 \end{enumerate}
 \vspace{-2ex}
-\caption{A translation procedure $\conv$ for a $\Sigma$-formula that is well-defined with respect to a set of well-specified function definitions $\sfundefs{\Sigma}$.
+\caption{A translation procedure $\conv$ for a $\Sigma$-formula that is in definitional form with respect to a set of admissible function definitions $\sfundefs{\Sigma}$.
 In the subprocedure $\conv_0$, the procedure $\pol( \boolop, i, p )$ returns the polarity of the $i^{th}$ child of a $\boolop$-application having polarity $p$,
 where $\boolop$ is an interpreted predicate.
 }
@@ -447,11 +453,11 @@ Consider the (combined) signature of linear arithmetic and uninterpreted functio
 where $\ssorts{\Sigma_{\euf}} = \{ \sortint \}$ and 
 $\sfuns{\Sigma_{\euf}} = \{ s\typ{ \sortint \rightarrow \sortint }, c\typ{ \sortint } \}$.
 Consider the $\Sigma$-formula $\varphi$:
-\begin{eqnarray} \label{eq:ex-before}
+\begin{equation} \label{eq:ex-before}
 \forall_{s} x\typ{\sortint}.\; \lite( x \leq 0, s(x) \teq 0, s( x ) \teq x + s( x-1 ) ) \wedge s( c ) > 100
-\end{eqnarray} 
+\end{equation} 
 Here, $s$ is a function that returns the sum of positive numbers between $0$ and its argument $x$.
-The formula $\varphi$ is well-defined with respect to functions $\sfundefs{\Sigma_u}$,
+The formula $\varphi$ is in definitional form with respect to functions $\sfundefs{\Sigma_u}$,
 and states that the sum of all positive numbers between $0$ and $c$ is greater than $100$.
 This formula is satisfiable with a model that interprets $c$ as an integer greater than or equal to $14$.
 Due to the universally quantified formula in the left disjunct,
@@ -483,19 +489,19 @@ $\fargsort{s}$ as a finite set of elements $\{ u_0, \ldots, u_{14} \}$,
 $\farg{s}$ as a finite map mapping containing $u_i \mapsto i$ for $i = 0, \ldots, 14$,
 $c$ as $14$, 
 and $s$ as the (almost constant) function:
-\begin{eqnarray}
+\begin{equation}
 \lambda x\typ{Int}. \lite( x \teq 0, 0, \lite( x \teq 1, 1, \lite( x \teq 2, 3, \ldots, \lite( x \teq 13, 91, 105 ) \ldots )
-\end{eqnarray}
+\end{equation}
 In other words, $s$ is a function mapping $x$ to the sum of all positive integers between $0$ and $x$ when $0 \leq x \leq 13$,
 and $105$ otherwise.
 Notice that $\I$ is \emph{not} a model for the original formula~(\ref{eq:ex-before}),
 since $\I$ interprets e.g.\ $s( -1 )$ and $s( 15 )$ as $105$.
-However, under the assumption that function definitions in $\sfundefs{\Sigma}$ are well-specified, 
+However, under the assumption that function definitions in $\sfundefs{\Sigma}$ are admissible, 
 we claim that $\conv(\varphi)$ is equisatisfiable to $\varphi$ for any input $\varphi$.
 The intuition is that the interpretation of a term such as $s( -1 )$ in the previous example is not relevant to the satisfiability of formula~(\ref{eq:ex-before}).
 Thus, a satisfiable (resp. unsatisfiable) response from an SMT solver on input $\conv( \varphi )$ implies the existence (resp.\ nonexistence) of a model for $\varphi$.
 Moreover, information in models for $\conv( \varphi )$ contains relevant information regarding the models of $\varphi$.
-For instance, the model $\I$ for formula~(\ref{eq:ex-after}) described above interprets $c$ as $14$, 
+For example, the model $\I$ for formula~(\ref{eq:ex-after}) described above interprets $c$ as $14$, 
 while there exists a model of formula~(\ref{eq:ex-before}) also interprets $c$ as $14$.
 In fact, we claim that there exists a model of $\varphi$ that coincides with each model of $\conv( \varphi )$ on its interpretation of all functions in $\sfuns{\Sigma}$ 
 other than those in $\sfundefs{\Sigma}$, i.e. $\{ s \}$ in the previous example.
@@ -515,8 +521,8 @@ and hence already has an intended interpretation.
 %\end{lemma}
 
 \begin{theorem}
-If $\varphi$ be a $\Sigma$-formula that is well-defined with respect to functions $\sfundefs{\Sigma}$,
-and the set of function definitions corresponding to functions in $\sfundefs{\Sigma}$ is well-specified,
+If $\varphi$ be a $\Sigma$-formula that is in definitional form with respect to functions $\sfundefs{\Sigma}$,
+and the set of function definitions corresponding to functions in $\sfundefs{\Sigma}$ is admissible,
 then $\varphi$ and $\conv( \varphi )$ are equisatisfiable.
 \end{theorem}
 \begin{proof}
@@ -566,7 +572,8 @@ We will call these sets {\bf isa+m} and {\bf leon+m} respectively.
 In total, our benchmark set consisted of 885 benchmarks (640 mutants plus the original 245).
 We considered these 885 benchmarks both before and after the translation $\conv$ as described in Section~\ref{sec:encoding}.
 We will denote the latter encoding using the suffix {\bf w}.
-For instance {\bf isa+w}, contains 79 benchmarks that are the results of applying $\conv$ to each of the 79 benchmarks in {\bf isa}.
+For example, {\bf isa+w} contains 79 benchmarks that are the results of
+applying $\conv$ to each of the 79 benchmarks in {\bf isa}.
 
 For solvers, we considered the SMT solver \ziii~\cite{de-moura-bjoerner-2008}, 
 which runs both heuristic methods for quantifier instantiation~\cite{DBLP:conf/cade/MouraB07},
@@ -617,7 +624,7 @@ This provides confirming evidence that the translation $\conv$ is \emph{refutati
 as we did not find a case where $\conv( \varphi )$ was unsatisfiable when $\varphi$ was satisfiable.
 It also provides confirming evidence that the translation is \emph{model-sound} for this set of benchmarks,
 as we did not find a case where $\conv( \varphi )$ was satisfiable when $\varphi$ was unsatisfiable.
-This is to be expected, since the functions in our benchmark sets are expected to be well-specified (and in fact, terminating).
+This is to be expected, since the functions in our benchmark sets are expected to be admissible (and in fact, terminating).
 
 Examining the first encoding in isolation (the first nine columns),
 the number of satisfiable responses from all configurations is quite low.
@@ -641,7 +648,7 @@ and in some cases may actually aid the solver for determining unsatisfiability.%
 information associated with quantified formulas for inductive arguments.}
 
 We conclude from this evaluation that the translation $\conv$ enables SMT solvers to find counterexamples 
-for conjectures involving recursive functions whose definitions are well-specified.
+for conjectures involving recursive functions whose definitions are admissible.
 Both {\bf z3} and {\bf cvc4+f} were able to find a large number of counterexamples after the translation,
 with the latter configuration finding significantly more instances (331 to 112).
 
@@ -652,8 +659,8 @@ We have seen a satisfiability-preserving translation $\conv$ that significantly 
 for finding counterexamples for formulas involving recursive function definitions.
 For convienience, the translation $\conv$ has been implemented in the latest development version of \cvc~\cite{ReyEtAl-1-RR-13} (version 1.5 pre-release).
 Function definitions $\forallf{\con{f}} \vec x.\; \varphi$ can be written in using the $\definefunreccmd$ command, 
-from Cersion 2.5~\cite{} of the SMT-LIB standard.
-For instance, the formula $\varphi$ in Example~\ref{ex:translation} 
+from Version 2.5~\cite{} of the SMT-LIB standard.
+For example, the formula $\varphi$ in Example~\ref{ex:translation} 
 can be written as:
 
 {\small
@@ -669,7 +676,7 @@ When reading this input,
 which after rewriting becomes $\forallf{s} x.\;\, \lite( x \leq 0, s( x ) \teq 0, s( x ) \teq s( x-1 ) )$.
 If \cvc's finite model finding mode for recursive functions is enabled (using the command line parameter ``--fmf-fun"),
 then it will replace its list of known assertions based on the conversion $\conv$ before checking for satisfiability.
-Note that this option is model-sound \ct{define?} only if the functions provided in the input are well-specified.
+Note that this option is model-sound \ct{define?} only if the functions provided in the input are admissible.
 
 \section{Conclusion}
 \label{sec:conclusion}
