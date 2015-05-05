@@ -54,7 +54,7 @@
 \newcommand\return{}
 
 %\newcommand\bigtuple[1]{$(${#1}$)$}
-\newcommand\bigtuple[1]{$\bigl<${#1}$\bigr>$}
+\newcommand\bigtuple[1]{$\bigl(${#1}$\bigr)$}
 
 %%% for \mathcalx
 \DeclareFontFamily{OT1}{pzc}{}
@@ -481,7 +481,7 @@ $\conv_0( t\typ{\tau},\, p )$ $=$
     \end{itemize}
    \item[] $\mathsf{else}$
    \begin{itemize}
-     \item[] \return \bigtuple{$t,\, \bigwedge\, \{ \exists a : \fargsort{\con{f}}.\; \vecfarg{\con{f}}( a ) \teq \vec t \mid \con{f}( \vec t ) \in \terms( t ),\, \con{f} \in \sfundefs{\Sigma} \}$}
+     \item[] \return \bigtuple{$t,\; \bigwedge\, \{ \exists a : \fargsort{\con{f}}.\; \vecfarg{\con{f}}( a ) \teq \vec t \mid \con{f}( \vec t ) \in \terms( t ),\, \con{f} \in \sfundefs{\Sigma} \}$}
    \end{itemize}
  \end{itemize}
 \end{enumerate}
@@ -667,8 +667,8 @@ and each $\fargx{\con{f}}{i}$ as the $i^{th}$ projection on such tuples for each
 Note that $\J$ satisfies \emph{every} constraint of the form $\exists a : {\fargsort{\con{f}}}. ( \vecfarg{\con{f}}( a ) \teq \vec t )$,
 since by our construction of $\J$ there exists an $a$ such that $a^\J = \vec t^\J$.
 By case analysis it follows that $\conv_0$ maintains the invariant that
-if $\conv_0( t\typ{\Bool}, \ppos )$ returns $( r\typ{\Bool}, D )$,
-then $\I$ satisfies $t$ if and only if $\J$ satisfies $r$.
+if $\conv_0( t\typ{\Bool}, \ppos )$ returns $( {t'}, \chi )$,
+then $\I$ satisfies $t$ if and only if $\J$ satisfies $t'$.
 Thus, we conclude $\J$ is a model of $\conv( \varphi )$.
 
 Second, we show that if $\conv( \varphi )$ is satisfied by a
