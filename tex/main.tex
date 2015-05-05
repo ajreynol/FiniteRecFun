@@ -330,7 +330,8 @@ interpreted as a finite set and $\con{f}$ as injective finite map.
 \jb{Weird example. This formula is a tautology of EUF! Maybe you put the
 negation at the right place?}
 
-Unfortunately, these fragments do not coincide with the vast majority of quantified formulas that correspond to recursive function definitions.
+Unfortunately, these fragments cannot accommodate the vast majority of
+quantified formulas that correspond to recursive function definitions.
 In particular, the fragments in~\cite{GeDeM-CAV-09} are not applicable when the argument of a recursive function is used in various ways (e.g. within an arithmetic expression), 
 while the fragment in~\cite{ReyEtAl-1-RR-13} is not applicable for functions over infinite domains such as the integers.
 So, for instance, the quantified formula $\forall x\typ{\sortint}.\;\, \lite( p \leq 0, p( x ) \teq 0, p( x ) \teq 2 * p( x - 1 ) )$ 
