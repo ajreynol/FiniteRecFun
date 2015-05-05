@@ -99,7 +99,9 @@
 \def\FI{\untab}
 \def\RETURN{\keyword{return}\ }
 \def\ENDPROC{\untab}
-\newcommand{\conv}{\mathcalx{W}}
+%%% @ANDY: I'm trying "A" like "abstraction", again in sync with the abstract--concrete
+%%% terminology from abstract interpretation
+\newcommand{\conv}{\mathcalx{A}}
 
 %\newcommand{\ssorts}[1]{#1^\mathrm{s}}
 \newcommand{\ssorts}[1]{#1^\mathrm{y}}
@@ -601,27 +603,34 @@ The interpretation $\I$, restricted to $\Sigma$, is {not} a model for the origin
 since $\I$ wrongly interprets $\con{s}( x )$ as $105$ when $x < 0$ or $x > 14$.
 
 However, under the assumption that the function definitions in
-$\sfundefs{\Sigma}$ are admissible, we claim that $\conv(\varphi)$ is
-equisatisfiable to $\varphi$ for any input $\varphi$. The intuition is that the
+$\sfundefs{\Sigma}$ are admissible, %we claim that
+$\conv(\varphi)$ is
+equisatisfiable with $\varphi$ for any input $\varphi$. The intuition is that the
 interpretation of a term such as $\con{s}( -1 )$ in the previous example is not
 relevant to the satisfiability of formula~(\ref{eq:ex-before}). Thus, a
-satisfiable (resp. unsatisfiable) response from an SMT solver on input $\conv(
-\varphi )$ implies the existence (resp.\ nonexistence) of a model for
+satisfiable or unsatisfiable response from an SMT solver on input $\conv(
+\varphi )$ implies the existence or nonexistence of a model for
 $\varphi$. Moreover, information in models for $\conv( \varphi )$ contains
-relevant information regarding the models of $\varphi$. For example, the model
-$\I$ for formula~(\ref{eq:ex-after}) described above interprets $c$ as $14$,
-while there exists a model of formula~(\ref{eq:ex-before}) also interprets $c$
-as $14$. In fact, we claim that there exists a model of $\varphi$ that
+pertinent information regarding the models of $\varphi$. For example, the model
+$\I$ for formula~(\ref{eq:ex-after}) described above interprets $\con{c}$ as $14$,
+and there exists a model of formula~(\ref{eq:ex-before}) that also interprets $\con{c}$
+as $14$. In general, there exists a model of $\varphi$ that
 coincides with each model of $\conv( \varphi )$ on its interpretation of all
-functions in $\sfuns{\Sigma}$ other than those in $\sfundefs{\Sigma}$, i.e. $\{
-s \}$ in the previous example. From a practical point of view, this is not an
-issue, because $s$ is the very function that was explicitly defined by the
-user, and hence already has an intended interpretation.
+functions in $\sfuns{\Sigma} - \sfundefs{\Sigma}$, i.e., $\{
+\con{s} \}$ in the example.
+
+%%% @ANDY: I don't get the following comment --jb
+%
+%From a practical point of view, this is not an
+%issue, because $s$ is the very function that was explicitly defined by the
+%user, and hence already has an intended interpretation.
 
 \begin{theorem}
-If $\varphi$ is a $\Sigma$-formula that is in definitional form with respect to $\sfundefs{\Sigma}$,
-and the set of function definitions $\mathcal{D}$ corresponding to functions in $\sfundefs{\Sigma}$ is admissible,
-then $\varphi$ and $\conv( \varphi )$ are equisatisfiable.
+If $\varphi$ is a\/ $\Sigma$-formula that is in definitional form with respect to\/
+$\sfundefs{\Sigma}$
+and the set of function definitions $\mathcal{D}$ corresponding to functions in
+$\sfundefs{\Sigma}$ is admissible, then $\varphi$ and $\conv( \varphi )$ are
+equisatisfiable.
 \end{theorem}
 \begin{proof}
 (Sketch)  First, we show that if $\varphi$ is satisfied by $\Sigma$-interpretation $\I$, then $\conv( \varphi )$ is satisfied by a $\extendsig{\Sigma}$-interpretation $\J$.
@@ -838,6 +847,8 @@ Refute
 Nitpick
   * inductive / coinductive predicates
   * quotient types
+
+  * abstract interpretation
 
 Leon
 
