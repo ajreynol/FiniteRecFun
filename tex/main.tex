@@ -590,12 +590,13 @@ $\extendsig{\Sigma}$-formula
 \begin{equation} \label{eq:ex-after}
 \!\begin{aligned}[c]
   & \phantom{{\wedge}\; }\bigl(
-    \!\begin{aligned}[t]
-      \forall a : \fargsort{\con{s}}.\; \lite\bigl( \farg{\con{s}}( a ) \leq 0,\;
-        \con{s}(\farg{\con{s}}( a )) \teq 0,\;
-        & \phantom{{\wedge}\;} \con{s}(\farg{\con{s}}( a )) \teq \farg{\con{s}}( a ) + \con{s}( \farg{\con{s}}( a )-1 )
+      \forall a : \fargsort{\con{s}}.\; \lite\bigl(
+        \!\begin{aligned}[t]
+         &  \farg{\con{s}}( a ) \leq 0,\;
+          \con{s}(\farg{\con{s}}( a )) \teq 0,\;
 \\[-\jot]
-      & {\wedge}\; \exists b : {\fargsort{\con{s}}}.\;\, \farg{\con{s}}( b ) \teq \farg{\con{s}}( a )-1 \bigr) \bigr)
+  & \con{s}(\farg{\con{s}}( a )) \teq \farg{\con{s}}( a ) + \con{s}( \farg{\con{s}}( a )-1 )
+    \wedge \exists b : {\fargsort{\con{s}}}.\;\, \farg{\con{s}}( b ) \teq \farg{\con{s}}( a )-1 \bigr) \bigr)
 \end{aligned}
 \\[-\jot]
  & {\wedge}\; \bigl( \con{s}( c ) > 100 \wedge \exists a : {\fargsort{\con{s}}}.\;\, \farg{\con{s}}( a ) \teq \con{c} \bigr)
@@ -888,26 +889,31 @@ arguments are guided by the types of quantified variables.
   in CVC4}
 \label{sec:front-end}
 
-We have seen a satisfiability-preserving translation $\conv$ that significantly improves the effectiveness of known SMT techniques
-for finding counterexamples for formulas involving recursive function definitions.
-For convienience, the translation $\conv$ has been implemented in the latest development version of \cvc %~\cite{ReyEtAl-1-RR-13}
-(version 1.5 pre-release).
+The translation $\conv$ significantly improves the effectiveness of known SMT
+techniques for finding counterexamples for formulas involving recursive
+function definitions.
+For the convenience of end users, it
+has been implemented in the latest development version of \cvc %~\cite{ReyEtAl-1-RR-13}
+(version~1.5 prerelease).
 Function definitions $\forallf{\con{f}} \vec x.\; \varphi$ can be written in using the $\definefunreccmd$ command,
-from Version 2.5~\cite{} of the SMT-LIB standard.
-For example, the formula $\varphi$ in Example~\ref{ex:translation}
-can be written as:
-
-{\small
+from the SMT-LIB 2.5 draft standard \cite{smtlib25}.
+For example, formula~(\ref{eq:ex-before}) from Example~\ref{ex:translation}
+can be specified as
+%
+\begin{quote}
 \begin{verbatim}
 (define-fun-rec s ((x Int)) Int (ite (<= x 0) 0 (s (- x 1))))
 (assert (> (s x) 100))
 (check-sat)
 \end{verbatim}
-}
-
+\end{quote}
+%
 When reading this input,
-\cvc adds the (annotated) quantified formula $\forallf{\con{s}} x.\;\, \con{s}( x ) \teq \lite\bigl( x \leq 0, 0, \con{s}( x-1 )\bigr)$ to its list of assertions,
-which after rewriting becomes $\forallf{\con{s}} x.\;\, \lite\bigl( x \leq 0, \con{s}( x ) \teq 0, \con{s}( x ) \teq \con{s}( x-1 ) \bigr)$.
+\cvc adds the annotated quantified formula
+$$\forallf{\con{s}} x.\;\, \con{s}( x ) \teq \lite\bigl( x \leq 0,\, 0,\, \con{s}( x-1 )\bigr)$$
+to its list of assertions,
+which after rewriting becomes
+$$\forallf{\con{s}} x.\;\, \lite\bigl( x \leq 0, \con{s}( x ) \teq 0, \con{s}( x ) \teq \con{s}( x-1 ) \bigr)$$
 If \cvc's finite model finding mode for recursive functions is enabled (using the command line parameter ``--fmf-fun"),
 then it will replace its list of known assertions based on the conversion $\conv$ before checking for satisfiability.
 %If the functions provided in the input are admissible,
