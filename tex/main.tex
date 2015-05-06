@@ -261,7 +261,8 @@ quantified formulas in SMT.
 Ge and de Moura \cite{GeDeM-CAV-09} introduced a complete instantiation-based
 procedure for formulas in the \relax{essentially uninterpreted} fragment.
 This fragment is limited to universally quantified formulas where all
-occurrences of variables occur as direct subterms of uninterpreted
+%ct occurrences of 
+variables occur as direct subterms of uninterpreted
 functions---e.g., $\forall x%\typ{\typeint} --- the type is not important, right?
 .\;\, \con{f}( x )
 \teq \con{g}( x ) + 5$.
@@ -277,7 +278,7 @@ formulas over uninterpreted types as well as types having a fixed finite
 interpretation, such as fixed-width bit vectors and enumerated datatypes.
 These techniques can
 find a model for a formula such as $\forall x,\, y : \tau.\;\, x \teq
-y \vee \allowbreak \neg \con{f}( x ) \teq \con{f}( y )$, where $\tau$ is uninterpreted.
+y \vee \allowbreak \neg \con{f}( x ) \teq \con{f}( y )$, where $\tau$ is an uninterpreted type.
 % where the uninterpreted type $\tau$ is
 % interpreted as a finite set and $\con{f}$ as injective finite map.
 
@@ -287,21 +288,22 @@ essentially uninterpreted fragment does not allow the argument of a
 recursive function to be used deep inside a complex term on the right-hand side,
 whereas the finite model finding techniques of Reynolds et al.\ are not
 applicable for functions over infinite domains such as the integers or
-recursive datatypes. A simple example where both approaches fail is
+algebraic datatypes. A simple example where both approaches fail is
 $$\forall n : {\typeint}.\;\, \lite\bigl(
 n \leq 0,\allowbreak\; \con{p}( n ) \teq 1,\allowbreak\; \con{p}( n ) \teq 2 * \con{p}( n - 1 ) \bigr)$$
 This state of affairs is highly unsatisfactory, given the frequence of
 recursive definitions in practice and the impending addition of a dedicated
 command, \texttt{define-fun-rec}, to the SMT-LIB standard \cite{smtlib25}.
 
-In this paper, we present a method for translating formulas involving function
+In this paper, we present a method for translating formulas involving recursice function
 definitions into formulas where finite model finding techniques can be applied.
 The recursive functions must meet a precise semantic criterion to be admissible
 (Section~\ref{sec:prelim}). This criterion is met by terminating recursive
 function definitions, but also by tail-recursive functions and even by
-productive corecursive functions. It is, however, not met by inconsistent
+\emph{productive} co-recursive functions. It is, however, not met by inconsistent
 definitions such as $\forall n : {\typeint}.\;\, \con{f}(n) \teq \con{f}(n) +
-1$, and it is possible to construct consistent examples that do not meet it.
+1$, %ct and it is possible to construct consistent examples that do not meet it.
+as well as other example of consistent definition.
 
 We define a translation for a class of
 formulas involving admissible recursive function definitions
@@ -310,12 +312,13 @@ recursive definition $\forall x : \tau.\; \const{f}(x) \teq t$
 can be translated to
 $\forall a :
 \fargtype{\tau}.\; \const{f}(\farg{\con{f}}(a)) \teq t[\concret(a)/x]$, where
-$\fargtype{\tau}$ is an uninterpreted ``abstract'' type and $\farg{\con{f}} :
+$\fargtype{\tau}$ is an uninterpreted \emph{abstract} type and $\farg{\con{f}} :
 \fargtype{\tau} \to \tau$ a coercion from the abstract type to the concrete
 type. The translation preserves satisfiability and, for admissible definitions,
-unsatisfiability, and it makes finite model finding possible in practice.
+unsatisfiability, and makes finite model finding possible in practice
+for problems in this class.
 
-Our empirical evaluation on benchmarks from IsaPlanner and Leon provides
+Our empirical evaluation on benchmarks from the IsaPlanner proof planner~\cite{} and Leon verifier~\cite{} provides
 evidence that this translation improves the effectiveness of the SMT solvers
 \cvc and \ziii for finding counterexamples to verification conditions
 (Section~\ref{sec:evaluation}). The approach is implemented as a preprocessor
@@ -331,21 +334,23 @@ command-line option, the solver assumes that functions introduced using the
 \section{Preliminaries}
 \label{sec:prelim}
 
-Our setting is a monomorphic (or many-sorted) first-order logic, such as
-the one defined by SMT-LIB \cite{smtlib25}.
+Our setting is a (monomorphic) many-sorted first-order logic
+like the one defined by SMT-LIB \cite{smtlib25}.
 A \emph{signature} $\Sigma$ consists of
-a set $\stypes{\Sigma}$ of type symbols (or sorts) and
-a set $\sfuns{\Sigma}$ of function symbols.
+a set $\stypes{\Sigma}$ of %ct type symbols
+fist-order types 
+%
+(or sorts) and a set $\sfuns{\Sigma}$ of function symbols over these types.
 We assume that signatures always include a Boolean type $\Bool$ and constants
 $\ltrue, \lfalse : \Bool$ for truth and falsity,
 an infix equality predicate ${\teq} : \tau \times \tau \to \Bool$
 for each $\tau \in \stypes{\Sigma}$,
 standard Boolean connectives ($\neg$, $\wedge$, $\vee$, etc.),
-and a function symbol $\lite : \Bool \times \tau \times \tau \rightarrow \tau$ (``if--then--else'')
+and an if-then-else function symbol $\lite : \Bool \times \tau \times \tau \rightarrow \tau$
 for each $\tau \in \stypes{\Sigma}$.
+Formulas are terms of type $\Bool$.
 We write $t\typ{\tau}$ to denote a metavariable ranging over terms of
 type~$\tau$ and $\terms( t )$ to denote the set of subterms in $t$.
-Formulas are terms of type $\Bool$.
 Given a term $u$, we write $u[\vec t/\vec x]$ to denote the result of replacing
 all occurrences of $\vec x$ with $\vec t$ in $u$.
 
@@ -364,24 +369,34 @@ A $\Sigma$-formula $\varphi$ is
 \emph{$T$-satisfiable}
 if it is satisfied by some interpretation in $\Mo$;
 otherwise, it is \emph{$T$-unsatisfiable}.
-A formula $\varphi$ \emph{entails} $\psi$, written $\varphi \models_T \psi$,
+A formula $\varphi$ \emph{$T$-entails} $\psi$, written $\varphi \models_T \psi$,
 if all interpretations in $\Mo$ that satisfy $\varphi$ also satisfy $\psi$.
+Two formulas $\varphi$ and $\psi$ are \emph{$T$-equivalent} 
+if each $T$-entails the other.
 Given a signature $\Sigma$,
 the \emph{theory of equality with uninterpreted functions} \euf
 consists of the set of all $\Sigma$-interpretations.
 We refer to the type and function symbols in this theory as \emph{uninterpreted}.
+\ct{This is both ambiguous and insufficient.
+Since this is SMT we should fix some background theory $T$,
+then extend its signature with additional symbols and call \emph{those} uninterpreted.
+}
 
-In this paper, we consider \emph{annotated quantified formulas} of the form
+In addition to standard quantified formulas $\forall \vec x.\; \varphi$,
+we consider \emph{annotated quantified formulas} of the form
 $\forallf{\const{f}} \vec x.\; \varphi$, where $\con{f} \in \sfuns{\Sigma}$ is
-an uninterpreted function symbol, in addition to standard quantified formulas
-$\forall \vec x.\; \varphi$.
+an uninterpreted function symbol, 
+whose semantics is the same as standard quantified formulas.
 Given $\con{f} : \tau_1 \times \cdots \times \tau_n \rightarrow \tau$,
 an annotated
 quantified formula $\forallf{\con{f}} \vec x.\; \varphi$ is a \emph{function definition}
-(\,\emph{for $\con{f}$}\vthinspace) if $\vec x$ is a tuple of variables of type
-$\tau_1, \ldots, \tau_n$ and $\varphi$ is a (quantifier-free) formula equivalent to
-$\con{f}( \vec x ) \teq t$ for some $t$. We write $\exists
-\vec x.\; \varphi$ as shorthand for $\neg \forall \vec x.\; \neg \varphi$.
+(\,\emph{for $\con{f}$}\vthinspace) if $\vec x$ is a tuple of variables
+$x_1, \ldots, x_n$ of respective type
+$\tau_1, \ldots, \tau_n$ and $\varphi$ is a quantifier-free formula 
+$T$-equivalent to $\con{f}( \vec x ) \teq t$ for some term $t$ of type $\tau$.
+\ct{Why can't $\varphi$ be existential instead of just quantifier free?} 
+We write $\exists
+\vec x.\; \varphi$ as a shorthand for $\neg \forall \vec x.\; \neg \varphi$.
 
 \begin{definition}\rm
 A formula $\varphi$ is in \emph{definitional form with respect to}
@@ -393,7 +408,12 @@ $\{ \con{f}_1, \ldots, \con{f}_n \}$ if it is of the form
 \[(\forallf{\con{f}_1} \vec x_1.\; \varphi_1) \wedge \cdots \wedge
 (\forallf{\con{f}_n} \vec x_n.\; \varphi_n) \wedge \psi\]
 %
-where $\con{f}_1, \ldots, \con{f}_n \in \sfuns{\Sigma}$ are distinct
+where $\con{f}_1, \ldots, \con{f}_n \in \sfuns{\Sigma}$ are distinct function symbols,
+%ct added
+$\forallf{\con{f}_i} \vec x_i.\; \varphi_i$ is a function definition
+for $i = 1, \ldots, n$,
+%
+\ct{I think we need more conditions here on how a symbol $\con{f}_i$ can occur in $\varphi_j$.}
 and $\psi$ contains no function definitions.
 We call $\psi$ the \emph{conjecture} of $\varphi$.
 %\ct{Don't we need additional restrictions on the $\varphi_i$'s here?
