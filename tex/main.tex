@@ -516,9 +516,9 @@ $\fargx{\con{f}}{i}$. Second, it augments $\varphi$ with additional constraints
 $\exists a : \fargsort{\con{f}}.\;\, \vecfarg{\con{f}}( a ) \teq \vec t$; these
 ensure that the restricted definition for $\con{f}$ covers all relevant tuples
 of terms, namely the ones for which an $\con{f}$ application exists and is
-relevant to the satisfiability of the current branch of $\varphi$.
-\jb{what does ``current branch of'' mean? can we drop it / rephrase it / vague
-it up?}
+relevant to the satisfiability of $\varphi$.
+%\jb{what does ``current branch of'' mean? can we drop it / rephrase it / vague
+%it up?}
 
 If $t$ is an application of an interpreted predicate $\boolop
 \in \{{\neg}, {\wedge}, {\vee}, {\teq}, {\lite}\}$,
@@ -902,8 +902,9 @@ can be specified as
 %
 \begin{quote}
 \begin{verbatim}
-(define-fun-rec s ((x Int)) Int (ite (<= x 0) 0 (s (- x 1))))
-(assert (> (s x) 100))
+(define-fun-rec s ((x Int)) Int (ite (<= x 0) 0 (+ x (s (- x 1)))))
+(declare-fun c () Int)
+(assert (> (s c) 100))
 (check-sat)
 \end{verbatim}
 \end{quote}
@@ -918,8 +919,25 @@ If \cvc's finite model finding mode for recursive functions is enabled (using th
 then it will replace its list of known assertions based on the conversion $\conv$ before checking for satisfiability.
 %If the functions provided in the input are admissible,
 %then a ``satisfiable" response from the solver implies that a model exists for the original formula.
-Accordingly, the solver will output an approximation of the interpretation for recursive function definitions,
-that is, it may output the interpretation~(\ref{eq:approx-interp}) from Section~\ref{sec:encoding} for $s$.
+Accordingly, the solver will output the approximation of the interpretation it used for recursive function definitions,
+that is, it will output the following model.
+\ajr{prefer having the full output like this here?}
+%it may output the interpretation~(\ref{eq:approx-interp}) from Section~\ref{sec:encoding} for $s$.
+
+{\small
+\begin{verbatim}
+(model
+(define-fun s (($x1 Int)) Int 
+               (ite (= $x1 14) 105 (ite (= $x1 13) 91 (ite (= $x1 12) 78 
+               (ite (= $x1 11) 66 (ite (= $x1 10) 55 (ite (= $x1 4) 10 
+               (ite (= $x1 9) 45 (ite (= $x1 8) 36 (ite (= $x1 7) 28 
+               (ite (= $x1 6) 21 (ite (= $x1 3) 6 (ite (= $x1 5) 15 
+               (ite (= $x1 2) 3 (ite (= $x1 1) 1 0)))))))))))))))
+(define-fun c () Int 14)
+)
+\end{verbatim}
+}
+
 
 Notice the option ``--fmf-fun" effectively instructs the SMT solver to assume that the functions provided by the user are admissible.
 If this option is used for a set of functions definitions that is \emph{not} admissible, then the solver is not model-sound, that is,
