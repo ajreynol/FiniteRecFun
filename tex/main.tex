@@ -136,13 +136,13 @@
 %%% terminology from abstract interpretation
 \newcommand{\conv}{\mathcalx{A}}
 
-%\newcommand{\ssorts}[1]{#1^\mathrm{s}}
-\newcommand{\ssorts}[1]{#1^\mathrm{y}}
+%\newcommand{\stypes}[1]{#1^\mathrm{s}}
+\newcommand{\stypes}[1]{#1^\mathrm{y}}
 
 \newcommand{\sfuns}[1]{#1^\mathrm{f}}
 \newcommand{\sfundefs}[1]{#1^\mathrm{dfn}}
 %\newcommand{\sfunndefs}[1]{#1^\mathrm{nf}}
-\newcommand{\sortint}{\ty{Int}}
+\newcommand{\typeint}{\ty{Int}}
 
 \newcommand{\pnone}{\con{apolar}}
 \newcommand{\ppos}{\con{pos}}
@@ -167,7 +167,7 @@
 \newcommand{\vecfarg}[1]{\vec{\concret}_{#1}}
 \newcommand{\farg}[1]{\concret_{#1}}
 \newcommand{\fargx}[2]{\concret^{\vthinspace#2}_{#1}}
-\newcommand{\fargsort}[1]{\alpha_{#1}}
+\newcommand{\fargtype}[1]{\alpha_{#1}}
 
 \newcommand{\Sigmalia}{\Sigma_{\mathcalx{LIA}}}
 \newcommand{\extendsig}[1]{\mathcalx{E}( #1 )}
@@ -224,13 +224,12 @@ Department of Computer Science, University of Iowa, USA
 \begin{abstract}
 SMT solvers have recently been extended with finite model finding techniques.
 However, these generally cannot cope with universal quantifiers ranging over
-infinite types, such as integers and recursive datatypes.
-This paper introduces a translation that eliminates infinite
-quantifiers in axioms specifying a large class of recursive functions,
-including terminating, tail-recursive, and productive functions. An empirical
-evaluation confirms that the approach works well on benchmarks from two
-independent sources. The translation is implemented as a preprocessor in the
-solver CVC4.
+infinite types, such as integers and recursive datatypes. This paper introduces
+a translation that eliminates infinite quantifiers in axioms specifying a large
+class of recursive functions, including terminating, tail-recursive, and
+productive functions. An empirical evaluation confirms that the approach works
+well on benchmarks from two sources. The translation is implemented as a
+preprocessor in the solver CVC4.
 \end{abstract}
 
 %% The institutions above shouldn't count as footnotes
@@ -242,9 +241,9 @@ solver CVC4.
 Many solvers based on SMT (satisfiability modulo theories) can reason about
 quantified formulas using incomplete instantiation-based methods
 \cite{MouraBjoerner07,ReynoldsTinelliMoura14}.
-These methods work well in the context of proving (i.e., showing
-unsatisfiability), but they generally cannot be used to find models (i.e.,
-showing satisfiability). Typically, a single universal quantifier in one of the
+These methods work well in the context of proving (i..e, showing
+unsatisfiability), but they are of little help for finding models (i.e.,
+showing satisfiability). Often, a single universal quantifier in one of the
 axioms of a problem is enough to prevent the discovery of models.
 
 In the past few years, techniques have been developed to finding models for
@@ -253,7 +252,7 @@ Ge and de Moura \cite{GeDeM-CAV-09} introduced a complete instantiation-based
 procedure for formulas in the \relax{essentially uninterpreted} fragment.
 This fragment is limited to universally quantified formulas where all
 occurrences of variables occur as direct subterms of uninterpreted
-functions---e.g., $\forall x%\typ{\sortint} --- the sort is not important, right?
+functions---e.g., $\forall x%\typ{\typeint} --- the type is not important, right?
 .\;\, \con{f}( x )
 \teq \con{g}( x ) + 5$.
 % since all
@@ -261,13 +260,13 @@ functions---e.g., $\forall x%\typ{\sortint} --- the sort is not important, right
 % $\con{g}$.
 Other syntactic criteria extend
 this fragment slightly, including cases when variables occur as arguments of
-arithmetic predicates. More recently, Reynolds et al.\
+arithmetic predicates. Subsequently, Reynolds et al.\
 \cite{ReyEtAl-1-RR-13,reynolds-et-al-2013} introduced techniques for finding finite
 models for quantified
 formulas over uninterpreted types as well as types having a fixed finite
 interpretation, such as fixed-width bit vectors and enumerated datatypes.
 These techniques can
-find a model for the formula $\forall x,\, y : \tau.\;\, x \teq
+find a model for a formula such as $\forall x,\, y : \tau.\;\, x \teq
 y \vee \allowbreak \neg \con{f}( x ) \teq \con{f}( y )$, where $\tau$ is uninterpreted.
 % where the uninterpreted type $\tau$ is
 % interpreted as a finite set and $\con{f}$ as injective finite map.
@@ -279,7 +278,7 @@ recursive function to be used deep inside a complex term on the right-hand side,
 whereas the finite model finding techniques of Reynolds et al.\ are not
 applicable for functions over infinite domains such as the integers or
 recursive datatypes. A simple example where both approaches fail is
-$$\forall n : {\sortint}.\;\, \lite\bigl(
+$$\forall n : {\typeint}.\;\, \lite\bigl(
 n \leq 0,\allowbreak\; \con{p}( n ) \teq 1,\allowbreak\; \con{p}( n ) \teq 2 * \con{p}( n - 1 ) \bigr)$$
 This state of affairs is highly unsatisfactory, given the frequence of
 recursive definitions in practice and the impending addition of a dedicated
@@ -291,7 +290,7 @@ The recursive functions must meet a precise semantic criterion to be admissible
 (Section~\ref{sec:prelim}). This criterion is met by terminating recursive
 function definitions, but also by tail-recursive functions and even by
 productive corecursive functions. It is, however, not met by inconsistent
-definitions such as $\forall n : {\sortint}.\;\, \con{f}(n) \teq \con{f}(n) +
+definitions such as $\forall n : {\typeint}.\;\, \con{f}(n) \teq \con{f}(n) +
 1$, and it is possible to construct consistent examples that do not meet it.
 
 We define a translation for a class of
@@ -301,9 +300,9 @@ finding techniques are applicable. The main insight is that a
 recursive definition $\forall x : \tau.\; \const{f}(x) \teq t$
 can be translated to
 $\forall a :
-\fargsort{\tau}.\; \const{f}(\farg{\con{f}}(a)) \teq t[\concret(a)/x]$, where
-$\fargsort{\tau}$ is an uninterpreted ``abstract'' type and $\farg{\con{f}} :
-\fargsort{\tau} \to \tau$ a coercion from the abstract type to the concrete
+\fargtype{\tau}.\; \const{f}(\farg{\con{f}}(a)) \teq t[\concret(a)/x]$, where
+$\fargtype{\tau}$ is an uninterpreted ``abstract'' type and $\farg{\con{f}} :
+\fargtype{\tau} \to \tau$ a coercion from the abstract type to the concrete
 type. The translation preserves satisfiability and, for admissible definitions,
 unsatisfiability, and it makes finite model finding possible in practice.
 
@@ -325,20 +324,20 @@ command are admissible and translates them accordingly
 \label{sec:prelim}
 
 A \emph{signature} $\Sigma$ consists of
-a set $\ssorts{\Sigma}$ of type symbols (or sorts) and
+a set $\stypes{\Sigma}$ of type symbols (or sorts) and
 a set $\sfuns{\Sigma}$ of function symbols.
 We assume that signatures always include a Boolean type $\Bool$ and constants
 $\ltrue$ (truth) and $\lfalse$ (falsity) of that type,
 an infix equality predicate ${\teq} : \tau \times \tau \to \Bool$
-for each $\tau \in \ssorts{\Sigma}$,
+for each $\tau \in \stypes{\Sigma}$,
 standard boolean connectives ($\neg$, $\wedge$, $\vee$, etc.),
-and a function $\lite : \Bool \times \tau \times \tau \rightarrow \tau$ for each $\tau \in \ssorts{\Sigma}$.
+and a function $\lite : \Bool \times \tau \times \tau \rightarrow \tau$ for each $\tau \in \stypes{\Sigma}$.
 We write $t\typ{\tau}$ to denote a metavariable ranging over terms of
 type~$\tau$ and $\terms( t )$ to denote the set of subterms in $t$.
 %We write $\functerms^\Sigma( t )$ to denote the set of $f$-applications in $t$ such that $f \in \sfundefs{\Sigma}$.
 
 A \emph{$\Sigma$-interpretation $\I$} %is a mathematical structure that
-maps each $\tau \in \ssorts{\Sigma}$ to a nonempty set $\tau^\I$,
+maps each $\tau \in \stypes{\Sigma}$ to a nonempty set $\tau^\I$,
 the \emph{domain} of~$\tau$ in $\I$,
 and each $\con{f} : \tau_1 \times \cdots \times \tau_n \rightarrow \tau$ in
 $\sfuns{\Sigma}$
@@ -379,10 +378,8 @@ $\{ \con{f}_1, \ldots, \con{f}_n \} \subseteq \sfuns{\Sigma}$ if it is of the fo
 %\kern-\abovedisplayskip
 %\kern+\abovedisplayshortskip
 %
-\begin{equation} \label{eq:wdf}
-(\forallf{\con{f}_1} \vec x_1.\; \varphi_1) \wedge \cdots \wedge
-(\forallf{\con{f}_n} \vec x_n.\; \varphi_n) \wedge \psi
-\end{equation}
+\[(\forallf{\con{f}_1} \vec x_1.\; \varphi_1) \wedge \cdots \wedge
+(\forallf{\con{f}_n} \vec x_n.\; \varphi_n) \wedge \psi\]
 %
 where $\psi$ contains no function definitions.
 We call $\psi$ the \emph{conjecture} of $\varphi$.
@@ -392,8 +389,8 @@ We call $\psi$ the \emph{conjecture} of $\varphi$.
 \end{definition}
 
 Given a signature $\Sigma$,
-we distinguish the subset of \emph{defined} function symbols $\sfundefs{\Sigma}
-\subseteq \sfuns{\Sigma}$.
+we distinguish the subset of (\emph{recursively}) \emph{defined} function
+symbols $\sfundefs{\Sigma} \subseteq \sfuns{\Sigma}$.
 We consider $\Sigma$-formulas that are in definitional form with respect to
 functions $\sfundefs{\Sigma}$.
 
@@ -401,14 +398,14 @@ functions $\sfundefs{\Sigma}$.
 Given a set of function definitions $\DDD = \{ \forallf{f_1} \vec x.\;
 \varphi_1, \ldots, \forallf{f_n} \vec x.\; \varphi_n \}$, a formula $\varphi$
 is \emph{closed under function expansion with respect to $\DDD$} if
-\[\varphi \models_T \bigwedge_{i=1}^n \{ \varphi_i[ \vec t / \vec x ] \mid f_i( \vec t ) \in \terms( \varphi ) \}\]
+\[\varphi \,\models_T\, \bigwedge\nolimits_{\,i=1}^{n} \{ \varphi_i[ \vec t / \vec x ] \mid f_i( \vec t ) \in \terms( \varphi ) \}\]
 The set $\DDD$ is \emph{admissible} if whenever there exists a model for $\varphi$ that is closed under function expansion,
 there exists a model for $\varphi \wedge \forallf{f_1} \vec x.\; \varphi_1 \wedge \cdots \wedge \forallf{f_n} \vec x.\; \varphi_n$.
 \end{definition}
 
 For example, the set $\{ \forallf{\con{f}} \vec x.\; \con{f}( x ) \teq 0 \}$ is admissible.
 A set of admissible function definitions can include definitions of non-terminating functions, e.g.
-$\{ \forallf{\con{f}} x : \sortint.\;\, \con{f}( x ) \teq \con{f}( x - 1 ) \}$ or even $\{ \forallf{\con{f}} x.\;\, \con{f}( x ) \teq \con{f}( x ) \}$ are admissible.
+$\{ \forallf{\con{f}} x : \typeint.\;\, \con{f}( x ) \teq \con{f}( x - 1 ) \}$ or even $\{ \forallf{\con{f}} x.\;\, \con{f}( x ) \teq \con{f}( x ) \}$ are admissible.
 On the other hand, the set $\{ \forallf{\con{f}} x.\;\, \con{f}( x ) \teq \con{f}( x ) + 1 \}$ is not admissible,
 since the empty set of formulas is closed under function expansion with respect to this set,
 and there is no model satisfying $\forallf{\con{f}} x.\;\, \con{f}( x ) \teq \con{f}( x ) + 1$.
@@ -423,7 +420,7 @@ but there exists no interpretation satisfying both $\con{f}( 0 ) \teq 4$ and $\f
 %Terminating function specifications are always admissible, but also some
 %nonterminating
 %An admissible function definition need not specify a terminating function, e.g.
-%$\{ \forallf{\con{f}} x^\sortint.\;\, \con{f}( x ) \teq \con{f}( x - 1 ) \}$ or even $\{ \forallf{\con{f}} x.\;\, \con{f}( x ) \teq \con{f}( x ) \}$ are admissible.
+%$\{ \forallf{\con{f}} x^\typeint.\;\, \con{f}( x ) \teq \con{f}( x - 1 ) \}$ or even $\{ \forallf{\con{f}} x.\;\, \con{f}( x ) \teq \con{f}( x ) \}$ are admissible.
 
 %\section{A Translation for Admissible Function Definitions}
 %\section{A Translation for Function Definitions}
@@ -452,10 +449,10 @@ We extend the signature of $\Sigma$ to a signature $\extendsig{\Sigma}$ containi
 For each $\con{f} : \tau_1 \times \cdots \times \tau_n \rightarrow \tau \in \sfundefs{\Sigma}$,
 the signature $\extendsig{\Sigma}$ includes
 \begin{itemize}
-\item an uninterpreted \emph{abstract type} $\fargsort{\con{f}}$;
-\item $n$ uninterpreted \emph{concretization functions} $\fargx{\con{f}}{1} : \fargsort{\con{f}} \rightarrow \tau_1$, \ldots, $\fargx{\con{f}}{n} : \fargsort{\con{f}} \rightarrow \tau_n$.
+\item an uninterpreted \emph{abstract type} $\fargtype{\con{f}}$;
+\item $n$ uninterpreted \emph{concretization functions} $\fargx{\con{f}}{1} : \fargtype{\con{f}} \rightarrow \tau_1$, \ldots, $\fargx{\con{f}}{n} : \fargtype{\con{f}} \rightarrow \tau_n$.
 \end{itemize}
-%The interpretation of uninterpreted sort $\fargsort{\con{f}}$ will denote the elements (tuples) on which the function $\con{f}$ is applied.
+%The interpretation of uninterpreted type $\fargtype{\con{f}}$ will denote the elements (tuples) on which the function $\con{f}$ is applied.
 %The role of the uninterpreted functions $\farg{\con{f}}^1$, $\ldots$, $\farg{\con{f}}^n$ will be discussed more in the following.
 
 The function $\conv$ translates the $\Sigma$-formula
@@ -502,7 +499,7 @@ $\conv_0( t\typ{\tau},\, p )$ $=$
     \begin{itemize}
       \item[] $\mathsf{let}$ $( u',\, \chi ) = \conv_0( u,\, p )$ $\mathsf{in}$
       %\item[] $\mathsf{assert}( \chi = \ltrue )$;
-      \item[] \return \bigtuple{$\forall y : \fargsort{\con{f}}.\; u' [ \vecfarg{\con{f}}( y ) / \vec x ],\, \ltrue$}
+      \item[] \return \bigtuple{$\forall y : \fargtype{\con{f}}.\; u' [ \vecfarg{\con{f}}( y ) / \vec x ],\, \ltrue$}
     \end{itemize}
   \item[] $\mathsf{else}$ $\mathsf{if}$ $t = \forall \vec x.\;\, u$ $\mathsf{then}$
     \begin{itemize}
@@ -511,7 +508,7 @@ $\conv_0( t\typ{\tau},\, p )$ $=$
     \end{itemize}
    \item[] $\mathsf{else}$
    \begin{itemize}
-     \item[] \return \bigtuple{$t,\; \bigwedge\, \{ \exists a : \fargsort{\con{f}}.\; \vecfarg{\con{f}}( a ) \teq \vec t \mid \con{f}( \vec t ) \in \terms( t ),\, \con{f} \in \sfundefs{\Sigma} \}$}
+     \item[] \return \bigtuple{$t,\; \bigwedge\, \{ \exists a : \fargtype{\con{f}}.\; \vecfarg{\con{f}}( a ) \teq \vec t \mid \con{f}( \vec t ) \in \terms( t ),\, \con{f} \in \sfundefs{\Sigma} \}$}
    \end{itemize}
  \end{itemize}
 \end{enumerate}
@@ -532,10 +529,10 @@ $\conv( \varphi )$ $=$
 
 The translation modifies $\varphi$ in two main ways. First, it restricts the
 quantification on function definitions for $\con{f}$ to the corresponding
-uninterpreted type $\fargsort{\con{f}}$ and inserts appropriate coercions
+uninterpreted type $\fargtype{\con{f}}$ and inserts appropriate coercions
 $\fargx{\con{f}}{i}$. Second, it augments $\varphi$ with additional exisential
 constraints
-$\exists a : \fargsort{\con{f}}.\;\, \vecfarg{\con{f}}( a ) \teq \vec t$; these
+$\exists a : \fargtype{\con{f}}.\;\, \vecfarg{\con{f}}( a ) \teq \vec t$; these
 ensure that the restricted definition for $\con{f}$ covers all relevant tuples
 of terms, namely the ones for which an $\con{f}$ application exists and is
 relevant to the satisfiability of $\varphi$.
@@ -565,7 +562,7 @@ known polarity, the constrained $\chi$ is simply returned to the caller.
 If $t$ is a quantified formula, $\conv_0$ recursively calls itself on the body
 with the same polarity. If $t$ is a function definition of a function in
 $\sfundefs{\Sigma}$, $\conv_0$ constructs a quantified formula over a single variable
-$y$ of type $\fargsort{\con{f}}$ and replaces all occurrences of $\vec x$ in
+$y$ of type $\fargtype{\con{f}}$ and replaces all occurrences of $\vec x$ in
 $t'_1$ with $\vecfarg{\con{f}}( y )$.Since function definitions
 are a top-level conjunct, %by case analysis on the return values of $\conv$,
 we know that $\chi$ is simply $\ltrue$.
@@ -576,7 +573,7 @@ returned by the call.
 
 Otherwise, $t$ is either an application of an uninterpreted predicate or a term
 of a type other than $\Bool$. The returned constraint is a conjunction of
-formulas of the form $\exists a : {\fargsort{\con{f}}}.\;\, \vecfarg{\con{f}}(
+formulas of the form $\exists a : {\fargtype{\con{f}}}.\;\, \vecfarg{\con{f}}(
 a ) \teq \vec t$ for each subterm $\con{f}( \vec t )$ of $t$ such that $\con{f}
 \in \sfundefs{\Sigma}$. Such constraints, when asserted positively, ensure that
 the tuple of uninterpreted functions $\vecfarg{\con{f}}$ must include $\vec t$
@@ -588,11 +585,11 @@ in its range.
 \label{ex:translation}
 Consider the combined signature of linear arithmetic and uninterpreted
 functions $\Sigma = \Sigmalia \mathrel{\cup} \Sigma_{\euf}$, where
-$\ssorts{\Sigma_{\euf}} = \{ \sortint \}$ and
-$\sfuns{\Sigma_{\euf}} = \{ \con{s} : { \sortint \rightarrow \sortint },\, \const{c} : { \sortint } \}$.
+$\stypes{\Sigma_{\euf}} = \{ \typeint \}$ and
+$\sfuns{\Sigma_{\euf}} = \{ \con{s} : { \typeint \rightarrow \typeint },\, \const{c} : { \typeint } \}$.
 Let $\varphi$ be the $\Sigma$-formula
 \begin{equation} \label{eq:ex-before}
-\forallf{\con{s}} n : {\sortint}.\;\, \lite\bigl( n \leq 0,\; \con{s}(n) \teq 0,\;
+\forallf{\con{s}} n : {\typeint}.\;\, \lite\bigl( n \leq 0,\; \con{s}(n) \teq 0,\;
   \con{s}( n ) \teq n + \con{s}( n - 1 ) \bigr) \wedge \con{s}( \con{c} ) > 100
 \end{equation}
 %
@@ -604,31 +601,31 @@ satisfiable with a model that interprets $\const{c}$ as an integer greater than 
 equal to $14$. Due to the universal quantifier,
 current SMT techniques~\cite{GeDeM-CAV-09, ReyEtAl-1-RR-13,reynolds-et-al-2013} are unable to find
 a model for this formula. The signature $\extendsig{\Sigma}$ includes the type
-$\fargsort{\con{s}}$ and the uninterpreted function $\farg{\con{s}}$ of type $\fargsort{\con{s}}
-\rightarrow \sortint$. The result of $\conv( \varphi,\, \ppos )$ is the pair $(
+$\fargtype{\con{s}}$ and the uninterpreted function $\farg{\con{s}}$ of type $\fargtype{\con{s}}
+\rightarrow \typeint$. The result of $\conv( \varphi,\, \ppos )$ is the pair $(
 \psi,\, \ltrue )$, where (after simplification) $\psi$ is the
 $\extendsig{\Sigma}$-formula
 %
 \begin{equation} \label{eq:ex-after}
 \!\begin{aligned}[c]
   & \phantom{{\wedge}\; }\bigl(
-      \forall a : \fargsort{\con{s}}.\; \lite\bigl(
+      \forall a : \fargtype{\con{s}}.\; \lite\bigl(
         \!\begin{aligned}[t]
          &  \farg{\con{s}}( a ) \leq 0,\;
           \con{s}(\farg{\con{s}}( a )) \teq 0,\;
 \\[-\jot]
   & \con{s}(\farg{\con{s}}( a )) \teq \farg{\con{s}}( a ) + \con{s}( \farg{\con{s}}( a )-1 )
-    \wedge \exists b : {\fargsort{\con{s}}}.\;\, \farg{\con{s}}( b ) \teq \farg{\con{s}}( a )-1 \bigr) \bigr)
+    \wedge \exists b : {\fargtype{\con{s}}}.\;\, \farg{\con{s}}( b ) \teq \farg{\con{s}}( a )-1 \bigr) \bigr)
 \end{aligned}
 \\[-\jot]
- & {\wedge}\; \bigl( \con{s}( \con{c} ) > 100 \wedge \exists a : {\fargsort{\con{s}}}.\;\, \farg{\con{s}}( a ) \teq \con{c} \bigr)
+ & {\wedge}\; \bigl( \con{s}( \con{c} ) > 100 \wedge \exists a : {\fargtype{\con{s}}}.\;\, \farg{\con{s}}( a ) \teq \con{c} \bigr)
 \end{aligned}
 \end{equation}
 %
 The universal quantification in the resulting formula is over an uninterpreted
-type $\fargsort{\con{s}}$, thus enabling the finite model finding
+type $\fargtype{\con{s}}$, thus enabling the finite model finding
 techniques by Reynolds et al.\ \cite{ReyEtAl-1-RR-13,reynolds-et-al-2013} to search for a finite interpretation for
-$\fargsort{\con{s}}$. Moreover, all occurrences of $a$ in this formula are beneath
+$\fargtype{\con{s}}$. Moreover, all occurrences of $a$ in this formula are beneath
 applications of the uninterpreted function $\farg{\con{s}}$, implying that the
 formula is in the essentially uninterpreted fragment,
 for which Ge and de Moura \cite{GeDeM-CAV-09} provide a complete instantiation
@@ -641,14 +638,14 @@ produce a model for formula~(\ref{eq:ex-after}) within 100 milliseconds.\xend
 
 The translation $\conv$ does not preserve the models of $\varphi$.
 One model $\I$ for formula~(\ref{eq:ex-after}) in the previous example interprets
-$\fargsort{\con{s}}$ as a finite set of elements $\{ u_0, \ldots, u_{14} \}$,
+$\fargtype{\con{s}}$ as a finite set of elements $\{ u_0, \ldots, u_{14} \}$,
 $\farg{\con{s}}$ as a finite map $u_i \mapsto i$ for $i = 0, \ldots, 14$,
 $\con{c}$ as $14$,
 and $\con{s}$ as the (almost constant) function
 %
 %% TYPESETTING: \mathbin and to make it fit nicely
 \begin{equation} \label{eq:approx-interp}
-\lambda x : \sortint.\;\, \lite( x \mathbin{\teq} 0,\, 0,\,
+\lambda x : \typeint.\;\, \lite( x \mathbin{\teq} 0,\, 0,\,
   \lite( x \mathbin{\teq} 1,\, 1,\,
     \lite( x \mathbin{\teq} 2,\, 3,\,
       \lite(\ldots,\; \lite( x \mathbin{\teq} 13,\, 91,\, 105 )\negvthinspace \ldots ))))
@@ -694,12 +691,12 @@ equisatisfiable.
 \end{theorem}
 \begin{proofsketch}
 First, we show that if $\varphi$ is satisfied by $\Sigma$-interpretation $\I$, then $\conv( \varphi )$ is satisfied by a $\extendsig{\Sigma}$-interpretation $\J$.
-Let $\J$ be the $\extendsig{\Sigma}$-interpretation that interprets all types $\tau \in \ssorts{\Sigma}$ as $\tau^\I$,
+Let $\J$ be the $\extendsig{\Sigma}$-interpretation that interprets all types $\tau \in \stypes{\Sigma}$ as $\tau^\I$,
 all functions $\con{f} \in \sfuns{\Sigma}$ as $\con{f}^\I$,
 and for each function $\con{f}$ of type $\tau_1 \times \cdots \tau_n \rightarrow \tau$ in $\sfundefs{\Sigma}$,
-interprets $\fargsort{\con{f}}$ as a tuple of values of type $\tau_1^\I \times \cdots \times \tau_n^\I$,
+interprets $\fargtype{\con{f}}$ as a tuple of values of type $\tau_1^\I \times \cdots \times \tau_n^\I$,
 and each $\fargx{\con{f}}{i}$ as the $i^{th}$ projection on such tuples for each $i = 1, \ldots, n$.
-Note that $\J$ satisfies \emph{every} constraint of the form $\exists a : {\fargsort{\con{f}}}. ( \vecfarg{\con{f}}( a ) \teq \vec t )$,
+Note that $\J$ satisfies \emph{every} constraint of the form $\exists a : {\fargtype{\con{f}}}. ( \vecfarg{\con{f}}( a ) \teq \vec t )$,
 since by our construction of $\J$ there exists an $a$ such that $a^\J = \vec t^\J$.
 By case analysis it follows that $\conv_0$ maintains the invariant that
 if $\conv_0( t\typ{\Bool}, \ppos )$ returns $( {t'}, \chi )$,
@@ -716,17 +713,17 @@ $\DDD \wedge \varphi_0$.
 %where $\psi$ entails $\varphi_0$.
 To do so, 
 we first construct a sequence of $\extendsig{\Sigma}$-literals $M_0, M_1, \ldots$ such that $\I$ satisfies each $M_i$,
-and a sequence of mappings $C^{\con f}_0, C^{\con f}_1, \ldots$ from values $\fargsort{f}^\I$ 
+and a sequence of mappings $C^{\con f}_0, C^{\con f}_1, \ldots$ from values $\fargtype{f}^\I$ 
 to tuples of terms of type $\tau_1 \times \cdots \times \tau_n$ 
 for each function $\con{f}$ of type $\tau_1 \times \cdots \times \tau_n \rightarrow \tau$ in $\sfundefs{\Sigma}$.
 Let $M_0$ be a set of literals over the atoms occurring in $\varphi_0$
 such that $\I$ satisfies each literal in $M_0$ and $\bigwedge M_0$ entails $\conv( \varphi_0 )$.
 For each $\con{f} \in \sfundefs{\Sigma}$, let $C^{\con{f}}_0$ be the empty mapping.
 For each $i \geq 0$, 
-let $X_i$ be the set of constraints of the form $\exists a : {\fargsort{\con{f}}}. ( \vecfarg{\con{f}}( a ) \teq \vec t )$ occurring in $M_i$
+let $X_i$ be the set of constraints of the form $\exists a : {\fargtype{\con{f}}}. ( \vecfarg{\con{f}}( a ) \teq \vec t )$ occurring in $M_i$
 and let $L_i$ be the others in $M_i$.
 For each $\con{f} \in \sfundefs{\Sigma}$, let $C^{\con{f}}_{i+1}$ be a mapping containing $C^{\con{f}}_i$ and a minimal number of entries
-such that for all $\exists a : {\fargsort{\con{f}}}. ( \vecfarg{\con{f}}( a ) \teq \vec t ) \in X_i$,
+such that for all $\exists a : {\fargtype{\con{f}}}. ( \vecfarg{\con{f}}( a ) \teq \vec t ) \in X_i$,
 there exists a $u \mapsto \vec s \in C^{\con{f}}_{i+1}$ such that $\vecfarg{\con{f}}^\I( u ) = \vec s^\I = \vec t^\I$.
 Let $M_{i+1}$ be the set containing $M_i$ as well as
 
@@ -746,11 +743,11 @@ which is $\varphi$.
 \begin{example}
 Let us revisit the translated formula~(\ref{eq:ex-after}) from
 Example~\ref{ex:translation}. This formula is unsatisfiable if and only if
-formula~(\ref{eq:ex-before}) is unsatisfiable since $\fargsort{f}$ can be
-interpreted as $\sortint$, and $\farg{f}$ can be interpreted as the identity
+formula~(\ref{eq:ex-before}) is unsatisfiable since $\fargtype{f}$ can be
+interpreted as $\typeint$, and $\farg{f}$ can be interpreted as the identity
 function. Conversely, we claim formula~(\ref{eq:ex-after}) is satisfiable if
 and only if formula~(\ref{eq:ex-before}) is satisfiable, noting that the set
-$\{ \forallf{\con{s}} x\typ{\sortint}.\;\, \lite\bigl( x \leq 0,\allowbreak\; \con{s}(x)
+$\{ \forallf{\con{s}} x\typ{\typeint}.\;\, \lite\bigl( x \leq 0,\allowbreak\; \con{s}(x)
 \teq 0,\; \con{s}( x ) \teq x + \con{s}( x-1 ) \bigr) \}$ is admissble.
 As stated
 in the proof of Theorem~\ref{thm:equi}, the reason is that any model of
@@ -758,7 +755,7 @@ formula~(\ref{eq:ex-after}) must satisfy a formula that is closed under
 function expansion, hence implying that formula~(\ref{eq:ex-before}) has a
 model. In more detail, let $\varphi_\con{s}$ be the formula $\forallf{\con{s}} x.\;\,
 \lite\bigl( x \leq 0, \con{s}(x) \teq 0, \con{s}( x ) \teq x + \con{s}( x-1 )
-\bigr)$. The rightmost conjunct $\exists a : {\fargsort{\con{s}}}.
+\bigr)$. The rightmost conjunct $\exists a : {\fargtype{\con{s}}}.
 \farg{\con{s}}( a ) \teq \con{c}$ ensures that any model of
 formula~(\ref{eq:ex-after}) satisfying $\con{s}( \con{c} ) > 100$ also
 satisfies $\varphi_{\con{s}}[\con{c}/x]$. The nested existential
