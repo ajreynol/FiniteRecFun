@@ -220,10 +220,10 @@ Department of Computer Science, University of Iowa, USA
 SMT solvers have recently been extended with finite model finding techniques.
 However, these cannot cope with universal quantifiers ranging over infinite
 types. This paper introduces a translation that eliminates infinite quantifiers
-in axioms specifying well-behaved recursive functions, including terminating,
-tail-recursive, and productive functions. An empirical evaluation confirms that
-the approach works well on benchmarks from various sources. The translation is
-implemented as a preprocessor in the solver CVC4.
+in axioms specifying a large class of recursive functions, including
+terminating, tail-recursive, and productive functions. An empirical evaluation
+confirms that the approach works well on benchmarks from various sources. The
+translation is implemented as a preprocessor in the solver CVC4.
 \end{abstract}
 
 \section{Introduction}
@@ -234,36 +234,6 @@ implemented as a preprocessor in the solver CVC4.
     * a single universal quantifier in an axiom is enough to put it off track
       (``maybe unsat'')
 
-  * quantifiers in recursive fun defs
-
-  * intuitively, finite quantification suffices:
-    * if we make sure all needed values are there
-    * if well-founded (assumed!)
-
-  * nasty example (not well-founded)
-    * f x = f x + 1
-
-  * how we do it
-
-  * show that it works also for example with weird recursion schemes
-
-  * corecursive functions???
-    * productive
-
-\begin{verbatim}
-this option targets users who wish to determine the satisfiability of inputs
-that involving function definitions that are known to be consistent, whereas it
-does not target users who wish to check the consistency of a set of function
-definitions.
-\end{verbatim}
-
-
-\ajr{Demand for recursive functions in SMT (new draft includes
-define-funs-rec). Usually not interested in showing logical consistency, there
-exist other tools that check e.g. termination.
-Thus, want SMT solver to check satisfiability the assumption that recursive
-functions are consistent (where this needs to be defined precisely).
-}
 
 Recent techniques~\cite{GeDeM-CAV-09, ReyEtAl-1-RR-13,reynolds-et-al-2013}
 have focused on finding models for quantified formulas in SMT.
@@ -301,15 +271,61 @@ In this paper, we advocate a method for translating formulas involving function
 definitions (such as the one mentioned in the previous paragraph) 
 into ones where the techniques~\cite{GeDeM-CAV-09, ReyEtAl-1-RR-13} are applicable.
 
-\paragraph{Contributions}
+The recursive functions must meet a precise semantic criterion to be admissible
+(Section~\ref{sec:prelim}). This criterion is met by terminating recursive
+function definitions, but also by tail-recursive functions and even by
+productive corecursive functions. The criterion is not met by inconsistent
+definitions such as $\forall n : {\sortint}.\;\, \con{f}(n) \teq \con{f}(n) +
+1$, but also by some consistent definitions.
 
-In this paper, we make the following contributions:
-\begin{itemize}
-\item[-] We define a satisfiability-preserving translation method for a class of formulas containing recursive function definitions
-that produces formulas for which existing model finding techniques~\cite{GeDeM-CAV-09, ReyEtAl-1-RR-13,reynolds-et-al-2013} are applicable.
-\item[-] We provide experimental evidence that this translation improves the effectiveness of SMT solvers \cvc and \ziii for finding counterexamples to verification conditions.
-\item[-] We detail front-end support for recursive function definitions and this translation in the SMT solver \cvc.
-\end{itemize}
+Demand for recursive functions in SMT (new draft includes
+define-funs-rec). Usually not interested in showing logical consistency, there
+exist other tools that check e.g. termination.
+Thus, want SMT solver to check satisfiability the assumption that recursive
+functions are consistent (where this needs to be defined precisely).
+
+We define an (un)satisfiability-preserving translation method for a class of
+formulas containing recursive function definitions (Section~\ref{sec:encoding})
+that produces formulas for which existing model finding techniques are
+applicable. The idea
+
+replace a definition $\forall x : \tau.\; \const{f}(x) \teq t$ by $\forall a :
+\fargsort{\tau}.\; \const{f}(\farg{\con{f}}(a)) \teq t[\concret(a)/x]$, where
+$\fargsort{\tau}$ is an uninterpreted ``abstract'' type and $\farg{\con{f}} :
+\fargsort{\tau} \to \tau$ a coercion from the abstract type to the concrete
+type. For admissible definitions, this preserves satisfiability and
+unsatisfiability, while making it possible to find finite models using known
+techniques.
+
+We provide experimental evidence that this translation improves the
+effectiveness of SMT solvers \cvc and \ziii for finding counterexamples to
+verification conditions (Section~\ref{sec:evaluation}).
+
+We detail front-end support for recursive function definitions and this
+translation in the SMT solver \cvc (Section~\ref{sec:front-end}).
+
+\newpage
+
+  * quantifiers in recursive fun defs
+
+  * intuitively, finite quantification suffices:
+    * if we make sure all needed values are there
+    * if well-founded (assumed!)
+
+  * nasty example (not well-founded)
+    * f x = f x + 1
+
+  * how we do it
+
+  * corecursive functions???
+    * productive
+
+\begin{verbatim}
+this option targets users who wish to determine the satisfiability of inputs
+that involving function definitions that are known to be consistent, whereas it
+does not target users who wish to check the consistency of a set of function
+definitions.
+\end{verbatim}
 
 \section{Preliminaries}
 \label{sec:prelim}
@@ -990,6 +1006,7 @@ Nitpick
     one abstract domain per type, not per function argument
   * guards + one-domain per arg are a good combi, guards + one-single-domain is bad because of
     odd schemes, give unsat example
+    [* show that it works also for example with weird recursion schemes]
 
   * other features:
     * inductive / coinductive predicates
