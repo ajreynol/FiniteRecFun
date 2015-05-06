@@ -229,43 +229,46 @@ translation is implemented as a preprocessor in the solver CVC4.
 \section{Introduction}
 \label{sec:introduction}
 
-  * why model finding?
-  * but SMT solvers better at proving
-    * a single universal quantifier in an axiom is enough to put it off track
-      (``maybe unsat'')
+Many SMT solvers can reason about quantified formulas using incomplete
+instantiation-based methods \cite{MouraBjoerner07,ReynoldsTinelliMoura14}.
+These methods work well in the context of proving (i.e., showing
+unsatisfiability), but they generally cannot be used to find models (i.e.,
+showing satisfiability). Typically, a single universal quantifier in one of the
+axioms of a problem is enough to prevent the discovery of models.
 
-
-Recent techniques~\cite{GeDeM-CAV-09, ReyEtAl-1-RR-13,reynolds-et-al-2013}
-have focused on finding models for quantified formulas in SMT.
-Ge and de Moura \cite{GeDeM-CAV-09} presented a complete instantiation-based
-procedure for formulas in the \emph{essentially uninterpreted} fragment.
+In the past few years, techniques have been developed to finding models for
+quantified formulas in SMT.
+Ge and de Moura \cite{GeDeM-CAV-09} introduced a complete instantiation-based
+procedure for formulas in the \relax{essentially uninterpreted} fragment.
 This fragment is limited to universally quantified formulas where all
 occurrences of variables occur as direct subterms of uninterpreted
-functions. For example, the formula $\forall x%\typ{\sortint} --- the sort is not important, right?
+functions---e.g., $\forall x%\typ{\sortint} --- the sort is not important, right?
 .\;\, \con{f}( x )
-\teq \con{g}( x ) + 5$ is in the essentially uninterpreted fragment.
+\teq \con{g}( x ) + 5$.
 % since all
 % occurrences of $x$ occur beneath uninterpreted functions $\con{f}$ and
 % $\con{g}$.
-Other syntactic criteria are identified in this paper that extend
+(Other syntactic criteria extend
 this fragment slightly, including cases when variables occur as arguments of
-arithmetic predicates. The techniques in~Reynolds et al.\
-\cite{ReyEtAl-1-RR-13,reynolds-et-al-2013} can be used for finding finite
+arithmetic predicates.) Reynolds et al.\
+\cite{ReyEtAl-1-RR-13,reynolds-et-al-2013} introduced techniques for finding finite
 models for quantified
 formulas over uninterpreted types as well as types having a fixed finite
 interpretation, such as fixed-width bit vectors and enumerated datatypes.
-Finite model finding techniques can
+These techniques can
 find a model for the formula $\forall x,\, y : \tau.\;\, x \teq
-y \vee \neg \con{f}( x ) \teq \con{f}( y )$ where the uninterpreted type $\tau$ is
-interpreted as a finite set and $\con{f}$ as injective finite map.
+y \vee \neg \con{f}( x ) \teq \con{f}( y )$.
+% where the uninterpreted type $\tau$ is
+% interpreted as a finite set and $\con{f}$ as injective finite map.
 
 Unfortunately, these fragments cannot accommodate the vast majority of
-quantified formulas that correspond to recursive function definitions.
-In particular, the fragments in~\cite{GeDeM-CAV-09} are not applicable when the argument of a recursive function is used in various ways (e.g. within an arithmetic expression),
-while the fragment in~\cite{ReyEtAl-1-RR-13,reynolds-et-al-2013} is not applicable for functions over infinite domains such as the integers.
-So, for instance, the quantified formula $\forall x : {\sortint}.\;\, \lite\bigl( p \leq 0, p( x ) \teq 0, p( x ) \teq 2 * p( x - 1 ) \bigr)$
-is not in the essentially uninterpreted fragment (since $x$ occurs as a child of $-$),
-nor does finite model finding apply (since $x$ is of type $\sortint$).
+quantified formulas that correspond to recursive function definitions: The
+essentially uninterpreted fragment does not allow the argument of a
+recursive function to be used deep inside a complex term on the right-hand side,
+whereas the finite model finding techniques of Reynolds et al.\ are not
+applicable for functions over infinite domains such as the integers. A simple
+example where both approaches fail is $\forall n : {\sortint}.\;\, \lite\bigl(
+\con{p} \leq 0,\allowbreak\; \con{p}( n ) \teq 1,\allowbreak\; \con{p}( n ) \teq 2 * \con{p}( n - 1 ) \bigr)$.
 
 In this paper, we advocate a method for translating formulas involving function
 definitions (such as the one mentioned in the previous paragraph) 
