@@ -1014,7 +1014,7 @@ if \texttt{--fmf-fun} is specified.
 We described the most closely related work, by Ge and de Moura
 \cite{GeDeM-CAV-09} and by Reynolds et al.\
 \cite{ReyEtAl-1-RR-13,reynolds-et-al-2013}, in the introduction already.
-Outside the world of SMT, model finding and counterexample generation have been
+Outside the world of SMT, model finding has been
 studied many times. The text below is partly adapted from Blanchette's Ph.D.\
 thesis \cite{blanchette-2012-phd}.
 
@@ -1066,6 +1066,19 @@ subset of Scala. Leon is based on an SMT solver. It avoids quantifiers
 altogether by unfolding recursive definitions up to a certain depth, which is
 increased iteratively as necessary.
 \jb{Andy: Can you add some more here? You're the Leon pro!}
+
+Model finding is concerned with satisfying arbitrary logical constraints. Some
+tools are optimized to work with problems that correspond to total functional
+programs. The QuickCheck tool for Haskell \cite{xxx} is an early example, based
+on random testing. Exhaustive testing and narrowing are other popular
+strategies \cite{xxx,yyy}. These tool are often much faster than model finders,
+but they typically cannot cope with underspecification and nonexecutable
+functions.
+
+% others
+%are Agsy for Agda \cite{xxx}, Quickcheck for Isabelle/HOL \cite{xxx}, and
+% QuickChick for Coq \cite{xxx}.
+
 
 %Unlike an SMT solver, Nitpick cannot rely on a built-in notion of
 %a datatype; it axiomatizes finite subterm-closed substructures.
