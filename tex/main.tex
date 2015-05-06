@@ -726,16 +726,32 @@ Second, we show that if $\conv( \varphi )$ is satisfied by a
 $\extendsig{\Sigma}$-interpretation $\I$, then $\varphi$ is satisfied by
 $\Sigma$-interpretation $\J$. Since $\varphi$ is in definitional form with
 respect to the functions defined by $\DDD$, we know $\varphi$ is of the form
-$\DDD \wedge \varphi_0$. We first argue that $\I$ satisfies a $\Sigma$-formula
-$\psi$ that is closed under function expansion with respect to $\DDD$, and
-where $\psi$ entails $\varphi_0$.
-Since $\I$ is a model of $\varphi_0$,
-there exists a set of literals $\psi_0$ over the atoms occurring in $\varphi_0$
-such that $\I$ satisfies $\psi_0$ and $\psi_0$ entails $\varphi_0$.
-\ajr{todo}
+$\DDD \wedge \varphi_0$. 
+%We first argue that $\I$ satisfies a $\Sigma$-formula
+%$\psi$ that is closed under function expansion with respect to $\DDD$, and
+%where $\psi$ entails $\varphi_0$.
+To do so, 
+we first construct a sequence of $\extendsig{\Sigma}$-literals $M_0, M_1, \ldots$ such that $\I$ satisfies each $M_i$,
+and a sequence of mappings $C^{\con f}_0, C^{\con f}_1, \ldots$ from values $\fargsort{f}^\I$ 
+to tuples of terms of type $\tau_1 \times \cdots \times \tau_n$ 
+for each function $\con{f}$ of type $\tau_1 \times \cdots \times \tau_n \rightarrow \tau$ in $\sfundefs{\Sigma}$.
+Let $M_0$ be a set of literals over the atoms occurring in $\varphi_0$
+such that $\I$ satisfies each literal in $M_0$ and $\bigwedge M_0$ entails $\conv( \varphi_0 )$.
+For each $\con{f} \in \sfundefs{\Sigma}$, let $C^{\con{f}}_0$ be the empty mapping.
+For each $i \geq 0$, 
+let $X_i$ be the set of constraints of the form $\exists a : {\fargsort{\con{f}}}. ( \vecfarg{\con{f}}( a ) \teq \vec t )$ occurring in $M_i$
+and let $L_i$ be the others in $M_i$.
+For each $\con{f} \in \sfundefs{\Sigma}$, let $C^{\con{f}}_{i+1}$ be a mapping containing $C^{\con{f}}_i$ and a minimal number of entries
+such that for all $\exists a : {\fargsort{\con{f}}}. ( \vecfarg{\con{f}}( a ) \teq \vec t ) \in X_i$,
+there exists a $u \mapsto \vec s \in C^{\con{f}}_{i+1}$ such that $\vecfarg{\con{f}}^\I( u ) = \vec s^\I = \vec t^\I$.
+Let $M_{i+1}$ be the set containing $M_i$ as well as
 
 
-
+Let $M^\ast$ be the limit of this sequence, which we partition into sets $X^\ast$ and $L^\ast$ in the same way as above.
+Let $\psi$ be $\bigwedge L^\ast$.
+We know $\psi$ is a $\Sigma$-formula since \ajr{blah}
+We know $\psi$ is closed under function expansion with respect to $\DDD$ since \ajr{blah}
+Finally, we know $\psi$ entails $\varphi_0$ since \ajr{blah}
 Since there exists a model for $\psi$ that is closed under function expansion
 with respect to $\DDD$, then since $\DDD$ is admissible, by definition there
 exists a model for $\psi \wedge \DDD$, which entails $\DDD \wedge \varphi_0$,
@@ -764,7 +780,7 @@ formula~(\ref{eq:ex-after}) satisfying $\con{s}( \con{c} ) > 100$ also
 satisfies $\varphi_{\con{s}}[\con{c}/x]$. The nested existential
 $\exists b.\;\, \farg{\con{s}}( b ) \teq \farg{\con{s}}( a )-1$ ensures that
 a similar constraint is enforced recursively: any model satisfying $\varphi_{\con{s}}[t/x]$
-must also satisfy $\varphi_{\con{s}}[t-1/x]$ when $t > 0$. Given a model $\I$ of
+must also satisfy $\varphi_{\con{s}}[t-1/x]$ when $t > 0$ \ajr{revise this sentence, not quite accurate}. Given a model $\I$ of
 formula~(\ref{eq:ex-after}) that interprets $\con{c}$ as $14$, it is easy to see that
 due to the structure of formula~(\ref{eq:ex-after}),
 $\I$ must satisfy the following formula $\psi$:
@@ -782,8 +798,8 @@ since it contains the $\con{s}$ applications corresponding to
 $\con{s}( \con{c}-i )$ for $i = 0, \ldots, 14$. The formula also
 entails $\varphi_\con{s}[\con{c}-i/x]$ for $i = 0, \ldots, 14$.
 Since $\varphi_\con{s}$ is an admissible definition,
-there must exist a model for $\psi \wedge \varphi_\con{s}$,
-which means there exists a model for formula~(\ref{eq:ex-before}).\xend
+there must exist a $\Sigma$-interpretation satisfying $\psi \wedge \varphi_\con{s}$,
+which means there exists a $\Sigma$-interpretation satisfying formula~(\ref{eq:ex-before}).\xend
 \end{example}
 
 \section{Evaluation}
