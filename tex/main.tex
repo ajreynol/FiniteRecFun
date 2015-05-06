@@ -569,7 +569,7 @@ if $p$ is $\pneg$, and $\pnone$ if $p$ is $\pnone$.
 If $t$ is positive, $\conv_0$ adds the constraint $\chi$ derived from
 the subterms as a conjunction. Dually, if $t$ is negative, the
 function constructs a disjunction with the negated constraint. It $t$ has no
-known polarity, the constrained $\chi$ is simply returned to the caller.
+polarity, the constrained $\chi$ is simply returned to the caller.
 
 If $t$ is a quantified formula, $\conv_0$ recursively calls itself on the body
 with the same polarity. If $t$ is a function definition of a function in
