@@ -566,8 +566,8 @@ p & \text{if either $\boolop \in \{{\wedge}, {\vee}\}$ or $\boolop = \lite$ and 
 The negation $\pnegate p$ of a polarity $p$ is $\pneg$ if $p$ is $\ppos$, $\ppos$
 if $p$ is $\pneg$, and $\pnone$ if $p$ is $\pnone$.
 
-If $t$ has positive polarity, $\conv_0$ adds the constraint $\chi$ derived from
-the subterms as a conjunction. Dually, if $t$ has negative polarity, the
+If $t$ is positive, $\conv_0$ adds the constraint $\chi$ derived from
+the subterms as a conjunction. Dually, if $t$ is negative, the
 function constructs a disjunction with the negated constraint. It $t$ has no
 known polarity, the constrained $\chi$ is simply returned to the caller.
 
