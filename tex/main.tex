@@ -372,8 +372,7 @@ x.\; \varphi$ as shorthand for $\forallf{\fnull} \vec x.\; \varphi$, and $\exist
 For a formula $\varphi$,
 we write $\varphi[\vec t/\vec x]$ to denote the result of replacing all occurrences of $\vec x$ with $\vec t$.
 
-\begin{definition}%
-\rm
+\begin{definition}\rm
 A formula $\varphi$ is in \emph{definitional form with respect to} $n$ distinct function symbols
 $\{ \con{f}_1, \ldots, \con{f}_n \} \subseteq \sfuns{\Sigma}$ if it is of the form
 %
@@ -398,13 +397,11 @@ we distinguish the subset of \emph{defined} function symbols $\sfundefs{\Sigma}
 We consider $\Sigma$-formulas that are in definitional form with respect to
 functions $\sfundefs{\Sigma}$.
 
-\begin{definition}
+\begin{definition}\rm
 Given a set of function definitions $\DDD = \{ \forallf{f_1} \vec x.\;
 \varphi_1, \ldots, \forallf{f_n} \vec x.\; \varphi_n \}$, a formula $\varphi$
 is \emph{closed under function expansion with respect to $\DDD$} if
-\begin{eqnarray}
-\varphi \models_T \bigwedge_{i=1}^n \{ \varphi_i[ \vec t / \vec x ] \mid f_i( \vec t ) \in \terms( \varphi ) \}
-\end{eqnarray}
+\[\varphi \models_T \bigwedge_{i=1}^n \{ \varphi_i[ \vec t / \vec x ] \mid f_i( \vec t ) \in \terms( \varphi ) \}\]
 The set $\DDD$ is \emph{admissible} if whenever there exists a model for $\varphi$ that is closed under function expansion,
 there exists a model for $\varphi \wedge \forallf{f_1} \vec x.\; \varphi_1 \wedge \cdots \wedge \forallf{f_n} \vec x.\; \varphi_n$.
 \end{definition}
