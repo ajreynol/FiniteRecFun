@@ -47,6 +47,12 @@
 \newcommand{\keywords}[1]{\par\addvspace\baselineskip
 \noindent\keywordname\enspace\ignorespaces#1}
 
+\newcommand\cvcd{CVC4d\xspace}
+\newcommand\cvcf{CVC4f\xspace}
+\newcommand\cvci{CVC4i\xspace}
+\newcommand\ziiib{\ziii\xspace}
+
+
 %\newcommand{\DDD}{\mathcalx{D}}
 \newcommand\DDD{\Delta}
 
@@ -81,7 +87,7 @@
 \def\Chi{\mathrm{X}}
 
 \let\oldneg=\neg
-\def\neg{\oldneg\:}
+\def\neg{\oldneg\;}
 
 \let\oldvee=\vee
 \def\vee{\mathrel{\oldvee}}
@@ -246,7 +252,7 @@ Thus, want SMT solver to check satisfiability the assumption that recursive
 functions are consistent (where this needs to be defined precisely).
 }
 
-Recent techniques~\cite{GeDeM-CAV-09, ReyEtAl-1-RR-13}
+Recent techniques~\cite{GeDeM-CAV-09, ReyEtAl-1-RR-13,reynolds-et-al-2013}
 have focused on finding models for quantified formulas in SMT.
 Ge and de Moura \cite{GeDeM-CAV-09} presented a complete instantiation-based
 procedure for formulas in the \emph{essentially uninterpreted} fragment.
@@ -261,20 +267,19 @@ functions. For example, the formula $\forall x%\typ{\sortint} --- the sort is no
 Other syntactic criteria are identified in this paper that extend
 this fragment slightly, including cases when variables occur as arguments of
 arithmetic predicates. The techniques in~Reynolds et al.\
-\cite{ReyEtAl-1-RR-13} can be used for finding finite models for quantified
+\cite{ReyEtAl-1-RR-13,reynolds-et-al-2013} can be used for finding finite
+models for quantified
 formulas over uninterpreted types as well as types having a fixed finite
 interpretation, such as fixed-width bitvectors and enumerated datatypes.
 Finite model finding techniques can
-find a model for the formula $\forall x\typ{\tau} y\typ{\tau}.\;\, x \teq
-y \vee \neg \con{f}( x ) \teq \con{f}( y )$ 
-\ajr{Need to settle on notation for types (currently we are using both superscript and colon).}
-where the uninterpreted type $\tau$ is
+find a model for the formula $\forall x,\, y : \tau.\;\, x \teq
+y \vee \neg \con{f}( x ) \teq \con{f}( y )$ where the uninterpreted type $\tau$ is
 interpreted as a finite set and $\con{f}$ as injective finite map.
 
 Unfortunately, these fragments cannot accommodate the vast majority of
 quantified formulas that correspond to recursive function definitions.
 In particular, the fragments in~\cite{GeDeM-CAV-09} are not applicable when the argument of a recursive function is used in various ways (e.g. within an arithmetic expression),
-while the fragment in~\cite{ReyEtAl-1-RR-13} is not applicable for functions over infinite domains such as the integers.
+while the fragment in~\cite{ReyEtAl-1-RR-13,reynolds-et-al-2013} is not applicable for functions over infinite domains such as the integers.
 So, for instance, the quantified formula $\forall x : {\sortint}.\;\, \lite\bigl( p \leq 0, p( x ) \teq 0, p( x ) \teq 2 * p( x - 1 ) \bigr)$
 is not in the essentially uninterpreted fragment (since $x$ occurs as a child of $-$),
 nor does finite model finding apply (since $x$ is of type $\sortint$).
@@ -288,7 +293,7 @@ into ones where the techniques~\cite{GeDeM-CAV-09, ReyEtAl-1-RR-13} are applicab
 In this paper, we make the following contributions:
 \begin{itemize}
 \item[-] We define a satisfiability-preserving translation method for a class of formulas containing recursive function definitions
-that produces formulas for which existing model finding techniques~\cite{GeDeM-CAV-09, ReyEtAl-1-RR-13} are applicable.
+that produces formulas for which existing model finding techniques~\cite{GeDeM-CAV-09, ReyEtAl-1-RR-13,reynolds-et-al-2013} are applicable.
 \item[-] We provide experimental evidence that this translation improves the effectiveness of SMT solvers \cvc and \ziii for finding counterexamples to verification conditions.
 \item[-] We detail front-end support for recursive function definitions and this translation in the SMT solver \cvc.
 \end{itemize}
@@ -575,7 +580,7 @@ respect to $\sfundefs{\Sigma_u}$ and states that the sum of all
 positive numbers between $0$ and $\const{c}$ is greater than $100$. This formula is
 satisfiable with a model that interprets $\const{c}$ as an integer greater than or
 equal to $14$. Due to the universal quantifier,
-current SMT techniques~\cite{GeDeM-CAV-09, ReyEtAl-1-RR-13} are unable to find
+current SMT techniques~\cite{GeDeM-CAV-09, ReyEtAl-1-RR-13,reynolds-et-al-2013} are unable to find
 a model for this formula. The signature $\extendsig{\Sigma}$ includes the type
 $\fargsort{\con{s}}$ and the uninterpreted function $\farg{\con{s}}$ of type $\fargsort{\con{s}}
 \rightarrow \sortint$. The result of $\conv( \varphi,\, \ppos )$ is the pair $(
@@ -599,7 +604,7 @@ $\extendsig{\Sigma}$-formula
 %
 The universal quantification in the resulting formula is over an uninterpreted
 type $\fargsort{\con{s}}$, thus enabling the finite model finding
-techniques by Reynolds et al.\ \cite{ReyEtAl-1-RR-13} to search for a finite interpretation for
+techniques by Reynolds et al.\ \cite{ReyEtAl-1-RR-13,reynolds-et-al-2013} to search for a finite interpretation for
 $\fargsort{\con{s}}$. Moreover, all occurrences of $a$ in this formula are beneath
 applications of the uninterpreted function $\farg{\con{s}}$, implying that the
 formula is in the essentially uninterpreted fragment,
@@ -773,25 +778,24 @@ We will call these sets {\bench isa+m} and {\bench leon+m} respectively.
 
 In total, our benchmark set consisted of 885 benchmarks (640 mutants plus the original 245).
 We considered these 885 benchmarks both before and after the translation $\conv$ as described in Section~\ref{sec:encoding}.
-We will denote the latter encoding using the suffix {\bench w}.
-For example, {\bench isa+w} contains 79 benchmarks that are the results of
-applying $\conv$ to each of the 79 benchmarks in {\bench isa}.
+For example, {\bench isa} contains 79 original benchmarks $\varphi$
+and 79 translated benchmarks $\conv(\varphi)$.
 
 For solvers, we considered the SMT solver \ziii~\cite{de-moura-bjoerner-2008},
 which runs both heuristic methods for quantifier instantiation~\cite{DBLP:conf/cade/MouraB07},
 as well as methods for finding models for quantified formulas~\cite{GeDeM-CAV-09}.
-We also considered three configurations of \cvc~\cite{barrett-et-al-2011} which we will refer to as {\bench cvc4}, {\bench cvc4+f} and {\bench cvc4+i}.
-The default configuration {\bench cvc4} runs heuristic quantifier instantiation,
+We also considered three configurations of \cvc~\cite{barrett-et-al-2011} which we will refer to as \cvcd, \cvcf, and \cvci.
+The default configuration \cvcd runs heuristic quantifier instantiation,
 but does not include techniques for finding models.
-The configuration {\bench cvc4+f} runs heuristic instantiation and the finite model finding procedure described in~\cite{ReyEtAl-1-RR-13, reynolds-et-al-2013}.
-The last configuration {\bench cvc4+i} incorporates techniques for automating inductive reasoning in SMT~\cite{reynolds-kuncak-2015}.
+The configuration \cvcf runs heuristic instantiation and the finite model finding procedure described in~\cite{ReyEtAl-1-RR-13,reynolds-et-al-2013}.
+The last configuration \cvci incorporates techniques for automating inductive reasoning in SMT~\cite{reynolds-kuncak-2015}.
 %All configurations of \cvc incorporate techniques for conflict-based instantiation~\cite{} ..?
 
 \begin{figure}[t]
 \normalsize
 \centering
 \begin{tabular}{l@{\kern1.5em}r@{\kern0.375em}r@{\kern1.5em}r@{\kern0.375em}r@{\kern1.5em}r@{\kern0.375em}r@{\kern1.5em}r@{\kern0.375em}r@{\,\,}}
-  & \multicolumn{2}{c@{\kern0.375em}}{{\bench z3}}     & \multicolumn{2}{c@{\kern0.375em}}{{\bench cvc4}}     & \multicolumn{2}{c@{\kern0.375em}}{{\bench cvc4+f}}     & \multicolumn{2}{c@{\kern0.375em}}{{\bench cvc4+i}}
+  & \multicolumn{2}{c@{\kern1.5em}}{\phantom{0}\ziiib}     & \multicolumn{2}{c@{\kern1.5em}}{\phantom{0}\cvcd}     & \multicolumn{2}{c@{\kern1.5em}}{\phantom{0}\cvcf}     & \multicolumn{2}{c@{\,\,}}{\phantom{0}\cvci}
 \\%[-1pt]
   & \hfill $\varphi$ \hfill & $\conv(\varphi)$\!\!
   & \hfill $\varphi$ \hfill & $\conv(\varphi)$\!\!
@@ -817,7 +821,7 @@ Total & \phantom{0}11  & 112 & \phantom{00}6 & \phantom{00}6 & \phantom{00}6 & {
 \normalsize
 \centering
 \begin{tabular}{l@{\kern1.5em}r@{\kern0.375em}r@{\kern1.5em}r@{\kern0.375em}r@{\kern1.5em}r@{\kern0.375em}r@{\kern1.5em}r@{\kern0.375em}r@{\,\,}}
-  & \multicolumn{2}{c@{\kern0.375em}}{{\bench z3}}     & \multicolumn{2}{c@{\kern0.375em}}{{\bench cvc4}}     & \multicolumn{2}{c@{\kern0.375em}}{{\bench cvc4+f}}     & \multicolumn{2}{c@{\kern0.375em}}{{\bench cvc4+i}}
+  & \multicolumn{2}{c@{\kern1.5em}}{\phantom{0}\ziiib}     & \multicolumn{2}{c@{\kern1.5em}}{\phantom{0}\cvcd}     & \multicolumn{2}{c@{\kern1.5em}}{\phantom{0}\cvcf}     & \multicolumn{2}{c@{\,\,}}{\phantom{0}\cvci}
 \\%[-1pt]
   & \hfill $\varphi$ \hfill & $\conv(\varphi)$\!\!
   & \hfill $\varphi$ \hfill & $\conv(\varphi)$\!\!
@@ -839,7 +843,7 @@ Total & 187 & 209 & 216 & 211 & 217 & 204 & {\win 318} & 217
 \label{fig:unsat}
 \end{figure}
 
-The results are shown in Figures \ref{fig:sat} and \ref{fig:sat}.
+The results are shown in Figures \ref{fig:sat} and \ref{fig:unsat}.
 The results are divided into benchmarks triggering ``unsatisfiable'' and ``satisfiable''
 responses and further into benchmarks before and after the translation $\conv$.
 \jb{rephrase}
@@ -854,28 +858,28 @@ This is to be expected, since the functions in our benchmark sets are expected t
 
 Examining the first encoding in isolation (the first nine columns),
 the number of satisfiable responses from all configurations is quite low.
-In total, {\bench z3} manages to find only 11 benchmarks to be satisfiable,
+In total, \ziiib manages to find only 11 benchmarks to be satisfiable,
 whereas each configuration of \cvc only finds 6.
 This confirms the shortcomings of existing SMT techniques for finding counterexamples for benchmarks containing recursive functions.
 In terms of number of unsatisfiable responses,
-the configuration {\bench cvc4+i} is the clear winner, finding 318 total benchmarks to be unsatisfiable.
+the configuration \cvci is the clear winner, finding 318 total benchmarks to be unsatisfiable.
 
 Now, examining the second encoding (the latter nine columns),
 we see that using the translation $\conv$ drastically improves the ability of configurations for answering satisfiable.
-In total, {\bench cvc4+f} finds 331 of the 885 benchmarks to be satisfiable, including 9 benchmarks in the original {\bench leon} benchmark set.
-The performance of {\bench z3} for counterexamples also improves drastically, as it solves 112 satisfiable,
-including 10 that were unsolved by {\bench cvc4+f}.
+In total, \cvcf finds 331 of the 885 benchmarks to be satisfiable, including 9 benchmarks in the original {\bench leon} benchmark set.
+The performance of \ziiib for counterexamples also improves drastically, as it solves 112 satisfiable,
+including 10 that were unsolved by \cvcf.
 Moreover, the translation $\conv$ helps \ziii for unsatisfiable responses as well,
 as we see \ziii solves a total of 209 whereas it solves only 187 before the translation.
-This number is 2 fewer than {\bench cvc4}, which solves 211 unsatisfiable.
+This number is 2 fewer than \cvcd, which solves 211 unsatisfiable.
 Thus, in most cases the translation $\conv$ does not significantly degrade performance for unsatisfiable benchmarks,
 and in some cases may actually aid the solver for determining unsatisfiability.%
-\footnote{The exception here is {\bench cvc4+i}, which makes use of type
+\footnote{The exception here is \cvci, which makes use of type
 information associated with quantified formulas for inductive arguments.}
 
 We conclude from this evaluation that the translation $\conv$ enables SMT solvers to find counterexamples
 for conjectures involving recursive functions whose definitions are admissible.
-Both {\bench z3} and {\bench cvc4+f} were able to find a large number of counterexamples after the translation,
+Both \ziiib and \cvcf were able to find a large number of counterexamples after the translation,
 with the latter configuration finding significantly more instances (331 to 112).
 
 \section{Front-End Support %for Recursive Function Definitions
@@ -884,7 +888,8 @@ with the latter configuration finding significantly more instances (331 to 112).
 
 We have seen a satisfiability-preserving translation $\conv$ that significantly improves the effectiveness of known SMT techniques
 for finding counterexamples for formulas involving recursive function definitions.
-For convienience, the translation $\conv$ has been implemented in the latest development version of \cvc~\cite{ReyEtAl-1-RR-13} (version 1.5 pre-release).
+For convienience, the translation $\conv$ has been implemented in the latest development version of \cvc %~\cite{ReyEtAl-1-RR-13}
+(version 1.5 pre-release).
 Function definitions $\forallf{\con{f}} \vec x.\; \varphi$ can be written in using the $\definefunreccmd$ command,
 from Version 2.5~\cite{} of the SMT-LIB standard.
 For example, the formula $\varphi$ in Example~\ref{ex:translation}
