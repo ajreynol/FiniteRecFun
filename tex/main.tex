@@ -222,15 +222,16 @@ However, these cannot cope with universal quantifiers ranging over infinite
 types. This paper introduces a translation that eliminates infinite quantifiers
 in axioms specifying a large class of recursive functions, including
 terminating, tail-recursive, and productive functions. An empirical evaluation
-confirms that the approach works well on benchmarks from various sources. The
+confirms that the approach works well on benchmarks from two sources. The
 translation is implemented as a preprocessor in the solver CVC4.
 \end{abstract}
 
 \section{Introduction}
 \label{sec:introduction}
 
-Many SMT solvers can reason about quantified formulas using incomplete
-instantiation-based methods \cite{MouraBjoerner07,ReynoldsTinelliMoura14}.
+Many solvers based on SMT (satisfiability modulo theories) can reason about
+quantified formulas using incomplete instantiation-based methods
+\cite{MouraBjoerner07,ReynoldsTinelliMoura14}.
 These methods work well in the context of proving (i.e., showing
 unsatisfiability), but they generally cannot be used to find models (i.e.,
 showing satisfiability). Typically, a single universal quantifier in one of the
@@ -267,45 +268,50 @@ essentially uninterpreted fragment does not allow the argument of a
 recursive function to be used deep inside a complex term on the right-hand side,
 whereas the finite model finding techniques of Reynolds et al.\ are not
 applicable for functions over infinite domains such as the integers. A simple
-example where both approaches fail is $\forall n : {\sortint}.\;\, \lite\bigl(
-\con{p} \leq 0,\allowbreak\; \con{p}( n ) \teq 1,\allowbreak\; \con{p}( n ) \teq 2 * \con{p}( n - 1 ) \bigr)$.
+example where both approaches fail is
+$$\forall n : {\sortint}.\;\, \lite\bigl(
+\con{p} \leq 0,\allowbreak\; \con{p}( n ) \teq 1,\allowbreak\; \con{p}( n ) \teq 2 * \con{p}( n - 1 ) \bigr)$$
+This state of affairs is highly unsatisfactory, given the frequence of
+recursive definitions in practice and the impending addition of a dedicated
+command, \texttt{define-funs-rec}, to the SMT-LIB standard \cite{smtlib25}.
 
-In this paper, we advocate a method for translating formulas involving function
-definitions (such as the one mentioned in the previous paragraph) 
-into ones where the techniques~\cite{GeDeM-CAV-09, ReyEtAl-1-RR-13} are applicable.
-
+In this paper, we present a method for translating formulas involving function
+definitions into formulas where finite model finding techniques can be applied.
 The recursive functions must meet a precise semantic criterion to be admissible
 (Section~\ref{sec:prelim}). This criterion is met by terminating recursive
 function definitions, but also by tail-recursive functions and even by
-productive corecursive functions. The criterion is not met by inconsistent
+productive corecursive functions. It is, however, not met by inconsistent
 definitions such as $\forall n : {\sortint}.\;\, \con{f}(n) \teq \con{f}(n) +
-1$, but also by some consistent definitions.
-
-Demand for recursive functions in SMT (new draft includes
-define-funs-rec). Usually not interested in showing logical consistency, there
-exist other tools that check e.g. termination.
-Thus, want SMT solver to check satisfiability the assumption that recursive
-functions are consistent (where this needs to be defined precisely).
+1$, and it is possible to construct consistent examples that do not meet it.
 
 We define an (un)satisfiability-preserving translation method for a class of
-formulas containing recursive function definitions (Section~\ref{sec:encoding})
-that produces formulas for which existing model finding techniques are
-applicable. The idea
-
-replace a definition $\forall x : \tau.\; \const{f}(x) \teq t$ by $\forall a :
+formulas containing admissible recursive function definitions
+(Section~\ref{sec:encoding}) that produces formulas for which existing model
+finding techniques are applicable. The main insight is that a
+recursive definition $\forall x : \tau.\; \const{f}(x) \teq t$
+can be translated to
+$\forall a :
 \fargsort{\tau}.\; \const{f}(\farg{\con{f}}(a)) \teq t[\concret(a)/x]$, where
 $\fargsort{\tau}$ is an uninterpreted ``abstract'' type and $\farg{\con{f}} :
 \fargsort{\tau} \to \tau$ a coercion from the abstract type to the concrete
-type. For admissible definitions, this preserves satisfiability and
-unsatisfiability, while making it possible to find finite models using known
-techniques.
+type. The translation preserves satisfiability and, for admissible definitions,
+unsatisfiability, and it makes finite model finding possible.
 
-We provide experimental evidence that this translation improves the
+Our empirical evaluation on benchmarks from provides evidence that this translation improves the
 effectiveness of SMT solvers \cvc and \ziii for finding counterexamples to
 verification conditions (Section~\ref{sec:evaluation}).
 
 We detail front-end support for recursive function definitions and this
 translation in the SMT solver \cvc (Section~\ref{sec:front-end}).
+
+
+Admissibility must be checked separately---for example, using a
+syntactic criterion or a termination prover.
+
+Usually not interested in showing logical consistency, there
+exist other tools that check e.g. termination.
+Thus, want SMT solver to check satisfiability the assumption that recursive
+functions are consistent (where this needs to be defined precisely).
 
 \newpage
 
