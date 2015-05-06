@@ -357,7 +357,7 @@ the \emph{theory of equality with uninterpreted functions} \euf
 consists of the set of all $\Sigma$-interpretations.
 We refer to the type and function symbols in this theory as \emph{uninterpreted}.
 
-In this paper, we consider \emph{annotated quantifed formulas} of the form
+In this paper, we consider \emph{annotated quantified formulas} of the form
 $\forallf{a} \vec x.\; \varphi$, where the annotation~$a$ is either
 an uninterpreted function $\con{f} \in \sfuns{\Sigma}$ or the special symbol
 $\fnull$.
@@ -374,18 +374,18 @@ we write $\varphi[\vec t/\vec x]$ to denote the result of replacing all occurren
 
 \begin{definition}%
 \rm
-A formula $\varphi$ is in \emph{definitional form with respect to} functions $\{
-\con{f}_1, \ldots, \con{f}_n \}$ if it is of the form
+A formula $\varphi$ is in \emph{definitional form with respect to} $n$ distinct function symbols
+$\{ \con{f}_1, \ldots, \con{f}_n \} \subseteq \sfuns{\Sigma}$ if it is of the form
 %
 %\kern-\abovedisplayskip
 %\kern+\abovedisplayshortskip
 %
 \begin{equation} \label{eq:wdf}
-(\forallf{\con{f}_1} \vec x_1.\; \varphi_1) \wedge \ldots \wedge (\forallf{\con{f}_n} \vec x_n.\; \varphi_n) \wedge \psi
+(\forallf{\con{f}_1} \vec x_1.\; \varphi_1) \wedge \cdots \wedge
+(\forallf{\con{f}_n} \vec x_n.\; \varphi_n) \wedge \psi
 \end{equation}
 %
-where $\con{f}_1, \ldots, \con{f}_n$ are not $\fnull$ and distinct,
-and $\psi$ contains no function definitions.
+where $\psi$ contains no function definitions.
 We call $\psi$ the \emph{conjecture} of $\varphi$.
 %\ct{Don't we need additional restrictions on the $\varphi_i$'s here?
 %(E.g., they are quantifier-free, or perhaps existential or containing only let binders.)}
@@ -399,16 +399,17 @@ We consider $\Sigma$-formulas that are in definitional form with respect to
 functions $\sfundefs{\Sigma}$.
 
 \begin{definition}
-Given a set of function definitions $\DDD = \{ \forallf{f_1} \vec x.\; \varphi_1, \ldots, \forallf{f_n} \vec x.\; \varphi_n \}$,
-a formula $\varphi$ is \emph{closed under function expansion with respect to $\DDD$} if
+Given a set of function definitions $\DDD = \{ \forallf{f_1} \vec x.\;
+\varphi_1, \ldots, \forallf{f_n} \vec x.\; \varphi_n \}$, a formula $\varphi$
+is \emph{closed under function expansion with respect to $\DDD$} if
 \begin{eqnarray}
 \varphi \models_T \bigwedge_{i=1}^n \{ \varphi_i[ \vec t / \vec x ] \mid f_i( \vec t ) \in \terms( \varphi ) \}
 \end{eqnarray}
 The set $\DDD$ is \emph{admissible} if whenever there exists a model for $\varphi$ that is closed under function expansion,
-there exists a model for $\varphi \wedge \forallf{f_1} \vec x.\; \varphi_1 \wedge \ldots \wedge \forallf{f_n} \vec x.\; \varphi_n$.
+there exists a model for $\varphi \wedge \forallf{f_1} \vec x.\; \varphi_1 \wedge \cdots \wedge \forallf{f_n} \vec x.\; \varphi_n$.
 \end{definition}
 
-For instance, the set $\{ \forallf{\con{f}} \vec x.\; \con{f}( x ) \teq 0 \}$ is admissible.
+For example, the set $\{ \forallf{\con{f}} \vec x.\; \con{f}( x ) \teq 0 \}$ is admissible.
 A set of admissible function definitions can include definitions of non-terminating functions, e.g.
 $\{ \forallf{\con{f}} x : \sortint.\;\, \con{f}( x ) \teq \con{f}( x - 1 ) \}$ or even $\{ \forallf{\con{f}} x.\;\, \con{f}( x ) \teq \con{f}( x ) \}$ are admissible.
 On the other hand, the set $\{ \forallf{\con{f}} x.\;\, \con{f}( x ) \teq \con{f}( x ) + 1 \}$ is not admissible,
@@ -819,26 +820,32 @@ set of terminating functions.
 A majority of these benchmarks are unsatisfiable, although a
 handful of the benchmarks in the \leon set are satisfiable.
 
-For each of these 245 benchmarks, we considered (up to) three randomly selected mutated forms of its conjecture $\psi$.
-In particular, we considered unique conjectures that are obtained as a result of swapping a subterm of $\psi$ at one position
-with another of the same type at another position.
-Note that benchmarks created in this way have a high likelihood of having small and easy-to-find counterexamples.
-In total, we considered 213 mutated forms of conjectures from \isa, and 427 mutated forms of conjectures from \leon.
-We will call these sets \isam and \leonm respectively.
+For each of these 245 benchmarks, we considered (up to) three randomly selected
+mutated forms of its conjecture $\psi$. In particular, we considered unique
+conjectures that are obtained as a result of swapping a subterm of $\psi$ at
+one position with another of the same type at another position.
+Note that benchmarks created in this way have a high likelihood of having small
+and easy-to-find counterexamples. In total, we considered 213 mutated forms of
+conjectures from \isa, and 427 mutated forms of conjectures from \leon. We will
+call these sets \isam and \leonm respectively.
 
-In total, our benchmark set consisted of 885 benchmarks (640 mutants plus the original 245).
-We considered these 885 benchmarks both before and after the translation $\conv$ as described in Section~\ref{sec:encoding}.
-For example, \isa contains 79 original benchmarks $\varphi$
-and 79 translated benchmarks $\conv(\varphi)$.
+In total, our benchmark set consisted of 885 benchmarks (640 mutants plus the
+original 245). We considered these 885 benchmarks both before and after the
+translation $\conv$ as described in Section~\ref{sec:encoding}. For example,
+\isa contains 79 original benchmarks $\varphi$ and 79 translated benchmarks
+$\conv(\varphi)$.
 
 For solvers, we considered the SMT solver \ziii~\cite{de-moura-bjoerner-2008},
 which runs both heuristic methods for quantifier instantiation~\cite{DBLP:conf/cade/MouraB07},
 as well as methods for finding models for quantified formulas~\cite{GeDeM-CAV-09}.
-We also considered three configurations of \cvc~\cite{barrett-et-al-2011} which we will refer to as \cvcd, \cvcf, and \cvci.
+We also considered three configurations of \cvc~\cite{barrett-et-al-2011} which
+we will refer to as \cvcd, \cvcf, and \cvci.
 The default configuration \cvcd runs heuristic quantifier instantiation,
 but does not include techniques for finding models.
-The configuration \cvcf runs heuristic instantiation and the finite model finding procedure described in~\cite{ReyEtAl-1-RR-13,reynolds-et-al-2013}.
-The last configuration \cvci incorporates techniques for automating inductive reasoning in SMT~\cite{reynolds-kuncak-2015}.
+The configuration \cvcf runs heuristic instantiation and the finite model
+finding procedure described in~\cite{ReyEtAl-1-RR-13,reynolds-et-al-2013}. The
+last configuration \cvci incorporates techniques for automating inductive
+reasoning in SMT~\cite{reynolds-kuncak-2015}.
 %All configurations of \cvc incorporate techniques for conflict-based instantiation~\cite{} ..?
 
 \begin{figure}[t]
