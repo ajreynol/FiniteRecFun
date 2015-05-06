@@ -79,6 +79,9 @@
 
 \renewcommand\vec[1]{\overline{#1}}
 
+\let\oldchi=\chi
+\def\chi{{\vthinspace\oldchi}}
+
 \let\oldSigma=\Sigma
 \def\Sigma{\mathrm{\oldSigma}}
 
@@ -145,7 +148,7 @@
 %\newcommand{\sfunndefs}[1]{#1^\mathrm{nf}}
 \newcommand{\typeint}{\ty{Int}}
 
-\newcommand{\pnone}{\con{apolar}}
+\newcommand{\pnone}{\con{none}}
 \newcommand{\ppos}{\con{pos}}
 \newcommand{\pneg}{\con{neg}}
 \newcommand{\pol}{\con{pol}}
@@ -180,6 +183,7 @@
 
 \newcommand{\negvthinspace}{\kern-0.083333em}
 \newcommand{\vthinspace}{\kern+0.083333em}
+\newcommand{\vvthinspace}{\kern+0.0416666em}
 \newcommand{\typ}[1]{^{\vthinspace #1}}
 
 \newcommand{\definefunreccmd}{\con{define}\text{-}\con{fun}\text{-}\con{rec}}
@@ -431,14 +435,14 @@ but there exists no interpretation satisfying both $\con{f}( 0 ) \teq 4$ and $\f
 \section{The Translation}
 \label{sec:encoding}
 
-Let us fix a signature $\Sigma$, a $\Sigma$-formula
+First, we fix a signature $\Sigma$ and a $\Sigma$-formula
 $\varphi$ in definitional form with respect to $\sfundefs{\Sigma}$,
 whose definitions are admissible.
 %We may translate $\varphi$ into a equisatisfiable formula $\psi$ for which known model-finding procedures~\cite{GeDeM-CAV-09, ReyEtAl-1-RR-13} are applicable.
 This section presents a method for constructing an extended signature
-$\extendsig{ \Sigma }$ and a $\extendsig{ \Sigma }$-formula $\psi$ such that
+$\extendsig{ \Sigma }$ and an $\extendsig{ \Sigma }$-formula $\psi$ such that
 $\psi$ is satisfiable if and only if $\varphi$ is satisfiable---i.e.,
-$\varphi$ and $\psi$ are \emph{equisatisfiable}.
+$\varphi$ and $\psi$ are \relax{equisatisfiable}.
 The intuition behind this translation
 is to use an uninterpreted type to abstract the set of
 \relax{relevant} tuples for each recursive function $\con{f}$ and restrict the
@@ -447,7 +451,7 @@ type. Informally, the relevant tuples $\vec t$ of a function $\con{f}$ are the
 ones for which the interpretation of $\con{f}( \vec t )$ is relevant to the
 satisfiability of $\varphi$.
 
-In more detail,
+More precisely,
 suppose our signature $\Sigma$ contains a set of defined function symbols $\sfundefs{\Sigma} \subseteq \sfuns{\Sigma}$.
 We extend the signature of $\Sigma$ to a signature $\extendsig{\Sigma}$ containing the following additional definitions.
 For each $\con{f} : \tau_1 \times \cdots \times \tau_n \rightarrow \tau \in \sfundefs{\Sigma}$,
@@ -462,18 +466,13 @@ the signature $\extendsig{\Sigma}$ includes
 The function $\conv$ translates the $\Sigma$-formula
 $\varphi$ into an $\extendsig{\Sigma}$-formula. It relies
 on the auxiliary function $\conv_0$, which takes two arguments:\ the term $t$
-to translate and a \emph{polarity} $p$, which is either $\ppos$, $\pneg$, or
-$\pnone$. It returns a pair $( t'\negvthinspace,\, \chi )$, where $t'$ is a term of
+to translate and a \relax{polarity}~$p$, which is either $\ppos$, $\pneg$, or
+$\pnone$. \vthinspace$\conv_0$ returns a pair $( t'\negvthinspace,\, \chi )$, where $t'$ is a term of
 type $\tau$ and $\chi$ is an additional constraint.
-This constraint is necessary if the polarity is $\pnone$; otherwise, any necessary
-constraint is encoded directly in $t'$ and $\chi$ is simply $\ltrue$.
-
-\jb{Merge para above with para below}
-
-A translation function $\conv$ for a $\Sigma$-formula that is in definitional
-form with respect to a set of admissible function definitions
-$\sfundefs{\Sigma}$. In the auxiliary function $\conv_0$, the function $\pol(
-\boolop, i, p )$ returns the polarity of the $i${th} argument of a
+This constraint is needed if the polarity is $\pnone$; otherwise, it is encoded
+directly in $t'$ and $\chi$ is simply $\ltrue$.
+In the auxiliary function $\conv_0$, the function $\pol(
+\boolop, i, p )$ returns the polarity of the $i$\vvthinspace{th} argument of a
 $\boolop$ application having polarity $p$, where $\boolop$ is an interpreted
 predicate.
 
@@ -503,7 +502,7 @@ $\conv_0( t\typ{\tau},\, p )$ $=$
     \begin{itemize}
       \item[] $\mathsf{let}$ $( u',\, \chi ) = \conv_0( u,\, p )$ $\mathsf{in}$
       %\item[] $\mathsf{assert}( \chi = \ltrue )$;
-      \item[] \return \bigtuple{$\forall y : \fargtype{\con{f}}.\; u' [ \vecfarg{\con{f}}( y ) / \vec x ],\, \ltrue$}
+      \item[] \return \bigtuple{$\forall a : \fargtype{\con{f}}.\; u' [ \vecfarg{\con{f}}( a ) / \vec x ],\, \ltrue$}
     \end{itemize}
   \item[] $\mathsf{else}$ $\mathsf{if}$ $t = \forall \vec x.\;\, u$ $\mathsf{then}$
     \begin{itemize}
@@ -521,9 +520,9 @@ $\conv_0( t\typ{\tau},\, p )$ $=$
 \item[\ ]
 $\conv( \varphi )$ $=$
  \begin{itemize}
-   \item[] $\mathsf{let}$ $( \psi,\, \_ ) = \conv_0( \varphi,\, \ppos )$ $\mathsf{in}$
+   \item[] $\mathsf{let}$ $( \varphi',\, \_ ) = \conv_0( \varphi,\, \ppos )$ $\mathsf{in}$
    %\item[] $\mathsf{assert}( D = \emptyset )$;
-   \item[] \return $\psi$
+   \item[] \return $\varphi'$
   \end{itemize}
 \end{enumerate}
 
@@ -531,7 +530,7 @@ $\conv( \varphi )$ $=$
 %the (restricted) function definition for $\con{f}$ includes certain tuples in
 %its domain, which we explain more in the following.
 
-The translation modifies $\varphi$ in two main ways. First, it restricts the
+The translation alters $\varphi$ in two main ways. First, it restricts the
 quantification on function definitions for $\con{f}$ to the corresponding
 uninterpreted type $\fargtype{\con{f}}$ and inserts appropriate coercions
 $\fargx{\con{f}}{i}$. Second, it augments $\varphi$ with additional exisential
@@ -566,8 +565,8 @@ known polarity, the constrained $\chi$ is simply returned to the caller.
 If $t$ is a quantified formula, $\conv_0$ recursively calls itself on the body
 with the same polarity. If $t$ is a function definition of a function in
 $\sfundefs{\Sigma}$, $\conv_0$ constructs a quantified formula over a single variable
-$y$ of type $\fargtype{\con{f}}$ and replaces all occurrences of $\vec x$ in
-$t'_1$ with $\vecfarg{\con{f}}( y )$.Since function definitions
+$a$ of type $\fargtype{\con{f}}$ and replaces all occurrences of $\vec x$ in
+$t'_1$ with $\vecfarg{\con{f}}( a )$. Since function definitions
 are a top-level conjunct, %by case analysis on the return values of $\conv$,
 we know that $\chi$ is simply $\ltrue$.
 If $t$ is not a function definition, the resulting
