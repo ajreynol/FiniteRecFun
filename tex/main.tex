@@ -47,9 +47,9 @@
 \newcommand{\keywords}[1]{\par\addvspace\baselineskip
 \noindent\keywordname\enspace\ignorespaces#1}
 
-\newcommand\cvcd{CVC4d\xspace}
-\newcommand\cvcf{CVC4f\xspace}
-\newcommand\cvci{CVC4i\xspace}
+\newcommand\cvcd{{\cvc}d\xspace}
+\newcommand\cvcf{{\cvc}f\xspace}
+\newcommand\cvci{{\cvc}i\xspace}
 \newcommand\ziiib{\ziii}
 
 
@@ -218,12 +218,13 @@ Department of Computer Science, University of Iowa, USA
 
 \begin{abstract}
 SMT solvers have recently been extended with finite model finding techniques.
-However, these cannot cope with universal quantifiers ranging over infinite
-types. This paper introduces a translation that eliminates infinite quantifiers
-in axioms specifying a large class of recursive functions, including
-terminating, tail-recursive, and productive functions. An empirical evaluation
-confirms that the approach works well on benchmarks from two sources. The
-translation is implemented as a preprocessor in the solver CVC4.
+However, these generally cannot cope with universal quantifiers ranging over
+infinite types. This paper introduces a translation that eliminates infinite
+quantifiers in axioms specifying a large class of recursive functions,
+including terminating, tail-recursive, and productive functions. An empirical
+evaluation confirms that the approach works well on benchmarks from two
+independent sources. The translation is implemented as a preprocessor in the
+solver CVC4.
 \end{abstract}
 
 \section{Introduction}
@@ -249,20 +250,20 @@ functions---e.g., $\forall x%\typ{\sortint} --- the sort is not important, right
 % since all
 % occurrences of $x$ occur beneath uninterpreted functions $\con{f}$ and
 % $\con{g}$.
-(Other syntactic criteria extend
+Other syntactic criteria extend
 this fragment slightly, including cases when variables occur as arguments of
-arithmetic predicates.) Reynolds et al.\
+arithmetic predicates. More recently, Reynolds et al.\
 \cite{ReyEtAl-1-RR-13,reynolds-et-al-2013} introduced techniques for finding finite
 models for quantified
 formulas over uninterpreted types as well as types having a fixed finite
 interpretation, such as fixed-width bit vectors and enumerated datatypes.
 These techniques can
 find a model for the formula $\forall x,\, y : \tau.\;\, x \teq
-y \vee \neg \con{f}( x ) \teq \con{f}( y )$.
+y \vee \allowbreak \neg \con{f}( x ) \teq \con{f}( y )$, where $\tau$ is uninterpreted.
 % where the uninterpreted type $\tau$ is
 % interpreted as a finite set and $\con{f}$ as injective finite map.
 
-Unfortunately, these fragments cannot accommodate the vast majority of
+Unfortunately, neither of these fragments can accommodate the vast majority of
 quantified formulas that correspond to recursive function definitions: The
 essentially uninterpreted fragment does not allow the argument of a
 recursive function to be used deep inside a complex term on the right-hand side,
@@ -273,7 +274,7 @@ $$\forall n : {\sortint}.\;\, \lite\bigl(
 n \leq 0,\allowbreak\; \con{p}( n ) \teq 1,\allowbreak\; \con{p}( n ) \teq 2 * \con{p}( n - 1 ) \bigr)$$
 This state of affairs is highly unsatisfactory, given the frequence of
 recursive definitions in practice and the impending addition of a dedicated
-command, \texttt{define-funs-rec}, to the SMT-LIB standard \cite{smtlib25}.
+command, \texttt{define-fun-rec}, to the SMT-LIB standard \cite{smtlib25}.
 
 In this paper, we present a method for translating formulas involving function
 definitions into formulas where finite model finding techniques can be applied.
@@ -284,7 +285,7 @@ productive corecursive functions. It is, however, not met by inconsistent
 definitions such as $\forall n : {\sortint}.\;\, \con{f}(n) \teq \con{f}(n) +
 1$, and it is possible to construct consistent examples that do not meet it.
 
-We define an (un)satisfiability-preserving translation method for a class of
+We define a translation for a class of
 formulas containing admissible recursive function definitions
 (Section~\ref{sec:encoding}) that produces formulas for which existing model
 finding techniques are applicable. The main insight is that a
@@ -295,46 +296,20 @@ $\forall a :
 $\fargsort{\tau}$ is an uninterpreted ``abstract'' type and $\farg{\con{f}} :
 \fargsort{\tau} \to \tau$ a coercion from the abstract type to the concrete
 type. The translation preserves satisfiability and, for admissible definitions,
-unsatisfiability, and it makes finite model finding possible.
+unsatisfiability, and it makes finite model finding possible in practice.
 
-Our empirical evaluation on benchmarks from provides evidence that this translation improves the
-effectiveness of SMT solvers \cvc and \ziii for finding counterexamples to
-verification conditions (Section~\ref{sec:evaluation}).
+Our empirical evaluation on benchmarks from IsaPlanner and Leon provides
+evidence that this translation improves the effectiveness of the SMT solvers
+\cvc and \ziii for finding counterexamples to verification conditions
+(Section~\ref{sec:evaluation}). The approach is implemented as a preprocessor
+in \cvc. When invoked with the appropriate command-line option,
+the solver assumes functions introduced using the \texttt{define-fun-rec} command are
+admissible and translates them accordingly (Section~\ref{sec:front-end}).
 
-We detail front-end support for recursive function definitions and this
-translation in the SMT solver \cvc (Section~\ref{sec:front-end}).
-
-
-Admissibility must be checked separately---for example, using a
-syntactic criterion or a termination prover.
-
-Usually not interested in showing logical consistency, there
-exist other tools that check e.g. termination.
-Thus, want SMT solver to check satisfiability the assumption that recursive
-functions are consistent (where this needs to be defined precisely).
-
-\newpage
-
-  * quantifiers in recursive fun defs
-
-  * intuitively, finite quantification suffices:
-    * if we make sure all needed values are there
-    * if well-founded (assumed!)
-
-  * nasty example (not well-founded)
-    * f x = f x + 1
-
-  * how we do it
-
-  * corecursive functions???
-    * productive
-
-\begin{verbatim}
-this option targets users who wish to determine the satisfiability of inputs
-that involving function definitions that are known to be consistent, whereas it
-does not target users who wish to check the consistency of a set of function
-definitions.
-\end{verbatim}
+%this option targets users who wish to determine the satisfiability of inputs
+%that involving function definitions that are known to be consistent, whereas it
+%does not target users who wish to check the consistency of a set of function
+%definitions.
 
 \section{Preliminaries}
 \label{sec:prelim}
@@ -811,7 +786,7 @@ benchmarks in the encoding.
 
 We gathered a set of 245 benchmarks from two sources, which we will refer to as
 {\bench isa} and {\bench leon}. The first ({\bench isa}) consists of the 79
-benchmarks from the Isaplanner benchmark
+benchmarks from the IsaPlanner
 suite~\cite{DBLP:conf/itp/JohanssonDB10} that do not contain higher-order
 functions. The benchmarks have been used recently as challenge problems for a
 variety of inductive theorem provers. These benchmarks heavily involve
@@ -943,8 +918,7 @@ for unsatisfiable benchmarks, and in some cases may actually aid the solver for
 determining unsatisfiability. The exception here is \cvci, whose inductive
 arguments are guided by the types of quantified variables.
 
-\section{Front-End Support %for Recursive Function Definitions
-  in CVC4}
+\section{Front-End Support in \cvc}
 \label{sec:front-end}
 
 The translation $\conv$ significantly improves the effectiveness of known SMT
@@ -1001,9 +975,11 @@ the nesting more clearly).}
 \end{verbatim}
 \end{quote}
 
-The \texttt{--fmf-fun} option instructs CVC4 to assume that the
+The \texttt{--fmf-fun} option instructs \cvc to assume that the
 functions provided by the user are admissible.
-If this condition is not met, the solver may answer ``satisfiable'' on
+Admissibility must be checked separately---for example, using a
+syntactic criterion or a termination prover.
+If this criterion is not met, the solver may answer ``satisfiable'' on
 an unsatisfiable problem. For example, if we add the inconsistent definition
 %
 \begin{quote}
@@ -1012,8 +988,13 @@ an unsatisfiable problem. For example, if we add the inconsistent definition
 \end{verbatim}
 \end{quote}
 %
-to the above problem, CVC4 will still find the same ``model''
+to the above problem, \cvc will still find the same ``model''
 if \texttt{--fmf-fun} is specified.
+
+%Usually not interested in showing logical consistency, there
+%exist other tools that check e.g. termination.
+%Thus, want SMT solver to check satisfiability the assumption that recursive
+%functions are consistent (where this needs to be defined precisely).
 
 \section{Related Work}
 
@@ -1057,7 +1038,7 @@ in smt : z3, cvc4 (briefly, text in main section gives detail)
   * future work
     * more eval
       * against other non-SMT-solvers (notably Leon and Nitpick)
-      * problems exercising codatatypes (which CVC4 supports \cite{xxx}) and
+      * problems exercising codatatypes (which \cvc supports \cite{xxx}) and
         corecursive functions
     * more features
       * e.g. encode (co)inductive predicates as (co)recursive functions
