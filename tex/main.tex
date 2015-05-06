@@ -52,6 +52,7 @@
 \newcommand\cvci{{\cvc}i\xspace}
 \newcommand\ziiib{\ziii}
 
+\renewcommand\models{\mathrel{\vDash}}
 
 %\newcommand{\DDD}{\mathcalx{D}}
 \newcommand\DDD{\Delta}
@@ -294,9 +295,8 @@ definitions such as $\forall n : {\typeint}.\;\, \con{f}(n) \teq \con{f}(n) +
 1$, and it is possible to construct consistent examples that do not meet it.
 
 We define a translation for a class of
-formulas containing admissible recursive function definitions
-(Section~\ref{sec:encoding}) that produces formulas for which existing model
-finding techniques are applicable. The main insight is that a
+formulas involving admissible recursive function definitions
+(Section~\ref{sec:encoding}). The main insight is that a
 recursive definition $\forall x : \tau.\; \const{f}(x) \teq t$
 can be translated to
 $\forall a :
@@ -310,10 +310,9 @@ Our empirical evaluation on benchmarks from IsaPlanner and Leon provides
 evidence that this translation improves the effectiveness of the SMT solvers
 \cvc and \ziii for finding counterexamples to verification conditions
 (Section~\ref{sec:evaluation}). The approach is implemented as a preprocessor
-in \cvc. When invoked with the appropriate command-line option,
-the solver assumes functions introduced using the \texttt{define-fun-rec}
-command are admissible and translates them accordingly
-(Section~\ref{sec:front-end}).
+in \cvc (Section~\ref{sec:front-end}). When invoked with the appropriate
+command-line option, the solver assumes that functions introduced using the
+\texttt{define-fun-rec} command are admissible and translates them accordingly.
 
 %this option targets users who wish to determine the satisfiability of inputs
 %that involving function definitions that are known to be consistent, whereas it
@@ -337,6 +336,10 @@ and a function symbol $\lite : \Bool \times \tau \times \tau \rightarrow \tau$ (
 for each $\tau \in \stypes{\Sigma}$.
 We write $t\typ{\tau}$ to denote a metavariable ranging over terms of
 type~$\tau$ and $\terms( t )$ to denote the set of subterms in $t$.
+Formulas are terms of type $\Bool$.
+Given a term $u$, we write $u[\vec t/\vec x]$ to denote the result of replacing
+all occurrences of $\vec x$ with $\vec t$ in $u$.
+
 %We write $\functerms^\Sigma( t )$ to denote the set of $f$-applications in $t$ such that $f \in \sfundefs{\Sigma}$.
 
 A \emph{$\Sigma$-interpretation $\I$} %is a mathematical structure that
@@ -346,7 +349,7 @@ and each function symbol $\con{f} : \tau_1 \times \cdots \times \tau_n \rightarr
 $\sfuns{\Sigma}$
 to a total function $\con{f}^\I : \tau_1^\I \times \cdots \times \tau_n^\I \rightarrow \tau^\I$.
 A \emph{theory} is a pair $T = (\Sigma, \Mo)$ where
-$\Sigma$ is a signature and  $\Mo$ is a class of $\Sigma$-interpretations,
+$\Sigma$ is a signature and $\Mo$ is a class of $\Sigma$-interpretations,
 the \emph{models} of $T$.
 A $\Sigma$-formula $\varphi$ is
 \emph{$T$-satisfiable}
@@ -360,23 +363,20 @@ consists of the set of all $\Sigma$-interpretations.
 We refer to the type and function symbols in this theory as \emph{uninterpreted}.
 
 In this paper, we consider \emph{annotated quantified formulas} of the form
-$\forallf{a} \vec x.\; \varphi$, where the annotation~$a$ is either
-an uninterpreted function $\con{f} \in \sfuns{\Sigma}$ or the special symbol
-$\fnull$.
+$\forallf{\const{f}} \vec x.\; \varphi$, where $\con{f} \in \sfuns{\Sigma}$ is
+an uninterpreted function symbol, in addition to standard quantified formulas
+$\forall \vec x.\; \varphi$.
 Given $\con{f} : \tau_1 \times \cdots \times \tau_n \rightarrow \tau$,
 an annotated
 quantified formula $\forallf{\con{f}} \vec x.\; \varphi$ is a \emph{function definition}
 (\,\emph{for $\con{f}$}\vthinspace) if $\vec x$ is a tuple of variables of type
 $\tau_1, \ldots, \tau_n$ and $\varphi$ is a (quantifier-free) formula equivalent to
-$\con{f}( \vec x ) \teq t$ for some $t$. We write $\forall \vec
-x.\; \varphi$ as shorthand for $\forallf{\fnull} \vec x.\; \varphi$, and $\exists
-\vec x. \varphi$ as shorthand for $\neg \forall \vec x.\; \neg \varphi$.
-For a formula $\varphi$,
-we write $\varphi[\vec t/\vec x]$ to denote the result of replacing all occurrences of $\vec x$ with $\vec t$.
+$\con{f}( \vec x ) \teq t$ for some $t$. We write $\exists
+\vec x.\; \varphi$ as shorthand for $\neg \forall \vec x.\; \neg \varphi$.
 
 \begin{definition}\rm
-A formula $\varphi$ is in \emph{definitional form with respect to} $n$ distinct function symbols
-$\{ \con{f}_1, \ldots, \con{f}_n \} \subseteq \sfuns{\Sigma}$ if it is of the form
+A formula $\varphi$ is in \emph{definitional form with respect to}
+$\{ \con{f}_1, \ldots, \con{f}_n \}$ if it is of the form
 %
 %\kern-\abovedisplayskip
 %\kern+\abovedisplayshortskip
@@ -384,7 +384,8 @@ $\{ \con{f}_1, \ldots, \con{f}_n \} \subseteq \sfuns{\Sigma}$ if it is of the fo
 \[(\forallf{\con{f}_1} \vec x_1.\; \varphi_1) \wedge \cdots \wedge
 (\forallf{\con{f}_n} \vec x_n.\; \varphi_n) \wedge \psi\]
 %
-where $\psi$ contains no function definitions.
+where $\con{f}_1, \ldots, \con{f}_n \in \sfuns{\Sigma}$ are distinct
+and $\psi$ contains no function definitions.
 We call $\psi$ the \emph{conjecture} of $\varphi$.
 %\ct{Don't we need additional restrictions on the $\varphi_i$'s here?
 %(E.g., they are quantifier-free, or perhaps existential or containing only let binders.)}
@@ -395,20 +396,20 @@ Given a signature $\Sigma$,
 we distinguish the subset of (\emph{recursively}) \emph{defined} function
 symbols $\sfundefs{\Sigma} \subseteq \sfuns{\Sigma}$.
 We consider $\Sigma$-formulas that are in definitional form with respect to
-functions $\sfundefs{\Sigma}$.
+$\sfundefs{\Sigma}$.
 
 \begin{definition}\rm
-Given a set of function definitions $\DDD = \{ \forallf{f_1} \vec x.\;
-\varphi_1, \ldots, \forallf{f_n} \vec x.\; \varphi_n \}$, a formula $\varphi$
+Given a set of function definitions $\DDD = \{ \forallf{\con{f}_1} \vec x.\;
+\varphi_1, \ldots, \forallf{\con{f}_n} \vec x.\; \varphi_n \}$, a formula $\varphi$
 is \emph{closed under function expansion with respect to $\DDD$} if
-\[\varphi \,\models_T\, \bigwedge\nolimits_{\,i=1}^{n} \{ \varphi_i[ \vec t / \vec x ] \mid f_i( \vec t ) \in \terms( \varphi ) \}\]
+\[\varphi \,\models_T\, \bigwedge\nolimits_{\,i=1}^{n} \{ \varphi_i[ \vec t / \vec x ] \mid \con{f}_i( \vec t ) \in \terms( \varphi ) \}\]
 The set $\DDD$ is \emph{admissible} if whenever there exists a model for $\varphi$ that is closed under function expansion,
-there exists a model for $\varphi \wedge \forallf{f_1} \vec x.\; \varphi_1 \wedge \cdots \wedge \forallf{f_n} \vec x.\; \varphi_n$.
+there exists a model for $\varphi \wedge \forallf{\con{f}_1} \vec x.\; \varphi_1 \wedge \cdots \wedge \forallf{\con{f}_n} \vec x.\; \varphi_n$.
 \end{definition}
 
-For example, the set $\{ \forallf{\con{f}} \vec x.\; \con{f}( x ) \teq 0 \}$ is admissible.
-A set of admissible function definitions can include definitions of nonterminating functions, e.g.
-$\{ \forallf{\con{f}} x : \typeint.\;\, \con{f}( x ) \teq \con{f}( x - 1 ) \}$ or even $\{ \forallf{\con{f}} x.\;\, \con{f}( x ) \teq \con{f}( x ) \}$ are admissible.
+For example, the set $\{ \forallf{\con{f}} \vec x.\;\, \con{f}( x ) \teq 0 \}$ is admissible.
+An admissible set can include definitions of nonterminating functions, e.g.
+$\{ \forallf{\con{f}} x : \typeint.\;\, \con{f}( x ) \teq \con{f}( x - 1 ) \}$ or even $\{ \forallf{\con{f}} x.\allowbreak\;\, \con{f}( x ) \teq \con{f}( x ) \}$ are admissible.
 On the other hand, the set $\{ \forallf{\con{f}} x.\;\, \con{f}( x ) \teq \con{f}( x ) + 1 \}$ is not admissible,
 since the empty set of formulas is closed under function expansion with respect to this set,
 and there is no model satisfying $\forallf{\con{f}} x.\;\, \con{f}( x ) \teq \con{f}( x ) + 1$.
