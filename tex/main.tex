@@ -323,23 +323,26 @@ command are admissible and translates them accordingly
 \section{Preliminaries}
 \label{sec:prelim}
 
+Our setting is a monomorphic (or many-sorted) first-order logic, such as
+the one defined by SMT-LIB \cite{smtlib25}.
 A \emph{signature} $\Sigma$ consists of
 a set $\stypes{\Sigma}$ of type symbols (or sorts) and
 a set $\sfuns{\Sigma}$ of function symbols.
 We assume that signatures always include a Boolean type $\Bool$ and constants
-$\ltrue$ (truth) and $\lfalse$ (falsity) of that type,
+$\ltrue, \lfalse : \Bool$ for truth and falsity,
 an infix equality predicate ${\teq} : \tau \times \tau \to \Bool$
 for each $\tau \in \stypes{\Sigma}$,
-standard boolean connectives ($\neg$, $\wedge$, $\vee$, etc.),
-and a function $\lite : \Bool \times \tau \times \tau \rightarrow \tau$ for each $\tau \in \stypes{\Sigma}$.
+standard Boolean connectives ($\neg$, $\wedge$, $\vee$, etc.),
+and a function symbol $\lite : \Bool \times \tau \times \tau \rightarrow \tau$ (``if--then--else'')
+for each $\tau \in \stypes{\Sigma}$.
 We write $t\typ{\tau}$ to denote a metavariable ranging over terms of
 type~$\tau$ and $\terms( t )$ to denote the set of subterms in $t$.
 %We write $\functerms^\Sigma( t )$ to denote the set of $f$-applications in $t$ such that $f \in \sfundefs{\Sigma}$.
 
 A \emph{$\Sigma$-interpretation $\I$} %is a mathematical structure that
-maps each $\tau \in \stypes{\Sigma}$ to a nonempty set $\tau^\I$,
-the \emph{domain} of~$\tau$ in $\I$,
-and each $\con{f} : \tau_1 \times \cdots \times \tau_n \rightarrow \tau$ in
+maps each type $\tau \in \stypes{\Sigma}$ to a nonempty set $\tau^\I$,
+the \emph{domain} of~$\tau$ in~$\I$,
+and each function symbol $\con{f} : \tau_1 \times \cdots \times \tau_n \rightarrow \tau$ in
 $\sfuns{\Sigma}$
 to a total function $\con{f}^\I : \tau_1^\I \times \cdots \times \tau_n^\I \rightarrow \tau^\I$.
 A \emph{theory} is a pair $T = (\Sigma, \Mo)$ where
@@ -404,7 +407,7 @@ there exists a model for $\varphi \wedge \forallf{f_1} \vec x.\; \varphi_1 \wedg
 \end{definition}
 
 For example, the set $\{ \forallf{\con{f}} \vec x.\; \con{f}( x ) \teq 0 \}$ is admissible.
-A set of admissible function definitions can include definitions of non-terminating functions, e.g.
+A set of admissible function definitions can include definitions of nonterminating functions, e.g.
 $\{ \forallf{\con{f}} x : \typeint.\;\, \con{f}( x ) \teq \con{f}( x - 1 ) \}$ or even $\{ \forallf{\con{f}} x.\;\, \con{f}( x ) \teq \con{f}( x ) \}$ are admissible.
 On the other hand, the set $\{ \forallf{\con{f}} x.\;\, \con{f}( x ) \teq \con{f}( x ) + 1 \}$ is not admissible,
 since the empty set of formulas is closed under function expansion with respect to this set,
