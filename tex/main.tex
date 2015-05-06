@@ -266,7 +266,9 @@ formulas over uninterpreted types as well as types having a fixed finite
 interpretation, such as fixed-width bitvectors and enumerated datatypes.
 Finite model finding techniques can
 find a model for the formula $\forall x\typ{\tau} y\typ{\tau}.\;\, x \teq
-y \vee \neg \con{f}( x ) \teq \con{f}( y )$ where the uninterpreted type $\tau$ is
+y \vee \neg \con{f}( x ) \teq \con{f}( y )$ 
+\ajr{Need to settle on notation for types (currently we are using both superscript and colon).}
+where the uninterpreted type $\tau$ is
 interpreted as a finite set and $\con{f}$ as injective finite map.
 
 Unfortunately, these fragments cannot accommodate the vast majority of
@@ -277,10 +279,9 @@ So, for instance, the quantified formula $\forall x : {\sortint}.\;\, \lite\bigl
 is not in the essentially uninterpreted fragment (since $x$ occurs as a child of $-$),
 nor does finite model finding apply (since $x$ is of type $\sortint$).
 
-Here, we advocate an approach that translates formulas involving function
-definitions (such as the one mentioned in the previous paragraph)
-into equisatisfiable \ct{to be defined} formulas where the
-techniques~\cite{GeDeM-CAV-09, ReyEtAl-1-RR-13} are applicable.
+In this paper, we advocate a method for translating formulas involving function
+definitions (such as the one mentioned in the previous paragraph) 
+into ones where the techniques~\cite{GeDeM-CAV-09, ReyEtAl-1-RR-13} are applicable.
 
 \paragraph{Contributions}
 
@@ -412,7 +413,7 @@ $\extendsig{ \Sigma }$ and a $\extendsig{ \Sigma }$-formula $\psi$ such that
 $\psi$ is satisfiable if and only if $\varphi$ is satisfiable---i.e.,
 $\varphi$ and $\psi$ are \emph{equisatisfiable}.
 The intuition behind this translation
-is to use an uninterpreted type \ct{to be defined} to abstract the set of
+is to use an uninterpreted type to abstract the set of
 \relax{relevant} tuples for each recursive function $\con{f}$ and restrict the
 quantification of the function definition for $\con{f}$ to a variable of this
 type. Informally, the relevant tuples $\vec t$ of a function $\con{f}$ are the
@@ -475,7 +476,7 @@ $\conv_0( t\typ{\tau},\, p )$ $=$
     \begin{itemize}
       \item[] $\mathsf{let}$ $( u',\, \chi ) = \conv_0( u,\, p )$ $\mathsf{in}$
       %\item[] $\mathsf{assert}( \chi = \ltrue )$;
-      \item[] \return \bigtuple{$\forall y\typ{\fargsort{\con{f}}}.\; u' [ \vecfarg{\con{f}}( y ) / \vec x ],\, \ltrue$}
+      \item[] \return \bigtuple{$\forall y : \fargsort{\con{f}}.\; u' [ \vecfarg{\con{f}}( y ) / \vec x ],\, \ltrue$}
     \end{itemize}
   \item[] $\mathsf{else}$ $\mathsf{if}$ $t = \forall \vec x.\;\, u$ $\mathsf{then}$
     \begin{itemize}
@@ -585,11 +586,11 @@ $\extendsig{\Sigma}$-formula
 \!\begin{aligned}[c]
   & \phantom{{\wedge}\; }\bigl(
     \!\begin{aligned}[t]
-      \forall a : \fargsort{\con{s}}.\; & \phantom{{\wedge}\;}\lite\bigl( \farg{\con{s}}( a ) \leq 0,\;
+      \forall a : \fargsort{\con{s}}.\; \lite\bigl( \farg{\con{s}}( a ) \leq 0,\;
         \con{s}(\farg{\con{s}}( a )) \teq 0,\;
-        \con{s}(\farg{\con{s}}( a )) \teq \farg{\con{s}}( a ) + \con{s}( \farg{\con{s}}( a )-1 ) \bigr)
+        & \phantom{{\wedge}\;} \con{s}(\farg{\con{s}}( a )) \teq \farg{\con{s}}( a ) + \con{s}( \farg{\con{s}}( a )-1 )
 \\[-\jot]
-      & {\wedge}\; \exists a : {\fargsort{\con{s}}}.\;\, \farg{\con{s}}( a ) \teq \farg{\con{s}}( a )-1 \bigr)
+      & {\wedge}\; \exists b : {\fargsort{\con{s}}}.\;\, \farg{\con{s}}( b ) \teq \farg{\con{s}}( a )-1 \bigr) \bigr)
 \end{aligned}
 \\[-\jot]
  & {\wedge}\; \bigl( \con{s}( c ) > 100 \wedge \exists a : {\fargsort{\con{s}}}.\;\, \farg{\con{s}}( a ) \teq \con{c} \bigr)
@@ -604,8 +605,9 @@ applications of the uninterpreted function $\farg{\con{s}}$, implying that the
 formula is in the essentially uninterpreted fragment,
 for which Ge and de Moura \cite{GeDeM-CAV-09} provide a complete instantiation
 procedure. Both
-%%% Added "apparently". Or are we sure?
-\cvc and \ziii apparently run indefinitely on formula~(\ref{eq:ex-before}), and both
+%%% Added "apparently". Or are we sure?  
+% Yes, I'm planning to post the 2 versions of the benchmark on the evaluation page (when we add it) --ajr
+\cvc and \ziii run indefinitely on formula~(\ref{eq:ex-before}), and both
 produce a model for formula~(\ref{eq:ex-after}) within 100 milliseconds.\xend
 \end{example}
 
@@ -648,7 +650,9 @@ functions in $\sfuns{\Sigma} - \sfundefs{\Sigma}$, i.e., $\{
 \con{s} \}$ in the example.
 
 %%% @ANDY: I don't get the following comment --jb
-%
+%   @JASMIN : The point of this comment is that the user is not interested in the SMT solver inferring any new information regarding the interpretation of s,
+%             since s is a "defined" function, the user already has an intended interpretation in their head of what s is (here, the sum of positive integers between 0...x).
+%             Thus, it isn't a big deal that the SMT solver "approximates" the interpretation of s during a check, since we already know what s is.
 %From a practical point of view, this is not an
 %issue, because $s$ is the very function that was explicitly defined by the
 %user, and hence already has an intended interpretation.
@@ -707,10 +711,12 @@ model. In more detail, let $\varphi_\con{s}$ be the formula $\forallf{\con{s}} x
 \bigr)$. The rightmost conjunct $\exists a : {\fargsort{\con{s}}}.
 \farg{\con{s}}( a ) \teq \con{c}$ ensures that any model of
 formula~(\ref{eq:ex-after}) satisfying $\con{s}( \con{c} ) > 100$ also
-satisfies $\varphi_{\con{s}}[\con{c}/x]$. Similarly, the nested existential
-$\exists a.\;\, \farg{\con{s}}( a ) \teq \farg{\con{s}}( y )-1$ ensures that
-this constraint is enforced recursively. Given a model $\I$ of
+satisfies $\varphi_{\con{s}}[\con{c}/x]$. The nested existential
+$\exists b.\;\, \farg{\con{s}}( b ) \teq \farg{\con{s}}( a )-1$ ensures that
+a similar constraint is enforced recursively: any model satisfying $\varphi_{\con{s}}[t/x]$
+must also satisfy $\varphi_{\con{s}}[t-1/x]$ when $t > 0$. Given a model $\I$ of
 formula~(\ref{eq:ex-after}) that interprets $\con{c}$ as $14$, it is easy to see that
+due to the structure of formula~(\ref{eq:ex-after}),
 $\I$ must satisfy the following formula $\psi$:
 %
 \begin{equation} \label{eq:fun-closure}
@@ -727,7 +733,7 @@ $\con{s}( \con{c}-i )$ for $i = 0, \ldots, 14$. The formula also
 entails $\varphi_\con{s}[\con{c}-i/x]$ for $i = 0, \ldots, 14$.
 Since $\varphi_\con{s}$ is an admissible definition,
 there must exist a model for $\psi \wedge \varphi_\con{s}$,
-which means that there exists a model for formula~(\ref{eq:ex-before}).\xend
+which means there exists a model for formula~(\ref{eq:ex-before}).\xend
 \end{example}
 
 \section{Evaluation}
