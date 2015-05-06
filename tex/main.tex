@@ -224,7 +224,8 @@ Department of Computer Science, University of Iowa, USA
 \begin{abstract}
 SMT solvers have recently been extended with finite model finding techniques.
 However, these generally cannot cope with universal quantifiers ranging over
-infinite types. This paper introduces a translation that eliminates infinite
+infinite types, such as integers and recursive datatypes.
+This paper introduces a translation that eliminates infinite
 quantifiers in axioms specifying a large class of recursive functions,
 including terminating, tail-recursive, and productive functions. An empirical
 evaluation confirms that the approach works well on benchmarks from two
@@ -276,8 +277,8 @@ quantified formulas that correspond to recursive function definitions: The
 essentially uninterpreted fragment does not allow the argument of a
 recursive function to be used deep inside a complex term on the right-hand side,
 whereas the finite model finding techniques of Reynolds et al.\ are not
-applicable for functions over infinite domains such as the integers. A simple
-example where both approaches fail is
+applicable for functions over infinite domains such as the integers or
+recursive datatypes. A simple example where both approaches fail is
 $$\forall n : {\sortint}.\;\, \lite\bigl(
 n \leq 0,\allowbreak\; \con{p}( n ) \teq 1,\allowbreak\; \con{p}( n ) \teq 2 * \con{p}( n - 1 ) \bigr)$$
 This state of affairs is highly unsatisfactory, given the frequence of
@@ -750,8 +751,8 @@ formula~(\ref{eq:ex-before}) is unsatisfiable since $\fargsort{f}$ can be
 interpreted as $\sortint$, and $\farg{f}$ can be interpreted as the identity
 function. Conversely, we claim formula~(\ref{eq:ex-after}) is satisfiable if
 and only if formula~(\ref{eq:ex-before}) is satisfiable, noting that the set
-$\{ \forallf{\con{s}} x\typ{\sortint}.\;\, \lite\bigl( x \leq 0, \con{s}(x)
-\teq 0, \con{s}( x ) \teq x + \con{s}( x-1 ) \bigr) \}$ is admissble.
+$\{ \forallf{\con{s}} x\typ{\sortint}.\;\, \lite\bigl( x \leq 0,\allowbreak\; \con{s}(x)
+\teq 0,\; \con{s}( x ) \teq x + \con{s}( x-1 ) \bigr) \}$ is admissble.
 As stated
 in the proof of Theorem~\ref{thm:equi}, the reason is that any model of
 formula~(\ref{eq:ex-after}) must satisfy a formula that is closed under
@@ -1044,6 +1045,18 @@ in smt : z3, cvc4 (briefly, text in main section gives detail)
 
 \section{Conclusion}
 \label{sec:conclusion}
+
+We presented a translation scheme that makes more SMT problems amenable to
+finite model findings in SMT. In conjunction with the finite model finding
+techniques introduced by Reynolds et al.\
+\cite{ReyEtAl-1-RR-13,reynolds-et-al-2013}, it makes it possible to
+find models of quantified formulas over infinite types, such as arithmetic
+types and recursive datatypes.
+
+
+in definitional form with respect to admissible function definitions
+
+Universal quantifiers ranging over infinite types
 
 \begin{verbatim}
   * future work
