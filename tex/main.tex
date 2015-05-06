@@ -217,7 +217,17 @@ Department of Computer Science, University of Iowa, USA
 \maketitle
 
 \begin{abstract}
-To do.
+
+  * finite model finding techniques for satisfiability modulo theories (SMT)
+    have emerged in recent years
+  * suffer from the major limitation that they cannot handle universal
+    quantifiers ranging over infinite types
+  * this paper introduces a simple translation to
+    produces an equisatifiable problem that avoids infinite quantification
+    for a large fragment of recursive functions,
+    including terminating, tail-recursive, and productive functions.
+  * empirical evaluation confirms that the approach works
+  * implemented as a preprocessor in CVC4
 \end{abstract}
 
 \section{Introduction}
@@ -947,7 +957,7 @@ the nesting more clearly).}
 )
 \end{verbatim}
 \end{quote}
-%
+
 The \texttt{--fmf-fun} option instructs CVC4 to assume that the
 functions provided by the user are admissible.
 If this condition is not met, the solver may answer ``satisfiable'' on
