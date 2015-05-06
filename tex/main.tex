@@ -231,7 +231,8 @@ Department of Computer Science, University of Iowa, USA
 \maketitle
 
 \begin{abstract}
-SMT solvers have recently been extended with finite model finding techniques.
+SMT solvers have recently been extended with techniques for finding models
+in presence of quantified formulas.
 However, these generally cannot cope with universal quantifiers ranging over
 infinite types, such as integers and recursive datatypes. This paper introduces
 a translation that eliminates infinite quantifiers in axioms specifying a large
@@ -421,10 +422,10 @@ $\{ \forallf{\con{f}} x : \typeint.\;\, \con{f}( x ) \teq \con{f}( x - 1 ) \}$ o
 On the other hand, the set $\{ \forallf{\con{f}} x.\;\, \con{f}( x ) \teq \con{f}( x ) + 1 \}$ is not admissible,
 since the empty set of formulas is closed under function expansion with respect to this set,
 and there is no model satisfying $\forallf{\con{f}} x.\;\, \con{f}( x ) \teq \con{f}( x ) + 1$.
-Consider the set $\{ \forallf{\con{f}} x.\;\, \con{f}( x ) \teq \con{f}( x ), \forallf{\con{g}}.\;\, \lite\bigl( \neg \con{f}( x ) \teq 5, \con{g}( x ) \teq \con{g}( x ) + 1, \con{g}( x ) \teq \con{f}( x ) \bigr) \}$.
+Consider the set $\{ \forallf{\con{f}} x.\;\, \con{f}( x ) \teq \con{f}( x ), \forallf{\con{g}} x.\;\, \lite\bigl( \neg \con{f}( x ) \teq 5, \con{g}( x ) \teq \con{g}( x ) + 1, \con{g}( x ) \teq \con{f}( x ) \bigr) \}$.
 While this set has a model where $f$ and $g$ are interpreted as the constant $5$, it is not admissible
 since the formula $\con{f}( 0 ) \teq 4$ is closed under function expansion with respect to this set,
-but there exists no interpretation satisfying both $\con{f}( 0 ) \teq 4$ and $\forallf{\con{g}}.\;\, \lite( \neg \con{f}( x ) \teq 5, \con{g}( x ) \teq \con{g}( x ) + 1, \con{g}( x ) \teq \con{f}( x ) )$.
+but there exists no interpretation satisfying both $\con{f}( 0 ) \teq 4$ and $\forallf{\con{g}} x.\;\, \lite( \neg \con{f}( x ) \teq 5, \con{g}( x ) \teq \con{g}( x ) + 1, \con{g}( x ) \teq \con{f}( x ) )$.
 
 
 \jb{TODO: Jasmin: Identify fragments: terminating recursive functions, etc.}
@@ -783,8 +784,8 @@ model. In more detail, let $\varphi_\con{s}$ be the formula $\forallf{\con{s}} x
 formula~(\ref{eq:ex-after}) satisfying $\con{s}( \con{c} ) > 100$ also
 satisfies $\varphi_{\con{s}}[\con{c}/x]$. The nested existential
 $\exists b.\;\, \farg{\con{s}}( b ) \teq \farg{\con{s}}( a )-1$ ensures that
-a similar constraint is enforced recursively: any model satisfying $\varphi_{\con{s}}[t/x]$
-must also satisfy $\varphi_{\con{s}}[t-1/x]$ when $t > 0$ \ajr{revise this sentence, not quite accurate}. Given a model $\I$ of
+a similar constraint is enforced recursively: when $\varphi_{\con{s}}[t/x]$ is used in part to evaluate $s( c )$,
+any model of $\varphi_{\con{s}}[t/x]$ must also satisfy $\varphi_{\con{s}}[t-1/x]$ when $t > 0$. Given a model $\I$ of
 formula~(\ref{eq:ex-after}) that interprets $\con{c}$ as $14$, it is easy to see that
 due to the structure of formula~(\ref{eq:ex-after}),
 $\I$ must satisfy the following formula $\psi$:
@@ -857,13 +858,12 @@ which runs both heuristic methods for quantifier instantiation~\cite{DBLP:conf/c
 as well as methods for finding models for quantified formulas~\cite{GeDeM-CAV-09}.
 We also considered three configurations of \cvc~\cite{barrett-et-al-2011} which
 we will refer to as \cvcd, \cvcf, and \cvci.
-The default configuration \cvcd runs heuristic quantifier instantiation,
+The default configuration \cvcd runs heuristic and conflict-based techniques for quantifier instantiation~\cite{ReynoldsTinelliMoura14},
 but does not include techniques for finding models.
 The configuration \cvcf runs heuristic instantiation and the finite model
 finding procedure described in~\cite{ReyEtAl-1-RR-13,reynolds-et-al-2013}. The
 last configuration \cvci incorporates techniques for automating inductive
 reasoning in SMT~\cite{reynolds-kuncak-2015}.
-%All configurations of \cvc incorporate techniques for conflict-based instantiation~\cite{} ..?
 
 \begin{figure}[t]
 \normalsize
@@ -990,12 +990,11 @@ assertions based on the conversion $\conv$ before checking for satisfiability.
 %If the functions provided in the input are admissible,
 %then a ``satisfiable" response from the solver implies that a model exists for the original formula.
 Accordingly, the solver will output the approximation of the interpretation it
-used for recursive function definitions. For our example, it will output the following
-model:
-\ajr{prefer having the full output like this here?}
-\jb{I like it the way you did it now, but I took the freedom to reformat the output slightly
-(to avoid the small font---I generally try to avoid ad hoc font mixtures---and to show
-the nesting more clearly).}
+used for recursive function definitions. For our example, it will produce the following output:
+%\ajr{prefer having the full output like this here?}
+%\jb{I like it the way you did it now, but I took the freedom to reformat the output slightly
+%(to avoid the small font---I generally try to avoid ad hoc font mixtures---and to show
+%the nesting more clearly).}
 %it may output the interpretation~(\ref{eq:approx-interp}) from Section~\ref{sec:encoding} for $s$.
 %
 \begin{quote}
@@ -1025,7 +1024,7 @@ an unsatisfiable problem. For example, if we add the inconsistent definition
 \end{verbatim}
 \end{quote}
 %
-to the above problem, \cvc will still find the same ``model''
+to the above problem, \cvc will still produce the same output
 if \texttt{--fmf-fun} is specified.
 
 %Usually not interested in showing logical consistency, there
@@ -1037,7 +1036,7 @@ if \texttt{--fmf-fun} is specified.
 
 We described the most closely related work, by Ge and de Moura
 \cite{GeDeM-CAV-09} and by Reynolds et al.\
-\cite{ReyEtAl-1-RR-13,reynolds-et-al-2013}, in the introduction already.
+\cite{ReyEtAl-1-RR-13,reynolds-et-al-2013}, in the text already.
 Outside the world of SMT, model finding has been
 studied many times. The text below is partly adapted from Blanchette's Ph.D.\
 thesis \cite{blanchette-2012-phd}.
