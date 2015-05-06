@@ -50,7 +50,7 @@
 \newcommand\cvcd{CVC4d\xspace}
 \newcommand\cvcf{CVC4f\xspace}
 \newcommand\cvci{CVC4i\xspace}
-\newcommand\ziiib{\ziii\xspace}
+\newcommand\ziiib{\ziii}
 
 
 %\newcommand{\DDD}{\mathcalx{D}}
@@ -270,7 +270,7 @@ arithmetic predicates. The techniques in~Reynolds et al.\
 \cite{ReyEtAl-1-RR-13,reynolds-et-al-2013} can be used for finding finite
 models for quantified
 formulas over uninterpreted types as well as types having a fixed finite
-interpretation, such as fixed-width bitvectors and enumerated datatypes.
+interpretation, such as fixed-width bit vectors and enumerated datatypes.
 Finite model finding techniques can
 find a model for the formula $\forall x,\, y : \tau.\;\, x \teq
 y \vee \neg \con{f}( x ) \teq \con{f}( y )$ where the uninterpreted type $\tau$ is
@@ -310,8 +310,8 @@ an infix equality predicate ${\teq} : \tau \times \tau \to \Bool$
 for each $\tau \in \ssorts{\Sigma}$,
 standard boolean connectives ($\neg$, $\wedge$, $\vee$, etc.),
 and a function $\lite : \Bool \times \tau \times \tau \rightarrow \tau$ for each $\tau \in \ssorts{\Sigma}$.
-We write $t\typ{\tau}$ to denote a term $t$ of type~$\tau$ and
-$\terms( t )$ to denote the set of subterms in $t$.
+We write $t\typ{\tau}$ to denote a metavariable ranging over terms of
+type~$\tau$ and $\terms( t )$ to denote the set of subterms in $t$.
 %We write $\functerms^\Sigma( t )$ to denote the set of $f$-applications in $t$ such that $f \in \sfundefs{\Sigma}$.
 
 A \emph{$\Sigma$-interpretation $\I$} %is a mathematical structure that
@@ -760,9 +760,10 @@ benchmarks from the Leon repository,\footnote{%Available at
 \url{https://github.com/epfl-lara/leon}} which were constructed from
 verification conditions from simple Scala programs. These benchmarks also
 heavily involve recursive functions over inductive datatypes, and also cover a
-wide variety of theories, including bitvectors, arrays, and linear and
-non-linear arithmetic. Each of the 245 benchmarks are of the form described in
-formula~(\ref{eq:wdf}) from Section~\ref{sec:prelim}.
+wide variety of theories, including bit vectors, arrays, and linear and
+nonlinear arithmetic. Each benchmark is in definitional form with respect to a
+set of terminating functions.
+%
 % in particular they each
 %are a conjoined list of function definitions followed by a (negated)
 %conjecture.
@@ -847,40 +848,41 @@ The results are shown in Figures \ref{fig:sat} and \ref{fig:unsat}.
 The results are divided into benchmarks triggering ``unsatisfiable'' and ``satisfiable''
 responses and further into benchmarks before and after the translation $\conv$.
 \jb{rephrase}
-First, we note that in no cases did a configuration answer differently across the two encodings.
-In other words, there were no cases in which \ziii or \cvc answered e.g.\ ``unsatisfiable'' on a benchmark $\varphi$
-and ``satisfiable'' on its corresponding benchmark $\conv( \varphi )$, or vice versa.
-This provides confirming evidence that the translation $\conv$ is \emph{refutation-sound},
-as we did not find a case where $\conv( \varphi )$ was unsatisfiable when $\varphi$ was satisfiable.
-It also provides confirming evidence that the translation is \emph{model-sound} for this set of benchmarks,
-as we did not find a case where $\conv( \varphi )$ was satisfiable when $\varphi$ was unsatisfiable.
-This is to be expected, since the functions in our benchmark sets are expected to be admissible (and in fact, terminating).
+%
+The raw evaluation data reveals no cases in which a solver answered
+``unsatisfiable'' on a benchmark $\varphi$ and ``satisfiable'' on its
+corresponding benchmark $\conv( \varphi )$, or vice versa, thereby
+corroborating Theorem~\ref{thm:equi}.
 
-Examining the first encoding in isolation (the first nine columns),
-the number of satisfiable responses from all configurations is quite low.
-In total, \ziiib manages to find only 11 benchmarks to be satisfiable,
-whereas each configuration of \cvc only finds 6.
-This confirms the shortcomings of existing SMT techniques for finding counterexamples for benchmarks containing recursive functions.
-In terms of number of unsatisfiable responses,
-the configuration \cvci is the clear winner, finding 318 total benchmarks to be unsatisfiable.
+Figure~\ref{fig:sat} shows that for untranslated benchmarks (the ``$\varphi$''
+columns), the number of satisfiable responses is very low, across all
+configurations. This confirms the shortcomings of existing SMT techniques for
+finding counterexamples for benchmarks containing recursive functions.
+%
+The translation $\conv$ (the ``$\conv(\varphi)$'' columns) has a major
+impact. \cvcf finds 331 of the 885 benchmarks to be satisfiable,
+including 9~benchmarks in the unmutated {\bench leon} benchmark set. The
+performance of \ziiib for counterexamples also improves dramatically, as it
+solves 112 satisfiable problems, including 10 that were unsolved by \cvcf.
+%
+We conclude that the translation $\conv$ enables SMT
+solvers to find counterexamples for conjectures involving recursive functions
+whose definitions are admissible.
+%Both \ziiib and \cvcf were able to find a
+%large number of counterexamples after the translation, with the latter
+%configuration finding significantly more instances (331 to 112).
 
-Now, examining the second encoding (the latter nine columns),
-we see that using the translation $\conv$ drastically improves the ability of configurations for answering satisfiable.
-In total, \cvcf finds 331 of the 885 benchmarks to be satisfiable, including 9 benchmarks in the original {\bench leon} benchmark set.
-The performance of \ziiib for counterexamples also improves drastically, as it solves 112 satisfiable,
-including 10 that were unsolved by \cvcf.
-Moreover, the translation $\conv$ helps \ziii for unsatisfiable responses as well,
-as we see \ziii solves a total of 209 whereas it solves only 187 before the translation.
-This number is 2 fewer than \cvcd, which solves 211 unsatisfiable.
-Thus, in most cases the translation $\conv$ does not significantly degrade performance for unsatisfiable benchmarks,
-and in some cases may actually aid the solver for determining unsatisfiability.%
-\footnote{The exception here is \cvci, which makes use of type
-information associated with quantified formulas for inductive arguments.}
-
-We conclude from this evaluation that the translation $\conv$ enables SMT solvers to find counterexamples
-for conjectures involving recursive functions whose definitions are admissible.
-Both \ziiib and \cvcf were able to find a large number of counterexamples after the translation,
-with the latter configuration finding significantly more instances (331 to 112).
+In terms of number of unsatisfiable responses, the configuration \cvci is the
+clear winner, finding 318 total benchmarks to be unsatisfiable. Moreover, the
+translation $\conv$ helps \ziii for ``unsatisfiable'' responses as well, as we
+see \ziii solves a total of 209 whereas it solves only 187 before the
+translation.
+%
+This number is 2 fewer than \cvcd, which solves 211 unsatisfiable. Thus, in
+most cases the translation $\conv$ does not significantly degrade performance
+for unsatisfiable benchmarks, and in some cases may actually aid the solver for
+determining unsatisfiability. The exception here is \cvci, whose inductive
+arguments are guided by the types of quantified variables.
 
 \section{Front-End Support %for Recursive Function Definitions
   in CVC4}
