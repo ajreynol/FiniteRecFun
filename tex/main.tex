@@ -328,7 +328,7 @@ unsatisfiability, and makes finite model finding possible in practice
 for problems in this class.
 
 Our empirical evaluation on benchmarks from the IsaPlanner proof planner~\cite{DBLP:conf/itp/JohanssonDB10}
-and the Leon verifier~\cite{suter-et-al-2011} provides
+and the Leon verifier~\cite{blanc2013overview} provides
 evidence that this translation improves the effectiveness of the SMT solvers
 \cvc and \ziii for finding counterexamples to verification conditions
 (Section~\ref{sec:evaluation}). The approach is implemented as a preprocessor
@@ -1296,7 +1296,7 @@ application. This approach works reasonably well in Nitpick, because it builds
 on Kodkod's relational logic, but our initial experiments with \cvc convinced
 us that it is more efficient to avoid unknown values by adding constraints.
 
-The Leon system \cite{suter-et-al-2011} implements a procedure that can both
+The Leon system~\cite{blanc2013overview} implements a procedure that can both
 produces proofs and counterexamples for properties of terminating functions
 written in a subset of Scala. Leon is based on an SMT solver. It avoids
 quantifiers altogether by unfolding recursive definitions up to a certain
