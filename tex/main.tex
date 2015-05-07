@@ -458,17 +458,19 @@ $\varphi \wedge (\forallf{\con{f}_1} \vec x.\; \varphi_1) \wedge \cdots \wedge (
 
 Admissibility is a semantic criterion that must be satisfied for each function
 definition before applying the translation described in
-Section~\ref{sec:encoding}. This criterion is general enough to accommodate
-\emph{well-founded} function definitions, also called ``terminating'' definitions in a
-slight abuse of terminology. In such definitions, all recursive calls are
-decreasing with respect to a well-founded relation $r$, which must be supplied
-by the user or inferred automatically using a termination prover.
+Section~\ref{sec:encoding}. It is interesting it connect it with the more
+standard notion of \emph{well-founded} function definitions, often called
+``terminating'' definitions in a slight abuse of terminology. In such
+definitions, all recursive calls are decreasing with respect to a well-founded
+relation $r$, which must be supplied by the user or inferred automatically
+using a termination prover. This ensures that the function is uniquely defined
+at all points.
 
 First-order logic has built-in notion of computation or termination. To ensure
 that a function specification is well-founded, it is sufficient to require that
 it would terminate when seen as a functional program for \relax{some}
 evaluation order. For example,
-$\{\forall n : {\typeint}.\;\, \lite\bigl(
+$\{\forallf{\con{f}} n : {\typeint}.\;\, \lite\bigl(
 n \leq 0,\allowbreak\; \con{p}( n ) \teq 1,\allowbreak\; \con{p}( n ) \teq 2 * \con{p}( n - 1 ) \bigr)\}$
 can be shown well-founded under an evaluation strategy that consides one of the
 two $\lite$ branches, based on the result of evaluating the condition.
@@ -476,8 +478,22 @@ Logically, such dependencies can be captured by congruence rules. Krauss
 develops these ideas systematically in the more general context of higher-order
 logic \cite[Section 2]{krauss-2009-phd}.
 
+Another interesting fragment is the class of \emph{productive} corecursive
+functions. Corecursive functions are functions to a coalgebraic datatype.
+These functions can call themselves forever, without their being inconsistent.
+Productive corecursive functions are functions that progressively reveal parts
+of their (potentially infinite)
+output \cite{turner-1995,abbott-et-al-2005,mcbride-productive}.
+For example, given a type of infinite streams constructed by $\con{scons}$,
+the definition
+$\{\forallf{\const{e}} n.\;\, \const{e}(n) \teq \con{scons}(n,\; \const{e}(n + 1))\}$
+falls within this fragment, since each call to $\const{e}$ produces one
+constructor before entering the nested call. Like terminating recursion,
+productive corecursion uniquely specifies a function. The following theorem
+connects these notion with admissibility.
+
 \begin{theorem}
-Well-founded f
+Let 
 \end{theorem}
 
 
@@ -1174,7 +1190,7 @@ an unsatisfiable problem. For example, if we add the inconsistent definition
 \begin{quote}
 \small
 \begin{verbatim}
-(define-fun-rec e ((n Int)) Int (+ (e n) 1))
+(define-fun-rec h ((n Int)) Int (+ (h n) 1))
 \end{verbatim}
 \end{quote}
 %
