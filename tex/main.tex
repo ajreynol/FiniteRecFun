@@ -603,7 +603,7 @@ quantification on function definitions for $\con{f}$ to the corresponding
 uninterpreted type $\fargtype{\con{f}}$ and inserts appropriate selectors
 $\fargx{\con{f}}{i}$. Second, it augments $\varphi$ with additional existential
 constraints
-$\exists a : \fargtype{\con{f}}.\;\, \vecfarg{\con{f}}( a ) \teq \vec t$; these
+$\exists a : \fargtype{\con{f}}.\;\, (\vecfarg{\con{f}}( a ) \teq \vec t)$; these
 ensure that the restricted definition for $\con{f}$ covers all relevant tuples
 of terms, namely the ones for which an $\con{f}$ application exists and is
 relevant to the satisfiability of $\varphi$.
@@ -776,7 +776,7 @@ The following lemma states the central invariant behind our conversion function 
 \begin{lemma}\label{lem:conv}
 Let $\varphi$ be a formula not containing function definitions,
 and $\I$ be a $\extendsig{\Sigma}$-interpretation satisfying $\conv( \varphi )$.
-Then, $\I$ satisfies a set of literals $L \cup \absconstraints( L )$ such that $L$ is a set of $\Sigma$-literals that entail $\varphi$.
+Then, $\I$ satisfies $L \cup \absconstraints( L )$, where $L$ is a set of ground $\Sigma$-literals that entail $\varphi$.
 %There exists a set of ground $\Sigma$-literals $L$ such that $L$ entails $\varphi$, 
 %and $\I$ satisfies $L \cup \absconstraints( L )$.
 \end{lemma}
@@ -847,44 +847,66 @@ which is $\varphi$.
 \end{proofsketch}
 
 The intuition of the above proof is as follows.
-
-For clarity, we demonstrate this in the context of a concrete example.
+First, $\conv( \varphi )$ cannot be unsatisfiable when $\varphi$ is satisfiable
+since any model of $\varphi$ can be extended in a straightforward way to satisfy $\conv( \varphi )$.
+Second, if a model is found for $\conv( \varphi )$,
+then the constraints of the form $\exists a : \fargtype{\con{f}}.\;\, (\vecfarg{\con{f}}( a ) \teq \vec t)$
+occurring in $\conv( \varphi )$ ensure that this model also satisfies
+a $\Sigma$-formula that is closed under function expansion that entails the conjecture of $\varphi$.
+Hence when $\DDD$ is admissible, this implies the existence of a model for $\varphi$.
+For clarity, we demonstrate the consequences of this theorem in the context of a concrete example.
 
 \begin{example}
 Let us revisit the translated formula~(\ref{eq:ex-after}) from
-Example~\ref{ex:translation}. This formula is unsatisfiable only if
+Example~\ref{ex:translation}. 
+This formula is unsatisfiable only if
 formula~(\ref{eq:ex-before}) is unsatisfiable since $\fargtype{f}$ can be
 interpreted as $\typeint$, and $\farg{f}$ can be interpreted as the identity
 function. Conversely, we claim formula~(\ref{eq:ex-after}) is satisfiable
 only if formula~(\ref{eq:ex-before}) is satisfiable, noting that the set
-$\{ \forallf{\con{s}} x\typ{\typeint}.\;\, \lite\bigl( x \leq 0,\allowbreak\; \con{s}(x)
-\teq 0,\; \con{s}( x ) \teq x + \con{s}( x-1 ) \bigr) \}$ is admissible.
+$\{ \forallf{\con{s}} x\typ{\typeint}.\;\, \varphi_\con{s} \}$ is admissible,
+where $\varphi_\con{s}$ is the formula $\lite\bigl( x \leq 0, \con{s}(x) \teq 0, \con{s}( x ) \teq x + \con{s}( x-1 ) \bigr)$.
 %\ct{
 %You cannot possibly mean "if and only if" in the two sentences above.
 %Once I show that (1) is unsat iff (2) is unsat, I do not need to argue that
 %(1) is sat iff (2) is sat. That is immediate.
 %}
 % You're right, changed both to "only if" --ajr
-As stated
-in the proof of Theorem~\ref{thm:equi}, the reason is that any model of
-formula~(\ref{eq:ex-after}) must satisfy a formula that is closed under
-function expansion, hence implying that formula~(\ref{eq:ex-before}) has a
-model. In more detail, let $\varphi_\con{s}$ be the formula $\forallf{\con{s}} x.\;\,
-\lite\bigl( x \leq 0, \con{s}(x) \teq 0, \con{s}( x ) \teq x + \con{s}( x-1 )
-\bigr)$. The rightmost conjunct $\exists a : {\fargtype{\con{s}}}.
-\farg{\con{s}}( a ) \teq \con{c}$ ensures that any model of
-formula~(\ref{eq:ex-after}) satisfying $\con{s}( \con{c} ) > 100$ also
-satisfies $\varphi_{\con{s}}[\con{c}/x]$. The nested existential
-$\exists b.\;\, \farg{\con{s}}( b ) \teq \farg{\con{s}}( a )-1$ ensures that
-a similar constraint is enforced recursively: when $\varphi_{\con{s}}[t/x]$ is used in part to evaluate $\con{s}( \con{c} )$,
-any model of $\varphi_{\con{s}}[t/x]$ must also satisfy $\varphi_{\con{s}}[t-1/x]$ when $t > 0$. Given a model $\I$ of
-formula~(\ref{eq:ex-after}) that interprets $\con{c}$ as $14$,
-due to the structure of formula~(\ref{eq:ex-after}), it can be shown that $\I$ must satisfy the following formula $\psi$:
+%As stated
+%in the proof of Theorem~\ref{thm:equi}, the reason is that any model of
+%formula~(\ref{eq:ex-after}) must satisfy a formula that is closed under
+%function expansion, hence implying that formula~(\ref{eq:ex-before}) has a
+%model.
+%The rightmost conjunct $\exists a : {\fargtype{\con{s}}}. (\farg{\con{s}}( a ) \teq \con{c})$ 
+%ensures that if $\con{s}( \con{c} ) > 100$ is a constraint that 
+%formula~(\ref{eq:ex-after}) satisfying $\con{s}( \con{c} ) > 100$ also
+%satisfies $\varphi_{\con{s}}[\con{c}/x]$. 
+%The nested existential
+%$\exists b.\;\, \farg{\con{s}}( b ) \teq \farg{\con{s}}( a )-1$ ensures that
+%a similar constraint is enforced recursively: when $\varphi_{\con{s}}[t/x]$ is used in part to evaluate $\con{s}( \con{c} )$,
+%any model of $\varphi_{\con{s}}[t/x]$ must also satisfy $\varphi_{\con{s}}[t-1/x]$ when $t > 0$. 
+It is easy to see that any interpretation $\I$ satisfying formula~(\ref{eq:ex-after}) must satisfy $\{ \con{s}( \con{c} ) > 100 \}$ 
+(call this set $L_0$),
+and moreover must satisfy the set $\absconstraints( L_0 ) = \{ \exists a : {\fargtype{\con{s}}}. (\farg{\con{s}}( a ) \teq \con{c}) \}$.
+The latter ensures that $\I$ satisfies a formula that entails both $\con{s}( \con{c} ) > 100$ and $\varphi_{\con{s}}[\con{c}/x]$.
+Since $\I$ also satisfies both the translated function definition for $\con{s}$ (e.g. the first conjunct of formula~(\ref{eq:ex-after})) 
+and $\absconstraints( L_0 )$, it must also satisfy the formula $\psi_1$:
+\[
+\lite\bigl( \con{c} \leq 0,\; 
+            \con{s}(\con{c}) \teq 0,\;
+            \con{s}(\con{c}) \teq \con{c} + \con{s}( \con{c}-1 )
+            \wedge \exists b : {\fargtype{\con{s}}}.\;\, (\farg{\con{s}}( b ) \teq \con{c}-1) \bigr) \bigr)
+\]
+
+The existential $\exists b : {\fargtype{\con{s}}}.\;\, (\farg{\con{s}}( b ) \teq \con{c}-1)$ ensures that a similar constraint is enforced recursively
+when $\I$ satisfies $\neg \con{c} \leq 0$.
+Hence, given a model of formula~(\ref{eq:ex-after}) that interprets $\con{c}$ as $14$,
+this model must satisfy the following formula $\psi$:
 %
 \begin{equation} \label{eq:fun-closure}
 \begin{split}
 & \con{s}( \con{c} ) > 100 \wedge %\displaystyle
-  \bigwedge\nolimits_{\vthinspace i=0}^{\!13} \bigl( \neg (\con{c}-i \leq 0) \wedge \con{s}( \con{c}-i ) \teq i + \con{s}( \con{c}-i-1 ) \bigr) \\[-\jot]
+  \bigwedge\nolimits_{\vthinspace i=0}^{\!13} \bigl( \neg (\con{c}-i \leq 0) \wedge \con{s}( \con{c}-i ) \teq (\con{c}-i) + \con{s}( (\con{c}-i)-1 ) \bigr) \\[-\jot]
 {\wedge}\; & \con{c}-14 \leq 0 \wedge \con{s}( \con{c}-14 ) \teq 0
 \end{split}
 \end{equation}
