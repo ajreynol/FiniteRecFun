@@ -917,7 +917,7 @@ $\ell \in L_i$ for some $i$),
 and let $\psi$ be the $\Sigma$-formula $\bigwedge L_\infty$.
 To show that $\psi$ is closed under function expansion with respect to $\DDD$,
 we first note that by construction $\psi$ entails $\psi_\infty$.
-For any function~$\con{f}$ and terms~$\vec t$, since $\varphi_{\con{f}}[ \vec t / \vec x ]$ does not contain function definitions,
+For any function symbol~$\con{f}$ and terms~$\vec t$, since $\varphi_{\con{f}}[ \vec t / \vec x ]$ does not contain function definitions,
 by Corollary~\ref{cor:conv},
 $\conv( \varphi_{\con{f}}[ \vec t / \vec x ] )$ entails $\varphi_{\con{f}}[ \vec t / \vec x ]$.
 Thus, $\psi$ entails $\{ \varphi_{\con{f}}[ \vec t / \vec x ] \mid \con{f}( \vec t ) \in \terms( \psi ), \con{f} \in \sfundefs{\Sigma} \}$,
@@ -925,8 +925,7 @@ meaning that $\psi$ is closed under function expansion with respect to $\DDD$.
 Furthermore, $\psi$ entails $\varphi_0$ since $L_0 \subseteq L_\infty$.
 Since $\psi$ is a $T$-satisfiable formula that is closed under function expansion with respect to $\DDD$ and $\DDD$ is admissible, 
 by definition there exists a $\Sigma$-interpretation $\I$ satisfying $\psi \wedge \DDD$, which entails $\DDD \wedge \varphi_0$,
-which is $\varphi$.
-%\ajr{Sketchy referring to "limit" of sequence, if it can be infinite. TODO: clarify/restrict.}
+i.e., $\varphi$.
 \qed
 \end{proofsketch}
 
@@ -938,7 +937,7 @@ then the constraints of the form $\exists a : \fargtype{\con{f}}.\;\, (\vecfarg{
 occurring in $\conv( \varphi )$ ensure that this model also satisfies
 a $\Sigma$-formula that is closed under function expansion that entails the conjecture of $\varphi$.
 Hence when $\DDD$ is admissible, this implies the existence of a model for $\varphi$.
-For clarity, we demonstrate the consequences of this theorem in the context of a concrete example.
+For clarity, we demonstrate the consequences of this theorem by means of an example.
 
 \begin{example}
 Let us revisit the translated formula~(\ref{eq:ex-after}) from
@@ -979,10 +978,10 @@ and $\absconstraints( L_0 )$, it must also satisfy the formula $\psi_1$:
 \lite\bigl( \con{c} \leq 0,\; 
             \con{s}(\con{c}) \teq 0,\;
             \con{s}(\con{c}) \teq \con{c} + \con{s}( \con{c}-1 )
-            \wedge \exists b : {\fargtype{\con{s}}}.\;\, (\farg{\con{s}}( b ) \teq \con{c}-1) \bigr) \bigr)
+            \wedge \exists b : {\fargtype{\con{s}}}.\;\, \farg{\con{s}}( b ) \teq \con{c}-1 \bigr)
 \]
 The existential $\exists b : {\fargtype{\con{s}}}.\;\, (\farg{\con{s}}( b ) \teq \con{c}-1)$ in the above formula
-ensures that whenever $\I$ satisfies the set $L_1 = L_0 \cup \{ \neg \con{c} \leq 0, \con{s}(\con{c}) \teq \con{c} + \con{s}( \con{c}-1 ) \}$,
+ensures that whenever $\I$ satisfies the set $L_1 = L_0 \cup \{ \neg \con{c} \leq 0,\; \con{s}(\con{c}) \teq \con{c} + \con{s}( \con{c}-1 ) \}$,
 $\I$ satisfies $\absconstraints( L_1 )$ as well.
 Hence, by repeated applications of this reasoning, it follows that
 a model of formula~(\ref{eq:ex-after}) that interprets $\con{c}$ as $n$ must also satisfy the formula $\psi$:
@@ -990,16 +989,16 @@ a model of formula~(\ref{eq:ex-after}) that interprets $\con{c}$ as $n$ must als
 \begin{equation} \label{eq:fun-closure}
 \begin{split}
 & \con{s}( \con{c} ) > 100 \wedge %\displaystyle
-  \bigwedge\nolimits_{\vthinspace i=0}^{\!n-1} \bigl( \neg (\con{c}-i \leq 0) \wedge \con{s}( \con{c}-i ) \teq (\con{c}-i) + \con{s}( (\con{c}-i)-1 ) \bigr) \\[-\jot]
+  \bigwedge\nolimits_{\vthinspace i=0}^{\!n-1} \bigl( \neg (\con{c}-i \leq 0) \wedge \con{s}( \con{c}-i ) \teq \con{c}-i + \con{s}( \con{c}-i-1 ) \bigr) \\[-\jot]
 {\wedge}\; & \con{c}-n \leq 0 \wedge \con{s}( \con{c}-n ) \teq 0
 \end{split}
 \end{equation}
 %
 This formula is closed under function expansion
-since it entails $\varphi_\con{s}[\con{c}-i/x]$ for $i = 0, \ldots, n$,
-and contains only $\con{s}$ applications corresponding to $\con{s}( \con{c}-i )$ for $i = 0, \ldots, n$.
-Since $\varphi_\con{s}$ is an admissible definition,
-there is a $\Sigma$-interpretation satisfying $\psi \wedge \forallf{\con{s}} x.\;\, \varphi_\con{s}$
+since it entails $\varphi_\con{s}[(\con{c}-i)/x]$ for $i = 0, \ldots, n$,
+and it contains only $\con{s}$ applications corresponding to $\con{s}( \con{c}-i )$ for $i = 0, \ldots, n$.
+Since $\{\forallf{\con{s}} x.\;\, \varphi_\con{s}\}$ is admissible,
+there exists a $\Sigma$-interpretation satisfying $\psi \wedge \forallf{\con{s}} x.\;\, \varphi_\con{s}$
 which entails formula~(\ref{eq:ex-before}).\xend
 \end{example}
 
