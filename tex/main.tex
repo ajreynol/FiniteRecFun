@@ -531,10 +531,10 @@ of a corecursive definition yields a uniquely specified infinite object.
 Beyond totality, an admissible set can contain underspecified functions
 such as $\forallf{\con{f}} x : \typeint.\;\, \con{f}( x )
 \teq \con{f}( x - 1 )$ or $\forallf{\con{g}} x.\allowbreak\;\, \con{g}( x
-) \teq \con{g}( x )$. More generally, it appears that one can ignore all
-tail-recursive calls (i.e., calls that occur on the right-hand side, possibly
-in some $\lite$ branch) when establishing well-foundedness or productivity,
-without affecting admissibility. % but this remains to be proved.
+) \teq \con{g}( x )$. More generally, we conjecture that one can ignore all
+tail-recursive calls (i.e., calls that occur on the right-hand side of the
+definition, possibly in some $\lite$ branch) when establishing well-foundedness
+or productivity, without affecting admissibility.
 
 An example of an inadmissible function set is
 $\{ \forallf{\con{f}} x.\;\, \con{f}( x ) \teq \con{f}( x ) + 1 \}$,
@@ -604,7 +604,7 @@ $\conv_0( t\typ{\tau},\, p )$ $=$
 $\conv( \varphi )$ $=$ $\mathsf{let}$ $( \varphi',\, \_ ) = \conv_0( \varphi,\, \ppos )$ $\mathsf{in}$ $\varphi'$
 \\[-1.5\baselineskip] %% TYPESETTING
 \end{enumerate}
-\caption{\,Definition of function $\conv$}
+\caption{\,Definition of translation $\conv$}
 \label{fig:A}
 \end{figure}
 
@@ -612,14 +612,14 @@ We fix a signature $\Sigma$ and a $\Sigma$-formula
 $\varphi$ in definitional form with respect to $\sfundefs{\Sigma}$,
 whose definitions are admissible.
 %We may translate $\varphi$ into a equisatisfiable formula $\phi'$ for which known model-finding procedures~\cite{GeDeM-CAV-09, ReyEtAl-1-RR-13} are applicable.
-This section presents a method for constructing an extended signature
+We present a method that constructs an extended signature
 $\extendsig{ \Sigma }$ and an $\extendsig{ \Sigma }$-formula $\varphi'$ such that
 $\varphi'$ is satisfiable if and only if $\varphi$ is satisfiable---i.e.,
 $\varphi$ and $\varphi'$ are \emph{equisatisfiable}.
-The intuition behind this translation
+The idea behind this translation
 is to use an uninterpreted type to abstract the set of
-\relax{relevant} tuples for each recursive function $\con{f}$ and restrict the
-quantification of the function definition for $\con{f}$ to a variable of this
+\relax{relevant} tuples for each defined function $\con{f}$ and restrict the
+quantification of $\con{f}$'s definition to a variable of this
 type. Informally, the relevant tuples $\vec t$ of a function $\con{f}$ are the
 ones for which the interpretation of $\con{f}( \vec t )$ is relevant to the
 satisfiability of $\varphi$.
@@ -635,7 +635,7 @@ the extended signature $\extendsig{\Sigma}$ contains
 %The interpretation of uninterpreted type $\fargtype{\con{f}}$ will denote the elements (tuples) on which the function $\con{f}$ is applied.
 %The role of the uninterpreted functions $\farg{\con{f}}^1$, $\ldots$, $\farg{\con{f}}^n$ will be discussed more in the following.
 
-The function $\conv$ defined in Figure~\ref{fig:A} translates the $\Sigma$-formula
+The translation $\conv$ defined in Figure~\ref{fig:A} translates the $\Sigma$-formula
 $\varphi$ into an $\extendsig{\Sigma}$-formula. It relies
 on the auxiliary function $\conv_0$, which takes two arguments:\ the term $t$
 to translate and a \relax{polarity}~$p$, which is either $\ppos$, $\pneg$, or
@@ -721,7 +721,7 @@ Let $\varphi$ be the $\Sigma$-formula
   \con{s}( x ) \teq x + \con{s}( x - 1 ) \bigr) \wedge \con{s}( \con{c} ) > 100
 \end{equation}
 %
-The definition of $\const{s}$ specifies that it returns the sum of the
+The definition of $\const{s}$ specifies that it returns the sum of all
 positive integers up to $x$. The formula $\varphi$ is in definitional form with
 respect to $\sfundefs{\Sigma}$ 
 %\jb{correct? It said $\Sigma_u$, which was definitely wrong} 
@@ -738,7 +738,7 @@ current SMT techniques
 %%% paragraphs. --jb
 are unable to find
 a model for this formula. The signature $\extendsig{\Sigma}$ contains the type
-$\fargtype{\con{s}}$ and the uninterpreted function $\farg{\con{s}}$ of type $\fargtype{\con{s}}
+$\fargtype{\con{s}}$ and the uninterpreted function $\farg{\con{s}} : \fargtype{\con{s}}
 \rightarrow \typeint$. The result of $\conv( \varphi )$ 
 is $\varphi'$ which (after simplification) is the $\extendsig{\Sigma}$-formula
 %
@@ -754,7 +754,7 @@ is $\varphi'$ which (after simplification) is the $\extendsig{\Sigma}$-formula
     \wedge \exists b : {\fargtype{\con{s}}}.\;\, \farg{\con{s}}( b ) \teq \farg{\con{s}}( a )-1 \bigr) \bigr)
 \end{aligned}
 \\[-\jot]
- & {\wedge}\; \bigl( \con{s}( \con{c} ) > 100 \wedge \exists a : {\fargtype{\con{s}}}.\;\, \farg{\con{s}}( a ) \teq \con{c} \bigr)
+ & {\wedge}\; \con{s}( \con{c} ) > 100 \wedge \exists a : {\fargtype{\con{s}}}.\;\, \farg{\con{s}}( a ) \teq \con{c}
 \end{aligned}
 \end{equation}
 %
@@ -770,14 +770,15 @@ a complete instantiation procedure, implemented in \ziii.
 Both
 %%% Added "apparently". Or are we sure?  
 % Yes, I'm planning to post the 2 versions of the benchmark on the evaluation page (when we add it) --ajr
+% Yes, but how can you be sure that Z3 will run forever? Your benchmarks surely have a timeout! --jb
 \cvc and \ziii run indefinitely on formula~(\ref{eq:ex-before}), 
-while they both produce a model for formula~(\ref{eq:ex-after}) 
+whereas they both produce a model for formula~(\ref{eq:ex-after}) 
 within 100 milliseconds.\xend
 \end{example}
 
 The translation $\conv$ results in formulas whose models are different than those of $\varphi$.
 %\ct{"Preserves models" means that it does not drop models, not that it adds models.}
-One model $\I$ for formula~(\ref{eq:ex-after}) in the previous example interprets
+One model $\I$ for formula~(\ref{eq:ex-after}) in the above example interprets
 $\fargtype{\con{s}}$ as a finite set of elements $\{ u_0, \ldots, u_{14} \}$,
 $\farg{\con{s}}$ as a finite map $u_i \mapsto i$ for $i = 0, \ldots, 14$,
 $\con{c}$ as $14$,
@@ -792,10 +793,10 @@ and $\con{s}$ as the (almost constant) function
 \end{equation}
 %
 In other words, $\const{s}$ is interpreted as a function mapping $x$ to the sum
-of all positive integers between $0$ and $x$ when $0 \leq x \leq 13$, and $105$
+of all positive integers up to $x$ when $0 \leq x \leq 13$, and $105$
 otherwise.
 The interpretation $\I$, restricted to $\Sigma$, is {not} a model for the original formula~(\ref{eq:ex-before}),
-since $\I$ wrongly interprets $\con{s}( x )$ as $105$ when $x < 0$ or $x > 14$.
+since $\I$ wrongly interprets $\con{s}( n )$ as $105$ when $n < 0$ or $n > 14$.
 
 However, under the assumption that the function definitions in
 $\sfundefs{\Sigma}$ are admissible, %we claim that
@@ -810,14 +811,19 @@ interpretation of a term such as $\con{s}( -1 )$ in the previous example is not
 relevant to the satisfiability of formula~(\ref{eq:ex-before}). Thus, a
 satisfiable or unsatisfiable response from an SMT solver on input $\conv(
 \varphi )$ implies the existence or nonexistence of a model for
-$\varphi$. Moreover, information in models for $\conv( \varphi )$ contains
+$\varphi$. Moreover, the models of $\conv( \varphi )$ contain
 pertinent information regarding the models of $\varphi$. For example, the model
-$\I$ for formula~(\ref{eq:ex-after}) described above interprets $\con{c}$ as $14$,
-and there exists a model of formula~(\ref{eq:ex-before}) that also interprets $\con{c}$
-as $14$. In general, there exists a model of $\varphi$ that
+$\I$ for formula~(\ref{eq:ex-after}) described above interprets $\con{c}$ as $14$
+and $\con{s}(n) = \sum_{i=1}^n i$ for $0 \le n \le 14$,
+and there exists a model of formula~(\ref{eq:ex-before}) that also interprets
+$\con{c}$ and and $\con{s}(n)$ in the same way (for $0 \le n \le 14$).
+In general, there exists a model of $\varphi$ that
 coincides with each model of $\conv( \varphi )$ on its interpretation of all
 functions in $\sfuns{\Sigma} - \sfundefs{\Sigma}$, i.e., $\{
-\con{s} \}$ in the example.
+\con{s} \}$ in the example. Furthermore, the model of $\conv( \varphi )$ will
+also give correct information for the defined functions at all points belonging
+to the domains of the corresponding abstract types. This can sometimes help
+users debug their specifications.
 
 %%% @ANDY: I don't get the following comment --jb
 %   @JASMIN : The point of this comment is that the user is not interested in the SMT solver inferring any new information regarding the interpretation of s,
@@ -827,6 +833,10 @@ functions in $\sfuns{\Sigma} - \sfundefs{\Sigma}$, i.e., $\{
 %issue, because $s$ is the very function that was explicitly defined by the
 %user, and hence already has an intended interpretation.
 
+%%% @ANDY: Now I understand. My experience with Nitpick is that users sometimes
+%%% want to see the partial information available about defined functions. I've
+%%% added a couple of sentences above to that effect.
+
 In the following, for a ground formula $\varphi$, 
 we write $\absconstraints( \varphi )$ to denote the set of constraints 
 that force our concretization functions to have the necessary elements in their range
@@ -835,7 +845,7 @@ Formally, we define $\absconstraints( \varphi )$ as:
 \[
 \absconstraints( \varphi ) = \{ \exists a : {\fargtype{\con{f}}}. ( \vecfarg{\con{f}}( a ) \teq \vec t ) \mid \con{f}( \vec t ) \in \terms( \varphi ), \con{f} \in \sfundefs{\Sigma} \}
 \]
-The following lemma states the central invariant behind our conversion function $\conv$.
+The following lemma states the central invariant behind our translation $\conv$.
 
 \begin{lemma}\label{lem:conv}
 Let $\varphi$ be a formula not containing function definitions,
@@ -1173,7 +1183,7 @@ which after rewriting becomes
 $$\forallf{\con{s}} x.\;\, \lite\bigl( x \leq 0,\; \con{s}( x ) \teq 0,\; \con{s}( x ) \teq \con{s}( x-1 ) \bigr)$$
 If \cvc's finite model finding mode for recursive functions is enabled (using
 the command-line option \texttt{--fmf-fun}), it will replace its list of known
-assertions based on the conversion $\conv$ before checking for satisfiability.
+assertions based on the translation $\conv$ before checking for satisfiability.
 %If the functions provided in the input are admissible,
 %then a ``satisfiable" response from the solver implies that a model exists for the original formula.
 Accordingly, the solver will output the approximation of the interpretation it
@@ -1262,7 +1272,7 @@ of) models for formulas in the \relax{existential--bounded-universal} fragment
 quantifiers ranging over datatypes). This idiom was further developed by Dunets
 et al.\ \cite{dunets-et-al-2010}, who presented a translation scheme
 for primitive recursion. Their definedness guards play a similar role to the
-existential constraints generated by our $\conv$ translation.
+existential constraints generated by our translation $\conv$.
 
 The higher-order model finder Nitpick for the Isabelle/HOL proof assistant uses
 another variant of Kuncak and Jackson's approach inside a Kleene-style
