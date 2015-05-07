@@ -523,41 +523,34 @@ expected value according to its definition and hence coincide with $\J$.
 And since $\psi$ does not depend on the interpretation at the other points,
 $\J$ is, like $\I$, a model of $\psi$. Furthermore, $\J \models \Delta$ by
 assumption. Thus, $\J \models \psi \wedge \bigwedge \Delta$.
-
 %We have
 %$\varphi \,\models_T\, \bigwedge\nolimits_{\,i=1}^{n} \{ \varphi_i[ \vec t / \vec x ] \mid \con{f}_i( \vec t ) \in \terms( \varphi ) \}$.
-
-
-
 \qed
 \end{proofsketch}
 
-\newpage
+Beyond totality, an admissible set can include definitions of non-well-founded
+functions---for example,
+$\{ \forallf{\con{f}} x : \typeint.\;\, \con{f}( x ) \teq \con{f}( x - 1 ) \}$
+or even $\{ \forallf{\con{g}} x.\allowbreak\;\, \con{g}( x ) \teq \con{g}( x ) \}$.
+More generally, we conjecture that one can ignore all tail-recursive calls
+(i.e., calls that occur on the right-hand side, possibly in some $\lite$ branch)
+when proving well-foundedness or productivity, without affecting admissibility.
 
-For example, if $T$ is the theory of integer arithmetic,
-the set $\{ \forallf{\con{f}} \vec x:\typeint.\;\, \con{f}( x ) \teq 0 \}$ is admissible.
-An admissible set can include definitions of nonterminating functions,
-\ct{There is no notion of termination in FOL. We either define this properly or we just replace "definitions of nonterminating functions, e.g.," with "definitions like"}
-\ajr{I agree. Jasmin, can you fix this?  We need to be careful in the same way when we talk about the "terminating" functions fragment we handle.}
-\jb{Yes, I need to rework and expand this whole part. Today.}
-e.g.,
-$\{ \forallf{\con{f}} x : \typeint.\;\, \con{f}( x ) \teq \con{f}( x - 1 ) \}$ or even $\{ \forallf{\con{f}} x.\allowbreak\;\, \con{f}( x ) \teq \con{f}( x ) \}$ are admissible.
-On the other hand, the set $\{ \forallf{\con{f}} x.\;\, \con{f}( x ) \teq \con{f}( x ) + 1 \}$ is not admissible,
+An example of an inadmissible function set is
+$\{ \forallf{\con{f}} x.\;\, \con{f}( x ) \teq \con{f}( x ) + 1 \}$,
 since the formula $\ltrue$ is (trivially) closed under function expansion with respect to this set,
-and there is no model of $T$ satisfying $\forallf{\con{f}} x.\;\, \con{f}( x ) \teq \con{f}( x ) + 1$.
-Consider the set 
-$\{ 
+and there is no model of $T$
+satisfying $\con{f}$'s definition. A more subtle example is given by %the set 
+\[\{ 
  \forallf{\con{f}} x.\;\, \con{f}( x ) \teq \con{f}( x ),\;
  \forallf{\con{g}} x.\;\, \lite\bigl( \con{f}( x ) \teq 5,\;
    \con{g}( x ) \teq \con{f}( x ),\,
    \con{g}( x ) \teq \con{g}( x ) + 1)
-\}$.
+\}\]
 While this set has a model where $\con f$ and $\con g$ are interpreted as the constant $5$, it is not admissible
 since the formula $\con{f}( 0 ) \teq 4$ is closed under function expansion with respect to this set,
-but there exists no interpretation satisfying both $\con{f}( 0 ) \teq 4$ and $\forallf{\con{g}} x.\;\, \lite( \con{f}( x ) \teq 5,\, \con{g}( x ) \teq \con{f}( x ),\, \con{g}( x ) \teq \con{g}( x ) + 1 )$.
-
-
-\jb{TODO: Jasmin: Identify fragments: terminating recursive functions, etc.}
+but there exists no interpretation satisfying both $\con{f}( 0 ) \teq 4$ and
+$\con{g}$'s definition.
 
 %Terminating function specifications are always admissible, but also some
 %nonterminating
