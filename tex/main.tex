@@ -479,7 +479,7 @@ condition. Logically, such dependencies can be captured by congruence rules.
 Krauss develops these ideas in the more general context of
 higher-order logic \cite[Section 2]{krauss-2009-phd}.
 
-\begin{theorem}\ref{thm:adm}
+\begin{theorem}\label{thm:adm}
 If
 $\DDD$ is a set of well-founded function definitions for
 $\sfundefs{\Sigma} = \{\con{f}_1,\ldots,\con{f}_n\}$, then it is admissible.
@@ -491,21 +491,19 @@ satisfiable. Let $\I$ be a model of $\psi$, and
 let $\J_0$ be the restriction of $\I$ to the function symbols in $\sfuns{\Sigma} -
 \sfundefs{\Sigma}$. By hypothesis, there exists a $\Sigma$-interpretation
 $\J$ such that $\J \models \Delta$.
-
+%
 Since $\psi$ is closed under function expansion, it already constraints the
-functions in $\sfundefs{\Sigma}$ recursively in as much as their interpretation
-is necessary when interpreting $\psi$. Thus, any point $v$ for which
+functions in $\sfundefs{\Sigma}$ recursively as far as is
+necessary for interpreting $\psi$. Thus, any point $v$ for which
 $\const{f}_i^\I(v)$ is queried when interpreting $\psi$ will have its
 expected value according to its definition and hence coincide with $\J$.
-And since $\psi$ does not depend on the interpretation at the other points,
-$\J$ is, like $\I$, a model of $\psi$. Furthermore, $\J \models \Delta$ by
-assumption. Thus, $\J \models \psi \wedge \bigwedge \Delta$.
+And since the $\psi^\I$ does not depend on the interpretation at the other
+points, $\J$ is, like $\I$, a model of $\psi$. Furthermore, $\J \models \Delta$
+by assumption. Thus, $\J \models \psi \wedge \bigwedge \Delta$.
 %We have
 %$\varphi \,\models_T\, \bigwedge\nolimits_{\,i=1}^{n} \{ \varphi_i[ \vec t / \vec x ] \mid \con{f}_i( \vec t ) \in \terms( \varphi ) \}$.
 \qed
 \end{proofsketch}
-
-
 
 Another useful fragment is the class of \emph{productive} corecursive
 functions. Corecursive functions are functions to a coalgebraic datatype.
@@ -521,21 +519,21 @@ constructor before entering the nested call. Like terminating recursion,
 productive corecursion totally specify the functions it defines.
 It is even possible to mix recursion and corecursion in the same function
 \cite{blanchette-et-al-2015-fouco}. We believe Theorem~\ref{thm:adm} can
-be extended to such specifications.
+be extended to cover such specifications.
 
-Beyond totality, an admissible set can include definitions of non-well-founded
-functions---for example,
-$\{ \forallf{\con{f}} x : \typeint.\;\, \con{f}( x ) \teq \con{f}( x - 1 ) \}$
-or even $\{ \forallf{\con{g}} x.\allowbreak\;\, \con{g}( x ) \teq \con{g}( x ) \}$.
-More generally, we conjecture that one can ignore all tail-recursive calls
-(i.e., calls that occur on the right-hand side, possibly in some $\lite$ branch)
-when proving well-foundedness or productivity, without affecting admissibility.
+Beyond totality, an admissible set can include underspecified functions
+such as $\{ \forallf{\con{f}} x : \typeint.\;\, \con{f}( x )
+\teq \con{f}( x - 1 ) \}$ or $\{ \forallf{\con{g}} x.\allowbreak\;\, \con{g}( x
+) \teq \con{g}( x ) \}$. More generally, it appears that one can ignore all
+tail-recursive calls (i.e., calls that occur on the right-hand side, possibly
+in some $\lite$ branch) when establishing well-foundedness or productivity,
+without affecting admissibility, but this remains to be proved.
 
 An example of an inadmissible function set is
 $\{ \forallf{\con{f}} x.\;\, \con{f}( x ) \teq \con{f}( x ) + 1 \}$,
 since the formula $\ltrue$ is (trivially) closed under function expansion with respect to this set,
 and there is no model of $T$
-satisfying $\con{f}$'s definition. A more subtle example is given by %the set 
+satisfying $\con{f}$'s definition. A more subtle specimen is
 \[\{ 
  \forallf{\con{f}} x.\;\, \con{f}( x ) \teq \con{f}( x ),\;
  \forallf{\con{g}} x.\;\, \lite\bigl( \con{f}( x ) \teq 5,\;
