@@ -1235,25 +1235,24 @@ if \texttt{--fmf-fun} is specified.
 We described the most closely related work, by Ge and de Moura
 \cite{GeDeM-CAV-09} and by Reynolds et al.\
 \cite{ReyEtAl-1-RR-13,reynolds-et-al-2013}, in the text already.
-Outside the world of SMT, model finding has been
-studied many times. 
+The finite model finding support in the instantiation-based iProver \cite{xxxx}
+is also closery related, given the similarities with SMT.
 
-Some finite model finders are based on a reduction to Boolean satisfiability
-(SAT). They translate the input problem to propositional logic and pass it to a
-SAT solver. The translation is parameterized by upper or exact finite bounds on
+%Model finding has been studied outside the world of SMT.
+
+Some finite model finders are based on a reduction to a decidable logic,
+typically propositional logic. They translate the input problem to the weaker
+logic and pass it to a solver for that logic.
+The translation is parameterized by upper or exact finite bounds on
 the cardinalities of the atomic types. This procedure was pioneered by McCune
 in the earlier versions of Mace (also capitalized MACE) \cite{mccune-1994}.
-Other SAT-based finders are Paradox \cite{claessen-sorensson-2003}, FMDarwin
-\cite{xxxx}, and iProver \cite{xxxx} for first-order logic with equality;
-\ct{FMDarwin is not SAT-based although it is Mace-like.
-Calling iProver SAT-based is a stretch since it is based 
-on a natively first-order calculus even it uses an auxiliary SAT solver heavily.
-}
-Alloy Analyzer and its back-end Kodkod \cite{torlak-jackson-2007} for
-first-order relational logic; and Refute \cite{weber-2008} and Nitpick
+Other conceptually similar finders are Paradox \cite{claessen-sorensson-2003}
+and FM-Darwin \cite{baumgartner-et-al-2009} for first-order logic with
+equality; the Alloy Analyzer and its back-end Kodkod \cite{torlak-jackson-2007}
+for first-order relational logic; and Refute \cite{weber-2008} and Nitpick
 \cite{blanchette-nipkow-2010} for higher-order logic.
 
-An alternative to translating the problem to propositional logic is to perform
+An alternative to translating the problem is to perform
 an exhaustive model search directly on the original problem. Given fixed
 cardinalities, the search space is represented in memory as multidimensional
 arrays. The procedure tries different values in the function and predicate
@@ -1291,22 +1290,15 @@ quantifiers altogether by unfolding recursive definitions up to a certain
 depth, which is increased iteratively as necessary.
 The approach described in this paper works in an analagous manner, 
 where instead the SMT solver is invoked only once 
-and where quantifier instantiation amounts to function unfolding.
-It is worth investigating how existing approaches for algorithms based on function unfolding
-can inform approaches for dedicated quantifier instantiation techniques for function definitions,
-and vice versa.
-%\jb{Andy: Can you add some more here? You're the Leon pro! E.g. why/when do we think
-%that our approach might be better?}
-%\ct{About Leon, the reviewers and readers may wonder why we do not do the same, that is, just progressively unfold the recursive definitions until a model is found.
-%We should probably say something in this regard.
-%}
-% It is not a question of "should you instead unfold function definitions?" since that's essential what quantifier instantiation does.  
-% The question is "is quantifier instantiation a good way of unfolding function definitions?" 
-% or "how can we instrument quantifier instantiation to mimic/improve upon existing strategies for function unfolding? --ajr
+and where quantifier instantiation amounts to function unfolding. It is worth
+investigating how existing approaches for algorithms based on function
+unfolding can inform approaches for dedicated quantifier instantiation
+techniques for function definitions, and vice versa.
 
 Model finding is concerned with satisfying arbitrary logical constraints. Some
 tools are optimized to work with problems that correspond to total functional
-programs. The QuickCheck tool for Haskell \cite{claessen-hughes-2000} is an early example, based
+programs. The QuickCheck tool for Haskell \cite{claessen-hughes-2000} is an
+early example, based
 on random testing. Bounded exhaustive testing \cite{runciman-et-al-2008} and
 narrowing \cite{lindblad-2008-testing} are other popular strategies. These tool
 are often much faster than model finders, but they typically cannot cope with
