@@ -398,7 +398,9 @@ quantified formula $\forallf{\con{f}} \vec x.\; \varphi$ is a \emph{function def
 $x_1, \ldots, x_n$ of respective type
 $\tau_1, \ldots, \tau_n$ and $\varphi$ is a quantifier-free formula 
 $T$-equivalent to $\con{f}( \vec x ) \teq t$ for some term $t$ of type $\tau$.
-\ct{Why can't $\varphi$ be existential instead of just quantifier free?} 
+%\ct{Why can't $\varphi$ be existential instead of just quantifier free?} 
+%I don't think it makes much sense to have any quantifiers within function bodies, 
+%since they aren't operational, that's why I put quantifier-free. --ajr
 We write $\exists
 \vec x.\; \varphi$ as a shorthand for $\neg \forall \vec x.\; \neg \varphi$.
 
@@ -434,10 +436,9 @@ $\sfundefs{\Sigma}$.
 \begin{definition}\rm
 Given a set of function definitions 
 $\DDD = \{ \forallf{\con{f}_1} \vec x.\; \varphi_1, \ldots, \forallf{\con{f}_n} \vec x.\; \varphi_n \}$, 
-a formula $\varphi$ 
-\ct{I suppose $\varphi$ is meant to be ground.}
-is \emph{closed under function expansion 
-with respect to $\DDD$} if 
+a ground formula $\varphi$ 
+%\ct{I suppose $\varphi$ is meant to be ground.} yes --ajr
+is \emph{closed under function expansion with respect to $\DDD$} if 
 \[
  \varphi \,\models_T\, \bigwedge\nolimits_{\,i=1}^{n} \{ \varphi_i[ \vec t / \vec x ] \mid \con{f}_i( \vec t ) \in \terms( \varphi ) \} .
 \]
@@ -452,6 +453,7 @@ For example, if $T$ is the theory of integer arithmetic,
 the set $\{ \forallf{\con{f}} \vec x:\typeint.\;\, \con{f}( x ) \teq 0 \}$ is admissible.
 An admissible set can include definitions of nonterminating functions,
 \ct{There is no notion of termination in FOL. We either define this properly or we just replace "definitions of nonterminating functions, e.g.," with "definitions like"}
+\ajr{I agree. Jasmin, can you fix this?  We need to be careful in the same way when we talk about the "terminating" functions fragment we handle.}
 e.g.,
 $\{ \forallf{\con{f}} x : \typeint.\;\, \con{f}( x ) \teq \con{f}( x - 1 ) \}$ or even $\{ \forallf{\con{f}} x.\allowbreak\;\, \con{f}( x ) \teq \con{f}( x ) \}$ are admissible.
 On the other hand, the set $\{ \forallf{\con{f}} x.\;\, \con{f}( x ) \teq \con{f}( x ) + 1 \}$ is not admissible,
@@ -644,9 +646,10 @@ in its range.
 \label{ex:translation}
 Consider the combined signature of linear arithmetic and uninterpreted
 functions $\Sigma = \Sigmalia \mathrel{\cup} \Sigma_{\euf}$, where
-$\stypes{\Sigma_{\euf}} = \{ \typeint \}$ 
-\ct{shouldn't this be $\stypes{\Sigmalia} = \{ \typeint \}$?}
-and
+%$\stypes{\Sigma_{\euf}} = \{ \typeint \}$ 
+%\ct{shouldn't this be $\stypes{\Sigmalia} = \{ \typeint \}$?}
+%and
+% Something went wrong, let's just remove it --ajr
 $\sfuns{\Sigma_{\euf}} = \{ \con{s} : { \typeint \rightarrow \typeint },\, \const{c} : { \typeint } \}$.
 Let $\varphi$ be the $\Sigma$-formula
 \begin{equation} \label{eq:ex-before}
@@ -700,8 +703,8 @@ while they both produce a model for formula~(\ref{eq:ex-after})
 within 100 milliseconds.\xend
 \end{example}
 
-The translation $\conv$ does not preserve the models of $\varphi$.
-\ct{"Preserves models" means that it does not drop models, not that it adds models.}
+The translation $\conv$ results in formulas whose models are different than those of $\varphi$.
+%\ct{"Preserves models" means that it does not drop models, not that it adds models.}
 One model $\I$ for formula~(\ref{eq:ex-after}) in the previous example interprets
 $\fargtype{\con{s}}$ as a finite set of elements $\{ u_0, \ldots, u_{14} \}$,
 $\farg{\con{s}}$ as a finite map $u_i \mapsto i$ for $i = 0, \ldots, 14$,
@@ -821,18 +824,19 @@ which is $\varphi$.
 
 \begin{example}
 Let us revisit the translated formula~(\ref{eq:ex-after}) from
-Example~\ref{ex:translation}. This formula is unsatisfiable if and only if
+Example~\ref{ex:translation}. This formula is unsatisfiable only if
 formula~(\ref{eq:ex-before}) is unsatisfiable since $\fargtype{f}$ can be
 interpreted as $\typeint$, and $\farg{f}$ can be interpreted as the identity
-function. Conversely, we claim formula~(\ref{eq:ex-after}) is satisfiable if
-and only if formula~(\ref{eq:ex-before}) is satisfiable, noting that the set
+function. Conversely, we claim formula~(\ref{eq:ex-after}) is satisfiable
+only if formula~(\ref{eq:ex-before}) is satisfiable, noting that the set
 $\{ \forallf{\con{s}} x\typ{\typeint}.\;\, \lite\bigl( x \leq 0,\allowbreak\; \con{s}(x)
 \teq 0,\; \con{s}( x ) \teq x + \con{s}( x-1 ) \bigr) \}$ is admissible.
-\ct{
-You cannot possibly mean "if and only if" in the two sentences above.
-Once I show that (1) is unsat iff (2) is unsat, I do not need to argue that
-(1) is sat iff (2) is sat. That is immediate.
-}
+%\ct{
+%You cannot possibly mean "if and only if" in the two sentences above.
+%Once I show that (1) is unsat iff (2) is unsat, I do not need to argue that
+%(1) is sat iff (2) is sat. That is immediate.
+%}
+% You're right, changed both to "only if" --ajr
 As stated
 in the proof of Theorem~\ref{thm:equi}, the reason is that any model of
 formula~(\ref{eq:ex-after}) must satisfy a formula that is closed under
@@ -870,11 +874,11 @@ which entails formula~(\ref{eq:ex-before}).\xend
 \section{Evaluation}
 \label{sec:evaluation}
 
-\jb{Add link to our evaluation data, like we did in CADE paper}
-
 In this section, we evaluate both the overall impact of the encoding introduced
 in the previous section and the performance of individual SMT techniques for
 benchmarks in the encoding.
+The experimental data is publicly available.%
+\footnote{\url{http://lara.epfl.ch/~reynolds/SMT2015-recfun/}}
 
 We gathered a set of 245 benchmarks from two sources, which we will refer to as
 \isa and \leon. The first source consists of the 79
@@ -903,7 +907,7 @@ mutated forms of its conjecture $\psi$. In particular, we considered unique
 conjectures that are obtained as a result of swapping a subterm of $\psi$ at
 one position with another of the same type at another position.
 Note that benchmarks created in this way have a high likelihood of having small
-and easy-to-find counterexamples \ct{contermodels?}. In total, we considered 213 mutated forms of
+and easy-to-find countermodels. In total, we considered 213 mutated forms of
 conjectures from \isa, and 427 mutated forms of conjectures from \leon. We will
 call these sets \isam and \leonm respectively.
 
@@ -914,7 +918,7 @@ translation $\conv$ as described in Section~\ref{sec:encoding}. For example,
 $\conv(\varphi)$.
 
 For solvers, we considered the SMT solver \ziii~\cite{de-moura-bjoerner-2008},
-which runs both heuristic methods for quantifier instantiation~\cite{DBLP:conf/cade/MouraB07},
+which runs both heuristic methods for quantifier instantiation~\cite{MouraBjoerner07},
 as well as methods for finding models for quantified formulas~\cite{GeDeM-CAV-09}.
 We also considered three configurations of \cvc~\cite{barrett-et-al-2011} which
 we will refer to as \cvcd, \cvcf, and \cvci.
@@ -1104,9 +1108,6 @@ We described the most closely related work, by Ge and de Moura
 \cite{ReyEtAl-1-RR-13,reynolds-et-al-2013}, in the text already.
 Outside the world of SMT, model finding has been
 studied many times. 
-The text below is partly adapted from Blanchette's Ph.D.\
-thesis \cite{blanchette-2012-phd}.
-\ct{The last sentence is strange. I would remove it since Jasmin is one of the authors.}
 
 Some finite model finders are based on a reduction to Boolean satisfiability
 (SAT). They translate the input problem to propositional logic and pass it to a
@@ -1161,7 +1162,6 @@ quantifiers altogether by unfolding recursive definitions up to a certain
 depth, which is increased iteratively as necessary.
 \jb{Andy: Can you add some more here? You're the Leon pro! E.g. why/when do we think
 that our approach might be better?}
-
 \ct{About Leon, the reviewers and readers may wonder why we do not do the same, that is, just progressively unfold the recursive definitions until a model is found.
 We should probably say something in this regard.
 }
