@@ -469,19 +469,19 @@ relation $r$, which must be supplied by the user or inferred automatically
 using a termination prover. This ensures that the function is uniquely defined
 at all points.
 
-First-order logic has built-in notion of computation or termination. To ensure
+First-order logic has no built-in notion of computation or termination. To ensure
 that a function specification is well-founded, it is sufficient to require that
-it would terminate when seen as a functional program for \relax{some}
-evaluation order. For example, the definition~(\ref{eq:pii}) from the
+the function would terminate when seen as a functional program, under \emph{some}
+evaluation order. For example, definition~(\ref{eq:pii}) from the
 introduction can be shown well-founded under an evaluation strategy that
 consides one of the two $\lite$ branches, based on the result of evaluating the
 condition. Logically, such dependencies can be captured by congruence rules.
-Krauss develops these ideas in the more general context of
+Krauss developed these ideas in the more general context of
 higher-order logic \cite[Section 2]{krauss-2009-phd}.
 
 \begin{theorem}\label{thm:adm}
-If
-$\DDD$ is a set of well-founded function definitions for
+If\/
+$\DDD$ is a set of well-founded function definitions for\/
 $\sfundefs{\Sigma} = \{\con{f}_1,\ldots,\con{f}_n\}$, then it is admissible.
 \end{theorem}
 \begin{proofsketch}
@@ -499,8 +499,9 @@ necessary for interpreting $\psi$. Thus, any point $v$ for which
 $\const{f}_i^\I(v)$ is queried when interpreting $\psi$ will have its
 expected value according to its definition and hence coincide with $\J$.
 And since $\psi^\I$ does not depend on the interpretation at the other
-points, $\J$ is, like $\I$, a model of $\psi$. Furthermore, $\J \models \Delta$
-by assumption. Thus, $\J \models \psi \wedge \bigwedge \Delta$.
+points, $\J$ is, like $\I$, a model of $\psi$.
+Since $\J \models \Delta$, we have $\J \models \psi \wedge \bigwedge \Delta$,
+as desired.
 %We have
 %$\varphi \,\models_T\, \bigwedge\nolimits_{\,i=1}^{n} \{ \varphi_i[ \vec t / \vec x ] \mid \con{f}_i( \vec t ) \in \terms( \varphi ) \}$.
 \qed
