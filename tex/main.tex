@@ -30,6 +30,7 @@
 \usepackage{graphicx}
 \usepackage{stmaryrd}
 \usepackage{cite}
+\usepackage{amsthm}
 %\usepackage{framed}
 
 % http://mirror.switch.ch/ftp/mirror/tex/macros/latex/contrib/xcolor/xcolor.pdf
@@ -44,16 +45,17 @@
 %\newfloat{alg}{ht}{loa}
 %\floatname{alg}{Algorithm}
 
-\def\proofname{Proof sketch}
-
 \theoremstyle{plain}
 \newtheorem{theorem}{Theorem}%[section]
-\newtheorem{lemma}{Lemma}%[section]
-\newtheorem{corollary}{Corollary}%[section]
+\newtheorem{lemma}[theorem]{Lemma}%[section]
+\newtheorem{corollary}[theorem]{Corollary}%[section]
 
 \theoremstyle{definition}
 \newtheorem{definition}{Definition}%[section]
 \newtheorem{example}{Example}%[section]
+
+\theoremstyle{remark}
+\newtheorem*{proofsketch}{Proof sketch}
 
 %\spnewtheorem*{proof}{Proof sketch}{\itshape}{\rmfamily}
 
@@ -226,9 +228,10 @@
 %\input{smtlib2listings}
 \usepackage{program}
 
+\def\squareforqed{\hbox{\rlap{$\sqcap$}$\sqcup$}}
+
 \newcommand\xend{{\hfill$\scriptstyle\blacksquare$}}
-%\renewcommand\qed{{\hfill$\squareforqed$}}
-\let\qed=\relax
+\renewcommand\qed{{\hfill$\squareforqed$}}
 
 \begin{document}
 
@@ -504,7 +507,7 @@ If\/
 $\DDD$ is a set of well-founded function definitions for\/
 $\sfundefs{\Sigma} = \{\con{f}_1,\ldots,\con{f}_n\}$, then it is admissible.
 \end{theorem}
-\begin{proof}
+\begin{proofsketch}
 Let $\psi$ be a satisfiable formula closed under function expansion with
 respect to $\DDD$. We show that $\psi \wedge \bigwedge \Delta$ is also
 satisfiable. Let $\I$ be a model of $\psi$, and
@@ -525,7 +528,7 @@ Since $\J \models \Delta$ by assumption, we have $\J \models \psi \wedge
 %We have
 %$\varphi \,\models_T\, \bigwedge\nolimits_{\,i=1}^{n} \{ \varphi_i[ \vec t / \vec x ] \mid \con{f}_i( \vec t ) \in \terms( \varphi ) \}$.
 \qed
-\end{proof}
+\end{proofsketch}
 
 Another useful fragment of function definitions is the class of
 \emph{productive} corecursive functions. Corecursive functions are functions to
@@ -875,9 +878,9 @@ $\I$ satisfies $L \cup \absconstraints( L )$, where $L$ is a set of ground $\Sig
 %There exists a set of ground $\Sigma$-literals $L$ such that $L$ entails $\varphi$, 
 %and $\I$ satisfies $L \cup \absconstraints( L )$.
 \end{lemma}
-\begin{proof}
+\begin{proofsketch}
 By definition of $\conv$ and case analysis on the return values of $\conv_0$.
-\end{proof}
+\end{proofsketch}
 
 \begin{cor}\label{cor:conv}
 If $\varphi$ is a formula not containing function definitions, then $\extendsig{\Sigma} = \Sigma$
@@ -891,7 +894,7 @@ and the set of function definitions\/ $\DDD$ corresponding to functions in\/
 $\sfundefs{\Sigma}$ is admissible, then\/ $\varphi$ and\/ $\conv( \varphi )$ are
 equisatisfiable.
 \end{theorem}
-\begin{proof}
+\begin{proofsketch}
 First, we show that if $\varphi$ is satisfied by $\Sigma$-interpretation $\I$, then $\conv( \varphi )$ is satisfied by a $\extendsig{\Sigma}$-interpretation $\J$.
 Let $\J$ be the $\extendsig{\Sigma}$-interpretation that interprets all types $\tau \in \stypes{\Sigma}$ as $\tau^\I$,
 all functions $\con{f} \in \sfuns{\Sigma}$ as $\con{f}^\I$,
@@ -944,7 +947,7 @@ Since $\psi$ is a $T$-satisfiable formula that is closed under function expansio
 by definition there exists a $\Sigma$-interpretation $\I$ satisfying $\psi \wedge \DDD$, which entails $\DDD \wedge \varphi_0$,
 i.e., $\varphi$.
 \qed
-\end{proof}
+\end{proofsketch}
 
 The intuition of the above proof is as follows.
 First, $\conv( \varphi )$ cannot be unsatisfiable when $\varphi$ is satisfiable
