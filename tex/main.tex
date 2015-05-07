@@ -890,41 +890,41 @@ since by our construction of $\J$ there exists a value $v \in {\fargtype{\con{f}
 Thus, $\J$ satisfies $L \cup \absconstraints( L )$, and by Lemma~\ref{lem:conv} we conclude $\J$ satisfies $\conv( \varphi )$.
 
 Second, we show that if $\conv( \varphi )$ is satisfied by a
-$\extendsig{\Sigma}$-interpretation $\I$, then $\varphi$ is satisfied by a
-$\Sigma$-interpretation $\J$. Since $\varphi$ is in definitional form with
+$\extendsig{\Sigma}$-interpretation $\J$, then $\varphi$ is satisfied by a
+$\Sigma$-interpretation $\I$. Since $\varphi$ is in definitional form with
 respect to the functions defined by $\DDD$, it must be of the form
 $\DDD \wedge \varphi_0$. 
-%We argue that $\I$ satisfies a $\Sigma$-formula
+%We argue that $\J$ satisfies a $\Sigma$-formula
 %$\varphi'$ that is closed under function expansion with respect to $\DDD$, and
 %where $\varphi'$ entails $\varphi_0$.
 %To construct $\varphi'$, 
 First, we define a sequence of $\Sigma$-literals sets $L_0 \subseteq L_1 \subseteq \cdots$
-such that $\I$ satisfies $L_i \cup \absconstraints( L_i )$ for $i = 0, 1, \ldots\vthinspace$.
-Since $\I$ satisfies $\conv( \varphi_0 )$,
+such that $\J$ satisfies $L_i \cup \absconstraints( L_i )$ for $i = 0, 1, \ldots\vthinspace$.
+Since $\J$ satisfies $\conv( \varphi_0 )$,
 by Lemma~\ref{lem:conv}, 
-$\I$ satisfies a set of literals $L \cup \absconstraints( L )$ where $L$ is a set of $\Sigma$-literals that entail $\varphi_0$.
+$\J$ satisfies a set of literals $L \cup \absconstraints( L )$ where $L$ is a set of $\Sigma$-literals that entail $\varphi_0$.
 Let $L_0 = L$.
 For each $i \geq 0$,
 let $\psi_i$ be the formula $\bigwedge\, \{ \conv( \varphi_{\con{f}}[ \vec t / \vec x ] ) \mid \con{f}( \vec t ) \in \terms( L_i ),\: \con{f} \in \sfundefs{\Sigma} \}$,
 where the function definition of $\con{f}$ in $\DDD$ is $\forallf{\con{f}} \vec x.\; \varphi_{\con{f}}$.
-Since $\I$ satisfies $\conv( \forallf{\con{f}} \vec x.\; \varphi_{\con{f}} )$ and $\absconstraints( L_i )$,
-we know that $\I$ also satisfies $\psi_i$.
+Since $\J$ satisfies $\conv( \forallf{\con{f}} \vec x.\; \varphi_{\con{f}} )$ and $\absconstraints( L_i )$,
+we know that $\J$ also satisfies $\psi_i$.
 Thus by Lemma~\ref{lem:conv},
-$\I$ satisfies a set of literals $L \cup \absconstraints( L )$ where $L$ is a set of $\Sigma$-literals that entail $\psi_i$.
+$\J$ satisfies a set of literals $L \cup \absconstraints( L )$ where $L$ is a set of $\Sigma$-literals that entail $\psi_i$.
 Let $L_{i+1} = L_0 \cup L$.
 Let $L_\infty$ be the limit of this sequence (i.e., $\ell \in L_\infty$ if and only if
 $\ell \in L_i$ for some $i$),
 and let $\psi$ be the $\Sigma$-formula $\bigwedge L_\infty$.
-To show $\psi$ is closed under function expansion with respect to $\DDD$,
-first note that by construction $\psi$ entails $\psi_\infty$.
-For any function $\con{f}$ and terms $\vec t$, since $\varphi_{\con{f}}[ \vec t / \vec x ]$ does not contain function definitions,
+To show that $\psi$ is closed under function expansion with respect to $\DDD$,
+we first note that by construction $\psi$ entails $\psi_\infty$.
+For any function~$\con{f}$ and terms~$\vec t$, since $\varphi_{\con{f}}[ \vec t / \vec x ]$ does not contain function definitions,
 by Corollary~\ref{cor:conv},
 $\conv( \varphi_{\con{f}}[ \vec t / \vec x ] )$ entails $\varphi_{\con{f}}[ \vec t / \vec x ]$.
 Thus, $\psi$ entails $\{ \varphi_{\con{f}}[ \vec t / \vec x ] \mid \con{f}( \vec t ) \in \terms( \psi ), \con{f} \in \sfundefs{\Sigma} \}$,
-which by definition implies that $\psi$ is closed under function expansion with respect to $\DDD$.
+meaning that $\psi$ is closed under function expansion with respect to $\DDD$.
 Furthermore, $\psi$ entails $\varphi_0$ since $L_0 \subseteq L_\infty$.
 Since $\psi$ is a $T$-satisfiable formula that is closed under function expansion with respect to $\DDD$ and $\DDD$ is admissible, 
-by definition there exists a $\Sigma$-interpretation $\J$ satisfying $\psi \wedge \DDD$, which entails $\DDD \wedge \varphi_0$,
+by definition there exists a $\Sigma$-interpretation $\I$ satisfying $\psi \wedge \DDD$, which entails $\DDD \wedge \varphi_0$,
 which is $\varphi$.
 %\ajr{Sketchy referring to "limit" of sequence, if it can be infinite. TODO: clarify/restrict.}
 \qed
