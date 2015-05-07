@@ -1167,7 +1167,8 @@ For example, formula~(\ref{eq:ex-before}) from Example~\ref{ex:translation}
 can be specified as
 %
 \begin{quote}
-\small
+%\small -- no small, unless you convince me that these mixtures of font sizes
+% are aesthetic and make sense --jb
 \begin{verbatim}
 (define-fun-rec s ((x Int)) Int (ite (<= x 0) 0 (+ x (s (- x 1)))))
 (declare-fun c () Int)
@@ -1196,7 +1197,7 @@ used for recursive function definitions. For our example, it will produce the fo
 %it may output the interpretation~(\ref{eq:approx-interp}) from Section~\ref{sec:encoding} for $s$.
 %
 \begin{quote}
-\small
+%\small
 \begin{verbatim}
 (model
   (define-fun s (($x1 Int)) Int 
@@ -1218,7 +1219,7 @@ If this criterion is not met, \cvc may answer \emph{sat} on
 an unsatisfiable problem. For example, if we add the inconsistent definition
 %
 \begin{quote}
-\small
+%\small
 \begin{verbatim}
 (define-fun-rec h ((x Int)) Int (+ (h x) 1))
 \end{verbatim}
