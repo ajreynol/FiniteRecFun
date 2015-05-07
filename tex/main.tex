@@ -296,8 +296,8 @@ recursive function to be used deep inside a complex term on the right-hand side,
 whereas the finite model finding techniques of Reynolds et al.\ are not
 applicable for functions over infinite domains such as the integers or
 algebraic datatypes. A simple example where both approaches fail is
-$$\forall n : {\typeint}.\;\, \lite\bigl(
-n \leq 0,\allowbreak\; \con{p}( n ) \teq 1,\allowbreak\; \con{p}( n ) \teq 2 * \con{p}( n - 1 ) \bigr)$$
+$\forall n : {\typeint}.\;\, \lite\bigl(
+n \leq 0,\allowbreak\; \con{p}( n ) \teq 1,\allowbreak\; \con{p}( n ) \teq 2 * \con{p}( n - 1 ) \bigr)$.
 This state of affairs is highly unsatisfactory, given the frequence of
 recursive definitions in practice and the impending addition of a dedicated
 command, \texttt{define-fun-rec}, to the SMT-LIB standard \cite{smtlib25}.
