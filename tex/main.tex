@@ -662,12 +662,12 @@ functions $\Sigma = \Sigmalia \mathrel{\cup} \Sigma_{\euf}$, where
 $\sfuns{\Sigma_{\euf}} = \{ \con{s} : { \typeint \rightarrow \typeint },\, \const{c} : { \typeint } \}$.
 Let $\varphi$ be the $\Sigma$-formula
 \begin{equation} \label{eq:ex-before}
-\forallf{\con{s}} n : {\typeint}.\;\, \lite\bigl( n \leq 0,\; \con{s}(n) \teq 0,\;
-  \con{s}( n ) \teq n + \con{s}( n - 1 ) \bigr) \wedge \con{s}( \con{c} ) > 100
+\forallf{\con{s}} x : {\typeint}.\;\, \lite\bigl( x \leq 0,\; \con{s}(x) \teq 0,\;
+  \con{s}( x ) \teq x + \con{s}( x - 1 ) \bigr) \wedge \con{s}( \con{c} ) > 100
 \end{equation}
 %
 Here, $\const{s}$ is a function that returns the sum of the positive integers
-up to $n$. The formula $\varphi$ is in definitional form with
+up to $x$. The formula $\varphi$ is in definitional form with
 respect to $\sfundefs{\Sigma_u}$ and states that the sum of all
 positive numbers between $0$ and $\const{c}$ is greater than $100$. This formula is
 satisfiable with a model that interprets $\const{c}$ as an integer greater than or
@@ -675,9 +675,8 @@ equal to $14$. Due to the universal quantifier,
 current SMT techniques~\cite{GeDeM-CAV-09, ReyEtAl-1-RR-13,reynolds-et-al-2013} are unable to find
 a model for this formula. The signature $\extendsig{\Sigma}$ includes the type
 $\fargtype{\con{s}}$ and the uninterpreted function $\farg{\con{s}}$ of type $\fargtype{\con{s}}
-\rightarrow \typeint$. The result of $\conv( \varphi,\, \ppos )$ is the pair $(
-\varphi',\, \ltrue )$, where (after simplification) $\varphi'$ is the
-$\extendsig{\Sigma}$-formula
+\rightarrow \typeint$. The result of $\conv( \varphi )$ 
+is $\varphi'$ which (after simplification) is the $\extendsig{\Sigma}$-formula
 %
 \begin{equation} \label{eq:ex-after}
 \!\begin{aligned}[c]
@@ -775,7 +774,7 @@ The following lemma states the central invariant behind our conversion function 
 
 \begin{lemma}\label{lem:conv}
 Let $\varphi$ be a formula not containing function definitions,
-and $\I$ be a $\extendsig{\Sigma}$-interpretation satisfying $\conv( \varphi )$.
+and let $\I$ be a $\extendsig{\Sigma}$-interpretation satisfying $\conv( \varphi )$.
 Then, $\I$ satisfies $L \cup \absconstraints( L )$, where $L$ is a set of ground $\Sigma$-literals that entail $\varphi$.
 %There exists a set of ground $\Sigma$-literals $L$ such that $L$ entails $\varphi$, 
 %and $\I$ satisfies $L \cup \absconstraints( L )$.
@@ -864,7 +863,7 @@ formula~(\ref{eq:ex-before}) is unsatisfiable since $\fargtype{f}$ can be
 interpreted as $\typeint$, and $\farg{f}$ can be interpreted as the identity
 function. Conversely, we claim formula~(\ref{eq:ex-after}) is satisfiable
 only if formula~(\ref{eq:ex-before}) is satisfiable, noting that the set
-$\{ \forallf{\con{s}} x\typ{\typeint}.\;\, \varphi_\con{s} \}$ is admissible,
+$\{ \forallf{\con{s}} x.\;\, \varphi_\con{s} \}$ is admissible,
 where $\varphi_\con{s}$ is the formula $\lite\bigl( x \leq 0, \con{s}(x) \teq 0, \con{s}( x ) \teq x + \con{s}( x-1 ) \bigr)$.
 %\ct{
 %You cannot possibly mean "if and only if" in the two sentences above.
@@ -885,10 +884,10 @@ where $\varphi_\con{s}$ is the formula $\lite\bigl( x \leq 0, \con{s}(x) \teq 0,
 %$\exists b.\;\, \farg{\con{s}}( b ) \teq \farg{\con{s}}( a )-1$ ensures that
 %a similar constraint is enforced recursively: when $\varphi_{\con{s}}[t/x]$ is used in part to evaluate $\con{s}( \con{c} )$,
 %any model of $\varphi_{\con{s}}[t/x]$ must also satisfy $\varphi_{\con{s}}[t-1/x]$ when $t > 0$. 
-It is easy to see that any interpretation $\I$ satisfying formula~(\ref{eq:ex-after}) must satisfy $\{ \con{s}( \con{c} ) > 100 \}$ 
-(call this set $L_0$),
-and moreover must satisfy the set $\absconstraints( L_0 ) = \{ \exists a : {\fargtype{\con{s}}}. (\farg{\con{s}}( a ) \teq \con{c}) \}$.
-The latter ensures that $\I$ satisfies a formula that entails both $\con{s}( \con{c} ) > 100$ and $\varphi_{\con{s}}[\con{c}/x]$.
+It is easy to see that any interpretation $\I$ satisfying formula~(\ref{eq:ex-after}) satisfies $L_0 \cup \absconstraints( L_0 )$,
+where $L_0 = \{ \con{s}( \con{c} ) > 100 \}$, 
+where $\absconstraints( L_0 )$ contains the single constraint $\exists a : {\fargtype{\con{s}}}. (\farg{\con{s}}( a ) \teq \con{c})$.
+%The latter ensures that $\I$ satisfies a formula that entails both $\con{s}( \con{c} ) > 100$ and $\varphi_{\con{s}}[\con{c}/x]$.
 Since $\I$ also satisfies both the translated function definition for $\con{s}$ (e.g. the first conjunct of formula~(\ref{eq:ex-after})) 
 and $\absconstraints( L_0 )$, it must also satisfy the formula $\psi_1$:
 \[
@@ -898,25 +897,25 @@ and $\absconstraints( L_0 )$, it must also satisfy the formula $\psi_1$:
             \wedge \exists b : {\fargtype{\con{s}}}.\;\, (\farg{\con{s}}( b ) \teq \con{c}-1) \bigr) \bigr)
 \]
 
-The existential $\exists b : {\fargtype{\con{s}}}.\;\, (\farg{\con{s}}( b ) \teq \con{c}-1)$ ensures that a similar constraint is enforced recursively
-when $\I$ satisfies $\neg \con{c} \leq 0$.
-Hence, given a model of formula~(\ref{eq:ex-after}) that interprets $\con{c}$ as $14$,
-this model must satisfy the following formula $\psi$:
+The resulting existential $\exists b : {\fargtype{\con{s}}}.\;\, (\farg{\con{s}}( b ) \teq \con{c}-1)$ 
+ensures that whenever $\I$ satisfies the set $L_1 = L_0 \cup \{ \neg \con{c} \leq 0, \con{s}(\con{c}) \teq \con{c} + \con{s}( \con{c}-1 ) \}$,
+$\I$ satisfies $\absconstraints( L_1 )$ as well.
+Hence, a model of formula~(\ref{eq:ex-after}) that interprets $\con{c}$ as $n$ must also satisfy the following formula $\psi$:
 %
 \begin{equation} \label{eq:fun-closure}
 \begin{split}
 & \con{s}( \con{c} ) > 100 \wedge %\displaystyle
-  \bigwedge\nolimits_{\vthinspace i=0}^{\!13} \bigl( \neg (\con{c}-i \leq 0) \wedge \con{s}( \con{c}-i ) \teq (\con{c}-i) + \con{s}( (\con{c}-i)-1 ) \bigr) \\[-\jot]
-{\wedge}\; & \con{c}-14 \leq 0 \wedge \con{s}( \con{c}-14 ) \teq 0
+  \bigwedge\nolimits_{\vthinspace i=0}^{\!n-1} \bigl( \neg (\con{c}-i \leq 0) \wedge \con{s}( \con{c}-i ) \teq (\con{c}-i) + \con{s}( (\con{c}-i)-1 ) \bigr) \\[-\jot]
+{\wedge}\; & \con{c}-n \leq 0 \wedge \con{s}( \con{c}-n ) \teq 0
 \end{split}
 \end{equation}
 %
 This formula is closed under function expansion,
 since it contains the $\con{s}$ applications corresponding to
-$\con{s}( \con{c}-i )$ for $i = 0, \ldots, 14$. The formula also
-entails $\varphi_\con{s}[\con{c}-i/x]$ for $i = 0, \ldots, 14$.
+$\con{s}( \con{c}-i )$ for $i = 0, \ldots, n$. The formula also
+entails $\varphi_\con{s}[\con{c}-i/x]$ for $i = 0, \ldots, n$.
 Since $\varphi_\con{s}$ is an admissible definition,
-there must exist a $\Sigma$-interpretation satisfying $\psi \wedge \varphi_\con{s}$
+there must exist a $\Sigma$-interpretation satisfying $\psi \wedge \forallf{\con{s}} x.\;\, \varphi_\con{s}$
 which entails formula~(\ref{eq:ex-before}).\xend
 \end{example}
 
