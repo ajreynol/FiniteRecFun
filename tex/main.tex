@@ -496,7 +496,7 @@ following theorem connects these notion with admissibility.
 Let
 $\DDD = \{ \forallf{\con{f}_1} \vec x.\; \varphi_1, \ldots, \forallf{\con{f}_n}
 \vec x.\; \varphi_n \}
-$ be a set of function definitions such that for all
+$ be a set of function definitions such that for every
 $(\stypes{\Sigma},\, \sfuns{\Sigma} - \sfundefs{\Sigma})$-interpretations
 $\I$, there exists a unique
 $\Sigma$-interpretation $\I'$ that extends $\I$
@@ -510,8 +510,16 @@ respect to $\DDD$.
 We must show that formula
 $\varphi \wedge (\forallf{\con{f}_1} \vec x.\; \varphi_1) \wedge \cdots \wedge (\forallf{\con{f}_n} \vec x.\; \varphi_n)$ is also $T$-satisfiable.
 
-We have
-$\varphi \,\models_T\, \bigwedge\nolimits_{\,i=1}^{n} \{ \varphi_i[ \vec t / \vec x ] \mid \con{f}_i( \vec t ) \in \terms( \varphi ) \}$.
+Let $\J$ be a model of $\varphi$.
+
+Let $\I$ be the restriction of $\J$ to the function symbols in $\sfuns{\Sigma} -
+\sfundefs{\Sigma}$. By hypothesis, there exists a $\Sigma$-interpretation
+$\I'$ such that $\I' = \Delta$.
+
+
+
+%We have
+%$\varphi \,\models_T\, \bigwedge\nolimits_{\,i=1}^{n} \{ \varphi_i[ \vec t / \vec x ] \mid \con{f}_i( \vec t ) \in \terms( \varphi ) \}$.
 
 
 
