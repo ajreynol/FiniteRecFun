@@ -980,19 +980,17 @@ and $\absconstraints( L_0 )$, it must also satisfy the formula $\psi_1$:
             \con{s}(\con{c}) \teq \con{c} + \con{s}( \con{c}-1 )
             \wedge \exists b : {\fargtype{\con{s}}}.\;\, \farg{\con{s}}( b ) \teq \con{c}-1 \bigr)
 \]
-The existential $\exists b : {\fargtype{\con{s}}}.\;\, (\farg{\con{s}}( b ) \teq \con{c}-1)$ in the above formula
+The existential constraint in the above formula
 ensures that whenever $\I$ satisfies the set $L_1 = L_0 \cup \{ \neg \con{c} \leq 0,\; \con{s}(\con{c}) \teq \con{c} + \con{s}( \con{c}-1 ) \}$,
 $\I$ satisfies $\absconstraints( L_1 )$ as well.
 Hence, by repeated applications of this reasoning, it follows that
 a model of formula~(\ref{eq:ex-after}) that interprets $\con{c}$ as $n$ must also satisfy the formula $\psi$:
 %
-\begin{equation} \label{eq:fun-closure}
-\begin{split}
+\[\begin{split}
 & \con{s}( \con{c} ) > 100 \wedge %\displaystyle
   \bigwedge\nolimits_{\vthinspace i=0}^{\!n-1} \bigl( \neg (\con{c}-i \leq 0) \wedge \con{s}( \con{c}-i ) \teq \con{c}-i + \con{s}( \con{c}-i-1 ) \bigr) \\[-\jot]
 {\wedge}\; & \con{c}-n \leq 0 \wedge \con{s}( \con{c}-n ) \teq 0
-\end{split}
-\end{equation}
+\end{split}\]
 %
 This formula is closed under function expansion
 since it entails $\varphi_\con{s}[(\con{c}-i)/x]$ for $i = 0, \ldots, n$,
