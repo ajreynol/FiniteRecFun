@@ -497,9 +497,9 @@ following theorem connects totality with admissibility.
 Let $\DDD$ be a set of function definitions for $\sfundefs{\Sigma}$. The set
 $\DDD$ is \emph{total} if for every
 $(\stypes{\Sigma},\, \sfuns{\Sigma} - \sfundefs{\Sigma})$-interpretations
-$\I_0$, there exists a unique
-$\Sigma$-interpretation $\I$ that extends $\I_0$
-and for which $\I \models \DDD$.
+$\J_0$, there exists a unique
+$\Sigma$-interpretation $\J$ that extends $\J_0$
+and for which $\J \models \DDD$.
 \end{definition}
 
 \begin{theorem}
@@ -509,23 +509,21 @@ $\DDD = \{ \forallf{\con{f}_1} \vec x.\; \varphi_1, \ldots, \forallf{\con{f}_n}
 $ is a total set of function definitions, then it is admissible.
 \end{theorem}
 \begin{proofsketch}
-Let $\varphi$ be a $T$-satisfiable formula closed under function expansion with
-respect to $\DDD$.
-
-We must show that the formula
-$\varphi \wedge \bigwedge \Delta$ is also $T$-satisfiable.
-
-Let $\J$ be a model of $\varphi$.
-
-Let $\I_0$ be the restriction of $\J$ to the function symbols in $\sfuns{\Sigma} -
+Let $\psi$ be a satisfiable formula closed under function expansion with
+respect to $\DDD$. We show that $\psi \wedge \bigwedge \Delta$ is also
+satisfiable. Let $\I$ be a model of $\psi$, and
+let $\J_0$ be the restriction of $\I$ to the function symbols in $\sfuns{\Sigma} -
 \sfundefs{\Sigma}$. By hypothesis, there exists a $\Sigma$-interpretation
-$\I$ such that $\I \models \Delta$.
+$\J$ such that $\J \models \Delta$.
 
-We must show that $\I$ coincides with $\J$ at the points of the functions
-$\con{f}_i$ that they care about:
-
-I.e. $\I$ is also a model of $\varphi$.
-And by assumoption $I \models \Delta$, hence
+Since $\psi$ is closed under function expansion, it already constraints the
+functions in $\sfundefs{\Sigma}$ recursively in as much as their interpretation
+is necessary when interpreting $\psi$. Thus, any point $v$ for which
+$\const{f}_i^\I(v)$ is queried when interpreting $\psi$ will have its
+expected value according to its definition and hence coincide with $\J$.
+And since $\psi$ does not depend on the interpretation at the other points,
+$\J$ is, like $\I$, a model of $\psi$. Furthermore, $\J \models \Delta$ by
+assumption. Thus, $\J \models \psi \wedge \bigwedge \Delta$.
 
 %We have
 %$\varphi \,\models_T\, \bigwedge\nolimits_{\,i=1}^{n} \{ \varphi_i[ \vec t / \vec x ] \mid \con{f}_i( \vec t ) \in \terms( \varphi ) \}$.
