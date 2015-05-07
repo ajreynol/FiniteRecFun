@@ -427,7 +427,7 @@ $\forallf{\con{f}_i} \vec x_i.\; \varphi_i$ is a function definition
 for $i = 1, \ldots, n$,
 %
 \ct{I think we need more conditions here on how a symbol $\con{f}_i$ can occur in $\varphi_j$.}
-\jb{do we?}
+\jb{do we? I'd think that the admissibility criterion below is enough.}
 and $\psi$ contains no function definitions.
 We call $\psi$ the \emph{conjecture} of $\varphi$.
 %\ct{Don't we need additional restrictions on the $\varphi_i$'s here?
@@ -461,6 +461,7 @@ the set $\{ \forallf{\con{f}} \vec x:\typeint.\;\, \con{f}( x ) \teq 0 \}$ is ad
 An admissible set can include definitions of nonterminating functions,
 \ct{There is no notion of termination in FOL. We either define this properly or we just replace "definitions of nonterminating functions, e.g.," with "definitions like"}
 \ajr{I agree. Jasmin, can you fix this?  We need to be careful in the same way when we talk about the "terminating" functions fragment we handle.}
+\jb{Yes, I need to rework and expand this whole part. Today.}
 e.g.,
 $\{ \forallf{\con{f}} x : \typeint.\;\, \con{f}( x ) \teq \con{f}( x - 1 ) \}$ or even $\{ \forallf{\con{f}} x.\allowbreak\;\, \con{f}( x ) \teq \con{f}( x ) \}$ are admissible.
 On the other hand, the set $\{ \forallf{\con{f}} x.\;\, \con{f}( x ) \teq \con{f}( x ) + 1 \}$ is not admissible,
