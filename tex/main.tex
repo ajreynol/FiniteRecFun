@@ -1363,9 +1363,11 @@ with underspecification and nonexecutable functions.
 \label{sec:conclusion}
 
 We presented a translation scheme that makes more SMT problems amenable to
-finite model findings in SMT. In conjunction with the finite model finding
-techniques introduced by Reynolds et al.\
-\cite{ReyEtAl-1-RR-13,reynolds-et-al-2013}, it makes it possible to
+finite model findings in SMT. In conjunction with finite model finding
+techniques,
+%introduced by Reynolds et al.\ \cite{ReyEtAl-1-RR-13,reynolds-et-al-2013},
+%%% Great work, but let's not cite it more than 4 times if it can be avoided. --jb
+it makes it possible to
 find models of quantified formulas over infinite types, such as integers
 and algebraic datatypes.
 
@@ -1375,7 +1377,7 @@ suite with problems exercising \cvc's support for coalgebraic datatypes
 \cite{reynolds-blanchette-2015-codata}. We also plan to integrate \cvc as a
 counterexample generator in proof assistants. Finally, future work could also
 include identifying further sufficient conditions for admissibility, thereby
-enlarging the scope of the scheme presented here.
+enlarging the applicability of the translation scheme presented here.
 
 %\ct{?? Leon is a model finder? Alloy?}
 %\jb{Alloy has no notion of datatypes, so it's pretty useless. Nitpick implements
