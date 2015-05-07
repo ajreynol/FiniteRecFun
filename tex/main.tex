@@ -972,8 +972,9 @@ It is easy to see that any interpretation $\I$ satisfying formula~(\ref{eq:ex-af
 where $L_0 = \{ \con{s}( \con{c} ) > 100 \}$, 
 where $\absconstraints( L_0 )$ is the set consisting of the single constraint $\exists a : {\fargtype{\con{s}}}. (\farg{\con{s}}( a ) \teq \con{c})$.
 %The latter ensures that $\I$ satisfies a formula that entails both $\con{s}( \con{c} ) > 100$ and $\varphi_{\con{s}}[\con{c}/x]$.
-Since $\I$ also satisfies both the translated function definition for $\con{s}$, i.e. the first conjunct of formula~(\ref{eq:ex-after}),
-and $\absconstraints( L_0 )$, it must also satisfy the formula $\psi_1$:
+Since $\I$ also satisfies both the translated function definition for $\con{s}$---i.e.,
+the first conjunct of formula~(\ref{eq:ex-after})---and $\absconstraints( L_0
+)$, it must also satisfy the formula $\psi_1$:
 \[
 \lite\bigl( \con{c} \leq 0,\; 
             \con{s}(\con{c}) \teq 0,\;
@@ -983,7 +984,7 @@ and $\absconstraints( L_0 )$, it must also satisfy the formula $\psi_1$:
 The existential constraint in the above formula
 ensures that whenever $\I$ satisfies the set $L_1 = L_0 \cup \{ \neg \con{c} \leq 0,\; \con{s}(\con{c}) \teq \con{c} + \con{s}( \con{c}-1 ) \}$,
 $\I$ satisfies $\absconstraints( L_1 )$ as well.
-Hence, by repeated applications of this reasoning, it follows that
+Hence, by repeated application of this reasoning, it follows that
 a model of formula~(\ref{eq:ex-after}) that interprets $\con{c}$ as $n$ must also satisfy the formula $\psi$:
 %
 \[\begin{split}
@@ -1003,10 +1004,9 @@ which entails formula~(\ref{eq:ex-before}).\xend
 \section{Evaluation}
 \label{sec:evaluation}
 
-In this section, we evaluate both the overall impact of the encoding introduced
-in the previous section and the performance of individual SMT techniques for
-benchmarks in the encoding.
-The experimental data is publicly available.%
+In this section, we evaluate both the overall impact of the translation
+introduced in the previous section and the performance of individual SMT
+techniques. The experimental data is publicly available.%
 \footnote{\url{http://lara.epfl.ch/~reynolds/SMT2015-recfun/}}
 
 We gathered a set of 245 benchmarks from two sources, which we will refer to as
@@ -1018,33 +1018,33 @@ variety of inductive theorem provers. These benchmarks heavily involve
 recursive functions and are limited to the combined theory of uninterpreted
 functions and algebraic datatypes. The second source consists of 166
 benchmarks from the Leon repository,\footnote{%Available at
-\url{https://github.com/epfl-lara/leon}} which were constructed from
+\url{https://github.com/epfl-lara/leon/}} which were constructed from
 verification conditions from simple Scala programs. These benchmarks also
-heavily involve recursively-defined functions over algebraic datatypes, 
-but cover a wide variety of theories, including bit vectors, arrays, and linear and
-nonlinear arithmetic. Each benchmark is in definitional form with respect to a
-set of terminating functions.
+heavily involve recursively defined functions over algebraic datatypes, 
+but cover a wide variety of theories, including bit vectors, arrays, and
+both linear and nonlinear arithmetic. Each benchmark is in definitional form
+with respect to a set of well-founded functions.
 %
 % in particular they each
 %are a conjoined list of function definitions followed by a (negated)
 %conjecture.
-A majority of these benchmarks are unsatisfiable, although a
-handful of benchmarks in the \leon set are satisfiable.
+Nearly all of these benchmarks are unsatisfiable, except for a
+handful of benchmarks in the \leon set.
 
-For each of these 245 benchmarks, we considered (up to) three randomly selected
+For each of these 245 benchmarks, we considered up to three randomly selected
 mutated forms of its conjecture $\psi$. In particular, we considered unique
 conjectures that are obtained as a result of swapping a subterm of $\psi$ at
 one position with another of the same type at another position.
 Note that benchmarks created in this way have a high likelihood of having small
 and easy-to-find countermodels. In total, we considered 213 mutated forms of
-conjectures from \isa, and 427 mutated forms of conjectures from \leon. We will
+conjectures from \isa and 427 mutated forms of conjectures from \leon. We will
 call these sets \isam and \leonm respectively.
 
 In total, our benchmark set consisted of 885 benchmarks (640 mutants plus the
 original 245). We considered these 885 benchmarks both before and after the
-translation $\conv$ as described in Section~\ref{sec:encoding}. For example,
-\isa contains 79 original benchmarks $\varphi$ and 79 translated benchmarks
-$\conv(\varphi)$.
+translation~$\conv$. % as described in Section~\ref{sec:encoding}.
+For example, \isa contains 79 original benchmarks $\varphi$ and 79 translated
+benchmarks $\conv(\varphi)$.
 
 For solvers, we considered the SMT solver \ziii~\cite{de-moura-bjoerner-2008},
 which runs both heuristic methods for quantifier instantiation~\cite{MouraBjoerner07},
@@ -1054,8 +1054,8 @@ we will refer to as \cvcd, \cvcf, and \cvci.
 The default configuration \cvcd runs heuristic and conflict-based techniques for quantifier instantiation~\cite{ReynoldsTinelliMoura14},
 but does not include techniques for finding models.
 The configuration \cvcf runs heuristic instantiation and the finite model
-finding procedure described in~\cite{ReyEtAl-1-RR-13,reynolds-et-al-2013}. The
-last configuration \cvci incorporates techniques for automating inductive
+finding procedure due to Reynolds et al.\ \cite{ReyEtAl-1-RR-13,reynolds-et-al-2013}. The
+last configuration, \cvci, incorporates techniques for automating inductive
 reasoning in SMT~\cite{reynolds-kuncak-2015}.
 
 \begin{figure}[t]
@@ -1117,15 +1117,16 @@ The raw evaluation data reveals no cases in which a solver answered
 \emph{unsat} on a benchmark $\varphi$ and \emph{sat} on its
 corresponding benchmark $\conv( \varphi )$, or vice versa.
 This is consistent with our expectations and Theorem~\ref{thm:equi}, 
-since these benchmarks contained only sets of function definitions that we expected were admissible.
+since these benchmarks contained only sets of function definitions
+that are supposed to be well-founded.
 %thereby confirming Theorem~\ref{thm:equi}.
 %\ct{?! \emph{Theorems} do not need corroboration! 
 %Maybe we should say "consistently with Theorem~\ref{thm:equi}"?}
 
 Figure~\ref{fig:sat} shows that for untranslated benchmarks (the ``$\varphi$''
-columns), the number of \emph{sat} responses is very low, across all
+columns), the number of \emph{sat} responses is very low across all
 configurations. This confirms the shortcomings of existing SMT techniques for
-finding counterexamples for benchmarks containing recursively-defined functions.
+finding counterexamples for benchmarks containing recursively defined functions.
 %
 The translation $\conv$ (the ``$\conv(\varphi)$'' columns) has a major
 impact. \cvcf finds 331 of the 885 benchmarks to be satisfiable,
@@ -1134,7 +1135,7 @@ performance of \ziiib for counterexamples also improves dramatically, as it
 solves 112 satisfiable problems, including 10 that were unsolved by \cvcf.
 %
 We conclude that the translation $\conv$ enables SMT
-solvers to find counterexamples for conjectures involving recursively-defined functions
+solvers to find counterexamples for conjectures involving recursively defined functions
 whose definitions are admissible.
 %Both \ziiib and \cvcf were able to find a
 %large number of counterexamples after the translation, with the latter
@@ -1142,15 +1143,15 @@ whose definitions are admissible.
 
 In terms of number of \emph{unsat} responses, the configuration \cvci is the
 clear winner, finding 318 total benchmarks to be unsatisfiable. Moreover, the
-translation $\conv$ helps \ziii for \emph{unsat} responses as well, as we
-see \ziii solves a total of 209 whereas it solves only 187 before the
+translation $\conv$ helps \ziii for \emph{unsat} responses as well:
+\ziii solves a total of 209, whereas it solves only 187 before the
 translation.
 %
-This number is 2 fewer than \cvcd, which finds 211 benchmarks unsatisfiable. Thus, in
-most cases the translation $\conv$ does not significantly degrade performance
+In contrast, \cvcd finds 211 benchmarks unsatisfiable with the translation.
+Thus, in most cases the translation $\conv$ does not significantly degrade performance
 for unsatisfiable benchmarks, and in some cases may actually aid the solver for
-determining unsatisfiability. The exception here is \cvci, whose inductive
-arguments are guided by the types of quantified variables.
+determining unsatisfiability. The exception is \cvci, whose inductive
+arguments are guided by the types of the quantified variables.
 
 \section{Front-End Support in \cvc}
 \label{sec:front-end}
@@ -1161,7 +1162,7 @@ function definitions.
 For the convenience of end users, it
 has been implemented in the latest development version of \cvc %~\cite{ReyEtAl-1-RR-13}
 (version~1.5 prerelease).
-Function definitions $\forallf{\con{f}} \vec x.\; \varphi$ can be written using the $\definefunreccmd$ command,
+Function definitions $\forallf{\con{f}} \vec x.\; \varphi$ can be written using the $\definefunreccmd$ command
 from the upcoming SMT-LIB 2.5 standard \cite{smtlib25}.
 For example, formula~(\ref{eq:ex-before}) from Example~\ref{ex:translation}
 can be specified as
@@ -1189,7 +1190,7 @@ assertions based on the translation $\conv$ before checking for satisfiability.
 %If the functions provided in the input are admissible,
 %then a ``satisfiable" response from the solver implies that a model exists for the original formula.
 Accordingly, the solver will output the approximation of the interpretation it
-used for recursive function definitions. For our example, it will produce the following output:
+used for recursive function definitions. For our example, it outputs
 %\ajr{prefer having the full output like this here?}
 %\jb{I like it the way you did it now, but I took the freedom to reformat the output slightly
 %(to avoid the small font---I generally try to avoid ad hoc font mixtures---and to show
@@ -1213,10 +1214,10 @@ used for recursive function definitions. For our example, it will produce the fo
 
 The \texttt{--fmf-fun} option instructs \cvc to assume that the
 functions provided by the user are admissible.
-Admissibility must be checked separately \relax{by the user}---for example, using a
+Admissibility must be checked separately \relax{by the user}, perhaps using a
 syntactic criterion or a termination prover.
 If this criterion is not met, \cvc may answer \emph{sat} on
-an unsatisfiable problem. For example, if we add the inconsistent definition
+an unsatisfiable problem. Indeed, if we add the inconsistent definition
 %
 \begin{quote}
 %\small
@@ -1225,8 +1226,8 @@ an unsatisfiable problem. For example, if we add the inconsistent definition
 \end{verbatim}
 \end{quote}
 %
-to the above problem, \cvc will answer \emph{sat}
-if \texttt{--fmf-fun} is specified.
+to the above problem and run \cvc with the \texttt{--fmf-fun} option,
+it wrongly answers \emph{sat}.
 
 %Usually not interested in showing logical consistency, there
 %exist other tools that check e.g. termination.
