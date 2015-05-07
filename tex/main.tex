@@ -257,6 +257,7 @@ Department of Computer Science, University of Iowa, USA
 \maketitle
 
 \begin{abstract}
+\noindent
 SMT solvers have recently been extended with techniques for finding models
 in presence of universally quantified formulas in some restricted fragments.
 This paper introduces a translation which reduces axioms specifying a large
@@ -354,7 +355,7 @@ and the Leon verifier~\cite{blanc2013overview} provides
 evidence that this translation improves the effectiveness of the SMT solvers
 \cvc and \ziii for finding counterexamples to verification conditions
 (Section~\ref{sec:evaluation}). The approach is implemented as a preprocessor
-in \cvc (Section~\ref{sec:front-end}). When invoked with a
+in \cvc (Section~\ref{sec:front-end}). When invoked with a specific
 command-line option, the solver assumes that functions introduced using the
 \texttt{define-fun-rec} command are admissible and translates them accordingly.
 
@@ -545,11 +546,11 @@ constructor before entering the nested call. Like terminating recursion,
 productive corecursion totally specify the functions it defines.
 It is even possible to mix recursion and corecursion in the same function
 \cite{blanchette-et-al-2015-fouco}. Theorem~\ref{thm:adm} can be extended to
-cover such specifications, based on the observation that an infinite unfolding
-of a corecursive definition yields a uniquely specified infinite object.
+cover such specifications, based on the observation that infinite unfolding
+a corecursive definition computes a unique infinite object.
 
 Beyond totality, an admissible set can contain underspecified functions
-such as $\forallf{\con{f}} x : \typeint.\;\, \con{f}( x )
+such as $\forallf{\con{f}} x : \typeint.\allowbreak\;\, \con{f}( x )
 \teq \con{f}( x - 1 )$ or $\forallf{\con{g}} x.\allowbreak\;\, \con{g}( x
 ) \teq \con{g}( x )$. More generally, we conjecture that one can ignore all
 tail-recursive calls (i.e., calls that occur on the right-hand side of the
@@ -583,7 +584,7 @@ definition.
 \label{sec:encoding}
 
 %%% TYPESETTING: approximated, to get centering
-\newcommand{\itemx}{\itemindent5em\item}
+\newcommand{\itemx}{\itemindent6.35em\item}
 
 \begin{figure}[t]
 \normalsize
@@ -595,7 +596,7 @@ $\conv_0( t\typ{\tau},\, p )$ $=$
  \begin{itemize}
    \itemx[] $\mathsf{if}$ $\tau = \Bool$ $\mathsf{and}$ $t = \boolop(t_1,\ldots,t_n)$ $\mathsf{then}$
     \begin{itemize}
-      \itemx[] $\mathsf{let}$ $( t'_i,\, \chi_i ) = \conv_0( t_i,\, \pol( \boolop,\, i,\, p ) )$ $\mathsf{for}$ $i = 1, \ldots, n$ $\mathsf{in}$%\kern5em$\mid$
+      \itemx[] $\mathsf{let}$ $( t'_i,\, \chi_i ) = \conv_0( t_i,\, \pol( \boolop,\, i,\, p ) )$ $\mathsf{for}$ $i = 1, \ldots, n$ $\mathsf{in}$%\kern6.35em$\mid$
       \itemx[] $\mathsf{let}$ $\chi = \chi_1 \wedge \cdots \wedge \chi_n$ $\mathsf{in}$
       \itemx[] $\mathsf{if}$ $p = \ppos$ $\mathsf{then}$ \bigtuple{$\boolop(t'_1, \ldots, t'_n) ) \wedge \chi,\, \ltrue$}
       \itemx[] $\mathsf{else}$ $\mathsf{if}$ $p = \pneg$ $\mathsf{then}$ \bigtuple{$\boolop(t'_1, \ldots, t'_n) \vee \neg \chi,\, \ltrue$}
@@ -622,7 +623,7 @@ $\conv_0( t\typ{\tau},\, p )$ $=$
 %\begin{framed}
 \itemx[\ ]
 $\conv( \varphi )$ $=$ $\mathsf{let}$ $( \varphi',\, \_ ) = \conv_0( \varphi,\, \ppos )$ $\mathsf{in}$ $\varphi'$
-\\[-1.5\baselineskip] %% TYPESETTING
+%\\[-1.25\baselineskip] %% TYPESETTING
 \end{enumerate}
 \caption{\,Definition of translation $\conv$}
 \label{fig:A}
