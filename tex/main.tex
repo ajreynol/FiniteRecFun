@@ -571,35 +571,23 @@ definition.
 $\conv_0( t\typ{\tau},\, p )$ $=$
 \\[-.8\baselineskip]
  \begin{itemize}
-   \itemx[] $\mathsf{if}$ $\tau = \Bool$ and $t = \boolop(t_1,\ldots,t_n)$ $\mathsf{then}$
+   \itemx[] $\mathsf{if}$ $\tau = \Bool$ $\mathsf{and}$ $t = \boolop(t_1,\ldots,t_n)$ $\mathsf{then}$
     \begin{itemize}
       \itemx[] $\mathsf{let}$ $( t'_i,\, \chi_i ) = \conv_0( t_i,\, \pol( \boolop,\, i,\, p ) )$ $\mathsf{for}$ $i = 1, \ldots, n$ $\mathsf{in}$%\kern5em$\mid$
       \itemx[] $\mathsf{let}$ $\chi = \chi_1 \wedge \cdots \wedge \chi_n$ $\mathsf{in}$
-      \itemx[] $\mathsf{if}$ $p = \ppos$ $\mathsf{then}$
-      \begin{itemize}
-        \itemx[] \return \bigtuple{$\boolop(t'_1, \ldots, t'_n) ) \wedge \chi,\, \ltrue$}
-      \end{itemize}
-      \itemx[] $\mathsf{else}$ $\mathsf{if}$ $p = \pneg$ $\mathsf{then}$
-      \begin{itemize}
-        \itemx[] \return \bigtuple{$\boolop(t'_1, \ldots, t'_n) \vee \neg \chi,\, \ltrue$}
-      \end{itemize}
-      \itemx[] $\mathsf{else}$
-      \begin{itemize}
-        \itemx[] \return \bigtuple{$\boolop(t'_1, \ldots, t'_n),\, \chi$}
+      \itemx[] $\mathsf{if}$ $p = \ppos$ $\mathsf{then}$ \bigtuple{$\boolop(t'_1, \ldots, t'_n) ) \wedge \chi,\, \ltrue$}
+      \itemx[] $\mathsf{else}$ $\mathsf{if}$ $p = \pneg$ $\mathsf{then}$ \bigtuple{$\boolop(t'_1, \ldots, t'_n) \vee \neg \chi,\, \ltrue$}
+      \itemx[] $\mathsf{else}$ \bigtuple{$\boolop(t'_1, \ldots, t'_n),\, \chi$}
 \\[-.8\baselineskip]
-      \end{itemize}
     \end{itemize}
   \itemx[] $\mathsf{else}$ $\mathsf{if}$ $t = \forallf{\con{f}} \vec x.\;\, u$ $\mathsf{then}$
     \begin{itemize}
-      \itemx[] $\mathsf{let}$ $( u',\, \chi ) = \conv_0( u,\, p )$ $\mathsf{in}$
-      %\itemx[] $\mathsf{assert}( \chi = \ltrue )$;
-      \itemx[] \return \bigtuple{$\forall a : \fargtype{\con{f}}.\; u' [ \vecfarg{\con{f}}( a ) / \vec x ],\, \ltrue$}
+      \itemx[] $\mathsf{let}$ $( u',\, \chi ) = \conv_0( u,\, p )$ $\mathsf{in}$ \bigtuple{$\forall a : \fargtype{\con{f}}.\; u' [ \vecfarg{\con{f}}( a ) / \vec x ],\, \ltrue$}
 \\[-.8\baselineskip]
     \end{itemize}
   \itemx[] $\mathsf{else}$ $\mathsf{if}$ $t = \forall \vec x.\;\, u$ $\mathsf{then}$
     \begin{itemize}
-      \itemx[] $\mathsf{let}$ $( u',\, \chi ) = \conv_0( u,\, p )$ $\mathsf{in}$
-      \itemx[] \return \bigtuple{$\forall \vec x.\; u',\, \forall \vec x.\; \chi$}
+      \itemx[] $\mathsf{let}$ $( u',\, \chi ) = \conv_0( u,\, p )$ $\mathsf{in}$ \bigtuple{$\forall \vec x.\; u',\, \forall \vec x.\; \chi$}
 \\[-.8\baselineskip]
     \end{itemize}
    \itemx[] $\mathsf{else}$
@@ -611,14 +599,8 @@ $\conv_0( t\typ{\tau},\, p )$ $=$
 \begin{enumerate}
 %\begin{framed}
 \itemx[\ ]
-$\conv( \varphi )$ $=$
-\\[-.8\baselineskip]
- \begin{itemize}
-   \itemx[] $\mathsf{let}$ $( \varphi',\, \_ ) = \conv_0( \varphi,\, \ppos )$ $\mathsf{in}$
-   %\itemx[] $\mathsf{assert}( D = \emptyset )$;
-   \itemx[] \return $\varphi'$
+$\conv( \varphi )$ $=$ $\mathsf{let}$ $( \varphi',\, \_ ) = \conv_0( \varphi,\, \ppos )$ $\mathsf{in}$ $\varphi'$
 \\[-1.5\baselineskip] %% TYPESETTING
-  \end{itemize}
 \end{enumerate}
 \caption{\,Definition of function $\conv$}
 \label{fig:A}
