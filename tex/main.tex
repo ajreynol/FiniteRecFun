@@ -236,13 +236,13 @@ Department of Computer Science, University of Iowa, USA
 \begin{abstract}
 SMT solvers have recently been extended with techniques for finding models
 in presence of (universally) quantified formulas.
-However, these generally cannot cope with universal quantifiers ranging over
-infinite types, such as integers and algebraic datatypes. This paper introduces
-a translation that eliminates infinite quantifiers in axioms specifying a large
-class of recursive functions, including terminating and
-productive functions. An empirical evaluation confirms that the approach works
-well on benchmarks from two sources. The translation is implemented as a
-preprocessor in the solver CVC4.
+These techniques are generally limited to universally quantified formulas in some restricted fragment.
+This paper introduces a translation which reduces axioms specifying a large
+class of recursive functions, including terminating, tail-recursive, and
+productive functions to universally quantified formulas for which known SMT solving techniques are applicable.
+An empirical evaluation confirms that the approach improves 
+the performance of existing solvers on benchmarks from two sources. 
+The translation is implemented as a preprocessor in the solver CVC4.
 \end{abstract}
 
 %% The institutions above shouldn't count as footnotes
@@ -453,7 +453,7 @@ The set $\DDD$ is \emph{admissible} if for every $T$-satisfiable formula
 $\varphi$ closed under function expansion with respect to $\DDD$,
 the formula
 $\varphi \wedge (\forallf{\con{f}_1} \vec x.\; \varphi_1) \wedge \cdots \wedge (\forallf{\con{f}_n} \vec x.\; \varphi_n)$ is also $T$-satisfiable.
-\ct{I}
+%\ct{I}
 \end{definition}
 
 Admissibility is a semantic criterion that must be satisfied for each function
@@ -962,7 +962,8 @@ and $\absconstraints( L_0 )$, it must also satisfy the formula $\psi_1$:
 The existential $\exists b : {\fargtype{\con{s}}}.\;\, (\farg{\con{s}}( b ) \teq \con{c}-1)$ above
 ensures that whenever $\I$ satisfies the set $L_1 = L_0 \cup \{ \neg \con{c} \leq 0, \con{s}(\con{c}) \teq \con{c} + \con{s}( \con{c}-1 ) \}$,
 $\I$ satisfies $\absconstraints( L_1 )$ as well.
-Hence, a model of formula~(\ref{eq:ex-after}) that interprets $\con{c}$ as $n$ must also satisfy the formula $\psi$:
+Hence, by repeated applications of this reasoning, it follows that
+a model of formula~(\ref{eq:ex-after}) that interprets $\con{c}$ as $n$ must also satisfy the formula $\psi$:
 %
 \begin{equation} \label{eq:fun-closure}
 \begin{split}
