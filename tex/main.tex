@@ -483,7 +483,7 @@ functions. Corecursive functions are functions to a coalgebraic datatype.
 These functions can call themselves forever, without their being inconsistent.
 Productive corecursive functions are functions that progressively reveal parts
 of their (potentially infinite)
-output \cite{turner-1995,abbott-et-al-2005,mcbride-productive}.
+output \cite{turner-1995,mcbride-productive}.
 For example, given a type of infinite streams constructed by $\con{scons}$,
 the definition
 $\{\forallf{\const{e}} n.\;\, \const{e}(n) \teq \con{scons}(n,\; \const{e}(n + 1))\}$
@@ -495,14 +495,26 @@ following theorem connects these notion with admissibility.
 \begin{theorem}
 Let
 $\DDD = \{ \forallf{\con{f}_1} \vec x.\; \varphi_1, \ldots, \forallf{\con{f}_n}
-\vec x.\; \varphi_n \}$ be a set of function definitions such that for all
+\vec x.\; \varphi_n \}
+$ be a set of function definitions such that for all
 $(\stypes{\Sigma},\, \sfuns{\Sigma} - \sfundefs{\Sigma})$-interpretations
 $\I$, there exists a unique
 $\Sigma$-interpretation $\I'$ that extends $\I$
-and such that $\I' \models \DDD$.
+and for which $\I' \models \DDD$.
 Then the set\/ $\DDD$ is admissible.
 \end{theorem}
 \begin{proofsketch}
+Let $\varphi$ be a $T$-satisfiable formula closed under function expansion with
+respect to $\DDD$.
+
+We must show that formula
+$\varphi \wedge (\forallf{\con{f}_1} \vec x.\; \varphi_1) \wedge \cdots \wedge (\forallf{\con{f}_n} \vec x.\; \varphi_n)$ is also $T$-satisfiable.
+
+We have
+$\varphi \,\models_T\, \bigwedge\nolimits_{\,i=1}^{n} \{ \varphi_i[ \vec t / \vec x ] \mid \con{f}_i( \vec t ) \in \terms( \varphi ) \}$.
+
+
+
 \qed
 \end{proofsketch}
 
