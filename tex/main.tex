@@ -52,10 +52,10 @@
 
 \theoremstyle{definition}
 \newtheorem{definition}{Definition}%[section]
-\newtheorem{example}{Example}%[section]
 
 \theoremstyle{remark}
 \newtheorem*{proofsketch}{Proof sketch}
+\newtheorem{example}{Example}%[section]
 
 %\spnewtheorem*{proof}{Proof sketch}{\itshape}{\rmfamily}
 
@@ -666,8 +666,8 @@ This constraint is needed if the polarity is $\pnone$; otherwise, it is encoded
 directly in $t'$ and $\chi$ is simply $\ltrue$.
 In the auxiliary function $\conv_0$, the function $\pol(
 \boolop, i, p )$ returns the polarity of the $i$\vvthinspace{th} argument of an
-application of~$\boolop$ having polarity $p$, where $\boolop$ is an interpreted
-predicate.
+application of~$\boolop$ having polarity $p$ if $\boolop$ is an interpreted
+predicate or $\pnone$ otherwise.
 
 
 %The role of $D$ is to ensure that
@@ -969,7 +969,7 @@ interpreted as the integers and $\farg{\con{s}}$ as the identity
 function. Conversely, we claim formula~(\ref{eq:ex-after}) is satisfiable
 only if formula~(\ref{eq:ex-before}) is satisfiable, noting that the set
 $\{ \forallf{\con{s}} x.\;\, \varphi_\con{s} \}$ is admissible,
-where $\varphi_\con{s}$ is the formula $\lite\bigl( x \leq 0, \con{s}(x) \teq 0, \con{s}( x ) \teq x + \con{s}( x-1 ) \bigr)$.
+where $\varphi_\con{s}$ is the formula $\lite\bigl( x \leq 0,\; \con{s}(x) \teq 0,\; \con{s}( x ) \teq x + \con{s}( x-1 ) \bigr)$.
 %\ct{
 %You cannot possibly mean "if and only if" in the two sentences above.
 %Once I show that (1) is unsat iff (2) is unsat, I do not need to argue that
@@ -1027,7 +1027,7 @@ which entails formula~(\ref{eq:ex-before}).\xend
 
 In this section, we evaluate both the overall impact of the translation
 introduced in the previous section and the performance of individual SMT
-techniques. The experimental data is publicly available.%
+techniques. The experimental data is publicly available online.%
 \footnote{\url{http://lara.epfl.ch/~reynolds/SMT2015-recfun/}}
 
 We gathered a set of 245 benchmarks from two sources, which we will refer to as
