@@ -234,8 +234,8 @@ Department of Computer Science, University of Iowa, USA
 \maketitle
 
 \begin{abstract}
-Model finding in SMT solvers is
-generally limited to universally quantified formulas in some restricted fragment.
+SMT solvers have recently been extended with techniques for finding models
+in presence of universally quantified formulas in some restricted fragments.
 This paper introduces a translation which reduces axioms specifying a large
 class of recursive functions, including well-founded (terminating),
 to universally quantified formulas for which known
@@ -297,8 +297,8 @@ whereas the finite model finding techniques of Reynolds et al.\ are not
 applicable for functions over infinite domains such as the integers or
 algebraic datatypes. A simple example where both approaches fail is
 \begin{equation}\label{eq:pii}
-\forall n : {\typeint}.\;\, \lite\bigl(
-n \leq 0,\allowbreak\; \con{p}( n ) \teq 1,\allowbreak\; \con{p}( n ) \teq 2 * \con{p}( n - 1 ) \bigr)
+\forall x : {\typeint}.\;\, \lite\bigl(
+x \leq 0,\allowbreak\; \con{p}( x ) \teq 1,\allowbreak\; \con{p}( x ) \teq 2 * \con{p}( x - 1 ) \bigr)
 \end{equation}
 This state of affairs is highly unsatisfactory, given the frequence of
 recursive definitions in practice and the impending addition of a dedicated
@@ -309,9 +309,9 @@ definitions into formulas where finite model finding techniques can be applied.
 The recursive functions must meet a semantic criterion to be admissible
 (Section~\ref{sec:prelim}). This criterion is met by well-founded (terminating)
 recursive function definitions. It is not met by inconsistent
-definitions such as $\forall n : {\typeint}.\;\, \con{f}(n) \teq \con{f}(n) +
+definitions such as $\forall x : {\typeint}.\;\, \con{f}(x) \teq \con{f}(x) +
 1$. %ct and it is possible to construct consistent examples that do not meet it.
-%as well as other examples of consistent definition.
+%as well as other example of consistent definition.
 
 We define a translation for a class of
 formulas involving admissible recursive function definitions
@@ -388,11 +388,11 @@ if each $T$-entails the other.
 Given a signature $\Sigma$,
 the \emph{theory of equality with uninterpreted functions} \euf
 consists of the set of all $\Sigma$-interpretations.
-We refer to the type and function symbols in this theory as \emph{uninterpreted}.
-\ct{This is both ambiguous and insufficient.
-Since this is SMT we should fix some background theory $T$,
-then extend its signature with additional symbols and call \emph{those} uninterpreted.
-}
+Informally, we refer to the type and function symbols in this theory as \emph{uninterpreted}.
+%\ct{This is both ambiguous and insufficient.
+%Since this is SMT we should fix some background theory $T$,
+%then extend its signature with additional symbols and call \emph{those} uninterpreted.
+%}
 
 In addition to standard quantified formulas $\forall \vec x.\; \varphi$,
 we consider \emph{annotated quantified formulas} of the form
@@ -856,6 +856,9 @@ $\I$ satisfies $L \cup \absconstraints( L )$, where $L$ is a set of ground $\Sig
 %There exists a set of ground $\Sigma$-literals $L$ such that $L$ entails $\varphi$, 
 %and $\I$ satisfies $L \cup \absconstraints( L )$.
 \end{lemma}
+\begin{proofsketch}
+By definition of $\conv$ and case analysis on the return values of $\conv_0$.
+\end{proofsketch}
 
 \begin{cor}\label{cor:conv}
 If $\varphi$ is a formula not containing function definitions, then $\conv( \varphi )$ entails $\varphi$.
@@ -1165,7 +1168,7 @@ can be specified as
 \begin{quote}
 \small
 \begin{verbatim}
-(define-fun-rec s ((n Int)) Int (ite (<= n 0) 0 (+ n (s (- n 1)))))
+(define-fun-rec s ((x Int)) Int (ite (<= x 0) 0 (+ x (s (- x 1)))))
 (declare-fun c () Int)
 (assert (> (s c) 100))
 (check-sat)
@@ -1216,7 +1219,7 @@ an unsatisfiable problem. For example, if we add the inconsistent definition
 \begin{quote}
 \small
 \begin{verbatim}
-(define-fun-rec h ((n Int)) Int (+ (h n) 1))
+(define-fun-rec h ((x Int)) Int (+ (h x) 1))
 \end{verbatim}
 \end{quote}
 %
