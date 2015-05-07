@@ -490,14 +490,27 @@ the definition
 $\{\forallf{\const{e}} n.\;\, \const{e}(n) \teq \con{scons}(n,\; \const{e}(n + 1))\}$
 falls within this fragment, since each call to $\const{e}$ produces one
 constructor before entering the nested call. Like terminating recursion,
-productive corecursion totally specify the functions it defines. The
-following theorem connects totality with admissibility.
+productive corecursion totally specify the functions it defines.
+It is even possible to mix recursion and corecursion in the same function
+\cite{blanchette-et-al-2015-fouco}.
 
-\jb{This stuff below is broken.}
+Here, we focus on a fragment of all reasonable recursive--corecursive
+specifications, where each function is either well-founded or productive.
+Mutual (co)recursion is not catered for, but it can be encoded in terms of
+simple (co)recursion.
+
+\begin{definition}
+Let $\DDD = \{ \forallf{\con{f}_1} \vec x.\; \varphi_1, \ldots,
+\forallf{\con{f}_n} \vec x.\; \varphi_n \}$ be a set of function definitions.
+This set forms a \emph{layered }(\emph{co})\emph{recursive specification} if
+$\const{f}_i$'s definition may not syntactically refer to $\const{f}_{j}$ for
+all $i < j$ and each $\const{f}_i$ is either well-founded recursive
+or productive corecursive.
+\end{definition}
 
 \begin{definition}\rm
 Let $\DDD$ be a set of function definitions for $\sfundefs{\Sigma}$. The set
-$\DDD$ is \emph{total} if for every
+$\DDD$ is \emph{} if for every
 $(\stypes{\Sigma},\, \sfuns{\Sigma} - \sfundefs{\Sigma})$-interpretations
 $\J_0$, there exists a unique
 $\Sigma$-interpretation $\J$ that extends $\J_0$
