@@ -292,7 +292,7 @@ y \vee \allowbreak \neg \con{f}( x ) \teq \con{f}( y )$, where $\tau$ is an unin
 Unfortunately, neither of these fragments can accommodate the vast majority of
 quantified formulas that correspond to recursive function definitions: The
 essentially uninterpreted fragment does not allow the argument of a
-recursive function to be used deep inside a complex term on the right-hand side,
+recursive function to be used inside a complex term on the right-hand side,
 whereas the finite model finding techniques of Reynolds et al.\ are not
 applicable for functions over infinite domains such as the integers or
 algebraic datatypes. A simple example where both approaches fail is
@@ -429,8 +429,9 @@ where $\con{f}_1, \ldots, \con{f}_n$ are distinct function symbols,
 $\forallf{\con{f}_i} \vec x_i.\; \varphi_i$ is a function definition
 for $i = 1, \ldots, n$,
 %
-\ct{I think we need more conditions here on how a symbol $\con{f}_i$ can occur in $\varphi_j$.}
-\jb{do we? I thought that the admissibility criterion below is enough.}
+%\ct{I think we need more conditions here on how a symbol $\con{f}_i$ can occur in $\varphi_j$.}
+%\jb{do we? I thought that the admissibility criterion below is enough.}
+% should be enough, unless I'm missing something? -ajr
 and $\psi$ contains no function definitions.
 We call $\psi$ the \emph{conjecture} of $\varphi$.
 %\ct{Don't we need additional restrictions on the $\varphi_i$'s here?
