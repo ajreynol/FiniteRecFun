@@ -460,7 +460,7 @@ Admissibility is a semantic criterion that must be satisfied for each function
 definition before applying the translation described in
 Section~\ref{sec:encoding}. It is interesting it connect it with the more
 standard notion of \emph{well-founded} function definitions, often called
-``terminating'' definitions in a slight abuse of terminology. In such
+\emph{terminating} definitions in a slight abuse of terminology. In such
 definitions, all recursive calls are decreasing with respect to a well-founded
 relation $r$, which must be supplied by the user or inferred automatically
 using a termination prover. This ensures that the function is uniquely defined
@@ -489,13 +489,19 @@ the definition
 $\{\forallf{\const{e}} n.\;\, \const{e}(n) \teq \con{scons}(n,\; \const{e}(n + 1))\}$
 falls within this fragment, since each call to $\const{e}$ produces one
 constructor before entering the nested call. Like terminating recursion,
-productive corecursion uniquely specifies a function. The following theorem
-connects these notion with admissibility.
+productive corecursion totally specify the functions it defines. The
+following theorem connects these notion with admissibility.
 
 \begin{theorem}
-Let 
+Let
+$\DDD = \{ \forallf{\con{f}_1} \vec x.\; \varphi_1, \ldots, \forallf{\con{f}_n} \vec x.\; \varphi_n \}$
+be a set of function definitions such that
+%
+Then the set $\DDD$ is admissible.
 \end{theorem}
-
+\begin{proofsketch}
+\qed
+\end{proofsketch}
 
 \newpage
 
