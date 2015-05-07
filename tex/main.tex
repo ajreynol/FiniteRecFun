@@ -303,7 +303,7 @@ algebraic datatypes. A simple example where both approaches fail is
 \forall x : {\typeint}.\;\, \lite\bigl(
 x \leq 0,\allowbreak\; \con{p}( x ) \teq 1,\allowbreak\; \con{p}( x ) \teq 2 * \con{p}( x - 1 ) \bigr)
 \end{equation}
-This state of affairs is highly unsatisfactory, given the frequence of
+This state of affairs is highly unsatisfactory, given the frequency of
 recursive definitions in practice and the impending addition of a dedicated
 command, \texttt{define-fun-rec}, to the SMT-LIB standard \cite{smtlib25}.
 
@@ -1293,7 +1293,7 @@ produces proofs and counterexamples for properties of terminating functions
 written in a subset of Scala. Leon is based on an SMT solver. It avoids
 quantifiers altogether by unfolding recursive definitions up to a certain
 depth, which is increased on a per-need basis.
-The approach described in this paper works in an analagous manner, 
+The approach described in this paper works in an analogous manner, 
 where instead the SMT solver is invoked only once 
 and where quantifier instantiation amounts to function unfolding. It would be
 worth investigating how existing approaches for algorithms based on function
