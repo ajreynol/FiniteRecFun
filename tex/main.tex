@@ -266,7 +266,7 @@ unsatisfiability), but they are of little help for finding models (i.e.,
 showing satisfiability). Often, a single universal quantifier in one of the
 axioms of a problem is enough to prevent the discovery of models.
 
-In the past few years, techniques have been developed to finding models for
+In the past few years, techniques have been developed to find models for
 quantified formulas in SMT.
 Ge and de Moura \cite{GeDeM-CAV-09} introduced a complete instantiation-based
 procedure for formulas in the \relax{essentially uninterpreted} fragment.
@@ -292,7 +292,7 @@ y \vee \allowbreak \neg \con{f}( x ) \teq \con{f}( y )$, where $\tau$ is an unin
 % where the uninterpreted type $\tau$ is
 % interpreted as a finite set and $\con{f}$ as injective finite map.
 
-Unfortunately, neither of these fragments can accommodate the vast majority of
+Unfortunately, none of these fragments can accommodate the vast majority of
 quantified formulas that correspond to recursive function definitions: The
 essentially uninterpreted fragment does not allow the argument of a
 recursive function to be used inside a complex term on the right-hand side,
@@ -326,8 +326,8 @@ $\forall a :
 $\fargtype{\tau}$ is an uninterpreted \relax{abstract} type and $\farg{\con{f}} :
 \fargtype{\tau} \to \tau$ converts the abstract type to the concrete
 type. The translation preserves satisfiability and, for admissible definitions,
-unsatisfiability, and makes finite model finding possible in practice
-for problems in this class.
+unsatisfiability, and makes finite model finding possible for problems in this
+class.
 
 Our empirical evaluation on benchmarks from the IsaPlanner proof planner~\cite{DBLP:conf/itp/JohanssonDB10}
 and the Leon verifier~\cite{blanc2013overview} provides
@@ -346,7 +346,7 @@ command-line option, the solver assumes that functions introduced using the
 \section{Preliminaries}
 \label{sec:prelim}
 
-Our setting is a (monomorphic) many-sorted first-order logic
+Our setting is a monomorphic (or many-sorted) first-order logic
 like the one defined by SMT-LIB \cite{smtlib25}.
 A \emph{signature} $\Sigma$ consists of
 a set $\stypes{\Sigma}$ of %ct type symbols
@@ -355,7 +355,7 @@ first-order types
 %\ct{What the rationale for using the letter $y$ in $\stypes{\Sigma}$?}
 %\jb{y as in t\textbf{y}pe. changed to `ty'}
 (or sorts) and a set $\sfuns{\Sigma}$ of function symbols over these types.
-We assume that signatures always include a Boolean type $\Bool$ and constants
+We assume that signatures always contain a Boolean type $\Bool$ and constants
 $\ltrue, \lfalse : \Bool$ for truth and falsity,
 an infix equality predicate ${\teq} : \tau \times \tau \to \Bool$
 for each $\tau \in \stypes{\Sigma}$,
@@ -400,8 +400,8 @@ Informally, we refer to the type and function symbols in this theory as \emph{un
 In addition to standard quantified formulas $\forall \vec x.\; \varphi$,
 we consider \emph{annotated quantified formulas} of the form
 $\forallf{\const{f}} \vec x.\; \varphi$, where $\con{f} \in \sfuns{\Sigma}$ is
-an uninterpreted function symbol, 
-whose semantics is the same as standard quantified formulas.
+an uninterpreted function symbol. Their
+semantics is the same as for standard quantified formulas.
 Given $\con{f} : \tau_1 \times \cdots \times \tau_n \rightarrow \tau$,
 an annotated
 quantified formula $\forallf{\con{f}} \vec x.\; \varphi$ is a \emph{function definition}
@@ -464,11 +464,11 @@ $\psi \wedge \bigwedge \Delta$ is also $T$-satisfiable.
 
 Admissibility is a semantic criterion that must be satisfied for each function
 definition before applying the translation described in
-Section~\ref{sec:encoding}. It is interesting it connect it with the
+Section~\ref{sec:encoding}. It is interesting to connect it to the
 standard notion of \emph{well-founded} function definitions, often called
 \emph{terminating} definitions in a slight abuse of terminology. In such
 definitions, all recursive calls are decreasing with respect to a well-founded
-relation $r$, which must be supplied by the user or inferred automatically
+relation, which must be supplied by the user or inferred automatically
 using a termination prover. This ensures that the function is uniquely defined
 at all points.
 
@@ -477,9 +477,9 @@ that a function specification is well-founded, it is sufficient to require that
 the function would terminate when seen as a functional program, under \emph{some}
 evaluation order. For example, definition~(\ref{eq:pii}) from the
 introduction can be shown well-founded under an evaluation strategy that
-consides one of the two $\lite$ branches, based on the result of evaluating the
-condition. Logically, such dependencies can be captured by congruence rules.
-Krauss developed these ideas in the more general context of
+evaluates the condition of a $\lite$ before evaluating the relevant branch,
+ignoring the other branch. Logically, such dependencies can be captured by
+congruence rules. Krauss developed these ideas in the more general context of
 higher-order logic \cite[Section 2]{krauss-2009-phd}.
 
 \begin{theorem}\label{thm:adm}
@@ -491,48 +491,50 @@ $\sfundefs{\Sigma} = \{\con{f}_1,\ldots,\con{f}_n\}$, then it is admissible.
 Let $\psi$ be a satisfiable formula closed under function expansion with
 respect to $\DDD$. We show that $\psi \wedge \bigwedge \Delta$ is also
 satisfiable. Let $\I$ be a model of $\psi$, and
-let $\J_0$ be the restriction of $\I$ to the function symbols in $\sfuns{\Sigma} -
+let $\I_0$ be the restriction of $\I$ to the function symbols in $\sfuns{\Sigma} -
 \sfundefs{\Sigma}$. Because well-founded definitions uniquely characterize
 the interpretation of the functions they define, there exists a
-$\Sigma$-interpretation $\J$ such that $\J \models \Delta$.
+$\Sigma$-interpretation $\J$ that extends $\I_0$ such that $\J \models \Delta$.
 %
 Since $\psi$ is closed under function expansion, it already constraints the
 functions in $\sfundefs{\Sigma}$ recursively as far as is
 necessary for interpreting $\psi$. Thus, any point $v$ for which
-$\const{f}_i^\I(v)$ is queried when interpreting $\psi$ will have its
+$\const{f}_i^\I(v)$ is needed for interpreting $\psi$ will have its
 expected value according to its definition and hence coincide with $\J$.
 And since $\psi^\I$ does not depend on the interpretation at the other
 points, $\J$ is, like $\I$, a model of $\psi$.
-Since $\J \models \Delta$, we have $\J \models \psi \wedge \bigwedge \Delta$,
-as desired.
+Since $\J \models \Delta$ by assumption, we have $\J \models \psi \wedge
+\bigwedge \Delta$, as desired.
 %We have
 %$\varphi \,\models_T\, \bigwedge\nolimits_{\,i=1}^{n} \{ \varphi_i[ \vec t / \vec x ] \mid \con{f}_i( \vec t ) \in \terms( \varphi ) \}$.
 \qed
 \end{proofsketch}
 
-Another useful fragment is the class of \emph{productive} corecursive
-functions. Corecursive functions are functions to a coalgebraic datatype.
-These functions can call themselves forever, without their being inconsistent.
-Productive corecursive functions are functions that progressively reveal parts
-of their (potentially infinite)
+Another useful fragment of function definitions is the class of
+\emph{productive} corecursive functions. Corecursive functions are functions to
+a coalgebraic datatype. These functions can call themselves forever, without
+their being inconsistent. Productive corecursive functions are functions that
+progressively reveal parts of their potentially infinite
 output \cite{turner-1995,mcbride-productive}.
-For example, given a type of infinite streams constructed by $\con{scons}$,
+For example, given a type of infinite streams constructed by
+$\con{scons} : \ty{int} \times \ty{stream} \to \ty{stream}$,
 the definition
-$\{\forallf{\const{e}} n.\;\, \const{e}(n) \teq \con{scons}(n,\; \const{e}(n + 1))\}$
-falls within this fragment, since each call to $\const{e}$ produces one
+$\{\forallf{\const{e}} x.\;\, \const{e}(x) \teq \con{scons}(x,\; \const{e}(x + 1))\}$
+falls within this fragment: Each call to $\const{e}$ produces one
 constructor before entering the nested call. Like terminating recursion,
 productive corecursion totally specify the functions it defines.
 It is even possible to mix recursion and corecursion in the same function
-\cite{blanchette-et-al-2015-fouco}. We believe Theorem~\ref{thm:adm} can
-be extended to cover such specifications.
+\cite{blanchette-et-al-2015-fouco}. Theorem~\ref{thm:adm} can be extended to
+cover such specifications, based on the observation that an infinite unfolding
+of a corecursive definition yields a uniquely specified infinite object.
 
-Beyond totality, an admissible set can include underspecified functions
-such as $\{ \forallf{\con{f}} x : \typeint.\;\, \con{f}( x )
-\teq \con{f}( x - 1 ) \}$ or $\{ \forallf{\con{g}} x.\allowbreak\;\, \con{g}( x
-) \teq \con{g}( x ) \}$. More generally, it appears that one can ignore all
+Beyond totality, an admissible set can contain underspecified functions
+such as $\forallf{\con{f}} x : \typeint.\;\, \con{f}( x )
+\teq \con{f}( x - 1 )$ or $\forallf{\con{g}} x.\allowbreak\;\, \con{g}( x
+) \teq \con{g}( x )$. More generally, it appears that one can ignore all
 tail-recursive calls (i.e., calls that occur on the right-hand side, possibly
 in some $\lite$ branch) when establishing well-foundedness or productivity,
-without affecting admissibility, but this remains to be proved.
+without affecting admissibility. % but this remains to be proved.
 
 An example of an inadmissible function set is
 $\{ \forallf{\con{f}} x.\;\, \con{f}( x ) \teq \con{f}( x ) + 1 \}$,
@@ -540,8 +542,8 @@ since the formula $\ltrue$ is (trivially) closed under function expansion with r
 and there is no model of $T$
 satisfying $\con{f}$'s definition. A more subtle specimen is
 \[\{ 
- \forallf{\con{f}} x.\;\, \con{f}( x ) \teq \con{f}( x ),\;
- \forallf{\con{g}} x.\;\, \lite\bigl( \con{f}( x ) \teq 5,\;
+ \forallf{\con{f}} x.\;\, \con{f}( x ) \teq \con{f}( x ),\;\,
+ \forallf{\con{g}} x.\;\, \lite( \con{f}( x ) \teq 5,\;
    \con{g}( x ) \teq \con{f}( x ),\,
    \con{g}( x ) \teq \con{g}( x ) + 1)
 \}\]
@@ -625,7 +627,7 @@ satisfiability of $\varphi$.
 More precisely,
 suppose our signature $\Sigma$ contains a set of defined function symbols $\sfundefs{\Sigma} \subseteq \sfuns{\Sigma}$.
 For each $\con{f} : \tau_1 \times \cdots \times \tau_n \rightarrow \tau \in \sfundefs{\Sigma}$,
-the extended signature $\extendsig{\Sigma}$ includes
+the extended signature $\extendsig{\Sigma}$ contains
 \begin{itemize}
 \item an uninterpreted \emph{abstract type} $\fargtype{\con{f}}$;
 \item $n$ uninterpreted \emph{concretization functions} $\fargx{\con{f}}{1} : \fargtype{\con{f}} \rightarrow \tau_1$, \ldots, $\fargx{\con{f}}{n} : \fargtype{\con{f}} \rightarrow \tau_n$.
@@ -735,7 +737,7 @@ current SMT techniques
 %%% and I cannot remember numbers like [9,18,19] across sections or even
 %%% paragraphs. --jb
 are unable to find
-a model for this formula. The signature $\extendsig{\Sigma}$ includes the type
+a model for this formula. The signature $\extendsig{\Sigma}$ contains the type
 $\fargtype{\con{s}}$ and the uninterpreted function $\farg{\con{s}}$ of type $\fargtype{\con{s}}
 \rightarrow \typeint$. The result of $\conv( \varphi )$ 
 is $\varphi'$ which (after simplification) is the $\extendsig{\Sigma}$-formula
@@ -827,7 +829,7 @@ functions in $\sfuns{\Sigma} - \sfundefs{\Sigma}$, i.e., $\{
 
 In the following, for a ground formula $\varphi$, 
 we write $\absconstraints( \varphi )$ to denote the set of constraints 
-that force our concretization functions to include the necessary elements in their range
+that force our concretization functions to have the necessary elements in their range
 for determining the satisfiability of $\varphi$ with respect to function definitions in our translation.
 Formally, we define $\absconstraints( \varphi )$ as:
 \[
