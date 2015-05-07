@@ -980,7 +980,7 @@ It is easy to see that any interpretation $\I$ satisfying formula~(\ref{eq:ex-af
 where $L_0 = \{ \con{s}( \con{c} ) > 100 \}$, 
 where $\absconstraints( L_0 )$ contains the single constraint $\exists a : {\fargtype{\con{s}}}. (\farg{\con{s}}( a ) \teq \con{c})$.
 %The latter ensures that $\I$ satisfies a formula that entails both $\con{s}( \con{c} ) > 100$ and $\varphi_{\con{s}}[\con{c}/x]$.
-Since $\I$ also satisfies both the translated function definition for $\con{s}$ (e.g. the first conjunct of formula~(\ref{eq:ex-after})) 
+Since $\I$ also satisfies both the translated function definition for $\con{s}$, i.e. the first conjunct of formula~(\ref{eq:ex-after}),
 and $\absconstraints( L_0 )$, it must also satisfy the formula $\psi_1$:
 \[
 \lite\bigl( \con{c} \leq 0,\; 
@@ -988,8 +988,7 @@ and $\absconstraints( L_0 )$, it must also satisfy the formula $\psi_1$:
             \con{s}(\con{c}) \teq \con{c} + \con{s}( \con{c}-1 )
             \wedge \exists b : {\fargtype{\con{s}}}.\;\, (\farg{\con{s}}( b ) \teq \con{c}-1) \bigr) \bigr)
 \]
-
-The existential $\exists b : {\fargtype{\con{s}}}.\;\, (\farg{\con{s}}( b ) \teq \con{c}-1)$ above
+The existential $\exists b : {\fargtype{\con{s}}}.\;\, (\farg{\con{s}}( b ) \teq \con{c}-1)$ in the above formula
 ensures that whenever $\I$ satisfies the set $L_1 = L_0 \cup \{ \neg \con{c} \leq 0, \con{s}(\con{c}) \teq \con{c} + \con{s}( \con{c}-1 ) \}$,
 $\I$ satisfies $\absconstraints( L_1 )$ as well.
 Hence, by repeated applications of this reasoning, it follows that
@@ -1003,12 +1002,11 @@ a model of formula~(\ref{eq:ex-after}) that interprets $\con{c}$ as $n$ must als
 \end{split}
 \end{equation}
 %
-This formula is closed under function expansion,
-since it contains the $\con{s}$ applications corresponding to
-$\con{s}( \con{c}-i )$ for $i = 0, \ldots, n$. The formula also
-entails $\varphi_\con{s}[\con{c}-i/x]$ for $i = 0, \ldots, n$.
+This formula is closed under function expansion
+since it entails $\varphi_\con{s}[\con{c}-i/x]$ for $i = 0, \ldots, n$,
+and contains (only) the $\con{s}$ applications corresponding to $\con{s}( \con{c}-i )$ for $i = 0, \ldots, n$.
 Since $\varphi_\con{s}$ is an admissible definition,
-there must exist a $\Sigma$-interpretation satisfying $\psi \wedge \forallf{\con{s}} x.\;\, \varphi_\con{s}$
+there is a $\Sigma$-interpretation satisfying $\psi \wedge \forallf{\con{s}} x.\;\, \varphi_\con{s}$
 which entails formula~(\ref{eq:ex-before}).\xend
 \end{example}
 
@@ -1301,11 +1299,20 @@ produces proofs and counterexamples for properties of terminating functions
 written in a subset of Scala. Leon is based on an SMT solver. It avoids
 quantifiers altogether by unfolding recursive definitions up to a certain
 depth, which is increased iteratively as necessary.
-\jb{Andy: Can you add some more here? You're the Leon pro! E.g. why/when do we think
-that our approach might be better?}
-\ct{About Leon, the reviewers and readers may wonder why we do not do the same, that is, just progressively unfold the recursive definitions until a model is found.
-We should probably say something in this regard.
-}
+The approach described in this paper works in an analagous manner, 
+where instead the SMT solver is invoked only once 
+and where quantifier instantiation amounts to function unfolding.
+It is worth investigating how existing approaches for algorithms based on function unfolding
+can inform approaches for dedicated quantifier instantiation techniques for function definitions,
+and vice versa.
+%\jb{Andy: Can you add some more here? You're the Leon pro! E.g. why/when do we think
+%that our approach might be better?}
+%\ct{About Leon, the reviewers and readers may wonder why we do not do the same, that is, just progressively unfold the recursive definitions until a model is found.
+%We should probably say something in this regard.
+%}
+% It is not a question of "should you instead unfold function definitions?" since that's essential what quantifier instantiation does.  
+% The question is "is quantifier instantiation a good way of unfolding function definitions?" 
+% or "how can we instrument quantifier instantiation to mimic/improve upon existing strategies for function unfolding? --ajr
 
 Model finding is concerned with satisfying arbitrary logical constraints. Some
 tools are optimized to work with problems that correspond to total functional
