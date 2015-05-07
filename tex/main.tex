@@ -675,15 +675,15 @@ quantification on function definitions for $\con{f}$ to the corresponding
 uninterpreted type $\fargtype{\con{f}}$ and inserts appropriate selectors
 $\fargx{\con{f}}{i}$. Second, it augments $\varphi$ with additional existential
 constraints
-$\exists a : \fargtype{\con{f}}.\;\, (\vecfarg{\con{f}}( a ) \teq \vec t)$; these
+$\exists a : \fargtype{\con{f}}.\;\, \vecfarg{\con{f}}( a ) \teq \vec t$; these
 ensure that the restricted definition for $\con{f}$ covers all relevant tuples
 of terms, namely the ones for which an $\con{f}$ application exists and is
 relevant to the satisfiability of $\varphi$.
 %\jb{what does ``current branch of'' mean? can we drop it / rephrase it / vague
 %it up?}
 
-If $t$ is an application of a logical predicate $\boolop
-\in \{{\neg}, {\wedge}, {\vee}, {\teq}, {\lite}\}$,
+If $t$ is an application of a predicate $\boolop$,
+%\in \{{\neg}, {\wedge}, {\vee}, {\teq}, {\lite}\}$,
 $\conv_0$ calls itself recursively on the arguments $t_i$ and polarity $\pol(
 \boolop, i, p )$, where $\pol$ is defined as
 \begin{equation*}
