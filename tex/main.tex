@@ -239,7 +239,7 @@ in presence of (universally) quantified formulas.
 However, these generally cannot cope with universal quantifiers ranging over
 infinite types, such as integers and algebraic datatypes. This paper introduces
 a translation that eliminates infinite quantifiers in axioms specifying a large
-class of recursive functions, including terminating, tail-recursive, and
+class of recursive functions, including terminating and
 productive functions. An empirical evaluation confirms that the approach works
 well on benchmarks from two sources. The translation is implemented as a
 preprocessor in the solver CVC4.
@@ -306,7 +306,7 @@ In this paper, we present a method for translating formulas involving recursice 
 definitions into formulas where finite model finding techniques can be applied.
 The recursive functions must meet a semantic criterion to be admissible
 (Section~\ref{sec:prelim}). This criterion is met by terminating recursive
-function definitions, but also by tail-recursive functions and even by
+function definitions, but also by
 \relax{productive} corecursive functions. It is, however, not met by inconsistent
 definitions such as $\forall n : {\typeint}.\;\, \con{f}(n) \teq \con{f}(n) +
 1$, %ct and it is possible to construct consistent examples that do not meet it.
@@ -455,6 +455,33 @@ the formula
 $\varphi \wedge (\forallf{\con{f}_1} \vec x.\; \varphi_1) \wedge \cdots \wedge (\forallf{\con{f}_n} \vec x.\; \varphi_n)$ is also $T$-satisfiable.
 \ct{I}
 \end{definition}
+
+Admissibility is a semantic criterion that must be satisfied for each function
+definition before applying the translation described in
+Section~\ref{sec:encoding}. This criterion is general enough to accommodate
+\emph{well-founded} function definitions, also called ``terminating'' definitions in a
+slight abuse of terminology. In such definitions, all recursive calls are
+decreasing with respect to a well-founded relation $r$, which must be supplied
+by the user or inferred automatically using a termination prover.
+
+First-order logic has built-in notion of computation or termination. To ensure
+that a function specification is well-founded, it is sufficient to require that
+it would terminate when seen as a functional program for \relax{some}
+evaluation order. For example,
+$\{\forall n : {\typeint}.\;\, \lite\bigl(
+n \leq 0,\allowbreak\; \con{p}( n ) \teq 1,\allowbreak\; \con{p}( n ) \teq 2 * \con{p}( n - 1 ) \bigr)\}$
+can be shown well-founded under an evaluation strategy that consides one of the
+two $\lite$ branches, based on the result of evaluating the condition.
+Logically, such dependencies can be captured by congruence rules. Krauss
+develops these ideas systematically in the more general context of higher-order
+logic \cite[Section 2]{krauss-2009-phd}.
+
+\begin{theorem}
+Well-founded f
+\end{theorem}
+
+
+\newpage
 
 For example, if $T$ is the theory of integer arithmetic,
 the set $\{ \forallf{\con{f}} \vec x:\typeint.\;\, \con{f}( x ) \teq 0 \}$ is admissible.
