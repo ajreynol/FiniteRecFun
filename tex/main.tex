@@ -200,6 +200,9 @@
 %\newcommand{\ari}{\ensuremath{\mathrm{A}}\xspace}
 \newcommand{\ari}{\ensuremath{\mathcalx{A}}\xspace}
 
+\newcommand{\absconstraints}{X}
+
+\newtheorem{cor}{Corollary}
 
 %\input{scalalistings}
 %\input{smtlib2listings}
@@ -232,7 +235,7 @@ Department of Computer Science, University of Iowa, USA
 
 \begin{abstract}
 SMT solvers have recently been extended with techniques for finding models
-in presence of quantified formulas.
+in presence of (universally) quantified formulas.
 However, these generally cannot cope with universal quantifiers ranging over
 infinite types, such as integers and algebraic datatypes. This paper introduces
 a translation that eliminates infinite quantifiers in axioms specifying a large
@@ -755,13 +758,27 @@ functions in $\sfuns{\Sigma} - \sfundefs{\Sigma}$, i.e., $\{
 %issue, because $s$ is the very function that was explicitly defined by the
 %user, and hence already has an intended interpretation.
 
+In the following, for a ground formula $\varphi$, 
+we write $\absconstraints( \varphi )$ to denote the set of constraints 
+that force our concretization functions to include the necessary elements in their range
+for determining the satisfiability of $\varphi$ with respect to function definitions in our translation.
+Formally, we define $\absconstraints( \varphi )$ as:
+\[
+\absconstraints( \varphi ) = \{ \exists a : {\fargtype{\con{f}}}. ( \vecfarg{\con{f}}( a ) \teq \vec t ) \mid \con{f}( \vec t ) \in \terms( \varphi ), \con{f} \in \sfundefs{\Sigma} \}
+\]
+The following lemma states the central invariant behind our conversion function $\conv$.
+
 \begin{lemma}\label{lem:conv}
-If $\varphi$ is a formula not containing function definitions,
-and $\I$ is a $\extendsig{\Sigma}$-interpretation satisfying $\conv( \varphi )$,
-then $\I$ satisfies a set of $\Sigma$-literals $L$ that entail $\varphi$,
-and $\I$ satisfies
-$\{ \exists a : {\fargtype{\con{f}}}. ( \vecfarg{\con{f}}( a ) \teq \vec t ) \mid \con{f}( \vec t ) \in \terms( L ), \con{f} \in \sfundefs{\Sigma} \}$.
+Let $\varphi$ be a formula not containing function definitions,
+and $\I$ be a $\extendsig{\Sigma}$-interpretation satisfying $\conv( \varphi )$.
+Then, $\I$ satisfies a set of literals $L \cup \absconstraints( L )$ such that $L$ is a set of $\Sigma$-literals that entail $\varphi$.
+%There exists a set of ground $\Sigma$-literals $L$ such that $L$ entails $\varphi$, 
+%and $\I$ satisfies $L \cup \absconstraints( L )$.
 \end{lemma}
+
+\begin{cor}\label{cor:conv}
+If $\varphi$ is a formula not containing function definitions, then $\conv( \varphi )$ entails $\varphi$.
+\end{cor}
 
 \begin{theorem}\label{thm:equi}
 If $\varphi$ is a\/ $\Sigma$-formula that is in definitional form with respect to\/
@@ -789,39 +806,44 @@ $\extendsig{\Sigma}$-interpretation $\I$, then $\varphi$ is satisfied by
 $\Sigma$-interpretation $\J$. Since $\varphi$ is in definitional form with
 respect to the functions defined by $\DDD$, we know $\varphi$ is of the form
 $\DDD \wedge \varphi_0$. 
-We argue that $\I$ satisfies a $\Sigma$-formula
-$\psi$ that is closed under function expansion with respect to $\DDD$, and
-where $\psi$ entails $\varphi_0$.
-To construct $\psi$, we define a sequence of sets of $\extendsig{\Sigma}$-literals $M_0 \subseteq M_1 \subseteq \ldots$ 
-such that each $M_i$ is 
-satisfied by $\I$ and
-can be partitioned into two sets $L_i$ and $X_i$,
-where $L_i$ are $\Sigma$-literals,
-and $X_i$ consists of literals of the form $\exists a : {\fargtype{\con{f}}}. ( \vecfarg{\con{f}}( a ) \teq \vec t )$
-for each term $\con{f}( \vec t ) \in \terms( L_i )$ where $\con{f} \in \sfundefs{\Sigma}$.
-Let $M_0$ be 
-a set of literals over atoms occurring in $\conv{ \varphi_0 }$
-such that $\I$ satisfies each literal in $M_0$ and $\bigwedge M_0$ entails $\conv( \varphi_0 )$.
-By case analysis on the return values of $\conv_0$ 
-it can be shown that $M_0$ can be partitioned into $L_0$ and $X_0$ in the way described above.
+%We argue that $\I$ satisfies a $\Sigma$-formula
+%$\psi$ that is closed under function expansion with respect to $\DDD$, and
+%where $\psi$ entails $\varphi_0$.
+%To construct $\psi$, 
+First, we define a sequence of $\Sigma$-literals sets $L_0 \subseteq L_1 \subseteq \ldots$
+such that $\I$ satisfies $L_i \cup \absconstraints( L_i )$ for each $i = 0, 1, \ldots$.
+Since $\I$ satisfies $\conv( \varphi_0 )$,
+by Lemma~\ref{lem:conv}, 
+$\I$ satisfies a set of literals $L \cup \absconstraints( L )$ where $L$ is a set of $\Sigma$-literals that entail $\varphi_0$.
+Let $L_0 = L$.
 For each $i \geq 0$,
-let $\psi'$ be $\bigwedge \{ \conv( \varphi_f[ \vec t / \vec x ] ) \mid \con{f}( \vec t ) \in \terms( L_i ), f \in \sfundefs{\Sigma} \}$,
-where $\varphi_f$ denotes the function definition of $f$ in $\DDD$.
-Note that $\I$ also satisfies $\psi'$ since $\I$ satisfies $X_i$.
-Let $M_{i+1}$ be the union of $M_0$ and
-a set of literals $M$ over atoms occurring in $\psi'$
-such that $\I$ satisfies each literal in $M$ and $\bigwedge M$ entails $\psi'$,
-where we again may partition $M_{i+1}$ into $L_{i+1}$ and $X_{i+1}$.
-Let $M^\ast$ be the limit of this sequence, 
-which we may partition into (possibly infinite) sets $X^\ast$ and $L^\ast$ in the same way as above.
-Let $\psi$ be the $\Sigma$-formula $\bigwedge L^\ast$.
-We know $\psi$ is closed under function expansion with respect to $\DDD$ due to its construction.
-Since there exists a model for $\psi$ that is closed under function expansion
-with respect to $\DDD$, then since $\DDD$ is admissible, by definition there
-exists a model for $\psi \wedge \DDD$, which entails $\DDD \wedge \varphi_0$,
+let $\psi_i$ be the formula $\bigwedge \{ \conv( \varphi_{\con{f}}[ \vec t / \vec x ] ) \mid \con{f}( \vec t ) \in \terms( L_i ), f \in \sfundefs{\Sigma} \}$,
+where the function definition of $\con{f}$ in $\DDD$ is $\forallf{f} \vec x. \varphi_{\con{f}}$.
+Since $\I$ satisfies $\conv( \forallf{f} \vec x. \varphi_{\con{f}} )$ and $\absconstraints( L_i )$,
+we know that $\I$ also satisfies $\psi_i$.
+Thus by Lemma~\ref{lem:conv},
+$\I$ satisfies a set of literals $L \cup \absconstraints( L )$ where $L$ is a set of $\Sigma$-literals that entail $\psi_i$.
+Let $L_{i+1} = L_0 \cup L$.
+Let $L_n$ be the limit of this sequence,
+and let $\psi$ be the $\Sigma$-formula $\bigwedge L_n$.
+To show $\psi$ is closed under function expansion with respect to $\DDD$,
+first note that by construction $\psi$ entails $\psi_n$.
+For any function $\con{f}$ and terms $\vec t$, since $\varphi_{\con{f}}[ \vec t / \vec x ]$ does not contain function definitions,
+by Corollary~\ref{cor:conv},
+$\conv( \varphi_{\con{f}}[ \vec t / \vec x ] )$ entails $\varphi_{\con{f}}[ \vec t / \vec x ]$.
+Thus, $\psi$ entails $\{ \varphi_{\con{f}}[ \vec t / \vec x ] \mid \con{f}( \vec t ) \in \terms( \psi ), f \in \sfundefs{\Sigma} \}$,
+which by definition implies that $\psi$ is closed under function expansion with respect to $\DDD$.
+Furthermore, $\psi$ entails $\varphi_0$ since $L_0 \subseteq L_n$.
+Since $\psi$ is a $T$-satisfiable formula that is closed under function expansion with respect to $\DDD$ and $\DDD$ is admissible, 
+by definition there exists a $\Sigma$-interpretation $\J$ satisfying $\psi \wedge \DDD$, which entails $\DDD \wedge \varphi_0$,
 which is $\varphi$.
+\ajr{Sketchy referring to "limit" of sequence, if it can be infinite. TODO: clarify/restrict.}
 \qed
 \end{proofsketch}
+
+The intuition of the above proof is as follows.
+
+For clarity, we demonstrate this in the context of a concrete example.
 
 \begin{example}
 Let us revisit the translated formula~(\ref{eq:ex-after}) from
@@ -851,9 +873,8 @@ satisfies $\varphi_{\con{s}}[\con{c}/x]$. The nested existential
 $\exists b.\;\, \farg{\con{s}}( b ) \teq \farg{\con{s}}( a )-1$ ensures that
 a similar constraint is enforced recursively: when $\varphi_{\con{s}}[t/x]$ is used in part to evaluate $\con{s}( \con{c} )$,
 any model of $\varphi_{\con{s}}[t/x]$ must also satisfy $\varphi_{\con{s}}[t-1/x]$ when $t > 0$. Given a model $\I$ of
-formula~(\ref{eq:ex-after}) that interprets $\con{c}$ as $14$, it is easy to see that
-due to the structure of formula~(\ref{eq:ex-after}),
-$\I$ must satisfy the following formula $\psi$:
+formula~(\ref{eq:ex-after}) that interprets $\con{c}$ as $14$,
+due to the structure of formula~(\ref{eq:ex-after}), it can be shown that $\I$ must satisfy the following formula $\psi$:
 %
 \begin{equation} \label{eq:fun-closure}
 \begin{split}
