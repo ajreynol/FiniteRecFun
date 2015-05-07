@@ -461,7 +461,7 @@ $\psi \wedge \bigwedge \Delta$ is also $T$-satisfiable.
 
 Admissibility is a semantic criterion that must be satisfied for each function
 definition before applying the translation described in
-Section~\ref{sec:encoding}. It is interesting it connect it with the more
+Section~\ref{sec:encoding}. It is interesting it connect it with the
 standard notion of \emph{well-founded} function definitions, often called
 \emph{terminating} definitions in a slight abuse of terminology. In such
 definitions, all recursive calls are decreasing with respect to a well-founded
@@ -489,15 +489,16 @@ Let $\psi$ be a satisfiable formula closed under function expansion with
 respect to $\DDD$. We show that $\psi \wedge \bigwedge \Delta$ is also
 satisfiable. Let $\I$ be a model of $\psi$, and
 let $\J_0$ be the restriction of $\I$ to the function symbols in $\sfuns{\Sigma} -
-\sfundefs{\Sigma}$. By hypothesis, there exists a $\Sigma$-interpretation
-$\J$ such that $\J \models \Delta$.
+\sfundefs{\Sigma}$. Because well-founded definitions uniquely characterize
+the interpretation of the functions they define, there exists a
+$\Sigma$-interpretation $\J$ such that $\J \models \Delta$.
 %
 Since $\psi$ is closed under function expansion, it already constraints the
 functions in $\sfundefs{\Sigma}$ recursively as far as is
 necessary for interpreting $\psi$. Thus, any point $v$ for which
 $\const{f}_i^\I(v)$ is queried when interpreting $\psi$ will have its
 expected value according to its definition and hence coincide with $\J$.
-And since the $\psi^\I$ does not depend on the interpretation at the other
+And since $\psi^\I$ does not depend on the interpretation at the other
 points, $\J$ is, like $\I$, a model of $\psi$. Furthermore, $\J \models \Delta$
 by assumption. Thus, $\J \models \psi \wedge \bigwedge \Delta$.
 %We have
