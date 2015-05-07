@@ -654,7 +654,7 @@ in its range.
 \begin{example}
 \label{ex:translation}
 Consider the combined signature of linear arithmetic and uninterpreted
-functions $\Sigma = \Sigmalia \mathrel{\cup} \Sigma_{\euf}$, where
+functions $\Sigma = \Sigmalia \mathrel{\uplus} \Sigma_{\euf}$, where
 %$\stypes{\Sigma_{\euf}} = \{ \typeint \}$ 
 %\ct{shouldn't this be $\stypes{\Sigmalia} = \{ \typeint \}$?}
 %and
@@ -666,9 +666,10 @@ Let $\varphi$ be the $\Sigma$-formula
   \con{s}( n ) \teq n + \con{s}( n - 1 ) \bigr) \wedge \con{s}( \con{c} ) > 100
 \end{equation}
 %
-Here, $\const{s}$ is a function that returns the sum of the positive integers
-up to $n$. The formula $\varphi$ is in definitional form with
-respect to $\sfundefs{\Sigma_u}$ and states that the sum of all
+The definition of $\const{s}$ specifies that it returns the sum of the
+positive integers up to $n$. The formula $\varphi$ is in definitional form with
+respect to $\sfundefs{\Sigma_{\euf}}$ \jb{correct? It said $\Sigma_u$, which was
+definitely wrong} and states that the sum of all
 positive numbers between $0$ and $\const{c}$ is greater than $100$. This formula is
 satisfiable with a model that interprets $\const{c}$ as an integer greater than or
 equal to $14$. Due to the universal quantifier,
