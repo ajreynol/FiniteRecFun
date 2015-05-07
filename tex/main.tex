@@ -203,7 +203,7 @@
 %\newcommand{\ari}{\ensuremath{\mathrm{A}}\xspace}
 \newcommand{\ari}{\ensuremath{\mathcalx{A}}\xspace}
 
-\newcommand{\absconstraints}{X}
+\newcommand{\absconstraints}{\mathrm{X}}
 
 \newtheorem{cor}{Corollary}
 
@@ -813,7 +813,7 @@ satisfiable or unsatisfiable response from an SMT solver on input $\conv(
 \varphi )$ implies the existence or nonexistence of a model for
 $\varphi$. Moreover, the models of $\conv( \varphi )$ contain
 pertinent information regarding the models of $\varphi$. For example, the model
-$\I$ for formula~(\ref{eq:ex-after}) described above interprets $\con{c}$ as $14$
+$\I$ for formula~(\ref{eq:ex-after}) given above interprets $\con{c}$ as $14$
 and $\con{s}(n) = \sum_{i=1}^n i$ for $0 \le n \le 14$,
 and there exists a model of formula~(\ref{eq:ex-before}) that also interprets
 $\con{c}$ and and $\con{s}(n)$ in the same way (for $0 \le n \le 14$).
@@ -837,15 +837,18 @@ users debug their specifications.
 %%% want to see the partial information available about defined functions. I've
 %%% added a couple of sentences above to that effect.
 
-In the following, for a ground formula $\varphi$, 
-we write $\absconstraints( \varphi )$ to denote the set of constraints 
-that force our concretization functions to have the necessary elements in their range
-for determining the satisfiability of $\varphi$ with respect to function definitions in our translation.
-Formally, we define $\absconstraints( \varphi )$ as:
-\[
-\absconstraints( \varphi ) = \{ \exists a : {\fargtype{\con{f}}}. ( \vecfarg{\con{f}}( a ) \teq \vec t ) \mid \con{f}( \vec t ) \in \terms( \varphi ), \con{f} \in \sfundefs{\Sigma} \}
-\]
-The following lemma states the central invariant behind our translation $\conv$.
+In the following, for a set of ground literals $L$, 
+we write $\absconstraints( L )$ to denote the set of constraints that
+force the concretization functions to have the necessary elements in their
+range for determining the satisfiability of $L$ with respect to function
+definitions in the translation.
+Formally, we define
+$\absconstraints( L )$
+as
+$\{ \exists a : {\fargtype{\con{f}}}.\;\, \vecfarg{\con{f}}( a ) \teq \vec t
+\mid \con{f}( \vec t ) \in \terms( L ),\: \con{f} \in \sfundefs{\Sigma}
+\}$.
+The following lemma states the central invariant behind the translation $\conv$.
 
 \begin{lemma}\label{lem:conv}
 Let $\varphi$ be a formula not containing function definitions,
@@ -860,13 +863,14 @@ By definition of $\conv$ and case analysis on the return values of $\conv_0$.
 \end{proofsketch}
 
 \begin{cor}\label{cor:conv}
-If $\varphi$ is a formula not containing function definitions, then $\conv( \varphi )$ entails $\varphi$.
+If $\varphi$ is a formula not containing function definitions, then $\extendsig{\Sigma} = \Sigma$
+and $\conv( \varphi )$ entails $\varphi$.
 \end{cor}
 
 \begin{theorem}\label{thm:equi}
 If $\varphi$ is a\/ $\Sigma$-formula that is in definitional form with respect to\/
 $\sfundefs{\Sigma}$
-and the set of function definitions\/ $\DDD$ corresponding to functions in
+and the set of function definitions\/ $\DDD$ corresponding to functions in\/
 $\sfundefs{\Sigma}$ is admissible, then\/ $\varphi$ and\/ $\conv( \varphi )$ are
 equisatisfiable.
 \end{theorem}
