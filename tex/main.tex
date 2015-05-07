@@ -401,8 +401,8 @@ Given $\con{f} : \tau_1 \times \cdots \times \tau_n \rightarrow \tau$,
 an annotated
 quantified formula $\forallf{\con{f}} \vec x.\; \varphi$ is a \emph{function definition}
 (\,\emph{for $\con{f}$}\vthinspace) if $\vec x$ is a tuple of variables
-$x_1, \ldots, x_n$ of respective type
-$\tau_1, \ldots, \tau_n$ and $\varphi$ is a quantifier-free formula 
+$x_1 : \tau_1$, $\ldots,$ $x_n : \tau_n$
+and $\varphi$ is a quantifier-free formula 
 $T$-equivalent to $\con{f}( \vec x ) \teq t$ for some term $t$ of type $\tau$.
 %\ct{Why can't $\varphi$ be existential instead of just quantifier free?} 
 %I don't think it makes much sense to have any quantifiers within function bodies, 
@@ -412,7 +412,8 @@ We write $\exists
 
 \begin{definition}\rm
 A formula $\varphi$ is in \emph{definitional form with respect to}
-$\{ \con{f}_1, \ldots, \con{f}_n \}$ if it is of the form
+$\{ \con{f}_1, \ldots, \con{f}_n \} \subseteq \sfuns{\Sigma}$ if it is of the
+form
 %
 %\kern-\abovedisplayskip
 %\kern+\abovedisplayshortskip
@@ -420,12 +421,13 @@ $\{ \con{f}_1, \ldots, \con{f}_n \}$ if it is of the form
 \[(\forallf{\con{f}_1} \vec x_1.\; \varphi_1) \wedge \cdots \wedge
 (\forallf{\con{f}_n} \vec x_n.\; \varphi_n) \wedge \psi\]
 %
-where $\con{f}_1, \ldots, \con{f}_n \in \sfuns{\Sigma}$ are distinct function symbols,
+where $\con{f}_1, \ldots, \con{f}_n$ are distinct function symbols,
 %ct added
 $\forallf{\con{f}_i} \vec x_i.\; \varphi_i$ is a function definition
 for $i = 1, \ldots, n$,
 %
 \ct{I think we need more conditions here on how a symbol $\con{f}_i$ can occur in $\varphi_j$.}
+\jb{do we?}
 and $\psi$ contains no function definitions.
 We call $\psi$ the \emph{conjecture} of $\varphi$.
 %\ct{Don't we need additional restrictions on the $\varphi_i$'s here?
@@ -433,9 +435,8 @@ We call $\psi$ the \emph{conjecture} of $\varphi$.
 % Now fixed above -ajr
 \end{definition}
 
-Given a signature $\Sigma$,
-we distinguish the subset of (\emph{recursively}) \emph{defined} function
-symbols $\sfundefs{\Sigma} \subseteq \sfuns{\Sigma}$.
+Given a signature $\Sigma$, we distinguish the subset of \emph{defined}
+function symbols $\sfundefs{\Sigma} \subseteq \sfuns{\Sigma}$.
 We consider $\Sigma$-formulas that are in definitional form with respect to
 $\sfundefs{\Sigma}$.
 
@@ -449,9 +450,9 @@ is \emph{closed under function expansion with respect to $\DDD$} if
  \varphi \,\models_T\, \bigwedge\nolimits_{\,i=1}^{n} \{ \varphi_i[ \vec t / \vec x ] \mid \con{f}_i( \vec t ) \in \terms( \varphi ) \} .
 \]
 The set $\DDD$ is \emph{admissible} if for every $T$-satisfiable formula 
-$\varphi$ closed under function expansion wrt $\DDD$
+$\varphi$ closed under function expansion with respect to $\DDD$,
 the formula
-$\varphi \wedge \forallf{\con{f}_1} \vec x.\; \varphi_1 \wedge \cdots \wedge \forallf{\con{f}_n} \vec x.\; \varphi_n$ is also $T$-satisfiable.
+$\varphi \wedge (\forallf{\con{f}_1} \vec x.\; \varphi_1) \wedge \cdots \wedge (\forallf{\con{f}_n} \vec x.\; \varphi_n)$ is also $T$-satisfiable.
 \ct{I}
 \end{definition}
 
