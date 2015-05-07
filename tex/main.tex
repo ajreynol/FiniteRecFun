@@ -369,7 +369,7 @@ type~$\tau$ and $\terms( t )$ to denote the set of subterms in $t$.
 Given a term $u$, we write $u[\vec t/\vec x]$ to denote the result of replacing
 all occurrences of $\vec x$ with $\vec t$ in $u$.
 
-%We write $\functerms^\Sigma( t )$ to denote the set of $f$-applications in $t$ such that $f \in \sfundefs{\Sigma}$.
+%We write $\functerms^\Sigma( t )$ to denote the set of $f$-applications in $t$ such that $\con{f} \in \sfundefs{\Sigma}$.
 
 A \emph{$\Sigma$-interpretation $\I$} %is a mathematical structure that
 maps each type $\tau \in \stypes{\Sigma}$ to a nonempty set $\tau^\I$,
@@ -905,14 +905,14 @@ by Lemma~\ref{lem:conv},
 $\I$ satisfies a set of literals $L \cup \absconstraints( L )$ where $L$ is a set of $\Sigma$-literals that entail $\varphi_0$.
 Let $L_0 = L$.
 For each $i \geq 0$,
-let $\psi_i$ be the formula $\bigwedge \{ \conv( \varphi_{\con{f}}[ \vec t / \vec x ] ) \mid \con{f}( \vec t ) \in \terms( L_i ), f \in \sfundefs{\Sigma} \}$,
-where the function definition of $\con{f}$ in $\DDD$ is $\forallf{f} \vec x. \varphi_{\con{f}}$.
-Since $\I$ satisfies $\conv( \forallf{f} \vec x. \varphi_{\con{f}} )$ and $\absconstraints( L_i )$,
+let $\psi_i$ be the formula $\bigwedge\, \{ \conv( \varphi_{\con{f}}[ \vec t / \vec x ] ) \mid \con{f}( \vec t ) \in \terms( L_i ),\: \con{f} \in \sfundefs{\Sigma} \}$,
+where the function definition of $\con{f}$ in $\DDD$ is $\forallf{\con{f}} \vec x.\; \varphi_{\con{f}}$.
+Since $\I$ satisfies $\conv( \forallf{\con{f}} \vec x.\; \varphi_{\con{f}} )$ and $\absconstraints( L_i )$,
 we know that $\I$ also satisfies $\psi_i$.
 Thus by Lemma~\ref{lem:conv},
 $\I$ satisfies a set of literals $L \cup \absconstraints( L )$ where $L$ is a set of $\Sigma$-literals that entail $\psi_i$.
 Let $L_{i+1} = L_0 \cup L$.
-Let $L_\infty$ be the limit of this sequence (i.e., $\ell \in L_\infty$ if and only
+Let $L_\infty$ be the limit of this sequence (i.e., $\ell \in L_\infty$ if and only if
 $\ell \in L_i$ for some $i$),
 and let $\psi$ be the $\Sigma$-formula $\bigwedge L_\infty$.
 To show $\psi$ is closed under function expansion with respect to $\DDD$,
@@ -920,7 +920,7 @@ first note that by construction $\psi$ entails $\psi_\infty$.
 For any function $\con{f}$ and terms $\vec t$, since $\varphi_{\con{f}}[ \vec t / \vec x ]$ does not contain function definitions,
 by Corollary~\ref{cor:conv},
 $\conv( \varphi_{\con{f}}[ \vec t / \vec x ] )$ entails $\varphi_{\con{f}}[ \vec t / \vec x ]$.
-Thus, $\psi$ entails $\{ \varphi_{\con{f}}[ \vec t / \vec x ] \mid \con{f}( \vec t ) \in \terms( \psi ), f \in \sfundefs{\Sigma} \}$,
+Thus, $\psi$ entails $\{ \varphi_{\con{f}}[ \vec t / \vec x ] \mid \con{f}( \vec t ) \in \terms( \psi ), \con{f} \in \sfundefs{\Sigma} \}$,
 which by definition implies that $\psi$ is closed under function expansion with respect to $\DDD$.
 Furthermore, $\psi$ entails $\varphi_0$ since $L_0 \subseteq L_\infty$.
 Since $\psi$ is a $T$-satisfiable formula that is closed under function expansion with respect to $\DDD$ and $\DDD$ is admissible, 
