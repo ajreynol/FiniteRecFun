@@ -127,7 +127,7 @@
 %\newcommand{\functerms}{\mathbf{DFT}}
 \newcommand{\vars}{\mathbf{V}}
 \newcommand{\M}{\mathcalx{M}}
-\newcommand{\I}{\mathcalx{J}} %%% there's no difference, right? --JB
+\newcommand{\I}{\mathcalx{I}} %%% there's no difference, right? --JB  need to simultaneously refer to 2 different interpretations --ajr.
 %% (I find \mathcalx{I} ugly, with its two horizontal bars, hence the J)
 \newcommand{\J}{\mathcalx{J}}
 \def\AIF{\qtab\keyword{if}\ }
@@ -174,7 +174,7 @@
 \newcommand{\fnull}{\emptyset}
 \newcommand{\vecfarg}[1]{\vec{\concret}_{#1}}
 \newcommand{\farg}[1]{\concret_{#1}}
-\newcommand{\fargx}[2]{\concret^{\vthinspace#2}_{#1}}
+\newcommand{\fargx}[2]{\concret_{#1,\vthinspace#2}}
 \newcommand{\fargtype}[1]{\alpha_{#1}}
 
 \newcommand{\Sigmalia}{\Sigma_{\mathcalx{LIA}}}
@@ -754,9 +754,8 @@ functions in $\sfuns{\Sigma} - \sfundefs{\Sigma}$, i.e., $\{
 \begin{lemma}\label{lem:conv}
 If $\varphi$ is a formula not containing function definitions,
 and $\I$ is a $\extendsig{\Sigma}$-interpretation satisfying $\conv( \varphi )$,
-then $\I$ satisfies a set of literals $L \cup X$ such that
-$L$ is a set of $\Sigma$-literals that entail $\varphi$,
-and $X$ is the set of literals
+then $\I$ satisfies a set of $\Sigma$-literals $L$ that entail $\varphi$,
+and $\I$ satisfies
 $\{ \exists a : {\fargtype{\con{f}}}. ( \vecfarg{\con{f}}( a ) \teq \vec t ) \mid \con{f}( \vec t ) \in \terms( L ), \con{f} \in \sfundefs{\Sigma} \}$.
 \end{lemma}
 
@@ -845,7 +844,7 @@ model. In more detail, let $\varphi_\con{s}$ be the formula $\forallf{\con{s}} x
 formula~(\ref{eq:ex-after}) satisfying $\con{s}( \con{c} ) > 100$ also
 satisfies $\varphi_{\con{s}}[\con{c}/x]$. The nested existential
 $\exists b.\;\, \farg{\con{s}}( b ) \teq \farg{\con{s}}( a )-1$ ensures that
-a similar constraint is enforced recursively: when $\varphi_{\con{s}}[t/x]$ is used in part to evaluate $s( c )$,
+a similar constraint is enforced recursively: when $\varphi_{\con{s}}[t/x]$ is used in part to evaluate $\con{s}( \con{c} )$,
 any model of $\varphi_{\con{s}}[t/x]$ must also satisfy $\varphi_{\con{s}}[t-1/x]$ when $t > 0$. Given a model $\I$ of
 formula~(\ref{eq:ex-after}) that interprets $\con{c}$ as $14$, it is easy to see that
 due to the structure of formula~(\ref{eq:ex-after}),
@@ -1090,7 +1089,7 @@ an unsatisfiable problem. For example, if we add the inconsistent definition
 \end{verbatim}
 \end{quote}
 %
-to the above problem, \cvc will still produce the same output
+to the above problem, \cvc will still return ``satisfiable"
 if \texttt{--fmf-fun} is specified.
 
 %Usually not interested in showing logical consistency, there
