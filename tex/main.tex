@@ -673,10 +673,17 @@ The definition of $\const{s}$ specifies that it returns the sum of the
 positive integers up to $x$. The formula $\varphi$ is in definitional form with
 respect to $\sfundefs{\Sigma_{\euf}}$ \jb{correct? It said $\Sigma_u$, which was
 definitely wrong} and states that the sum of all
-positive numbers between $0$ and $\const{c}$ is greater than $100$. This formula is
-satisfiable with a model that interprets $\const{c}$ as an integer greater than or
-equal to $14$. Due to the universal quantifier,
-current SMT techniques~\cite{GeDeM-CAV-09, ReyEtAl-1-RR-13,reynolds-et-al-2013} are unable to find
+positive numbers up to $\const{c}$ is greater than $100$. This formula is
+satisfiable with a model that interprets $\const{c}$ as $14$ or more.
+Due to the universal quantifier,
+current SMT techniques
+%~\cite{GeDeM-CAV-09, ReyEtAl-1-RR-13,reynolds-et-al-2013}
+%%% We described them in the intro. When I see references like that appear with
+%%% no description, as a reader, I get all paranoid and wonder if it's the old
+%%% stuff from the intro (Ge, Moura, Renoylds et al.) or if it's new stuff ---
+%%% and I cannot remember numbers like [9,18,19] across sections or even
+%%% paragraphs. --jb
+are unable to find
 a model for this formula. The signature $\extendsig{\Sigma}$ includes the type
 $\fargtype{\con{s}}$ and the uninterpreted function $\farg{\con{s}}$ of type $\fargtype{\con{s}}
 \rightarrow \typeint$. The result of $\conv( \varphi )$ 
