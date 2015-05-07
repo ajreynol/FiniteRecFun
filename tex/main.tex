@@ -80,6 +80,9 @@
 
 \renewcommand\vec[1]{\overline{#1}}
 
+\let\oldcup=\cup
+\def\cup{\mathrel{\oldcup}}
+
 \let\oldchi=\chi
 \def\chi{{\vthinspace\oldchi}}
 
@@ -614,6 +617,7 @@ $\conv( \varphi )$ $=$
    \itemx[] $\mathsf{let}$ $( \varphi',\, \_ ) = \conv_0( \varphi,\, \ppos )$ $\mathsf{in}$
    %\itemx[] $\mathsf{assert}( D = \emptyset )$;
    \itemx[] \return $\varphi'$
+\\[-1.5\baselineskip] %% TYPESETTING
   \end{itemize}
 \end{enumerate}
 \caption{\,Definition of function $\conv$}
@@ -852,7 +856,7 @@ The following lemma states the central invariant behind our conversion function 
 \begin{lemma}\label{lem:conv}
 Let $\varphi$ be a formula not containing function definitions,
 and let $\I$ be an $\extendsig{\Sigma}$-interpretation.
-Then, $\I$ satisfies $\conv( \varphi )$ if and only if
+Then $\I$ satisfies $\conv( \varphi )$ if and only if
 $\I$ satisfies $L \cup \absconstraints( L )$, where $L$ is a set of ground $\Sigma$-literals that entail $\varphi$.
 %There exists a set of ground $\Sigma$-literals $L$ such that $L$ entails $\varphi$, 
 %and $\I$ satisfies $L \cup \absconstraints( L )$.
@@ -923,7 +927,7 @@ Furthermore, $\psi$ entails $\varphi_0$ since $L_0 \subseteq L_n$.
 Since $\psi$ is a $T$-satisfiable formula that is closed under function expansion with respect to $\DDD$ and $\DDD$ is admissible, 
 by definition there exists a $\Sigma$-interpretation $\J$ satisfying $\psi \wedge \DDD$, which entails $\DDD \wedge \varphi_0$,
 which is $\varphi$.
-\ajr{Sketchy referring to "limit" of sequence, if it can be infinite. TODO: clarify/restrict.}
+%\ajr{Sketchy referring to "limit" of sequence, if it can be infinite. TODO: clarify/restrict.}
 \qed
 \end{proofsketch}
 
