@@ -174,7 +174,7 @@
 \newcommand{\fnull}{\emptyset}
 \newcommand{\vecfarg}[1]{\vec{\concret}_{#1}}
 \newcommand{\farg}[1]{\concret_{#1}}
-\newcommand{\fargx}[2]{\concret_{#1,\vthinspace#2}}
+\newcommand{\fargx}[2]{\concret_{#1,#2}}
 \newcommand{\fargtype}[1]{\alpha_{#1}}
 
 \newcommand{\Sigmalia}{\Sigma_{\mathcalx{LIA}}}
@@ -551,14 +551,14 @@ $\conv( \varphi )$ $=$
 \label{fig:A}
 \end{figure}
 
-First, we fix a signature $\Sigma$ and a $\Sigma$-formula
+We fix a signature $\Sigma$ and a $\Sigma$-formula
 $\varphi$ in definitional form with respect to $\sfundefs{\Sigma}$,
 whose definitions are admissible.
-%We may translate $\varphi$ into a equisatisfiable formula $\psi$ for which known model-finding procedures~\cite{GeDeM-CAV-09, ReyEtAl-1-RR-13} are applicable.
+%We may translate $\varphi$ into a equisatisfiable formula $\phi'$ for which known model-finding procedures~\cite{GeDeM-CAV-09, ReyEtAl-1-RR-13} are applicable.
 This section presents a method for constructing an extended signature
-$\extendsig{ \Sigma }$ and an $\extendsig{ \Sigma }$-formula $\psi$ such that
-$\psi$ is satisfiable if and only if $\varphi$ is satisfiable---i.e.,
-$\varphi$ and $\psi$ are \relax{equisatisfiable}.
+$\extendsig{ \Sigma }$ and an $\extendsig{ \Sigma }$-formula $\varphi'$ such that
+$\varphi'$ is satisfiable if and only if $\varphi$ is satisfiable---i.e.,
+$\varphi$ and $\varphi'$ are \relax{equisatisfiable}.
 The intuition behind this translation
 is to use an uninterpreted type to abstract the set of
 \relax{relevant} tuples for each recursive function $\con{f}$ and restrict the
@@ -569,9 +569,8 @@ satisfiability of $\varphi$.
 
 More precisely,
 suppose our signature $\Sigma$ contains a set of defined function symbols $\sfundefs{\Sigma} \subseteq \sfuns{\Sigma}$.
-We extend the signature of $\Sigma$ to a signature $\extendsig{\Sigma}$ containing the following additional definitions.
 For each $\con{f} : \tau_1 \times \cdots \times \tau_n \rightarrow \tau \in \sfundefs{\Sigma}$,
-the signature $\extendsig{\Sigma}$ includes
+the extended signature $\extendsig{\Sigma}$ includes
 \begin{itemize}
 \item an uninterpreted \emph{abstract type} $\fargtype{\con{f}}$;
 \item $n$ uninterpreted \emph{concretization functions} $\fargx{\con{f}}{1} : \fargtype{\con{f}} \rightarrow \tau_1$, \ldots, $\fargx{\con{f}}{n} : \fargtype{\con{f}} \rightarrow \tau_n$.
@@ -676,7 +675,7 @@ current SMT techniques~\cite{GeDeM-CAV-09, ReyEtAl-1-RR-13,reynolds-et-al-2013} 
 a model for this formula. The signature $\extendsig{\Sigma}$ includes the type
 $\fargtype{\con{s}}$ and the uninterpreted function $\farg{\con{s}}$ of type $\fargtype{\con{s}}
 \rightarrow \typeint$. The result of $\conv( \varphi,\, \ppos )$ is the pair $(
-\psi,\, \ltrue )$, where (after simplification) $\psi$ is the
+\varphi',\, \ltrue )$, where (after simplification) $\varphi'$ is the
 $\extendsig{\Sigma}$-formula
 %
 \begin{equation} \label{eq:ex-after}
@@ -812,9 +811,9 @@ $\Sigma$-interpretation $\J$. Since $\varphi$ is in definitional form with
 respect to the functions defined by $\DDD$, we know $\varphi$ is of the form
 $\DDD \wedge \varphi_0$. 
 %We argue that $\I$ satisfies a $\Sigma$-formula
-%$\psi$ that is closed under function expansion with respect to $\DDD$, and
-%where $\psi$ entails $\varphi_0$.
-%To construct $\psi$, 
+%$\varphi'$ that is closed under function expansion with respect to $\DDD$, and
+%where $\varphi'$ entails $\varphi_0$.
+%To construct $\varphi'$, 
 First, we define a sequence of $\Sigma$-literals sets $L_0 \subseteq L_1 \subseteq \ldots$
 such that $\I$ satisfies $L_i \cup \absconstraints( L_i )$ for each $i = 0, 1, \ldots$.
 Since $\I$ satisfies $\conv( \varphi_0 )$,
