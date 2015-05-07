@@ -248,8 +248,9 @@ preprocessor in the solver CVC4.
 \section{Introduction}
 \label{sec:introduction}
 
-\ct{The paper used "recursive datatype" in some places and "inductive datatype" in others. I have replaced both by "algebraic datatype" which is more accurate for \cvc.
-("recursive datatype" is a more general notion and "inductive datatype" has a stronger meaning in higher-order logics.)}  
+%\ct{The paper used "recursive datatype" in some places and "inductive datatype" in others. I have replaced both by "algebraic datatype" which is more accurate for \cvc.
+%("recursive datatype" is a more general notion and "inductive datatype" has a stronger meaning in higher-order logics.)}  
+%% I agree --JB.
 
 Many solvers based on SMT (satisfiability modulo theories) can reason about
 quantified formulas using incomplete instantiation-based methods
@@ -277,8 +278,8 @@ this fragment slightly, including cases when variables occur as arguments of
 arithmetic predicates. Subsequently, Reynolds et al.\
 \cite{ReyEtAl-1-RR-13,reynolds-et-al-2013} introduced techniques for finding finite
 models for quantified
-formulas over uninterpreted types as well as types having a fixed finite
-interpretation, such as fixed-width bit vectors and enumerated datatypes.
+formulas over uninterpreted types and types having a fixed finite
+interpretation. %, such as fixed-width bit vectors and enumerated datatypes.
 These techniques can
 find a model for a formula such as $\forall x,\, y : \tau.\;\, x \teq
 y \vee \allowbreak \neg \con{f}( x ) \teq \con{f}( y )$, where $\tau$ is an uninterpreted type.
