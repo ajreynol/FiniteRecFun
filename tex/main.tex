@@ -670,8 +670,9 @@ why insist on using it for concrete variables of type int, when literature
 normally uses $i, \ldots, n$ (and keeps $x$ for real numbers and such)?}
 The definition of $\const{s}$ specifies that it returns the sum of the
 positive integers up to $x$. The formula $\varphi$ is in definitional form with
-respect to $\sfundefs{\Sigma_{\euf}}$ \jb{correct? It said $\Sigma_u$, which was
-definitely wrong} and states that the sum of all
+respect to $\sfundefs{\Sigma}$ 
+%\jb{correct? It said $\Sigma_u$, which was definitely wrong} 
+and states that the sum of all
 positive numbers up to $\const{c}$ is greater than $100$. This formula is
 satisfiable with a model that interprets $\const{c}$ as $14$ or more.
 Due to the universal quantifier,
@@ -784,8 +785,9 @@ The following lemma states the central invariant behind our conversion function 
 
 \begin{lemma}\label{lem:conv}
 Let $\varphi$ be a formula not containing function definitions,
-and let $\I$ be a $\extendsig{\Sigma}$-interpretation satisfying $\conv( \varphi )$.
-Then, $\I$ satisfies $L \cup \absconstraints( L )$, where $L$ is a set of ground $\Sigma$-literals that entail $\varphi$.
+and let $\I$ be a $\extendsig{\Sigma}$-interpretation.
+Then, $\I$ satisfies $\conv( \varphi )$ if and only if
+$\I$ satisfies $L \cup \absconstraints( L )$, where $L$ is a set of ground $\Sigma$-literals that entail $\varphi$.
 %There exists a set of ground $\Sigma$-literals $L$ such that $L$ entails $\varphi$, 
 %and $\I$ satisfies $L \cup \absconstraints( L )$.
 \end{lemma}
@@ -810,10 +812,11 @@ interprets $\fargtype{\con{f}}$ as a tuple of values of type $\tau_1^\I \times \
 and each $\fargx{\con{f}}{i}$ as the $i^{th}$ projection on such tuples for each $i = 1, \ldots, n$.
 Note that $\J$ satisfies \emph{every} constraint of the form $\exists a : {\fargtype{\con{f}}}. ( \vecfarg{\con{f}}( a ) \teq \vec t )$,
 since by our construction of $\J$ there exists an $a$ such that $a^\J = \vec t^\J$.
-By case analysis it follows that $\conv_0$ maintains the invariant that
-if $\conv_0( t\typ{\Bool}, \ppos )$ returns $( {t'}, \chi )$,
-then $\I$ satisfies $t$ if and only if $\J$ satisfies $t'$.
-Thus, we conclude $\J$ is a model of $\conv( \varphi )$.
+%By case analysis it follows that $\conv_0$ maintains the invariant that
+%if $\conv_0( t\typ{\Bool}, \ppos )$ returns $( {t'}, \chi )$,
+%then $\I$ satisfies $t$ if and only if $\J$ satisfies $t'$.
+Since $\J$ satisfies $\varphi$, it satisfies a set of ground literals $L$ that entail $\varphi$.
+Thus, $\J$ satisfies $L \cup \absconstraints( L )$, and by Lemma~\ref{lem:conv} we conclude $\J$ satisfies $\conv( \varphi )$.
 
 Second, we show that if $\conv( \varphi )$ is satisfied by a
 $\extendsig{\Sigma}$-interpretation $\I$, then $\varphi$ is satisfied by
