@@ -328,7 +328,7 @@ unsatisfiability, and makes finite model finding possible in practice
 for problems in this class.
 
 Our empirical evaluation on benchmarks from the IsaPlanner proof planner~\cite{DBLP:conf/itp/JohanssonDB10}
-and the Leon verifier~\cite{suter-et-al-2011} provides
+and the Leon verifier~\cite{blanc2013overview} provides
 evidence that this translation improves the effectiveness of the SMT solvers
 \cvc and \ziii for finding counterexamples to verification conditions
 (Section~\ref{sec:evaluation}). The approach is implemented as a preprocessor
@@ -746,6 +746,7 @@ Let $\varphi$ be the $\Sigma$-formula
 \jb{I think $x$ is a great name for a metavariable standing for a variable, but
 why insist on using it for concrete variables of type int, when literature
 normally uses $i, \ldots, n$ (and keeps $x$ for real numbers and such)?}
+\ajr{To me, $n$ typically refers to some concrete numeral, e.g. $14$.  The reason I changed the instance above is to be consistent with Example 2, which I noticed was using $x$ (and also uses $n$ to refer to a concrete numeral). So, I think I'd still prefer $x$ here.}
 The definition of $\const{s}$ specifies that it returns the sum of the
 positive integers up to $x$. The formula $\varphi$ is in definitional form with
 respect to $\sfundefs{\Sigma}$ 
@@ -888,12 +889,12 @@ all functions $\con{f} \in \sfuns{\Sigma}$ as $\con{f}^\I$,
 and for each function $\con{f}$ of type $\tau_1 \times \cdots \tau_n \rightarrow \tau$ in $\sfundefs{\Sigma}$,
 interprets $\fargtype{\con{f}}$ as a tuple of values of type $\tau_1^\I \times \cdots \times \tau_n^\I$,
 and each $\fargx{\con{f}}{i}$ as the $i^{th}$ projection on such tuples for each $i = 1, \ldots, n$.
-Note that $\J$ satisfies \emph{every} constraint of the form $\exists a : {\fargtype{\con{f}}}. ( \vecfarg{\con{f}}( a ) \teq \vec t )$,
+Since $\J$ satisfies $\varphi$, it satisfies a set of ground literals $L$ that entail $\varphi$.
+Furthermore, $\J$ satisfies \emph{every} constraint of the form $\exists a : {\fargtype{\con{f}}}. ( \vecfarg{\con{f}}( a ) \teq \vec t )$,
 since by our construction of $\J$ there exists an $a$ such that $a^\J = \vec t^\J$.
 %By case analysis it follows that $\conv_0$ maintains the invariant that
 %if $\conv_0( t\typ{\Bool}, \ppos )$ returns $( {t'}, \chi )$,
 %then $\I$ satisfies $t$ if and only if $\J$ satisfies $t'$.
-Since $\J$ satisfies $\varphi$, it satisfies a set of ground literals $L$ that entail $\varphi$.
 Thus, $\J$ satisfies $L \cup \absconstraints( L )$, and by Lemma~\ref{lem:conv} we conclude $\J$ satisfies $\conv( \varphi )$.
 
 Second, we show that if $\conv( \varphi )$ is satisfied by a
@@ -977,7 +978,7 @@ where $\varphi_\con{s}$ is the formula $\lite\bigl( x \leq 0, \con{s}(x) \teq 0,
 %any model of $\varphi_{\con{s}}[t/x]$ must also satisfy $\varphi_{\con{s}}[t-1/x]$ when $t > 0$. 
 It is easy to see that any interpretation $\I$ satisfying formula~(\ref{eq:ex-after}) satisfies $L_0 \cup \absconstraints( L_0 )$,
 where $L_0 = \{ \con{s}( \con{c} ) > 100 \}$, 
-where $\absconstraints( L_0 )$ contains the single constraint $\exists a : {\fargtype{\con{s}}}. (\farg{\con{s}}( a ) \teq \con{c})$.
+where $\absconstraints( L_0 )$ is the set consisting of the single constraint $\exists a : {\fargtype{\con{s}}}. (\farg{\con{s}}( a ) \teq \con{c})$.
 %The latter ensures that $\I$ satisfies a formula that entails both $\con{s}( \con{c} ) > 100$ and $\varphi_{\con{s}}[\con{c}/x]$.
 Since $\I$ also satisfies both the translated function definition for $\con{s}$, i.e. the first conjunct of formula~(\ref{eq:ex-after}),
 and $\absconstraints( L_0 )$, it must also satisfy the formula $\psi_1$:
@@ -1003,7 +1004,7 @@ a model of formula~(\ref{eq:ex-after}) that interprets $\con{c}$ as $n$ must als
 %
 This formula is closed under function expansion
 since it entails $\varphi_\con{s}[\con{c}-i/x]$ for $i = 0, \ldots, n$,
-and contains (only) the $\con{s}$ applications corresponding to $\con{s}( \con{c}-i )$ for $i = 0, \ldots, n$.
+and contains only $\con{s}$ applications corresponding to $\con{s}( \con{c}-i )$ for $i = 0, \ldots, n$.
 Since $\varphi_\con{s}$ is an admissible definition,
 there is a $\Sigma$-interpretation satisfying $\psi \wedge \forallf{\con{s}} x.\;\, \varphi_\con{s}$
 which entails formula~(\ref{eq:ex-before}).\xend
@@ -1124,10 +1125,12 @@ They are divided into benchmarks triggering \emph{unsat} and \emph{sat}
 responses and further into benchmarks before and after the translation $\conv$.
 The raw evaluation data reveals no cases in which a solver answered
 \emph{unsat} on a benchmark $\varphi$ and \emph{sat} on its
-corresponding benchmark $\conv( \varphi )$, or vice versa, 
-thereby corroborating Theorem~\ref{thm:equi}.
-\ct{?! \emph{Theorems} do not need corroboration! 
-Maybe we should say "consistently with Theorem~\ref{thm:equi}"?}
+corresponding benchmark $\conv( \varphi )$, or vice versa.
+This is consistent with our expectations and Theorem~\ref{thm:equi}, 
+since these benchmarks contained only sets of function definitions that we expected were admissible.
+%thereby confirming Theorem~\ref{thm:equi}.
+%\ct{?! \emph{Theorems} do not need corroboration! 
+%Maybe we should say "consistently with Theorem~\ref{thm:equi}"?}
 
 Figure~\ref{fig:sat} shows that for untranslated benchmarks (the ``$\varphi$''
 columns), the number of \emph{sat} responses is very low, across all
@@ -1293,7 +1296,7 @@ application. This approach works reasonably well in Nitpick, because it builds
 on Kodkod's relational logic, but our initial experiments with \cvc convinced
 us that it is more efficient to avoid unknown values by adding constraints.
 
-The Leon system \cite{suter-et-al-2011} implements a procedure that can both
+The Leon system~\cite{blanc2013overview} implements a procedure that can both
 produces proofs and counterexamples for properties of terminating functions
 written in a subset of Scala. Leon is based on an SMT solver. It avoids
 quantifiers altogether by unfolding recursive definitions up to a certain
