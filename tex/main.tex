@@ -237,8 +237,8 @@ Department of Computer Science, University of Iowa, USA
 Model finding in SMT solvers is
 generally limited to universally quantified formulas in some restricted fragment.
 This paper introduces a translation which reduces axioms specifying a large
-class of recursive functions, including terminating and
-productive functions to universally quantified formulas for which known
+class of recursive functions, including well-founded (terminating),
+to universally quantified formulas for which known
 techniques are applicable.
 An empirical evaluation confirms that the approach improves 
 the performance of existing solvers on benchmarks from two sources. 
@@ -307,12 +307,11 @@ command, \texttt{define-fun-rec}, to the SMT-LIB standard \cite{smtlib25}.
 In this paper, we present a method for translating formulas involving recursice function
 definitions into formulas where finite model finding techniques can be applied.
 The recursive functions must meet a semantic criterion to be admissible
-(Section~\ref{sec:prelim}). This criterion is met by terminating recursive
-function definitions, but also by
-\relax{productive} corecursive functions. It is, however, not met by inconsistent
+(Section~\ref{sec:prelim}). This criterion is met by well-founded (terminating)
+recursive function definitions. It is not met by inconsistent
 definitions such as $\forall n : {\typeint}.\;\, \con{f}(n) \teq \con{f}(n) +
-1$, %ct and it is possible to construct consistent examples that do not meet it.
-as well as other example of consistent definition.
+1$. %ct and it is possible to construct consistent examples that do not meet it.
+%as well as other examples of consistent definition.
 
 We define a translation for a class of
 formulas involving admissible recursive function definitions
@@ -480,42 +479,9 @@ condition. Logically, such dependencies can be captured by congruence rules.
 Krauss develops these ideas in the more general context of
 higher-order logic \cite[Section 2]{krauss-2009-phd}.
 
-Another useful fragment is the class of \emph{productive} corecursive
-functions. Corecursive functions are functions to a coalgebraic datatype.
-These functions can call themselves forever, without their being inconsistent.
-Productive corecursive functions are functions that progressively reveal parts
-of their (potentially infinite)
-output \cite{turner-1995,mcbride-productive}.
-For example, given a type of infinite streams constructed by $\con{scons}$,
-the definition
-$\{\forallf{\const{e}} n.\;\, \const{e}(n) \teq \con{scons}(n,\; \const{e}(n + 1))\}$
-falls within this fragment, since each call to $\const{e}$ produces one
-constructor before entering the nested call. Like terminating recursion,
-productive corecursion totally specify the functions it defines.
-It is even possible to mix recursion and corecursion in the same function
-\cite{blanchette-et-al-2015-fouco}.
-
-\begin{definition}
-Let $\DDD = \{ \forallf{\con{f}_1} \vec x.\; \varphi_1, \ldots,
-\forallf{\con{f}_n} \vec x.\; \varphi_n \}$ be a set of function definitions.
-This set forms a \emph{layered }(\emph{co})\emph{recursive specification} if
-$\const{f}_i$'s definition may not syntactically refer to $\const{f}_{j}$ for
-all $i < j$ and each $\const{f}_i$ is either well-founded recursive
-or productive corecursive.
-\end{definition}
-
-\begin{definition}\rm
-Let $\DDD$ be a set of function definitions for $\sfundefs{\Sigma}$. The set
-$\DDD$ is \emph{layered-total} if for every
-$(\stypes{\Sigma},\, \sfuns{\Sigma} - \sfundefs{\Sigma})$-interpretations
-$\J_0$, there exists a unique
-$\Sigma$-interpretation $\J$ that extends $\J_0$
-and for which $\J \models \DDD$.
-\end{definition}
-
-\begin{theorem}
+\begin{theorem}\ref{thm:adm}
 If
-$\DDD$ is a total set of function definitions for
+$\DDD$ is a set of well-founded function definitions for
 $\sfundefs{\Sigma} = \{\con{f}_1,\ldots,\con{f}_n\}$, then it is admissible.
 \end{theorem}
 \begin{proofsketch}
@@ -538,6 +504,24 @@ assumption. Thus, $\J \models \psi \wedge \bigwedge \Delta$.
 %$\varphi \,\models_T\, \bigwedge\nolimits_{\,i=1}^{n} \{ \varphi_i[ \vec t / \vec x ] \mid \con{f}_i( \vec t ) \in \terms( \varphi ) \}$.
 \qed
 \end{proofsketch}
+
+
+
+Another useful fragment is the class of \emph{productive} corecursive
+functions. Corecursive functions are functions to a coalgebraic datatype.
+These functions can call themselves forever, without their being inconsistent.
+Productive corecursive functions are functions that progressively reveal parts
+of their (potentially infinite)
+output \cite{turner-1995,mcbride-productive}.
+For example, given a type of infinite streams constructed by $\con{scons}$,
+the definition
+$\{\forallf{\const{e}} n.\;\, \const{e}(n) \teq \con{scons}(n,\; \const{e}(n + 1))\}$
+falls within this fragment, since each call to $\const{e}$ produces one
+constructor before entering the nested call. Like terminating recursion,
+productive corecursion totally specify the functions it defines.
+It is even possible to mix recursion and corecursion in the same function
+\cite{blanchette-et-al-2015-fouco}. We believe Theorem~\ref{thm:adm} can
+be extended to such specifications.
 
 Beyond totality, an admissible set can include definitions of non-well-founded
 functions---for example,
