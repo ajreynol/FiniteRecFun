@@ -444,8 +444,8 @@ form
 %\kern-\abovedisplayskip
 %\kern+\abovedisplayshortskip
 %
-\[(\forallf{\con{f}_1} \vec x_1.\; \varphi_1) \wedge \cdots \wedge
-(\forallf{\con{f}_n} \vec x_n.\; \varphi_n) \wedge \psi\]
+$(\forallf{\con{f}_1} \vec x_1.\; \varphi_1) \wedge \cdots \wedge
+(\forallf{\con{f}_n} \vec x_n.\; \varphi_n) \wedge \psi$,
 %
 where $\con{f}_1, \ldots, \con{f}_n$ are distinct function symbols,
 %ct added
@@ -649,10 +649,12 @@ More precisely,
 suppose our signature $\Sigma$ contains a set of defined function symbols $\sfundefs{\Sigma} \subseteq \sfuns{\Sigma}$.
 For each $\con{f} : \tau_1 \times \cdots \times \tau_n \rightarrow \tau \in \sfundefs{\Sigma}$,
 the extended signature $\extendsig{\Sigma}$ contains
-\begin{itemize}
-\item an uninterpreted \emph{abstract type} $\fargtype{\con{f}}$;
-\item $n$ uninterpreted \emph{concretization functions} $\fargx{\con{f}}{1} : \fargtype{\con{f}} \rightarrow \tau_1$, \ldots, $\fargx{\con{f}}{n} : \fargtype{\con{f}} \rightarrow \tau_n$.
-\end{itemize}
+%\begin{itemize}
+%\item
+an uninterpreted \emph{abstract type} $\fargtype{\con{f}}$ and
+%\item
+$n$ uninterpreted \emph{concretization functions} $\fargx{\con{f}}{1} : \fargtype{\con{f}} \rightarrow \tau_1$, \ldots, $\fargx{\con{f}}{n} : \fargtype{\con{f}} \rightarrow \tau_n$.
+%\end{itemize}
 %The interpretation of uninterpreted type $\fargtype{\con{f}}$ will denote the elements (tuples) on which the function $\con{f}$ is applied.
 %The role of the uninterpreted functions $\farg{\con{f}}^1$, $\ldots$, $\farg{\con{f}}^n$ will be discussed more in the following.
 
@@ -713,7 +715,7 @@ $t'_1$ with $\vecfarg{\con{f}}( a )$. Since function definitions
 are a top-level conjunct, %by case analysis on the return values of $\conv$,
 $\chi$ must be $\ltrue$.
 
-If $t$ is an unannotated quantified formula, $\conv_0$ recursively calls itself
+If $t$ is an unannotated quantified formula, $\conv_0$ calls itself
 on the body with the same polarity. A quantifier is prefixed to the
 quantified formula and constraint returned by the recursive call.
 
@@ -800,18 +802,17 @@ within 100 milliseconds.\xend
 The translation $\conv$ results in formulas whose models are different than those of $\varphi$.
 %\ct{"Preserves models" means that it does not drop models, not that it adds models.}
 One model $\I$ for formula~(\ref{eq:ex-after}) in the above example interprets
-$\fargtype{\con{s}}$ as a finite set of elements $\{ u_0, \ldots, u_{14} \}$,
+$\fargtype{\con{s}}$ as a finite set $\{ u_0, \ldots, u_{14} \}$,
 $\farg{\con{s}}$ as a finite map $u_i \mapsto i$ for $i = 0, \ldots, 14$,
 $\con{c}$ as $14$,
 and $\con{s}$ as the (almost constant) function
 %
-%% TYPESETTING: \mathbin and to make it fit nicely
-\begin{equation} \label{eq:approx-interp}
-\lambda x : \typeint.\;\, \lite( x \mathbin{\teq} 0,\, 0,\,
-  \lite( x \mathbin{\teq} 1,\, 1,\,
-    \lite( x \mathbin{\teq} 2,\, 3,\,
-      \lite(\ldots,\; \lite( x \mathbin{\teq} 13,\, 91,\, 105 )\negvthinspace \ldots ))))
-\end{equation}
+%\begin{equation} \label{eq:approx-interp}
+\[\lambda x : \typeint.\;\, \lite( x \teq 0,\; 0,\;
+  \lite( x \teq 1,\; 1,\;
+    \lite( x \teq 2,\; 3,\;
+      \lite(\ldots,\; \lite( x \teq 13,\, 91,\, 105 )\negvthinspace \ldots ))))\]
+%\end{equation}
 %
 In other words, $\const{s}$ is interpreted as a function mapping $x$ to the sum
 of all positive integers up to $x$ when $0 \leq x \leq 13$, and $105$
@@ -896,7 +897,7 @@ $\sfundefs{\Sigma}$ is admissible, then\/ $\varphi$ and\/ $\conv( \varphi )$ are
 equisatisfiable.
 \end{theorem}
 \begin{proofsketch}
-First, we show that if $\varphi$ is satisfied by $\Sigma$-interpretation $\I$, then $\conv( \varphi )$ is satisfied by a $\extendsig{\Sigma}$-interpretation $\J$.
+First, we show that if $\varphi$ is satisfied by $\Sigma$-interpretation $\I$, then $\conv( \varphi )$ is satisfied by an $\extendsig{\Sigma}$-interpretation $\J$.
 Let $\J$ be the $\extendsig{\Sigma}$-interpretation that interprets all types $\tau \in \stypes{\Sigma}$ as $\tau^\I$,
 all functions $\con{f} \in \sfuns{\Sigma}$ as $\con{f}^\I$,
 and for each function $\con{f} : \tau_1 \times \cdots \times \tau_n \rightarrow \tau$ in $\sfundefs{\Sigma}$,
@@ -958,7 +959,7 @@ then the constraints of the form $\exists a : \fargtype{\con{f}}.\;\, (\vecfarg{
 occurring in $\conv( \varphi )$ ensure that this model also satisfies
 a $\Sigma$-formula that is closed under function expansion that entails the conjecture of $\varphi$.
 Hence when $\DDD$ is admissible, this implies the existence of a model for $\varphi$.
-For clarity, we demonstrate the consequences of this theorem by means of an example.
+%For clarity, we demonstrate the consequences of this theorem by means of an example.
 
 \begin{example}
 Let us revisit the translated formula~(\ref{eq:ex-after}) from
@@ -1008,11 +1009,9 @@ $\I$ satisfies $\absconstraints( L_1 )$ as well.
 Hence, by repeated application of this reasoning, it follows that
 a model of formula~(\ref{eq:ex-after}) that interprets $\con{c}$ as $n$ must also satisfy the formula $\psi$:
 %
-\[\begin{split}
-& \con{s}( \con{c} ) > 100 \wedge %\displaystyle
-  \bigwedge\nolimits_{\vthinspace i=0}^{\!n-1} \bigl( \neg (\con{c}-i \leq 0) \wedge \con{s}( \con{c}-i ) \teq \con{c}-i + \con{s}( \con{c}-i-1 ) \bigr) \\[-\jot]
-{\wedge}\; & \con{c}-n \leq 0 \wedge \con{s}( \con{c}-n ) \teq 0
-\end{split}\]
+\[\con{s}( \con{c} ) > 100 \wedge %\displaystyle
+  \bigwedge\nolimits_{\vthinspace i=0}^{\!n-1} \bigl( \neg (\con{c}-i \leq 0) \wedge \con{s}( \con{c}-i ) \teq \con{c}-i + \con{s}( \con{c}-i-1 ) \bigr)
+\wedge \con{c}-n \leq 0 \wedge \con{s}( \con{c}-n ) \teq 0\]
 %
 This formula is closed under function expansion
 since it entails $\varphi_\con{s}[(\con{c}-i)/x]$ for $i = 0, \ldots, n$,
@@ -1027,9 +1026,8 @@ which entails formula~(\ref{eq:ex-before}).\xend
 
 In this section, we evaluate both the overall impact of the translation
 introduced in the previous section and the performance of individual SMT
-techniques. The experimental data is publicly available online.%
-\footnote{\url{http://lara.epfl.ch/~reynolds/SMT2015-recfun/}}
-
+techniques.
+%
 We gathered a set of 245 benchmarks from two sources, which we will refer to as
 \isa and \leon. The first source consists of the 79
 benchmarks from the IsaPlanner
@@ -1059,24 +1057,24 @@ one position with another of the same type at another position.
 Note that benchmarks created in this way have a high likelihood of having small
 and easy-to-find countermodels. In total, we considered 213 mutated forms of
 conjectures from \isa and 427 mutated forms of conjectures from \leon. We will
-call these sets \isam and \leonm respectively.
+call these sets \isam and \leonm, respectively.
 
-In total, our benchmark set consisted of 885 benchmarks (640 mutants plus the
+Thus, our benchmark set consist of 885 benchmarks (640 mutants plus the
 original 245). We considered these 885 benchmarks both before and after the
 translation~$\conv$. % as described in Section~\ref{sec:encoding}.
 For example, \isa contains 79 original benchmarks $\varphi$ and 79 translated
 benchmarks $\conv(\varphi)$.
 
 For solvers, we considered the SMT solver \ziii~\cite{de-moura-bjoerner-2008},
-which runs both heuristic methods for quantifier instantiation~\cite{MouraBjoerner07},
-as well as methods for finding models for quantified formulas~\cite{GeDeM-CAV-09}.
+which runs both heuristic methods for quantifier instantiation~\cite{MouraBjoerner07}
+and methods for finding models for quantified formulas~\cite{GeDeM-CAV-09}.
 We also considered three configurations of \cvc~\cite{barrett-et-al-2011} which
 we will refer to as \cvcd, \cvcf, and \cvci.
 The default configuration \cvcd runs heuristic and conflict-based techniques for quantifier instantiation~\cite{ReynoldsTinelliMoura14},
 but does not include techniques for finding models.
-The configuration \cvcf runs heuristic instantiation and the finite model
-finding procedure due to Reynolds et al.\ \cite{ReyEtAl-1-RR-13,reynolds-et-al-2013}. The
-last configuration, \cvci, incorporates techniques for automating inductive
+\cvcf runs heuristic instantiation and the finite model
+finding procedure due to Reynolds et al.\ \cite{ReyEtAl-1-RR-13,reynolds-et-al-2013}.
+\cvci incorporates techniques for automating inductive
 reasoning in SMT~\cite{reynolds-kuncak-2015}.
 
 \begin{figure}[t]
@@ -1131,8 +1129,10 @@ Total & 187 & 209 & 216 & 211 & 217 & 204 & {\win 318} & 217
 \label{fig:unsat}
 \end{figure}
 
-The results are shown in Figures \ref{fig:sat} and \ref{fig:unsat}.
-They are divided into benchmarks triggering \emph{unsat} and \emph{sat}
+The results are summarized in Figures \ref{fig:sat} and \ref{fig:unsat}.
+The benchmarks and more detailed results are available online.%
+\footnote{\url{http://lara.epfl.ch/~reynolds/SMT2015-recfun/}}
+The figures are divided into benchmarks triggering \emph{unsat} and \emph{sat}
 responses and further into benchmarks before and after the translation $\conv$.
 The raw evaluation data reveals no cases in which a solver answered
 \emph{unsat} on a benchmark $\varphi$ and \emph{sat} on its
@@ -1180,17 +1180,17 @@ arguments are guided by the types of the quantified variables.
 The translation $\conv$ significantly improves the effectiveness of known SMT
 techniques for finding counterexamples for formulas involving recursive
 function definitions.
-For the convenience of end users, it
-has been implemented in the latest development version of \cvc %~\cite{ReyEtAl-1-RR-13}
+For convenience, it
+has been implemented in the development version of \cvc %~\cite{ReyEtAl-1-RR-13}
 (version~1.5 prerelease).
 Function definitions $\forallf{\con{f}} \vec x.\; \varphi$ can be written using the $\definefunreccmd$ command
 from the upcoming SMT-LIB 2.5 standard \cite{smtlib25}.
 For example, formula~(\ref{eq:ex-before}) from Example~\ref{ex:translation}
-can be specified as
+can be specified as %follows:
 %
 \begin{quote}
 %\small -- no small, unless you convince me that these mixtures of font sizes
-% are aesthetic and make sense --jb
+% are aesthetic and serve a purpose --jb
 \begin{verbatim}
 (define-fun-rec s ((x Int)) Int (ite (<= x 0) 0 (+ x (s (- x 1)))))
 (declare-fun c () Int)
@@ -1211,7 +1211,7 @@ assertions based on the translation $\conv$ before checking for satisfiability.
 %If the functions provided in the input are admissible,
 %then a ``satisfiable" response from the solver implies that a model exists for the original formula.
 Accordingly, the solver will output the approximation of the interpretation it
-used for recursive function definitions. For our example, it outputs
+used for recursive function definitions. For the example above, it outputs
 %\ajr{prefer having the full output like this here?}
 %\jb{I like it the way you did it now, but I took the freedom to reformat the output slightly
 %(to avoid the small font---I generally try to avoid ad hoc font mixtures---and to show
