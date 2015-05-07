@@ -878,12 +878,12 @@ equisatisfiable.
 First, we show that if $\varphi$ is satisfied by $\Sigma$-interpretation $\I$, then $\conv( \varphi )$ is satisfied by a $\extendsig{\Sigma}$-interpretation $\J$.
 Let $\J$ be the $\extendsig{\Sigma}$-interpretation that interprets all types $\tau \in \stypes{\Sigma}$ as $\tau^\I$,
 all functions $\con{f} \in \sfuns{\Sigma}$ as $\con{f}^\I$,
-and for each function $\con{f}$ of type $\tau_1 \times \cdots \tau_n \rightarrow \tau$ in $\sfundefs{\Sigma}$,
-interprets $\fargtype{\con{f}}$ as a tuple of values of type $\tau_1^\I \times \cdots \times \tau_n^\I$,
-and each $\fargx{\con{f}}{i}$ as the $i^{th}$ projection on such tuples for each $i = 1, \ldots, n$.
+and for each function $\con{f} : \tau_1 \times \cdots \times \tau_n \rightarrow \tau$ in $\sfundefs{\Sigma}$,
+interprets $\fargtype{\con{f}}$ as a tuple of values belonging to $\tau_1^\I \times \cdots \times \tau_n^\I$,
+and each $\fargx{\con{f}}{i}$ as the $i$\vvthinspace{th} projection on such tuples for $i = 1, \ldots, n$.
 Since $\J$ satisfies $\varphi$, it satisfies a set of ground literals $L$ that entail $\varphi$.
-Furthermore, $\J$ satisfies \emph{every} constraint of the form $\exists a : {\fargtype{\con{f}}}. ( \vecfarg{\con{f}}( a ) \teq \vec t )$,
-since by our construction of $\J$ there exists an $a$ such that $a^\J = \vec t^\J$.
+Furthermore, $\J$ satisfies \relax{every} constraint of the form $\exists a : {\fargtype{\con{f}}}.\;\, \vecfarg{\con{f}}( a ) \teq \vec t$,
+since by our construction of $\J$ there exists a value $v \in {\fargtype{\con{f}}}^\J$ such that $v = \vec t^\J$.
 %By case analysis it follows that $\conv_0$ maintains the invariant that
 %if $\conv_0( t\typ{\Bool}, \ppos )$ returns $( {t'}, \chi )$,
 %then $\I$ satisfies $t$ if and only if $\J$ satisfies $t'$.
@@ -899,7 +899,7 @@ $\DDD \wedge \varphi_0$.
 %where $\varphi'$ entails $\varphi_0$.
 %To construct $\varphi'$, 
 First, we define a sequence of $\Sigma$-literals sets $L_0 \subseteq L_1 \subseteq \ldots$
-such that $\I$ satisfies $L_i \cup \absconstraints( L_i )$ for each $i = 0, 1, \ldots$.
+such that $\I$ satisfies $L_i \cup \absconstraints( L_i )$ for $i = 0, 1, \ldots$.
 Since $\I$ satisfies $\conv( \varphi_0 )$,
 by Lemma~\ref{lem:conv}, 
 $\I$ satisfies a set of literals $L \cup \absconstraints( L )$ where $L$ is a set of $\Sigma$-literals that entail $\varphi_0$.
