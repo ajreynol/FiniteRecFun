@@ -73,6 +73,7 @@
 
 %\newcommand\pneg{\neg}
 \newcommand\pnegate{-}
+%\newcommand\pnegate{{\sim}}
 
 \newcommand{\con}[1]{\mathsf{#1}}
 \let\const=\con
@@ -319,8 +320,8 @@ recursive definition $\forall x : \tau.\;\, \const{f}(x) \teq t$
 can be translated to
 $\forall a :
 \fargtype{\tau}.\;\, \const{f}(\farg{\con{f}}(a)) \teq t[\concret(a)/x]$, where
-$\fargtype{\tau}$ is an uninterpreted \emph{abstract} type and $\farg{\con{f}} :
-\fargtype{\tau} \to \tau$ is a coercion from the abstract type to the concrete
+$\fargtype{\tau}$ is an uninterpreted \relax{abstract} type and $\farg{\con{f}} :
+\fargtype{\tau} \to \tau$ converts the abstract type to the concrete
 type. The translation preserves satisfiability and, for admissible definitions,
 unsatisfiability, and makes finite model finding possible in practice
 for problems in this class.
@@ -582,13 +583,13 @@ The function $\conv$ defined in Figure~\ref{fig:A} translates the $\Sigma$-formu
 $\varphi$ into an $\extendsig{\Sigma}$-formula. It relies
 on the auxiliary function $\conv_0$, which takes two arguments:\ the term $t$
 to translate and a \relax{polarity}~$p$, which is either $\ppos$, $\pneg$, or
-$\pnone$. \vthinspace$\conv_0$ returns a pair $( t'\negvthinspace,\, \chi )$, where $t'$ is a term of
+$\pnone$ (none). \vthinspace$\conv_0$ returns a pair $( t'\negvthinspace,\, \chi )$, where $t'$ is a term of
 type $\tau$ and $\chi$ is an additional constraint.
 This constraint is needed if the polarity is $\pnone$; otherwise, it is encoded
 directly in $t'$ and $\chi$ is simply $\ltrue$.
 In the auxiliary function $\conv_0$, the function $\pol(
 \boolop, i, p )$ returns the polarity of the $i$\vvthinspace{th} argument of an
-application of $\boolop$ having polarity $p$, where $\boolop$ is an interpreted
+application of~$\boolop$ having polarity $p$, where $\boolop$ is an interpreted
 predicate.
 
 
@@ -598,7 +599,7 @@ predicate.
 
 The translation alters $\varphi$ in two main ways. First, it restricts the
 quantification on function definitions for $\con{f}$ to the corresponding
-uninterpreted type $\fargtype{\con{f}}$ and inserts appropriate coercions
+uninterpreted type $\fargtype{\con{f}}$ and inserts appropriate selectors
 $\fargx{\con{f}}{i}$. Second, it augments $\varphi$ with additional existential
 constraints
 $\exists a : \fargtype{\con{f}}.\;\, \vecfarg{\con{f}}( a ) \teq \vec t$; these
@@ -610,8 +611,8 @@ relevant to the satisfiability of $\varphi$.
 
 If $t$ is an application of a logical predicate $\boolop
 \in \{{\neg}, {\wedge}, {\vee}, {\teq}, {\lite}\}$,
-we recursively call $\conv$ on the arguments $t_i$ and polarity $\pol( \boolop,
-i, p )$, where $\pol$ is defined as
+$\conv_0$ calls itself recursively on the arguments $t_i$ and polarity $\pol(
+\boolop, i, p )$, where $\pol$ is defined as
 \begin{equation*}
 \pol( \boolop, i, p ) =
 \begin{cases}
@@ -624,9 +625,9 @@ The negation $\pnegate p$ of a polarity $p$ is $\pneg$ if $p$ is $\ppos$, $\ppos
 if $p$ is $\pneg$, and $\pnone$ if $p$ is $\pnone$.
 
 If $t$ is positive, $\conv_0$ adds the constraint $\chi$ derived from
-the subterms as a conjunction. Dually, if $t$ is negative, the
-function constructs a disjunction with the negated constraint. It $t$ has no
-polarity, the constrained $\chi$ is simply returned to the caller.
+the subterms as a conjunction. Dually, if $t$ is negative, it constructs a
+disjunction with the negated constraint. It $t$ has no polarity, the
+constraint $\chi$ is simply returned to the caller.
 
 If $t$ is a quantified formula, $\conv_0$ recursively calls itself on the body
 with the same polarity. If $t$ is a function definition of a function in
