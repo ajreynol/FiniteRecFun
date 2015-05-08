@@ -330,7 +330,8 @@ $\fargtype{\tau}$ is an uninterpreted \relax{abstract} type and $\farg{\con{f}} 
 \fargtype{\tau} \to \tau\end{longv}$ converts the abstract type to the concrete
 type. The translation preserves satisfiability and\begin{longv}, for admissible definitions,\end{longv}
 unsatisfiability, and makes finite model finding possible for problems in this
-class. Detailed proofs are included in a technical report \cite{our-report}.
+class.\begin{shortv} Detailed proofs of correctness are included in a technical
+report \cite{our-report}.\end{shortv}
 
 Our empirical evaluation on benchmarks from the IsaPlanner proof planner~\cite{DBLP:conf/itp/JohanssonDB10}
 and the Leon verifier~\cite{blanc2013overview} provides
@@ -400,10 +401,10 @@ Informally, we refer to the type and function symbols in this theory as \emph{un
 %then extend its signature with additional symbols and call \emph{those} uninterpreted.
 %}
 
-In addition to standard quantified formulas $\forall \vec x.\; \varphi$,
+In addition to $\forall \vec x.\; \varphi$,
 we consider \emph{annotated quantified formulas} of the form
 $\forallf{\const{f}} \vec x.\; \varphi$, where $\con{f} \in \sfuns{\Sigma}$ is
-an uninterpreted function symbol. Their
+uninterpreted. Their
 semantics is the same as for standard quantified formulas.
 Given $\con{f} : \tau_1 \times \cdots \times \tau_n \rightarrow \tau$,
 an annotated
@@ -415,8 +416,10 @@ $T$-equivalent to $\con{f}( \vec x ) \teq t$ for some term $t$ of type $\tau$.
 %\ct{Why can't $\varphi$ be existential instead of just quantifier free?} 
 %I don't think it makes much sense to have any quantifiers within function bodies, 
 %since they aren't operational, that's why I put quantifier-free. --ajr
+%%\jb{Actually, in Isabelle we can have them and we use them sometimes. It certainly
+%% makes sense. I can give you real examples if you like.}
 We write $\exists
-\vec x.\; \varphi$ as a shorthand for $\neg \forall \vec x.\; \neg \varphi$.
+\vec x.\; \varphi$ as an abbreviation for $\neg \forall \vec x.\; \neg \varphi$.
 
 \begin{definition}\rm
 A formula $\varphi$ is in \emph{definitional form with respect to}
@@ -484,8 +487,8 @@ $\forall x : {\typeint}.\;\, \lite\bigl(
 x \leq 0,\allowbreak\; \con{p}( x ) \teq 1,\allowbreak\; \con{p}( x ) \teq 2 * \con{p}( x - 1 ) \bigr)$
 can be shown well-founded under an strategy that
 evaluates the condition of a $\lite$ before evaluating the relevant branch,
-ignoring the other branch. Logically, such dependencies can be captured by
-congruence rules. Krauss developed these ideas in the more general context of
+ignoring the other branch. \begin{longv}Logically, such dependencies can be captured by
+congruence rules. \end{longv}Krauss developed these ideas in the more general context of
 higher-order logic \cite[Section 2]{krauss-2009-phd}.
 
 \begin{theorem}\label{thm:adm}
@@ -547,8 +550,8 @@ or productivity, without affecting admissibility.
 
 \newcommand\badassex{%
  \{\forallf{\con{f}} x.\;\, \con{f}( x ) \teq \con{f}( x ),\;\,
- \forallf{\con{g}} x.\;\, \lite( \con{f}( x ) \teq 5,\;
-   \con{g}( x ) \teq \con{f}( x ),\;
+ \forallf{\con{g}} x.\;\, \lite( \con{f}( x ) \teq 5,\allowbreak\;
+   \con{g}( x ) \teq \con{f}( x ),\allowbreak\;
    \con{g}( x ) \teq \con{g}( x ) + 1)\}}
 
 An example of an inadmissible function set is
@@ -607,6 +610,7 @@ $\conv_0( t\typ{\tau},\, p )$ $=$
    \itemx[] $\mathsf{else}$
    \begin{itemize}
      \itemx[] \return \bigtuple{$t,\; \bigwedge\, \{ \exists a : \fargtype{\con{f}}.\; \vecfarg{\con{f}}( a ) \teq \vec t \mid \con{f}( \vec t ) \in \terms( t ),\, \con{f} \in \sfundefs{\Sigma} \}$}
+\\[-.8\baselineskip]
    \end{itemize}
  \end{itemize}
 \end{enumerate}
@@ -696,7 +700,9 @@ If $t$ is positive, $\conv_0$ adds the constraint $\chi$ derived from
 the subterms as a conjunction. Dually, if $t$ is negative, it constructs a
 disjunction with the negated constraint. It $t$ has no polarity, the
 constraint $\chi$ is simply returned to the caller.
-
+%
+\begin{longv}\par\end{longv}
+%
 If $t$ is a function definition of a function in
 $\sfundefs{\Sigma}$, $\conv_0$ constructs a quantified formula over a single variable
 $a$ of type $\fargtype{\con{f}}$ and replaces all occurrences of $\vec x$ in
@@ -828,11 +834,12 @@ pertinent information regarding the models of $\varphi$. For example, the model
 $\I$ for formula~(\ref{eq:ex-after}) given above interprets $\con{c}$ as $14$
 and $\con{s}(n)$ as $\sum_{i=1}^n i$ for $0 \le n \le 14$,
 and there exists a model of formula~(\ref{eq:ex-before}) that also interprets
-$\con{c}$ and and $\con{s}(n)$ in the same way (for $0 \le n \le 14$).
-In general, there exists a model of $\varphi$ that
-coincides with each model of $\conv( \varphi )$ on its interpretation of all
-functions in $\sfuns{\Sigma} - \sfundefs{\Sigma}$, i.e., $\{
-\con{s} \}$ in the example. Furthermore, the model of $\conv( \varphi )$ will
+$\con{c}$ and $\con{s}(n)$ in the same way (for $0 \le n \le 14$).
+In general, for every model of $\conv( \varphi )$,
+there exists a model of $\varphi$ that
+coincides with it on its interpretation of all
+function symbols in $\sfuns{\Sigma} - \sfundefs{\Sigma}$ ($\{
+\con{s} \}$ in the example). Furthermore, the model of $\conv( \varphi )$ will
 also give correct information for the defined functions at all points belonging
 to the domains of the corresponding abstract types. This can sometimes help
 users debug their specifications.
@@ -1001,7 +1008,7 @@ where $\absconstraints( L_0 )$ is the set consisting of the single constraint $\
 %The latter ensures that $\I$ satisfies a formula that entails both $\con{s}( \con{c} ) > 100$ and $\varphi_{\con{s}}[\con{c}/x]$.
 Since $\I$ also satisfies both the translated function definition for $\con{s}$---i.e.,
 the first conjunct of formula~(\ref{eq:ex-after})---and $\absconstraints( L_0
-)$, it must also satisfy\begin{longv} the formula $\psi_1$\end{longv}:
+)$, it must also satisfy\begin{longv} the formula $\psi_1$\end{longv}
 \[
 \lite\bigl( \con{c} \leq 0,\; 
             \con{s}(\con{c}) \teq 0,\;
@@ -1242,16 +1249,15 @@ For the example above, it outputs
            (ite (= $x1 9) 45 (ite (= $x1 8) 36 (ite (= $x1 7) 28 
               (ite (= $x1 6) 21 (ite (= $x1 3) 6 (ite (= $x1 5) 15 
                  (ite (= $x1 2) 3 (ite (= $x1 1) 1 0)))))))))))))))
-  (define-fun c () Int 14)
-)
+  (define-fun c () Int 14))
 \end{verbatim}
 \end{quote}
 
 The \texttt{--fmf-fun} option instructs \cvc to assume that the
 functions provided by the user are admissible.
-Admissibility must be checked separately \relax{by the user}, perhaps using a
+Admissibility must be checked \relax{by the user}, perhaps using a
 syntactic criterion or a termination prover.
-If this criterion is not met, \cvc may answer \emph{sat} on
+If it is not met, \cvc may answer \emph{sat} for
 an unsatisfiable problem. 
 \begin{longv}
 Indeed, if we add the inconsistent definition
@@ -1287,22 +1293,25 @@ typically propositional logic. \begin{longv}They translate the input problem to 
 logic and pass it to a solver for that logic.\end{longv}
 The translation is parameterized by upper or exact finite bounds on
 the cardinalities of the atomic types. This procedure was pioneered by McCune
-in the earlier versions of Mace (or MACE) \cite{mccune-1994}.
+in the earlier versions of
+\begin{shortv}MACE\end{shortv}\begin{longv}Mace (or MACE)\end{longv}
+\cite{mccune-1994}.
 Other conceptually similar finders are Paradox \cite{claessen-sorensson-2003}
 and FM-Darwin \cite{baumgartner-et-al-2009} for first-order logic with
 equality; the Alloy Analyzer and its back-end Kodkod \cite{torlak-jackson-2007}
 for first-order relational logic; and Refute \cite{weber-2008} and Nitpick
 \cite{blanchette-nipkow-2010} for higher-order logic.
 
-An alternative to translating the problem is to perform
+An alternative is to perform
 an exhaustive model search directly on the original problem. Given fixed
-cardinalities, the search space is represented in memory as multidimensional
-arrays. The procedure tries different values in the function and predicate
-table entries, checking each time if the problem is satisfied and backtracking
-if necessary. This approach was pioneered by FINDER \cite{slaney-1994} and
-SEM \cite{zhang-zhang-1995}\begin{longv} and serves as the basis of many more model finders,
-notably the Alloy Analyzer's precursor \cite{jackson-1996} and the later
-versions of~Mace \cite{mccune-prover9-mace4}\end{longv}.
+cardinalities, the search space is represented as multidimensional
+tables. The procedure tries different values in the function and predicate
+tables, checking each time if the problem is satisfied.
+This approach was pioneered by FINDER
+\cite{slaney-1994} and SEM \cite{zhang-zhang-1995}\begin{longv} and serves as
+the basis of many more model finders, notably the Alloy Analyzer's precursor
+\cite{jackson-1996} and the later versions of~Mace
+\cite{mccune-prover9-mace4}\end{longv}.
 
 \begin{longv}
 Most of the above tools cannot cope with algebraic datatypes or other infinite
@@ -1346,11 +1355,11 @@ techniques for function definitions, and vice versa.\end{longv}
 Model finding is concerned with satisfying arbitrary logical constraints. Some
 tools are tailored for problems that correspond to total functional
 programs. The QuickCheck tool for Haskell \cite{claessen-hughes-2000} is an
-early example, based
-on random testing. Bounded exhaustive testing \cite{runciman-et-al-2008} and
-narrowing \cite{lindblad-2008-testing} are other successful strategies. These
-tool are often much faster than model finders, but they typically cannot cope
-with underspecification and nonexecutable functions.
+early example, based on random testing. Bounded exhaustive
+testing\begin{longv} \cite{runciman-et-al-2008}\end{longv} and
+narrowing\begin{longv} \cite{lindblad-2008-testing}\end{longv} are other
+successful strategies. These tool are often much faster than model finders, but
+they typically cannot cope with underspecification and nonexecutable functions.
 
 % others
 %are Agsy for Agda \cite{xxx}, Quickcheck for Isabelle/HOL \cite{xxx}, and
@@ -1416,8 +1425,6 @@ Viktor Kuncak and Stephan Merz have made this work possible. We would also like
 to thank Damien Busato-Gaston and Emmanouil Koukoutos for providing the initial
 set of benchmarks used in the evaluation.
 }
-
-
 
 {
 \bibliographystyle{abbrv}
