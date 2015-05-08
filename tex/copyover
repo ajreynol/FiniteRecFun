@@ -1,3 +1,4 @@
-cp main.pdf ~/hgs/papers_etc/homepage/smt_frf.pdf
+cp shortv.pdf ~/hgs/papers_etc/homepage/smt_frf.pdf
+cp longv.pdf ~/hgs/papers_etc/homepage/smt_frf_rep.pdf
 copyweb
 (cd ~/hgs/papers_etc; hg ci -m "updated smt_frf")
