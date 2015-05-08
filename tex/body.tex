@@ -956,6 +956,14 @@ Hence when $\DDD$ is admissible, this implies the existence of a model for $\var
 %For clarity, we demonstrate the consequences of this theorem by means of an example.
 \end{longv}
 
+\begin{shortv}
+In following, we give an intuition of the above theorem in the context of an example.
+For a set of ground $\Sigma$-literals $L$, let $\absconstraints( L )$ be the set
+$\{ \exists a : {\fargtype{\con{f}}}.\;\, \vecfarg{\con{f}}( a ) \teq \vec t
+\mid \con{f}( \vec t ) \in \terms( L ),\: \con{f} \in \sfundefs{\Sigma}
+\}$.
+\end{shortv}
+
 \begin{example}
 Let us revisit the translated formula~(\ref{eq:ex-after}) from
 Example~\ref{ex:translation}. 
@@ -985,7 +993,8 @@ where $\varphi_\con{s}$ is the formula $\lite\bigl( x \leq 0,\; \con{s}(x) \teq 
 %$\exists b.\;\, \farg{\con{s}}( b ) \teq \farg{\con{s}}( a )-1$ ensures that
 %a similar constraint is enforced recursively: when $\varphi_{\con{s}}[t/x]$ is used in part to evaluate $\con{s}( \con{c} )$,
 %any model of $\varphi_{\con{s}}[t/x]$ must also satisfy $\varphi_{\con{s}}[t-1/x]$ when $t > 0$. 
-Clearly any interpretation $\I$ satisfying formula~(\ref{eq:ex-after}) satisfies $L_0 \cup \absconstraints( L_0 )$,
+Clearly any interpretation $\I$ satisfying formula~(\ref{eq:ex-after}) satisfies 
+$L_0 \cup \absconstraints( L_0 )$,
 where $L_0 = \{ \con{s}( \con{c} ) > 100 \}$, 
 where $\absconstraints( L_0 )$ is the set consisting of the single constraint $\exists a : {\fargtype{\con{s}}}. (\farg{\con{s}}( a ) \teq \con{c})$.
 %The latter ensures that $\I$ satisfies a formula that entails both $\con{s}( \con{c} ) > 100$ and $\varphi_{\con{s}}[\con{c}/x]$.
