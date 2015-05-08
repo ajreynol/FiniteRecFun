@@ -168,13 +168,14 @@
 %\newcommand{\sfunndefs}[1]{#1^\mathrm{nf}}
 \newcommand{\typeint}{\ty{Int}}
 
-%\newcommand{\pnone}{\con{none}}
-%\newcommand{\ppos}{\con{pos}}
-%\newcommand{\pneg}{\con{neg}}
+\newcommand{\pnone}{\con{none}}
+\newcommand{\ppos}{\con{pos}}
+\newcommand{\pneg}{\con{neg}}
 %%% @ANDY: as usual, revert if you don't like
-\newcommand{\pnone}{{\pm}}
-\newcommand{\ppos}{{+}}
-\newcommand{\pneg}{{-}}
+% too confusing, too many different meanings for + and -, with below the latter is a theory symbol, a polarity, and a negation of polarities :)
+%\newcommand{\pnone}{{\pm}}
+%\newcommand{\ppos}{{+}}
+%\newcommand{\pneg}{{-}}
 \newcommand{\pol}{\con{pol}}
 
 %\newtheorem{remark}{Remark}
@@ -662,7 +663,7 @@ The translation $\conv$ defined in Figure~\ref{fig:A} translates the $\Sigma$-fo
 $\varphi$ into an $\extendsig{\Sigma}$-formula. It relies
 on the auxiliary function $\conv_0$, which takes two arguments:\ the term $t$
 to translate and a \relax{polarity}~$p$, which is either $\ppos$, $\pneg$, or
-$\pnone$ (none). \vthinspace$\conv_0$ returns a pair $( t'\negvthinspace,\, \chi )$, where $t'$ is a term of
+$\pnone$. \vthinspace$\conv_0$ returns a pair $( t'\negvthinspace,\, \chi )$, where $t'$ is a term of
 type $\tau$ and $\chi$ is an additional constraint.
 This constraint is needed if the polarity is $\pnone$; otherwise, it is encoded
 directly in $t'$ and $\chi$ is simply $\ltrue$.
@@ -700,9 +701,8 @@ p & \text{if either $\boolop \in \{{\wedge}, {\vee}\}$ or $\boolop = \lite$ and 
 \pnone & \text{otherwise}
 \end{cases}
 \end{equation*}
-The negation $\pnegate p$ of a polarity $p$ is $\pneg$ if $p$ is $\ppos$, $\ppos$
+where the negation $\pnegate p$ of a polarity $p$ is $\pneg$ if $p$ is $\ppos$, $\ppos$
 if $p$ is $\pneg$, and $\pnone$ if $p$ is $\pnone$.
-
 If $t$ is positive, $\conv_0$ adds the constraint $\chi$ derived from
 the subterms as a conjunction. Dually, if $t$ is negative, it constructs a
 disjunction with the negated constraint. It $t$ has no polarity, the
@@ -714,11 +714,9 @@ $a$ of type $\fargtype{\con{f}}$ and replaces all occurrences of $\vec x$ in
 $t'_1$ with $\vecfarg{\con{f}}( a )$. Since function definitions
 are a top-level conjunct, %by case analysis on the return values of $\conv$,
 $\chi$ must be $\ltrue$.
-
 If $t$ is an unannotated quantified formula, $\conv_0$ calls itself
 on the body with the same polarity. A quantifier is prefixed to the
 quantified formula and constraint returned by the recursive call.
-
 Otherwise, $t$ is either an application of an uninterpreted predicate or a term
 of a type other than $\Bool$. The returned constraint is a conjunction of
 formulas of the form $\exists a : {\fargtype{\con{f}}}.\;\, \vecfarg{\con{f}}(
@@ -859,7 +857,8 @@ users debug their specifications.
 %%% want to see the partial information available about defined functions. I've
 %%% added a couple of sentences above to that effect.
 
-In the following, for a set of ground literals $L$, 
+In the following, we sketch the correctness of our translation $\conv$.
+For a set of ground literals $L$, 
 we write $\absconstraints( L )$ to denote the set of constraints that
 force the concretization functions to have the necessary elements in their
 range for determining the satisfiability of $L$ with respect to function
@@ -873,20 +872,20 @@ $\{ \exists a : {\fargtype{\con{f}}}.\;\, \vecfarg{\con{f}}( a ) \teq \vec t
 The following lemma states the central invariant behind the translation $\conv$.
 
 \begin{lemma}\label{lem:conv}
-Let $\varphi$ be a formula not containing function definitions,
+Let $\psi$ be a formula not containing function definitions,
 and let $\I$ be an $\extendsig{\Sigma}$-interpretation.
-Then $\I$ satisfies $\conv( \varphi )$ if and only if
-$\I$ satisfies $L \cup \absconstraints( L )$, where $L$ is a set of ground $\Sigma$-literals that entail $\varphi$.
+Then $\I$ satisfies $\conv( \psi )$ if and only if
+$\I$ satisfies $L \cup \absconstraints( L )$, where $L$ is a set of ground $\Sigma$-literals that entail $\psi$.
 %There exists a set of ground $\Sigma$-literals $L$ such that $L$ entails $\varphi$, 
 %and $\I$ satisfies $L \cup \absconstraints( L )$.
 \end{lemma}
 \begin{proofsketch}
 By definition of $\conv$ and case analysis on the return values of $\conv_0$.
+\qed
 \end{proofsketch}
 
 \begin{cor}\label{cor:conv}
-If $\varphi$ is a formula not containing function definitions, then $\extendsig{\Sigma} = \Sigma$
-and $\conv( \varphi )$ entails $\varphi$.
+If $\psi$ is a formula not containing function definitions, then $\conv( \psi )$ entails $\psi$.
 \end{cor}
 
 \begin{theorem}\label{thm:equi}
@@ -953,7 +952,8 @@ i.e., $\varphi$.
 
 The intuition of the above proof is as follows.
 First, $\conv( \varphi )$ cannot be unsatisfiable when $\varphi$ is satisfiable
-since any model of $\varphi$ can be extended in a straightforward way to satisfy $\conv( \varphi )$.
+since any $\Sigma$-interpretation that satisfies $\varphi$ can be extended in a straightforward way to 
+a $\extendsig{\Sigma}$-interpretation that satisfies $\conv( \varphi )$.
 Second, if a model is found for $\conv( \varphi )$,
 then the constraints of the form $\exists a : \fargtype{\con{f}}.\;\, (\vecfarg{\con{f}}( a ) \teq \vec t)$
 occurring in $\conv( \varphi )$ ensure that this model also satisfies
@@ -990,7 +990,7 @@ where $\varphi_\con{s}$ is the formula $\lite\bigl( x \leq 0,\; \con{s}(x) \teq 
 %$\exists b.\;\, \farg{\con{s}}( b ) \teq \farg{\con{s}}( a )-1$ ensures that
 %a similar constraint is enforced recursively: when $\varphi_{\con{s}}[t/x]$ is used in part to evaluate $\con{s}( \con{c} )$,
 %any model of $\varphi_{\con{s}}[t/x]$ must also satisfy $\varphi_{\con{s}}[t-1/x]$ when $t > 0$. 
-It is easy to see that any interpretation $\I$ satisfying formula~(\ref{eq:ex-after}) satisfies $L_0 \cup \absconstraints( L_0 )$,
+Clearly any interpretation $\I$ satisfying formula~(\ref{eq:ex-after}) satisfies $L_0 \cup \absconstraints( L_0 )$,
 where $L_0 = \{ \con{s}( \con{c} ) > 100 \}$, 
 where $\absconstraints( L_0 )$ is the set consisting of the single constraint $\exists a : {\fargtype{\con{s}}}. (\farg{\con{s}}( a ) \teq \con{c})$.
 %The latter ensures that $\I$ satisfies a formula that entails both $\con{s}( \con{c} ) > 100$ and $\varphi_{\con{s}}[\con{c}/x]$.
@@ -1317,7 +1317,7 @@ depth, which is increased on a per-need basis.
 The approach described in this paper works in an analogous manner, 
 where instead the SMT solver is invoked only once 
 and where quantifier instantiation amounts to function unfolding. It would be
-worth investigating how existing approaches for algorithms based on function
+worth investigating how existing approaches for function
 unfolding can inform approaches for dedicated quantifier instantiation
 techniques for function definitions, and vice versa.
 
