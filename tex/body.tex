@@ -482,7 +482,7 @@ the function would terminate when seen as a functional program, under \emph{some
 evaluation order. For example, the definition
 $\forall x : {\typeint}.\;\, \lite\bigl(
 x \leq 0,\allowbreak\; \con{p}( x ) \teq 1,\allowbreak\; \con{p}( x ) \teq 2 * \con{p}( x - 1 ) \bigr)$
-can be shown well-founded under an evaluation strategy that
+can be shown well-founded under an strategy that
 evaluates the condition of a $\lite$ before evaluating the relevant branch,
 ignoring the other branch. Logically, such dependencies can be captured by
 congruence rules. Krauss developed these ideas in the more general context of
