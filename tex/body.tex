@@ -1159,8 +1159,7 @@ The raw evaluation data reveals no cases in which a solver answered
 \emph{unsat} on a benchmark $\varphi$ and \emph{sat} on its
 corresponding benchmark $\conv( \varphi )$, or vice versa.
 This is consistent with our expectations and Theorem~\ref{thm:equi}, 
-since these benchmarks contained only sets of function definitions
-that are supposed to be well-founded.
+since these benchmarks contain only well-founded function definitions.
 %thereby confirming Theorem~\ref{thm:equi}.
 %\ct{?! \emph{Theorems} do not need corroboration! 
 %Maybe we should say "consistently with Theorem~\ref{thm:equi}"?}
@@ -1348,8 +1347,8 @@ on a relational logic, but our initial experiments with \cvc suggest
 that it is more efficient to avoid unknowns by adding existential
 constraints.
 
-The Leon system~\cite{blanc2013overview} implements a procedure that can both
-produces proofs and counter\-examples for properties of terminating functions
+The Leon system~\cite{blanc2013overview} implements a procedure that can
+produce both proofs and counter\-examples for properties of terminating functions
 written in a subset of Scala. Leon is based on an SMT solver. It avoids
 quantifiers altogether by unfolding recursive definitions up to a certain
 depth, which is increased on a per-need basis.
