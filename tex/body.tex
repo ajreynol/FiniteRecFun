@@ -1046,7 +1046,6 @@ Note that benchmarks created in this way have a high likelihood of having small
 and easy-to-find countermodels. In total, we considered 213 mutated forms of
 conjectures from \isa and 427 mutated forms of conjectures from \leon. We will
 call these sets \isam and \leonm, respectively.
-
 Thus, our benchmark set consist of 885 benchmarks (640 mutants plus the
 original 245). We considered these 885 benchmarks both before and after the
 translation~$\conv$. % as described in Section~\ref{sec:encoding}.
@@ -1188,19 +1187,19 @@ can be specified as %follows:
 \end{quote}
 %
 When reading this input,
-\cvc adds the annotated quantified formula
 \begin{longv}
+\cvc adds the annotated quantified formula
 $$\forallf{\con{s}} x.\;\, \con{s}( x ) \teq \lite\bigl( x \leq 0,\; 0,\; \con{s}( x-1 )\bigr)$$
 to its list of assertions,
 which after rewriting becomes
 $$\forallf{\con{s}} x.\;\, \lite\bigl( x \leq 0,\; \con{s}( x ) \teq 0,\; \con{s}( x ) \teq \con{s}( x-1 ) \bigr)$$
 \end{longv}
 \begin{shortv}
+\cvc adds
 $\forallf{\con{s}} x.\;\, \con{s}( x ) \teq \lite\bigl( x \leq 0,\; 0,\; \con{s}( x-1 )\bigr)$
 to its list of assertions,
 which after rewriting becomes
-$\forallf{\con{s}} x.\;\, \lite\bigl( x \leq 0,\; \con{s}( x ) \teq 0,\; \con{s}( x ) \teq \con{s}( x-1 ) \bigr)$
-\end{shortv}
+$\forallf{\con{s}} x.\;\, \lite\bigl( x \leq 0,\; \con{s}( x ) \teq 0,\; \con{s}( x ) \teq \con{s}( x-1 ) \bigr)$.\end{shortv}
 If \cvc's finite model finding mode for recursive functions is enabled (using
 the command-line option \texttt{--fmf-fun}), it will replace its list of known
 assertions based on the translation $\conv$ before checking for satisfiability.
