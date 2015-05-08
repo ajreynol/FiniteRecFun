@@ -485,7 +485,7 @@ the function would terminate when seen as a functional program, under \emph{some
 evaluation order. For example, the definition
 $\forall x : {\typeint}.\;\, \lite\bigl(
 x \leq 0,\allowbreak\; \con{p}( x ) \teq 1,\allowbreak\; \con{p}( x ) \teq 2 * \con{p}( x - 1 ) \bigr)$
-can be shown well-founded under an strategy that
+can be shown well-founded under a strategy that
 evaluates the condition of a $\lite$ before evaluating the relevant branch,
 ignoring the other branch. \begin{longv}Logically, such dependencies can be captured by
 congruence rules. \end{longv}Krauss developed these ideas in the more general context of
@@ -1074,7 +1074,7 @@ call these sets \isam and \leonm, respectively.
 Thus, our benchmark set consist of 885 benchmarks (640 mutants plus the
 original 245). We considered these 885 benchmarks both before and after the
 translation~$\conv$. % as described in Section~\ref{sec:encoding}.
-For example, \isa contains 79 original benchmarks $\varphi$ and 213 translated
+For example, \isa contains 79 original benchmarks $\varphi$ and 79 translated
 benchmarks $\conv(\varphi)$.
 
 For solvers, we considered the SMT solver \ziii~\cite{de-moura-bjoerner-2008},
@@ -1355,11 +1355,11 @@ techniques for function definitions, and vice versa.\end{longv}
 Model finding is concerned with satisfying arbitrary logical constraints. Some
 tools are tailored for problems that correspond to total functional
 programs. The QuickCheck tool for Haskell \cite{claessen-hughes-2000} is an
-early example, based on random testing. Bounded exhaustive
-testing\begin{longv} \cite{runciman-et-al-2008}\end{longv} and
-narrowing\begin{longv} \cite{lindblad-2008-testing}\end{longv} are other
-successful strategies. These tool are often much faster than model finders, but
-they typically cannot cope with underspecification and nonexecutable functions.
+early example, based on random testing. Bounded exhaustive testing\begin{longv}
+\cite{runciman-et-al-2008}\end{longv} and narrowing\begin{longv}
+\cite{lindblad-2008-testing}\end{longv} are other successful strategies. These
+tools are often much faster than model finders, but they typically cannot cope
+with underspecification and nonexecutable functions.
 
 % others
 %are Agsy for Agda \cite{xxx}, Quickcheck for Isabelle/HOL \cite{xxx}, and
