@@ -304,11 +304,9 @@ recursive function to be used inside a complex term on the right-hand side,
 whereas the finite model finding techniques of Reynolds et al.\ are not
 applicable for functions over infinite domains such as the integers or
 algebraic datatypes. A simple example where both approaches fail is
-\begin{equation}\label{eq:pii}
-\forall x : {\typeint}.\;\, \lite\bigl(
-x \leq 0,\allowbreak\; \con{p}( x ) \teq 1,\allowbreak\; \con{p}( x ) \teq 2 * \con{p}( x - 1 ) \bigr)
-\end{equation}
-This state of affairs is highly unsatisfactory, given the frequency of
+$\forall x : {\typeint}.\;\, \lite\bigl(
+x \leq 0,\allowbreak\; \con{p}( x ) \teq 1,\allowbreak\; \con{p}( x ) \teq 2 * \con{p}( x - 1 ) \bigr)$.
+This state of affairs is unsatisfactory, given the frequency of
 recursive definitions in practice and the impending addition of a dedicated
 command, \texttt{define-fun-rec}, to the SMT-LIB standard \cite{smtlib25}.
 
@@ -316,9 +314,9 @@ In this paper, we present a method for translating formulas involving recursive 
 definitions into formulas where finite model finding techniques can be applied.
 The recursive functions must meet a semantic criterion to be admissible
 (Section~\ref{sec:prelim}). This criterion is met by well-founded (terminating)
-recursive function definitions. It is not met by inconsistent
+recursive function definitions. \begin{longv}It is not met by inconsistent
 definitions such as $\forall x : {\typeint}.\;\, \con{f}(x) \teq \con{f}(x) +
-1$. %ct and it is possible to construct consistent examples that do not meet it.
+1$.\end{longv} %ct and it is possible to construct consistent examples that do not meet it.
 %as well as other example of consistent definition.
 
 We define a translation for a class of
@@ -328,9 +326,9 @@ recursive definition $\forall x : \tau.\;\, \const{f}(x) \teq t$
 can be translated to
 $\forall a :
 \fargtype{\tau}.\;\, \const{f}(\farg{\con{f}}(a)) \teq t[\concret(a)/x]$, where
-$\fargtype{\tau}$ is an uninterpreted \relax{abstract} type and $\farg{\con{f}} :
-\fargtype{\tau} \to \tau$ converts the abstract type to the concrete
-type. The translation preserves satisfiability and, for admissible definitions,
+$\fargtype{\tau}$ is an uninterpreted \relax{abstract} type and $\farg{\con{f}} \begin{longv}:
+\fargtype{\tau} \to \tau\end{longv}$ converts the abstract type to the concrete
+type. The translation preserves satisfiability and\begin{longv}, for admissible definitions,\end{longv}
 unsatisfiability, and makes finite model finding possible for problems in this
 class.
 
@@ -339,9 +337,9 @@ and the Leon verifier~\cite{blanc2013overview} provides
 evidence that this translation improves the effectiveness of the SMT solvers
 \cvc and \ziii for finding counterexamples to verification conditions
 (Section~\ref{sec:evaluation}). The approach is implemented as a preprocessor
-in \cvc (Section~\ref{sec:front-end}). When invoked with a specific
+in \cvc (Section~\ref{sec:front-end}).\begin{longv} When invoked with a specific
 command-line option, the solver assumes that functions introduced using the
-\texttt{define-fun-rec} command are admissible and translates them accordingly.
+\texttt{define-fun-rec} command are admissible and translates them accordingly.\end{longv}
 
 %this option targets users who wish to determine the satisfiability of inputs
 %that involving function definitions that are known to be consistent, whereas it
@@ -387,8 +385,8 @@ $\Sigma$ is a signature and $\Mo$ is a class of $\Sigma$-interpretations,
 the \emph{models} of $T$.
 A $\Sigma$-formula $\varphi$ is
 \emph{$T$-satisfiable}
-if it is satisfied by some interpretation in $\Mo$;
-otherwise, it is \emph{$T$-unsatisfiable}.
+if it is satisfied by some interpretation in $\Mo$\begin{longv};
+otherwise, it is \emph{$T$-unsatisfiable}\end{longv}.
 A formula $\varphi$ \emph{$T$-entails} $\psi$, written $\varphi \models_T \psi$,
 if all interpretations in $\Mo$ that satisfy $\varphi$ also satisfy $\psi$.
 Two formulas $\varphi$ and $\psi$ are \emph{$T$-equivalent} 
@@ -431,7 +429,7 @@ form
 $(\forallf{\con{f}_1} \vec x_1.\; \varphi_1) \wedge \cdots \wedge
 (\forallf{\con{f}_n} \vec x_n.\; \varphi_n) \wedge \psi$,
 %
-where $\con{f}_1, \ldots, \con{f}_n$ are distinct function symbols,
+where $\con{f}_1, \ldots, \con{f}_n$ are distinct\begin{longv} function symbols\end{longv},
 %ct added
 $\forallf{\con{f}_i} \vec x_i.\; \varphi_i$ is a function definition
 for $i = 1, \ldots, n$,
@@ -480,17 +478,18 @@ at all points.
 First-order logic has no built-in notion of computation or termination. To ensure
 that a function specification is well-founded, it is sufficient to require that
 the function would terminate when seen as a functional program, under \emph{some}
-evaluation order. For example, definition~(\ref{eq:pii}) from the
-introduction can be shown well-founded under an evaluation strategy that
+evaluation order. For example, the definition
+$\forall x : {\typeint}.\;\, \lite\bigl(
+x \leq 0,\allowbreak\; \con{p}( x ) \teq 1,\allowbreak\; \con{p}( x ) \teq 2 * \con{p}( x - 1 ) \bigr)$
+can be shown well-founded under an evaluation strategy that
 evaluates the condition of a $\lite$ before evaluating the relevant branch,
 ignoring the other branch. Logically, such dependencies can be captured by
 congruence rules. Krauss developed these ideas in the more general context of
 higher-order logic \cite[Section 2]{krauss-2009-phd}.
 
 \begin{theorem}\label{thm:adm}
-If\/
-$\DDD$ is a set of well-founded function definitions for\/
-$\sfundefs{\Sigma} = \{\con{f}_1,\ldots,\con{f}_n\}$, then it is admissible.
+If $\DDD$ is a set of well-founded function definitions for\/
+$\sfundefs{\Sigma} \begin{longv} = \{\con{f}_1,\ldots,\con{f}_n\}\end{longv}$, then it is admissible.
 \end{theorem}
 \begin{longv}
 \begin{proofsketch}
