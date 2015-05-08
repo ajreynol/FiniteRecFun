@@ -683,14 +683,12 @@ If $t$ is an application of a predicate $\boolop$, including the built-in
 operators ${\neg}$, ${\wedge}$, ${\vee}$, ${\teq}$, and ${\lite}$,
 $\conv_0$ calls itself recursively on the arguments $t_i$ and polarity $\pol(
 \boolop, i, p )$, where $\pol$ is defined as
-\begin{equation*}
-\pol( \boolop, i, p ) =
+\[\pol( \boolop, i, p ) =
 \begin{cases}
 p & \text{if either $\boolop \in \{{\wedge}, {\vee}\}$ or $\boolop = \lite$ and $i \in \{2, 3\}$} \\[-\jot]
 \pnegate p & \text{if $\boolop = {\neg}$} \\[-\jot]
 \pnone & \text{otherwise}
-\end{cases}
-\end{equation*}
+\end{cases}\]
 where the negation $\pnegate p$ of a polarity $p$ is $\pneg$ if $p$ is $\ppos$, $\ppos$
 if $p$ is $\pneg$, and $\pnone$ if $p$ is $\pnone$.
 If $t$ is positive, $\conv_0$ adds the constraint $\chi$ derived from
@@ -705,8 +703,8 @@ $t'_1$ with $\vecfarg{\con{f}}( a )$. Since function definitions
 are a top-level conjunct, %by case analysis on the return values of $\conv$,
 $\chi$ must be $\ltrue$.
 If $t$ is an unannotated quantified formula, $\conv_0$ calls itself
-on the body with the same polarity. A quantifier is prefixed to the
-quantified formula and constraint returned by the recursive call.
+on the body with the same polarity. \begin{longv}A quantifier is prefixed to the
+quantified formula and constraint returned by the recursive call.\end{longv}
 Otherwise, $t$ is either an application of an uninterpreted predicate or a term
 of a type other than $\Bool$. The returned constraint is a conjunction of
 formulas of the form $\exists a : {\fargtype{\con{f}}}.\;\, \vecfarg{\con{f}}(
@@ -787,6 +785,11 @@ whereas they both produce a model for formula~(\ref{eq:ex-after})
 within 100 milliseconds.\xend
 \end{example}
 
+\newcommand\badlambda{\lambda x : \typeint.\allowbreak\;\, \lite( x \teq 0,\allowbreak\; 0,\allowbreak\;
+  \lite( x \teq 1,\allowbreak\; 1,\allowbreak\;
+    \lite( x \teq 2,\allowbreak\; 3,\allowbreak\;
+      \lite(\ldots,\allowbreak\; \lite( x \teq 13,\allowbreak\, 91,\allowbreak\, 105 )\negvthinspace \ldots ))))}
+
 The translation $\conv$ results in formulas whose models are different than those of $\varphi$.
 %\ct{"Preserves models" means that it does not drop models, not that it adds models.}
 One model $\I$ for formula~(\ref{eq:ex-after}) in the above example interprets
@@ -796,10 +799,8 @@ $\con{c}$ as $14$,
 and $\con{s}$ as the (almost constant) function
 %
 %\begin{equation} \label{eq:approx-interp}
-\[\lambda x : \typeint.\;\, \lite( x \teq 0,\; 0,\;
-  \lite( x \teq 1,\; 1,\;
-    \lite( x \teq 2,\; 3,\;
-      \lite(\ldots,\; \lite( x \teq 13,\, 91,\, 105 )\negvthinspace \ldots ))))\]
+\begin{shortv}$\badlambda$.\end{shortv}%
+\begin{longv}\[\badlambda\]\end{longv}
 %\end{equation}
 %
 In other words, $\const{s}$ is interpreted as a function mapping $x$ to the sum
@@ -883,7 +884,7 @@ If $\psi$ is a formula not containing function definitions, then $\conv( \psi )$
 \begin{theorem}\label{thm:equi}
 If $\varphi$ is a\/ $\Sigma$-formula that is in definitional form with respect to\/
 $\sfundefs{\Sigma}$
-and the set of function definitions\/ $\DDD$ corresponding to functions in\/
+and the set of function definitions\/ $\DDD$ corresponding to\/
 $\sfundefs{\Sigma}$ is admissible, then\/ $\varphi$ and\/ $\conv( \varphi )$ are
 equisatisfiable.
 \end{theorem}
@@ -1001,7 +1002,8 @@ The existential constraint in the above formula
 ensures that whenever $\I$ satisfies the set $L_1 = L_0 \cup \{ \neg \con{c} \leq 0,\; \con{s}(\con{c}) \teq \con{c} + \con{s}( \con{c}-1 ) \}$,
 $\I$ satisfies $\absconstraints( L_1 )$ as well.
 Hence, by repeated application of this reasoning, it follows that
-a model of formula~(\ref{eq:ex-after}) that interprets $\con{c}$ as $n$ must also satisfy the formula $\psi$:
+a model of formula~(\ref{eq:ex-after}) that interprets $\con{c}$ as $n$ must also satisfy% the formula
+~$\psi$:
 %
 \[\con{s}( \con{c} ) > 100 \wedge %\displaystyle
   \bigwedge\nolimits_{\vthinspace i=0}^{\!n-1} \bigl( \neg (\con{c}-i \leq 0) \wedge \con{s}( \con{c}-i ) \teq \con{c}-i + \con{s}( \con{c}-i-1 ) \bigr)
@@ -1271,11 +1273,11 @@ The finite model finding support in the instantiation-based iProver
 %Model finding has been studied outside the world of SMT.
 
 Some finite model finders are based on a reduction to a decidable logic,
-typically propositional logic. They translate the input problem to the weaker
-logic and pass it to a solver for that logic.
+typically propositional logic. \begin{longv}They translate the input problem to the weaker
+logic and pass it to a solver for that logic.\end{longv}
 The translation is parameterized by upper or exact finite bounds on
 the cardinalities of the atomic types. This procedure was pioneered by McCune
-in the earlier versions of Mace (also capitalized MACE) \cite{mccune-1994}.
+in the earlier versions of Mace (or MACE) \cite{mccune-1994}.
 Other conceptually similar finders are Paradox \cite{claessen-sorensson-2003}
 and FM-Darwin \cite{baumgartner-et-al-2009} for first-order logic with
 equality; the Alloy Analyzer and its back-end Kodkod \cite{torlak-jackson-2007}
@@ -1288,30 +1290,34 @@ cardinalities, the search space is represented in memory as multidimensional
 arrays. The procedure tries different values in the function and predicate
 table entries, checking each time if the problem is satisfied and backtracking
 if necessary. This approach was pioneered by FINDER \cite{slaney-1994} and
-SEM \cite{zhang-zhang-1995} and serves as the basis of many more model finders,
+SEM \cite{zhang-zhang-1995}\begin{longv} and serves as the basis of many more model finders,
 notably the Alloy Analyzer's precursor \cite{jackson-1996} and the later
-versions of~Mace \cite{mccune-prover9-mace4}.
+versions of~Mace \cite{mccune-prover9-mace4}\end{longv}.
 
+\begin{longv}
 Most of the above tools cannot cope with algebraic datatypes or other infinite
-types. Kuncak and Jackson \cite{kuncak-jackson-2005} presented an idiom for
+types. \end{longv}%
+Kuncak and Jackson \cite{kuncak-jackson-2005} presented an idiom for
 encoding datatypes and recursive functions in Alloy, by approximating datatypes
 by finite subterm-closed substructures. The approach finds sound (fragments
 of) models for formulas in the \relax{existential--bounded-universal} fragment
-(i.e., formulas whose prenex normal forms contain no unbounded universal
-quantifiers ranging over datatypes). This idiom was further developed by Dunets
+\begin{longv}(i.e., formulas whose prenex normal forms contain no unbounded universal
+quantifiers ranging over datatypes)\end{longv}. This idiom was further developed by Dunets
 et al.\ \cite{dunets-et-al-2010}, who presented a translation scheme
 for primitive recursion. Their definedness guards play a similar role to the
 existential constraints generated by our translation $\conv$.
 
-The higher-order model finder Nitpick for the Isabelle/HOL proof assistant
+The higher-order model finder Nitpick \cite{blanchette-nipkow-2010}
+for the Isabelle/HOL proof assistant
 relies on another variant of Kuncak and Jackson's approach inside a
-Kleene-style three-valued logic, inspired by abstract interpretation. It was
-also the first tool of its kind to support corecursion and coalgebraic datatypes
-\cite{blanchette-2013-relational}. The three-valued logic approach extends each
+Kleene-style three-valued logic\begin{longv}, inspired by abstract interpretation\end{longv}.
+\begin{longv}It was also the first tool of its kind to support corecursion and
+coalgebraic datatypes \cite{blanchette-2013-relational}.\end{longv}
+The three-valued logic approach extends each
 approximated type with an unknown value, which is propagated by function
 application. This approach works reasonably well in Nitpick, because it builds
-on Kodkod's relational logic, but our initial experiments with \cvc convinced
-us that it is more efficient to avoid unknown values by adding existential
+on a relational logic, but our initial experiments with \cvc suggest
+that it is more efficient to avoid unknown values by adding existential
 constraints.
 
 The Leon system~\cite{blanc2013overview} implements a procedure that can both
@@ -1321,10 +1327,11 @@ quantifiers altogether by unfolding recursive definitions up to a certain
 depth, which is increased on a per-need basis.
 The approach described in this paper works in an analogous manner, 
 where instead the SMT solver is invoked only once 
-and where quantifier instantiation amounts to function unfolding. It would be
+and where quantifier instantiation amounts to function unfolding.
+\begin{longv}It would be
 worth investigating how existing approaches for function
 unfolding can inform approaches for dedicated quantifier instantiation
-techniques for function definitions, and vice versa.
+techniques for function definitions, and vice versa.\end{longv}
 
 Model finding is concerned with satisfying arbitrary logical constraints. Some
 tools are tailored for problems that correspond to total functional
