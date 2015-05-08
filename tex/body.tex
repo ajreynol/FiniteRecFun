@@ -654,13 +654,14 @@ $\varphi$ into an $\extendsig{\Sigma}$-formula. It relies
 on the auxiliary function $\conv_0$, which takes two arguments:\ the term $t$
 to translate and a \relax{polarity}~$p$, which is either $\ppos$, $\pneg$, or
 $\pnone$. \vthinspace$\conv_0$ returns a pair $( t'\negvthinspace,\, \chi )$, where $t'$ is a term of
-type $\tau$ and $\chi$ is an additional constraint.
-This constraint is needed if the polarity is $\pnone$; otherwise, it is encoded
-directly in $t'$ and $\chi$ is simply $\ltrue$.
-In the auxiliary function $\conv_0$, the function $\pol(
-\boolop, i, p )$ returns the polarity of the $i$\vvthinspace{th} argument of an
-application of~$\boolop$ having polarity $p$ if $\boolop$ is an interpreted
-predicate or $\pnone$ otherwise.
+the same type as $t$, and $\chi$ is a $\extendsig{\Sigma}$-formula.
+%an additional constraint.
+%This constraint is needed if the polarity is $\pnone$; otherwise, it is encoded
+%directly in $t'$ and $\chi$ is simply $\ltrue$.
+%In the auxiliary function $\conv_0$, the function $\pol(
+%\boolop, i, p )$ returns the polarity of the $i$\vvthinspace{th} argument of an
+%application of~$\boolop$ having polarity $p$ if $\boolop$ is an interpreted
+%predicate or $\pnone$ otherwise.
 
 
 %The role of $D$ is to ensure that
@@ -1000,7 +1001,7 @@ where $\absconstraints( L_0 )$ is the set consisting of the single constraint $\
 %The latter ensures that $\I$ satisfies a formula that entails both $\con{s}( \con{c} ) > 100$ and $\varphi_{\con{s}}[\con{c}/x]$.
 Since $\I$ also satisfies both the translated function definition for $\con{s}$---i.e.,
 the first conjunct of formula~(\ref{eq:ex-after})---and $\absconstraints( L_0
-)$, it must also satisfy the formula $\psi_1$:
+)$, it must also satisfy\begin{longv} the formula $\psi_1$\end{longv}:
 \[
 \lite\bigl( \con{c} \leq 0,\; 
             \con{s}(\con{c}) \teq 0,\;
