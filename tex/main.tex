@@ -39,6 +39,7 @@
 %\usepackage{amsthm}
 \usepackage{amsmath}    % need for subequations
 \usepackage{booktabs}
+\usepackage{version}
 %\usepackage{float}
 %\usepackage{fullpage}
 %\floatstyle{ruled}
@@ -228,6 +229,9 @@
 %\input{scalalistings}
 %\input{smtlib2listings}
 \usepackage{program}
+
+\excludeversion{longv}
+\includeversion{shortv}
 
 \def\squareforqed{\hbox{\rlap{$\sqcap$}$\sqcup$}}
 
@@ -509,6 +513,7 @@ If\/
 $\DDD$ is a set of well-founded function definitions for\/
 $\sfundefs{\Sigma} = \{\con{f}_1,\ldots,\con{f}_n\}$, then it is admissible.
 \end{theorem}
+\begin{longv}
 \begin{proofsketch}
 Let $\psi$ be a satisfiable formula closed under function expansion with
 respect to $\DDD$. We show that $\psi \wedge \bigwedge \Delta$ is also
@@ -531,6 +536,7 @@ Since $\J \models \Delta$ by assumption, we have $\J \models \psi \wedge
 %$\varphi \,\models_T\, \bigwedge\nolimits_{\,i=1}^{n} \{ \varphi_i[ \vec t / \vec x ] \mid \con{f}_i( \vec t ) \in \terms( \varphi ) \}$.
 \qed
 \end{proofsketch}
+\end{longv}
 
 Another useful fragment of function definitions is the class of
 \emph{productive} corecursive functions. Corecursive functions are functions to
@@ -879,10 +885,12 @@ $\I$ satisfies $L \cup \absconstraints( L )$, where $L$ is a set of ground $\Sig
 %There exists a set of ground $\Sigma$-literals $L$ such that $L$ entails $\varphi$, 
 %and $\I$ satisfies $L \cup \absconstraints( L )$.
 \end{lemma}
+\begin{longv}
 \begin{proofsketch}
 By definition of $\conv$ and case analysis on the return values of $\conv_0$.
 \qed
 \end{proofsketch}
+\end{longv}
 
 \begin{cor}\label{cor:conv}
 If $\psi$ is a formula not containing function definitions, then $\conv( \psi )$ entails $\psi$.
@@ -895,6 +903,7 @@ and the set of function definitions\/ $\DDD$ corresponding to functions in\/
 $\sfundefs{\Sigma}$ is admissible, then\/ $\varphi$ and\/ $\conv( \varphi )$ are
 equisatisfiable.
 \end{theorem}
+\begin{longv}
 \begin{proofsketch}
 First, we show that if $\varphi$ is satisfied by $\Sigma$-interpretation $\I$, then $\conv( \varphi )$ is satisfied by an $\extendsig{\Sigma}$-interpretation $\J$.
 Let $\J$ be the $\extendsig{\Sigma}$-interpretation that interprets all types $\tau \in \stypes{\Sigma}$ as $\tau^\I$,
@@ -949,6 +958,7 @@ by definition there exists a $\Sigma$-interpretation $\I$ satisfying $\psi \wedg
 i.e., $\varphi$.
 \qed
 \end{proofsketch}
+\end{longv}
 
 The intuition of the above proof is as follows.
 First, $\conv( \varphi )$ cannot be unsatisfiable when $\varphi$ is satisfiable
@@ -1201,17 +1211,27 @@ can be specified as %follows:
 %
 When reading this input,
 \cvc adds the annotated quantified formula
+\begin{longv}
 $$\forallf{\con{s}} x.\;\, \con{s}( x ) \teq \lite\bigl( x \leq 0,\; 0,\; \con{s}( x-1 )\bigr)$$
 to its list of assertions,
 which after rewriting becomes
 $$\forallf{\con{s}} x.\;\, \lite\bigl( x \leq 0,\; \con{s}( x ) \teq 0,\; \con{s}( x ) \teq \con{s}( x-1 ) \bigr)$$
+\end{longv}
+\begin{shortv}
+$\forallf{\con{s}} x.\;\, \con{s}( x ) \teq \lite\bigl( x \leq 0,\; 0,\; \con{s}( x-1 )\bigr)$
+to its list of assertions,
+which after rewriting becomes
+$\forallf{\con{s}} x.\;\, \lite\bigl( x \leq 0,\; \con{s}( x ) \teq 0,\; \con{s}( x ) \teq \con{s}( x-1 ) \bigr)$
+\end{shortv}
 If \cvc's finite model finding mode for recursive functions is enabled (using
 the command-line option \texttt{--fmf-fun}), it will replace its list of known
 assertions based on the translation $\conv$ before checking for satisfiability.
 %If the functions provided in the input are admissible,
 %then a ``satisfiable" response from the solver implies that a model exists for the original formula.
 Accordingly, the solver will output the approximation of the interpretation it
-used for recursive function definitions. For the example above, it outputs
+used for recursive function definitions. 
+\begin{longv}
+For the example above, it outputs
 %\ajr{prefer having the full output like this here?}
 %\jb{I like it the way you did it now, but I took the freedom to reformat the output slightly
 %(to avoid the small font---I generally try to avoid ad hoc font mixtures---and to show
@@ -1232,6 +1252,10 @@ used for recursive function definitions. For the example above, it outputs
 )
 \end{verbatim}
 \end{quote}
+\end{longv}
+\begin{shortv}
+\ajr{todo}
+\end{shortv}
 
 The \texttt{--fmf-fun} option instructs \cvc to assume that the
 functions provided by the user are admissible.
