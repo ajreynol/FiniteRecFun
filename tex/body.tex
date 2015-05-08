@@ -52,7 +52,7 @@
 \newcommand\cvci{{\cvc}i\xspace}
 \newcommand\ziiib{\ziii}
 
-\renewcommand\models{\mathrel{\vDash}}
+\renewcommand\models{\mathrel{\vthinspace\vDash}}
 
 %\newcommand{\DDD}{\mathcalx{D}}
 \newcommand\DDD{\Delta}
@@ -449,15 +449,16 @@ function symbols $\sfundefs{\Sigma} \subseteq \sfuns{\Sigma}$.
 We consider $\Sigma$-formulas that are in definitional form with respect to
 $\sfundefs{\Sigma}$.
 
+\newcommand\closurefmla{\psi \models_T \bigwedge\nolimits_{\,i=1}^{n} \{ \psi_i[ \vec t / \vec x ] \mid \con{f}_i( \vec t ) \in \terms( \psi ) \}}
+
 \begin{definition}\rm
 Given a set of function definitions 
 $\DDD = \{ \forallf{\con{f}_1} \vec x.\; \varphi_1, \ldots, \forallf{\con{f}_n} \vec x.\; \varphi_n \}$, 
 a ground formula $\psi$ 
 %\ct{I suppose $\psi$ is meant to be ground.} yes --ajr
-is \emph{closed under function expansion with respect to $\DDD$} if 
-\[
- \psi \,\models_T\, \bigwedge\nolimits_{\,i=1}^{n} \{ \psi_i[ \vec t / \vec x ] \mid \con{f}_i( \vec t ) \in \terms( \psi ) \} %.
-\]
+is \emph{closed under function expansion with respect to $\DDD$} if
+\begin{shortv}$\closurefmla$.\end{shortv}%
+\begin{longv}\[\closurefmla\]\end{longv}
 The set $\DDD$ is \emph{admissible} if for every $T$-satisfiable formula 
 $\psi$ closed under function expansion with respect to $\DDD$,
 the formula
