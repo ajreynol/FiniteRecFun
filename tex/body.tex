@@ -1255,11 +1255,11 @@ For the example above, it outputs
 \begin{verbatim}
 (model
   (define-fun s (($x1 Int)) Int 
-     (ite (= $x1 14) 105 (ite (= $x1 13) 91 (ite (= $x1 12) 78 
-        (ite (= $x1 11) 66 (ite (= $x1 10) 55 (ite (= $x1 4) 10 
-           (ite (= $x1 9) 45 (ite (= $x1 8) 36 (ite (= $x1 7) 28 
-              (ite (= $x1 6) 21 (ite (= $x1 3) 6 (ite (= $x1 5) 15 
-                 (ite (= $x1 2) 3 (ite (= $x1 1) 1 0)))))))))))))))
+    (ite (= $x1 14) 105 (ite (= $x1 13) 91 (ite (= $x1 12) 78 
+      (ite (= $x1 11) 66 (ite (= $x1 10) 55 (ite (= $x1 4) 10 
+        (ite (= $x1 9) 45 (ite (= $x1 8) 36 (ite (= $x1 7) 28 
+          (ite (= $x1 6) 21 (ite (= $x1 3) 6 (ite (= $x1 5) 15 
+            (ite (= $x1 2) 3 (ite (= $x1 1) 1 0)))))))))))))))
   (define-fun c () Int 14))
 \end{verbatim}
 \end{quote}
