@@ -547,25 +547,28 @@ definition, possibly in some $\lite$ branch) when establishing well-foundedness
 or productivity, without affecting admissibility.
 \end{longv}
 
-\newcommand\badassex{%
- \{\forallf{\con{f}} x.\;\, \con{f}( x ) \teq \con{f}( x ),\;\,
- \forallf{\con{g}} x.\;\, \lite( \con{f}( x ) \teq 5,\allowbreak\;
-   \con{g}( x ) \teq \con{f}( x ),\allowbreak\;
-   \con{g}( x ) \teq \con{g}( x ) + 1)\}}
+%\newcommand\badassex{
+% \{\forallf{\con{f}} x : \typeint.\;\, \con{f}( x ) \teq \con{f}( x ),\;\,
+% \forallf{\con{g}} x : \typeint.\;\, \lite( \con{f}( x ) \teq 5,\allowbreak\;
+%   \con{g}( x ) \teq \con{f}( x ),\allowbreak\;
+%   \con{g}( x ) \teq \con{g}( x ) + 1)\}}
+\newcommand\badassex{
+ \{\forallf{\con{f}} x : \typeint.\;\, \con{f}( x ) \teq \con{f}( x ),\;\,
+ \forallf{\con{g}} x : \typeint.\;\, \con{g}( x ) \teq \con{g}( x ) + \nobreak\con{f}( x )\}}
 
-An example of an inadmissible function set is
-$\{ \forallf{\con{f}} x.\;\, \con{f}( x ) \teq \con{f}( x ) + 1 \}$,
+An example of an inadmissible set is
+$\{ \forallf{\con{f}} x : \typeint.\;\, \con{f}( x ) \teq \con{f}( x ) + 1 \}$,
 since the formula $\ltrue$ is (trivially) closed under function expansion with respect to this set,
 and there is no model of $T$
 satisfying $\con{f}$'s definition. A more subtle specimen is
 \begin{shortv}$\badassex$. \end{shortv}%
 \begin{longv}\[\badassex\]\end{longv}%
 While this set has a model where $\con f$ and $\con g$ are interpreted as the
-constant function $5$, it is not admissible since %the formula
-$\con{f}( 0 ) \teq 4$ is
+constant function $0$, it is not admissible since %the formula
+$\con{f}( 0 ) \teq 1$ is
 closed under function expansion \begin{longv}with respect to this set\end{longv}
 and yet there exists
-no interpretation satisfying both $\con{f}( 0 ) \teq 4$ and $\con{g}$'s
+no interpretation satisfying both $\con{f}( 0 ) \teq 1$ and $\con{g}$'s
 definition.
 
 %Terminating function specifications are always admissible, but also some
