@@ -238,6 +238,10 @@ Department of Computer Science, University of Iowa, USA
 
 \maketitle
 
+%% The institutions above shouldn't count as footnotes
+\setcounter{footnote}{0}
+
+\begin{nottinyv}
 \begin{abstract}
 \noindent
 SMT solvers have recently been extended with techniques for finding models
@@ -251,11 +255,9 @@ the performance of existing solvers on benchmarks from two sources.
 The translation is implemented as a preprocessor in the solver CVC4.
 \end{abstract}
 
-%% The institutions above shouldn't count as footnotes
-\setcounter{footnote}{0}
-
 \section{Introduction}
 \label{sec:introduction}
+\end{nottinyv}
 
 %\ct{The paper used "recursive datatype" in some places and "inductive datatype" in others. I have replaced both by "algebraic datatype" which is more accurate for \cvc.
 %("recursive datatype" is a more general notion and "inductive datatype" has a stronger meaning in higher-order logics.)}  
@@ -311,16 +313,16 @@ command for introducing them, \texttt{define-fun-rec}, to the SMT-LIB standard \
 %In this paper,
 We present a method for translating formulas involving recursive function
 definitions into formulas where finite model finding techniques can be applied.
-The recursive functions must meet a semantic criterion to be admissible
-(Section~\ref{sec:prelim}). This criterion is met by well-founded (terminating)
+The recursive functions must meet a semantic criterion to be admissible\begin{nottinyv}
+(Section~\ref{sec:prelim})\end{nottinyv}. This criterion is met by well-founded (terminating)
 recursive function definitions. \begin{longv}It is not met by inconsistent
 definitions such as $\forall x : {\typeint}.\;\, \con{f}(x) \teq \con{f}(x) +
 1$.\end{longv} %ct and it is possible to construct consistent examples that do not meet it.
 %as well as other example of consistent definition.
 
 We define a translation for a class of
-formulas involving admissible recursive function definitions
-(Section~\ref{sec:encoding}). The main insight is that a
+formulas involving admissible recursive function definitions\begin{nottinyv}
+(Section~\ref{sec:encoding})\end{nottinyv}. The main insight is that a
 recursive definition $\forall x : \tau.\;\, \const{f}(x) \teq t$
 can be translated to
 $\forall a :
@@ -335,9 +337,10 @@ report \cite{our-report}.\end{shortv}
 Our empirical evaluation on benchmarks from the IsaPlanner proof planner~\cite{DBLP:conf/itp/JohanssonDB10}
 and the Leon verifier~\cite{blanc2013overview} provides
 evidence that this translation improves the effectiveness of the SMT solvers
-\cvc and \ziii for finding counterexamples to verification conditions
-(Section~\ref{sec:evaluation}). The approach is implemented as a preprocessor
-in \cvc (Section~\ref{sec:front-end}).\begin{longv} When invoked with a specific
+\cvc and \ziii for finding counterexamples to verification conditions\begin{nottinyv}
+(Section~\ref{sec:evaluation})\end{nottinyv}. The approach is implemented as a preprocessor
+in \cvc \begin{nottinyv}(Section~\ref{sec:front-end})\end{nottinyv}. \begin{longv}%
+When invoked with a specific
 command-line option, the solver assumes that functions introduced using the
 \texttt{define-fun-rec} command are admissible and translates them accordingly.\end{longv}
 
@@ -346,6 +349,7 @@ command-line option, the solver assumes that functions introduced using the
 %does not target users who wish to check the consistency of a set of function
 %definitions.
 
+\begin{nottinyv}
 \section{Preliminaries}
 \label{sec:prelim}
 
@@ -1413,6 +1417,7 @@ techniques,
 it makes it possible to
 find models of quantified formulas over infinite types, such as integers
 and algebraic datatypes.
+\end{nottinyv}
 
 In future work, it would be interesting to evaluate the approach against other
 counterexample generators, notably Leon and Nitpick, and enrich the benchmark
@@ -1429,6 +1434,7 @@ enlarging the applicability of the translation scheme presented here.
 %to evaluating Alloy itself. Leon is, in part, a counterexample generator.
 %``Model finder'' is probably a stretch.}
 
+\begin{nottinyv}
 {%\footnotesize
 \def\ackname{Acknowledgment}
 \paragraph{%\footnotesize
@@ -1437,6 +1443,7 @@ Viktor Kuncak and Stephan Merz have made this work possible. We would also like
 to thank Damien Busato-Gaston and Emmanouil Koukoutos for providing the initial
 set of benchmarks used in the evaluation.
 }
+\end{nottinyv}
 
 {
 \bibliographystyle{abbrv}
