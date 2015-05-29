@@ -215,11 +215,13 @@
 \newcommand\xend{{\hfill$\scriptstyle\blacksquare$}}
 \renewcommand\qed{{\hfill$\squareforqed$}}
 
+\hyphenation{counter-example counter-examples Isa-belle}
+
 \begin{document}
 
 \title{Model Finding for Recursive Functions in SMT\thanks{%
 This research is partially supported by the Inria technological development
-action ``Contre-exemples Utilisables par Isabelle et Coq'' (CUIC).
+action ``Contre-exemples utilisables par Isabelle et Coq'' (CUIC).
 }
 }
 \titlerunning {Model Finding for Recursive Functions in SMT}
@@ -241,7 +243,7 @@ Department of Computer Science, University of Iowa, USA
 %% The institutions above shouldn't count as footnotes
 \setcounter{footnote}{0}
 
-\begin{nottinyv}
+%\begin{nottinyv}
 \begin{abstract}
 \noindent
 SMT solvers have recently been extended with techniques for finding models
@@ -257,7 +259,7 @@ The translation is implemented as a preprocessor in the solver CVC4.
 
 \section{Introduction}
 \label{sec:introduction}
-\end{nottinyv}
+%\end{nottinyv}
 
 %\ct{The paper used "recursive datatype" in some places and "inductive datatype" in others. I have replaced both by "algebraic datatype" which is more accurate for \cvc.
 %("recursive datatype" is a more general notion and "inductive datatype" has a stronger meaning in higher-order logics.)}  
@@ -326,7 +328,7 @@ formulas involving admissible recursive function definitions\begin{nottinyv}
 recursive definition $\forall x : \tau.\;\, \const{f}(x) \teq t$
 can be translated to
 $\forall a :
-\fargtype{\tau}.\;\, \const{f}(\farg{\con{f}}(a)) \teq t[\concret(a)/x]$, where
+\fargtype{\tau}.\;\, \const{f}(\farg{\con{f}}(a)) \teq t[\farg{\con{f}}(a)/x]$, where
 $\fargtype{\tau}$ is an uninterpreted \relax{abstract} type and $\farg{\con{f}} \begin{longv}:
 \fargtype{\tau} \to \tau\end{longv}$ converts the abstract type to the concrete
 type. The translation preserves satisfiability and\begin{longv}, for admissible definitions,\end{longv}
@@ -349,7 +351,7 @@ command-line option, the solver assumes that functions introduced using the
 %does not target users who wish to check the consistency of a set of function
 %definitions.
 
-\begin{nottinyv}
+%\begin{nottinyv}
 \section{Preliminaries}
 \label{sec:prelim}
 
@@ -1128,7 +1130,7 @@ reasoning in SMT~\cite{reynolds-kuncak-2015}.
 \\[\jot]
 Total & \phantom{0}11  & 112 & \phantom{00}6 & \phantom{00}6 & \phantom{00}6 & {\win 331} & \phantom{00}6 & \phantom{00}6
 \end{tabular}
-\caption{\,Number of \emph{sat} responses on benchmarks without and with translation with $\conv$}
+\caption{\,Number of \emph{sat} responses on benchmarks without and with $\conv$ translation}
 \label{fig:sat}
 \end{figure}
 
@@ -1154,7 +1156,7 @@ Total & \phantom{0}11  & 112 & \phantom{00}6 & \phantom{00}6 & \phantom{00}6 & {
 \\[\jot]
 Total & 187 & 209 & 216 & 211 & 217 & 204 & {\win 318} & 217
 \end{tabular}
-\caption{\,Number of \emph{unsat} responses on benchmarks without and with translation with $\conv$}
+\caption{\,Number of \emph{unsat} responses on benchmarks without and with $\conv$ translation}
 \label{fig:unsat}
 \end{figure}
 
@@ -1417,7 +1419,7 @@ techniques,
 it makes it possible to
 find models of quantified formulas over infinite types, such as integers
 and algebraic datatypes.
-\end{nottinyv}
+%\end{nottinyv}
 
 In future work, it would be interesting to evaluate the approach against other
 counterexample generators, notably Leon and Nitpick, and enrich the benchmark
@@ -1440,7 +1442,7 @@ which itself is based on a longer technical report. Both are available online.%
 \footnote{\url{http://lara.epfl.ch/~reynolds/SMT2015-recfun/}}
 \end{tinyv}
 
-\begin{nottinyv}
+%\begin{nottinyv}
 {%\footnotesize
 \def\ackname{Acknowledgment}
 \paragraph{%\footnotesize
@@ -1449,7 +1451,7 @@ Viktor Kuncak and Stephan Merz have made this work possible. We would also like
 to thank Damien Busato-Gaston and Emmanouil Koukoutos for providing the initial
 set of benchmarks used in the evaluation.
 }
-\end{nottinyv}
+%\end{nottinyv}
 
 {
 \bibliographystyle{abbrv}
