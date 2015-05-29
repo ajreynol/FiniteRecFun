@@ -249,7 +249,7 @@ Department of Computer Science, University of Iowa, USA
 SMT solvers have recently been extended with techniques for finding models
 in presence of universally quantified formulas in some restricted fragments.
 This paper introduces a translation which reduces axioms specifying a large
-class of recursive functions, including well-founded (terminating),
+class of recursive functions, including well-founded (terminating) functions,
 to universally quantified formulas for which these
 techniques are applicable.
 An empirical evaluation confirms that the approach improves 
@@ -331,7 +331,9 @@ $\forall a :
 \fargtype{\tau}.\;\, \const{f}(\farg{\con{f}}(a)) \teq t[\farg{\con{f}}(a)/x]$, where
 $\fargtype{\tau}$ is an uninterpreted \relax{abstract} type and $\farg{\con{f}} \begin{longv}:
 \fargtype{\tau} \to \tau\end{longv}$ converts the abstract type to the concrete
-type. The translation preserves satisfiability and\begin{longv}, for admissible definitions,\end{longv}
+type. Additional constraints ensure that the abstract values that are relevant
+to the formula's satisfiability
+exist. The translation preserves satisfiability and\begin{longv}, for admissible definitions,\end{longv}
 unsatisfiability, and makes finite model finding possible for problems in this
 class.\begin{shortv} Detailed proofs of correctness are included in a technical
 report \cite{our-report}.\end{shortv}
