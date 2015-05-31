@@ -1,0 +1,82 @@
+----------------------- REVIEW 1 ---------------------
+PAPER: 6
+TITLE: Model Finding for Recursive Functions in SMT
+AUTHORS: Andrew Reynolds, Jasmin Blanchette and Cesare Tinelli
+
+OVERALL EVALUATION: 2 (accept)
+REVIEWER'S CONFIDENCE: 4 (high)
+
+----------- REVIEW -----------
+The paper introduces a syntactic transformation on function definitions which
+preserves unsatisfiability. The idea is to ensure that function uses follow
+the recursive equations, but values outside of the domain where the function
+is used do not need to satisfy the recursive equations. The paper is readable
+and well suited for the SMT workshop.
+
+
+----------------------- REVIEW 2 ---------------------
+PAPER: 6
+TITLE: Model Finding for Recursive Functions in SMT
+AUTHORS: Andrew Reynolds, Jasmin Blanchette and Cesare Tinelli
+
+OVERALL EVALUATION: 2 (accept)
+REVIEWER'S CONFIDENCE: 4 (high)
+
+----------- REVIEW -----------
+The paper presents a model-finding procedure that works with recursive
+function definitions. It is based on translating an original formula
+into a new formula for which finite-model finding is applicable.
+This builds on previous work by Reynolds and his co-authors on
+model finding for quantified formulas.
+
+The paper is readable and the approach looks good and interesting.
+Experimental results show that it works well. It also has significant
+applications related to verification (or counterexample finding)
+in the Leon system.
+
+This is a good paper for this workshop.
+
+
+----------------------- REVIEW 3 ---------------------
+PAPER: 6
+TITLE: Model Finding for Recursive Functions in SMT
+AUTHORS: Andrew Reynolds, Jasmin Blanchette and Cesare Tinelli
+
+OVERALL EVALUATION: 2 (accept)
+REVIEWER'S CONFIDENCE: 4 (high)
+
+----------- REVIEW -----------
+Review of "Model Finding for Recursive Functions in SMT"
+
+The paper introduces a new technique for translating a class of universal
+quantified formulas, frequently arising in the axiomatization of recursive
+functions, to a form more amenable to finite model finding SMT solvers. For
+example, even a simple recursive function for computing triangular numbers is
+beyond the capabilities of current SMT techniques. The key idea is to replace
+each universally quantified variable with a new uninterpreted abstract type
+and a concretization function that will provide concrete values to the
+abstract type. The resulting translation is equisatisfiable with the original
+formula assuming the set of recursive function definitions are admissible. The
+authors then showed their technique on the benchmark from the IsaPlanner suite
+and another benchmark from simple Scala program verification. The experiment
+shows a drastic improvement on the satisfiable instances. The results for
+unsatisfiable instances are mixed.
+
+The technique presented in the paper is of high relevance and interest to the
+SMT workshop given the prevalence of recursive functions in mathematics and
+programming. The considerable improvement on satisfiable instances shows that
+the technique is valuable for finding counter-examples in verification
+problems. The practical outcome of the work is very exciting. The biggest
+drawback of the technique is the assumption of admissibility, which the user
+must verify independently. If the assumption is violated, then the technique
+can return spurious results for unsatisfiable instances. As one of the
+examples in the paper demonstrates, (in)admissibility can be somewhat subtle.
+So either the user must accept spurious results or prove admissibility, which
+places a big burden on the user.
+
+The paper is well written and with good examples to explain the abstract
+ideas. Possible typos in the paper:
+
+1) In the second line of definition 2: ψ_i should be φ_i
+2) In the second last paragraph of the introduction: t[γ(a)/x] is missing a
+subscript "f" after the function.
