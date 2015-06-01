@@ -1,3 +1,29 @@
+\PassOptionsToClass{11pt,withtimes}{easychair}
+\PassOptionsToPackage{hyphens}{url}
+\PassOptionsToPackage{scaled=.86}{helvet}
+\PassOptionsToPackage{
+   a4paper,
+   pdftex,
+   pdftitle={Model Finding for Recursive Functions in SMT},
+   pdfauthor={Andrew Reynolds, Jasmin Christian Blanchette, and Cesare Tinelli},
+   pdfkeywords={},
+   pdfborder={0 0 0},
+   draft=false,
+   bookmarksnumbered,
+   bookmarks,
+   bookmarksdepth=2,
+   bookmarksopenlevel=2,
+   bookmarksopen}{hyperref}
+\documentclass{easychair}
+
+%envcountsect,
+\usepackage{version}
+
+\excludeversion{tinyv}
+\includeversion{nottinyv}
+\includeversion{shortv}
+\excludeversion{longv}
+
 %\documentclass[runningheads,a4paper]{llncs}
 \usepackage[T1]{fontenc}
 \usepackage{amsmath}
@@ -1363,7 +1389,7 @@ The Leon system~\cite{blanc2013overview} implements a procedure that can
 produce both proofs and counter\-examples for properties of terminating functions
 written in a subset of Scala. Leon is based on an SMT solver. It avoids
 quantifiers altogether by unfolding recursive definitions up to a certain
-depth\begin{longv}, which is increased on a per-need basis\end{longv}.
+depth. %, which is increased on a per-need basis.
 Our translation~$\conv$ works in an analogous manner, 
 where instead the SMT solver is invoked only once 
 and where quantifier instantiation amounts to function unfolding.
@@ -1458,7 +1484,164 @@ suggestions and comments.
 
 {
 \bibliographystyle{abbrv}
-\bibliography{bib}
+%\bibliography{bib}
+
+\begin{thebibliography}{10}
+
+\bibitem{barrett-et-al-2011}
+C.~Barrett, C.~L. Conway, M.~Deters, L.~Hadarean, D.~Jovanovic, T.~King,
+  A.~Reynolds, and C.~Tinelli.
+\newblock {CVC4}.
+\newblock In G.~Gopalakrishnan and S.~Qadeer, editors, {\em CAV 2011}, volume
+  6806 of {\em LNCS}, pages 171--177. Springer, 2011.
+
+\bibitem{smtlib25}
+C.~Barrett, P.~Fontaine, and C.~Tinelli.
+\newblock The {SMT-LIB} standard---{V}ersion 2.5.
+\newblock \url{http://smt-lib.org/language.shtml}, to appear.
+
+\bibitem{baumgartner-et-al-2009}
+P.~Baumgartner, A.~Fuchs, H.~de~Nivelle, and C.~Tinelli.
+\newblock Computing finite models by reduction to function-free clause logic.
+\newblock {\em J. Applied Logic}, 7(1):58--74, 2009.
+
+\bibitem{blanc2013overview}
+R.~Blanc, V.~Kuncak, E.~Kneuss, and P.~Suter.
+\newblock An overview of the {Leon} verification system---{V}erification by
+  translation to recursive functions.
+\newblock In {\em Scala {'}13}. ACM, 2013.
+
+\bibitem{blanchette-nipkow-2010}
+J.~C. Blanchette and T.~Nipkow.
+\newblock Nitpick: A counterexample generator for higher-order logic based on a
+  relational model finder.
+\newblock In M.~Kaufmann and L.~C. Paulson, editors, {\em ITP 2010}, volume
+  6172 of {\em LNCS}, pages 131--146. Springer, 2010.
+
+\bibitem{claessen-hughes-2000}
+K.~Claessen and J.~Hughes.
+\newblock Quick{C}heck: A lightweight tool for random testing of {H}askell
+  programs.
+\newblock In {\em ICFP {'}00}, pages 268--279. ACM, 2000.
+
+\bibitem{claessen-sorensson-2003}
+K.~Claessen and N.~S{\"o}rensson.
+\newblock New techniques that improve {MACE}-style model finding.
+\newblock In {\em MODEL}, 2003.
+
+\bibitem{MouraBjoerner07}
+L.~de~Moura and N.~Bj{\o}rner.
+\newblock Efficient {E}-matching for {SMT} solvers.
+\newblock In F.~Pfenning, editor, {\em CADE-21}, volume 4603 of {\em LNCS},
+  pages 183--198. Springer, 2007.
+
+\bibitem{de-moura-bjoerner-2008}
+L.~de~Moura and N.~Bj{\o}rner.
+\newblock {Z3}: {An} efficient {SMT} solver.
+\newblock In C.~R. Ramakrishnan and J.~Rehof, editors, {\em TACAS 2008}, volume
+  4963 of {\em LNCS}, pages 337--340. Springer, 2008.
+
+\bibitem{dunets-et-al-2010}
+A.~Dunets, G.~Schellhorn, and W.~Reif.
+\newblock Automated flaw detection in algebraic specifications.
+\newblock {\em J.~Autom.\ Reasoning}, 45(4):359--395, 2010.
+
+\bibitem{GeDeM-CAV-09}
+Y.~Ge and L.~de~Moura.
+\newblock Complete instantiation for quantified formulas in satisfiability
+  modulo theories.
+\newblock In {\em CAV '09}, volume 5643 of {\em LNCS}, pages 306--320.
+  Springer, 2009.
+
+\bibitem{DBLP:conf/itp/JohanssonDB10}
+M.~Johansson, L.~Dixon, and A.~Bundy.
+\newblock Case-analysis for rippling and inductive proof.
+\newblock In {\em {ITP} 2010}, pages 291--306, 2010.
+
+\bibitem{korovin-2013}
+K.~Korovin.
+\newblock Non-cyclic sorts for first-order satisfiability.
+\newblock In P.~Fontaine, C.~Ringeissen, and R.~A. Schmidt, editors, {\em
+  FroCoS 2013}, volume 8152 of {\em LNCS}, pages 214--228. Springer, 2013.
+
+\bibitem{krauss-2009-phd}
+A.~Krauss.
+\newblock {\em Automating Recursive Definitions and Termination Proofs in
+  Higher-Order Logic}.
+\newblock {Ph.D.}\ thesis, Technische Universit\"at M\"unchen, 2009.
+
+\bibitem{kuncak-jackson-2005}
+V.~Kuncak and D.~Jackson.
+\newblock Relational analysis of algebraic datatypes.
+\newblock In M.~Wermelinger and H.~Gall, editors, {\em ESEC/FSE 2005}. ACM,
+  2005.
+
+\bibitem{mccune-1994}
+W.~McCune.
+\newblock A {D}avis--{P}utnam program and its application to finite first-order
+  model search: Quasigroup existence problems.
+\newblock Technical report, Argonne National Laboratory, 1994.
+
+\bibitem{reynolds-blanchette-2015-codata}
+A.~Reynolds and J.~C. Blanchette.
+\newblock A decision procedure for (co)datatypes in {SMT} solvers.
+\newblock In A.~Felty and A.~Middeldorp, editors, {\em CADE-25}, LNCS.
+  Springer, 2015.
+
+\bibitem{our-report}
+A.~Reynolds, J.~C. Blanchette, and C.~Tinelli.
+\newblock Model finding for recursive functions in {SMT}.
+\newblock Tech.\ report, \url{http://lara.epfl.ch/~reynolds/SMT2015-recfun/},
+  2015.
+
+\bibitem{reynolds-kuncak-2015}
+A.~Reynolds and V.~Kuncak.
+\newblock Induction for {SMT} solvers.
+\newblock In D.~D'Souza, A.~Lal, and K.~G. Larsen, editors, {\em {VMCAI} 2015},
+  volume 8931 of {\em LNCS}, pages 80--98. Springer, 2014.
+
+\bibitem{ReynoldsTinelliMoura14}
+A.~Reynolds, C.~Tinelli, and L.~de~Moura.
+\newblock Finding conflicting instances of quantified formulas in {SMT}.
+\newblock In {\em FMCAD 2014}, pages 195--202. {IEEE}, 2014.
+
+\bibitem{ReyEtAl-1-RR-13}
+A.~Reynolds, C.~Tinelli, A.~Goel, and S.~Krsti\'c.
+\newblock Finite model finding in {SMT}.
+\newblock In N.~Sharygina and H.~Veith, editors, {\em CAV 2013}, volume 8044 of
+  {\em LNCS}, pages 640--655. Springer, 2013.
+
+\bibitem{reynolds-et-al-2013}
+A.~Reynolds, C.~Tinelli, A.~Goel, S.~Krsti{\'c}, M.~Deters, and C.~Barrett.
+\newblock Quantifier instantiation techniques for finite model finding in
+  {SMT}.
+\newblock In M.~P. Bonacina, editor, {\em CADE-24}, volume 7898 of {\em LNCS},
+  pages 377--391. Springer, 2013.
+
+\bibitem{slaney-1994}
+J.~K. Slaney.
+\newblock {FINDER}: Finite domain enumerator system description.
+\newblock In A.~Bundy, editor, {\em CADE-12}, volume 814 of {\em LNCS}, pages
+  798--801. Springer, 1994.
+
+\bibitem{torlak-jackson-2007}
+E.~Torlak and D.~Jackson.
+\newblock Kodkod: A relational model finder.
+\newblock In O.~Grumberg and M.~Huth, editors, {\em TACAS 2007}, volume 4424 of
+  {\em {LNCS}}, pages 632--647. Springer, 2007.
+
+\bibitem{weber-2008}
+T.~Weber.
+\newblock {\em SAT-Based Finite Model Generation for Higher-Order Logic}.
+\newblock {Ph.D.}\ thesis, Technische Universit\"at M\"unchen, 2008.
+
+\bibitem{zhang-zhang-1995}
+J.~Zhang and H.~Zhang.
+\newblock {SEM}: A system for enumerating models.
+\newblock In C.~S. Mellish, editor, {\em IJCAI-95}, volume~1, pages 298--303.
+  Morgan Kaufmann, 1995.
+
+\end{thebibliography}
 }
 
 \end{document}
