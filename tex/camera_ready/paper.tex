@@ -419,12 +419,12 @@ A \emph{$\Sigma$-interpretation $\I$} %is a mathematical structure that
 maps each type $\tau \in \stypes{\Sigma}$ to a nonempty set $\tau^\I$,
 the \emph{domain} of~$\tau$ in~$\I$,
  each function symbol $\con{f} : \tau_1 \times \cdots \times \tau_n \rightarrow \tau$ in $\sfuns{\Sigma}$
-to a total function $\con{f}^\I : \tau_1^\I \times \cdots \times \tau_n^\I \rightarrow \tau^\I$
+to a total function $\con{f}^\I : \tau_1^\I \times \cdots \times \tau_n^\I \rightarrow \tau^\I$,
 and each variable $x:\tau$ of $\svars{\Sigma}$ as an element of $\tau^\I$.
 A \emph{theory} is a pair $T = (\Sigma, \Mo)$ where
 $\Sigma$ is a signature and $\Mo$ is a class of $\Sigma$-interpretations,
 the \emph{models} of $T$, closed under variable reassignment
-(that is, for every $I \in \Mo$, every $\Sigma$-interpretation that differs
+(i.e., for every $I \in \Mo$, every $\Sigma$-interpretation that differs
 from $I$ only on the variables of $\svars \Sigma$ is also in $\Mo$).
 A $\Sigma$-formula $\varphi$ is \emph{$T$-satisfiable}
 if it is satisfied by some interpretation in $\Mo$\begin{longv};
@@ -450,11 +450,11 @@ $\sfuns{\Sigma} = \sfuns{\Sigma_1} \cup \sfuns{\Sigma_2}$,
 $\stypes{\Sigma} = \stypes{\Sigma_1} \cup \stypes{\Sigma_2}$,
 and $\Mo$ is the set of all $\Sigma$-interpretations $\I$
 whose $\Sigma_1$-reduct is a model of $T_1$.
-We refer to the symbols of $\Sigma_2$ that are not is $\Sigma_1$ as \emph{uninterpreted}.
-For the rest of the paper \emph{we fix a theory $T = (\Sigma, \Mo)$ 
+We refer to the symbols of $\Sigma_2$ that are not in $\Sigma_1$ as \emph{uninterpreted}.
+For the rest of the paper, \relax{we fix a theory $T = (\Sigma, \Mo)$ 
 with uninterpreted symbols} constructed as above.
 
-We will consider \emph{annotated quantified formulas} of the form
+We consider \emph{annotated quantified formulas} of the form
 $\forallf{\const{f}} \vec x.\; \varphi$, where $\con{f} \in \sfuns{\Sigma}$ is
 uninterpreted. Their
 semantics is the same as for standard quantified formulas
@@ -1295,8 +1295,8 @@ assertions based on the translation $\conv$ before checking for satisfiability.
 %then a ``satisfiable" response from the solver implies that a model exists for the original formula.
 Accordingly, the solver will output the approximation of the interpretation it
 used for recursive function definitions. 
-For the example above, it outputs a partial model of~$\con{s}$, where only
-the values of $\con{s}$ for $x = 0,\ldots,14$ are given.
+For the example above, it outputs a partial model of~$\con{s}$ where only
+the values of $\con{s}(x)$ for $x = 0,\ldots,14$ are given.
 
 The \texttt{--fmf-fun} option tells \cvc to assume that
 functions introduced using \texttt{define-\allowbreak fun-\allowbreak rec} are admissible.
