@@ -172,6 +172,8 @@
 %\newcommand{\stypes}[1]{#1^\mathrm{s}}
 \newcommand{\stypes}[1]{#1^\mathrm{ty}}
 
+\newcommand{\svars}[1]{#1^\mathrm{v}}
+
 \newcommand{\sfuns}[1]{#1^\mathrm{f}}
 \newcommand{\sfundefs}[1]{#1^\mathrm{dfn}}
 %\newcommand{\sfunndefs}[1]{#1^\mathrm{nf}}
@@ -261,7 +263,7 @@ Inria Nancy \& LORIA, Villers-l\`es-Nancy, France
 \and
 Max-Planck-Institut f\"ur Informatik, Saarbr\"ucken, Germany
 \and
-Department of Computer Science, University of Iowa, USA
+Department of Computer Science, The University of Iowa, USA
 }
 
 \maketitle
@@ -400,6 +402,10 @@ standard Boolean connectives ($\neg$, $\wedge$, $\vee$, etc.),
 and an if--then--else function symbol
 $\lite : \Bool \times \tau \times \tau \rightarrow \tau$
 for each $\tau \in \stypes{\Sigma}$.
+For each $\tau \in \stypes{\Sigma}$,
+we fix an infinite set $\svars{\Sigma}_\tau$ of \emph{variables of type $\tau$} and
+define $\svars{\Sigma}$ as $\bigcup_{\tau \in \stypes{\Sigma}} \svars{\Sigma}_\tau$.
+$\Sigma$-terms are built as usual over functions symbols in $\Sigma$ and variables in $\svars{\Sigma}$. 
 Formulas are terms of type $\Bool$.
 We write $t\typ{\tau}$ to denote a metavariable ranging over terms of
 type~$\tau$ and $\terms( t )$ to denote the set of subterms in $t$.
@@ -412,34 +418,47 @@ all occurrences of $\vec x$ with $\vec t$ in $u$.
 A \emph{$\Sigma$-interpretation $\I$} %is a mathematical structure that
 maps each type $\tau \in \stypes{\Sigma}$ to a nonempty set $\tau^\I$,
 the \emph{domain} of~$\tau$ in~$\I$,
-and each function symbol $\con{f} : \tau_1 \times \cdots \times \tau_n \rightarrow \tau$ in
-$\sfuns{\Sigma}$
-to a total function $\con{f}^\I : \tau_1^\I \times \cdots \times \tau_n^\I \rightarrow \tau^\I$.
+ each function symbol $\con{f} : \tau_1 \times \cdots \times \tau_n \rightarrow \tau$ in $\sfuns{\Sigma}$
+to a total function $\con{f}^\I : \tau_1^\I \times \cdots \times \tau_n^\I \rightarrow \tau^\I$
+and each variable $x:\tau$ of $\svars{\Sigma}$ as an element of $\tau^\I$.
 A \emph{theory} is a pair $T = (\Sigma, \Mo)$ where
 $\Sigma$ is a signature and $\Mo$ is a class of $\Sigma$-interpretations,
-the \emph{models} of $T$.
-A $\Sigma$-formula $\varphi$ is
-\emph{$T$-satisfiable}
+the \emph{models} of $T$, closed under variable reassignment
+(that is, for every $I \in \Mo$, every $\Sigma$-interpretation that differs
+from $I$ only on the variables of $\svars \Sigma$ is also in $\Mo$).
+A $\Sigma$-formula $\varphi$ is \emph{$T$-satisfiable}
 if it is satisfied by some interpretation in $\Mo$\begin{longv};
 otherwise, it is \emph{$T$-unsatisfiable}\end{longv}.
 A formula $\varphi$ \emph{$T$-entails} $\psi$, written $\varphi \models_T \psi$,
 if all interpretations in $\Mo$ that satisfy $\varphi$ also satisfy $\psi$.
 Two formulas $\varphi$ and $\psi$ are \emph{$T$-equivalent} 
 if each $T$-entails the other.
-Given a signature $\Sigma$,
-the \emph{theory of equality with uninterpreted functions} \euf
-consists of the set of all $\Sigma$-interpretations.
-Informally, we refer to the type and function symbols in this theory as \emph{uninterpreted}.
-%\ct{This is both ambiguous and insufficient.
-%Since this is SMT we should fix some background theory $T$,
-%then extend its signature with additional symbols and call \emph{those} uninterpreted.
-%}
+%ct changed the following because it is not adequate for our purposes
+%
+%Given a signature $\Sigma$,
+%the \emph{theory of equality with uninterpreted functions} \euf
+%consists of the set of all $\Sigma$-interpretations.
+%Informally, we refer to the type and function symbols in this theory as \emph{uninterpreted}.
+%%\ct{This is both ambiguous and insufficient.
+%%Since this is SMT we should fix some background theory $T$,
+%%then extend its signature with additional symbols and call \emph{those} uninterpreted.
+%%}
+If $T_1 = (\Sigma_1, \Mo_1)$ is a theory and $\Sigma_2$ is a signature 
+with $\sfuns{\Sigma_1} \cap \sfuns{\Sigma_2} = \emptyset$,
+the \emph{extension of $T_1$ to $\Sigma_2$} is the theory $T = (\Sigma, \Mo)$ where 
+$\sfuns{\Sigma} = \sfuns{\Sigma_1} \cup \sfuns{\Sigma_2}$,
+$\stypes{\Sigma} = \stypes{\Sigma_1} \cup \stypes{\Sigma_2}$,
+and $\Mo$ is the set of all $\Sigma$-interpretations $\I$
+whose $\Sigma_1$-reduct is a model of $T_1$.
+We refer to the symbols of $\Sigma_2$ that are not is $\Sigma_1$ as \emph{uninterpreted}.
+For the rest of the paper \emph{we fix a theory $T = (\Sigma, \Mo)$ 
+with uninterpreted symbols} constructed as above.
 
-In addition to $\forall \vec x.\; \varphi$,
-we consider \emph{annotated quantified formulas} of the form
+We will consider \emph{annotated quantified formulas} of the form
 $\forallf{\const{f}} \vec x.\; \varphi$, where $\con{f} \in \sfuns{\Sigma}$ is
 uninterpreted. Their
-semantics is the same as for standard quantified formulas.
+semantics is the same as for standard quantified formulas
+$\forall \vec x.\; \varphi$.
 Given $\con{f} : \tau_1 \times \cdots \times \tau_n \rightarrow \tau$,
 an annotated
 quantified formula $\forallf{\con{f}} \vec x.\; \varphi$ is a \emph{function definition}
@@ -481,8 +500,7 @@ We call $\psi$ the \emph{conjecture} of $\varphi$.
 % Now fixed above -ajr
 \end{definition}
 
-Given a signature $\Sigma$, we distinguish the subset of \emph{defined}
-function symbols $\sfundefs{\Sigma} \subseteq \sfuns{\Sigma}$.
+In the signature $\Sigma$, we distinguish a subset $\sfundefs{\Sigma} \subseteq \sfuns{\Sigma}$ of \emph{defined} uninterpreted function symbols.
 We consider $\Sigma$-formulas that are in definitional form with respect to
 $\sfundefs{\Sigma}$.
 
@@ -519,7 +537,8 @@ the function would terminate when seen as a functional program, under \emph{some
 evaluation order. For example, the definition
 $\forall x : {\typeint}.\;\, \lite\bigl(
 x \leq 0,\allowbreak\; \con{p}( x ) \teq 1,\allowbreak\; \con{p}( x ) \teq 2 * \con{p}( x - 1 ) \bigr)$
-can be shown well-founded under a strategy that
+where $T$ is integer arithmetic extended with the uninterpreted symbol 
+$\con p:\typeint \rightarrow \Bool$ can be shown well-founded under a strategy that
 evaluates the condition of a $\lite$ before evaluating the relevant branch,
 ignoring the other branch. \begin{longv}Logically, such dependencies can be captured by
 congruence rules. \end{longv}Krauss developed these ideas in the more general context of
@@ -592,10 +611,14 @@ or productivity, without affecting admissibility.
  \forallf{\con{g}} x : \typeint.\;\, \con{g}( x ) \teq \con{g}( x ) + \nobreak\con{f}( x )\}}
 
 An example of an inadmissible set is
-$\{ \forallf{\con{f}} x : \typeint.\;\, \con{f}( x ) \teq \con{f}( x ) + 1 \}$,
-since the formula $\ltrue$ is (trivially) closed under function expansion with respect to this set,
+$\{ \forallf{\con{f}} x : \typeint.\;\, \con{f}( x ) \teq \con{f}( x ) + 1 \}$
+where $T$ is integer arithmetic extended to a set of uninterpreted symbols 
+$\{\con f:\typeint \rightarrow \typeint,\, \con g:\typeint \rightarrow \typeint,\, \ldots \}$.
+The reason is that the formula $\ltrue$ is (trivially) closed under function expansion with respect to this set,
 and there is no model of $T$
-satisfying $\con{f}$'s definition. A more subtle specimen is
+satisfying $\con{f}$'s definition. A more subtle %ct specimen 
+example 
+is
 \begin{shortv}$\badassex$. \end{shortv}%
 \begin{longv}\[\badassex\]\end{longv}%
 While this set has a model where $\con f$ and $\con g$ are interpreted as the
@@ -762,13 +785,7 @@ in its range.
 
 \begin{example}
 \label{ex:translation}
-Consider the combined signature of linear arithmetic and uninterpreted
-functions $\Sigma = \Sigmalia \mathrel{\uplus} \Sigma_{\euf}$, where
-%$\stypes{\Sigma_{\euf}} = \{ \typeint \}$ 
-%\ct{shouldn't this be $\stypes{\Sigmalia} = \{ \typeint \}$?}
-%and
-% Something went wrong, let's just remove it --ajr
-$\sfuns{\Sigma_{\euf}} = \{ \con{s} : { \typeint \rightarrow \typeint },\, \const{c} : { \typeint } \}$.
+Let $T$ be linear arithmetic with the uninterpreted symbols  $\{ \con{s} : { \typeint \rightarrow \typeint },\, \const{c} : { \typeint } \}$.
 Let $\varphi$ be the $\Sigma$-formula
 \begin{equation} \label{eq:ex-before}
 \forallf{\con{s}} x : {\typeint}.\;\, \lite\bigl( x \leq 0,\; \con{s}(x) \teq 0,\;
