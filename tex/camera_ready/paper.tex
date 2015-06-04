@@ -538,8 +538,8 @@ evaluation order. For example, the definition
 $\forall x : {\typeint}.\;\, \lite\bigl(
 x \leq 0,\allowbreak\; \con{p}( x ) \teq 1,\allowbreak\; \con{p}( x ) \teq 2 * \con{p}( x - 1 ) \bigr)$
 where $T$ is integer arithmetic extended with the uninterpreted symbol 
-$\con p:\typeint \rightarrow \Bool$ can be shown well-founded under a strategy that
-evaluates the condition of a $\lite$ before evaluating the relevant branch,
+$\con p:\typeint \rightarrow \Bool$, can be shown well-founded under a strategy that
+evaluates the condition of an $\lite$ before evaluating the relevant branch,
 ignoring the other branch. \begin{longv}Logically, such dependencies can be captured by
 congruence rules. \end{longv}Krauss developed these ideas in the more general context of
 higher-order logic \cite[Section 2]{krauss-2009-phd}.
@@ -611,7 +611,7 @@ or productivity, without affecting admissibility.
  \forallf{\con{g}} x : \typeint.\;\, \con{g}( x ) \teq \con{g}( x ) + \nobreak\con{f}( x )\}}
 
 An example of an inadmissible set is
-$\{ \forallf{\con{f}} x : \typeint.\;\, \con{f}( x ) \teq \con{f}( x ) + 1 \}$
+$\{ \forallf{\con{f}} x : \typeint.\;\, \con{f}( x ) \teq \con{f}( x ) + 1 \}$,
 where $T$ is integer arithmetic extended to a set of uninterpreted symbols 
 $\{\con f:\typeint \rightarrow \typeint,\, \con g:\typeint \rightarrow \typeint,\, \ldots \}$.
 The reason is that the formula $\ltrue$ is (trivially) closed under function expansion with respect to this set,
