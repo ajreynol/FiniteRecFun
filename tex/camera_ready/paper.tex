@@ -369,7 +369,7 @@ report \cite{our-report}.\end{shortv}
 Our empirical evaluation on benchmarks from the IsaPlanner proof planner~\cite{DBLP:conf/itp/JohanssonDB10}
 and the Leon verifier~\cite{blanc2013overview} provides
 evidence that this translation improves the effectiveness of the SMT solvers
-\cvc and \ziii for finding counterexamples to verification conditions\begin{nottinyv}
+\cvc and \ziii for finding countermodels to verification conditions\begin{nottinyv}
 (Section~\ref{sec:evaluation})\end{nottinyv}. The approach is implemented as a preprocessor
 in \cvc \begin{nottinyv}(Section~\ref{sec:front-end})\end{nottinyv}. \begin{longv}%
 When invoked with a specific
@@ -536,7 +536,7 @@ that a function specification is well-founded, it is sufficient to require that
 the function would terminate when seen as a functional program, under \emph{some}
 evaluation order. For example, the definition
 $\forall x : {\typeint}.\;\, \lite\bigl(
-x \leq 0,\allowbreak\; \con{p}( x ) \teq 1,\allowbreak\; \con{p}( x ) \teq 2 * \con{p}( x - 1 ) \bigr)$
+x \leq 0,\allowbreak\; \con{p}( x ) \teq 1,\allowbreak\; \con{p}( x ) \teq 2 * \con{p}( x - 1 ) \bigr)$,
 where $T$ is integer arithmetic extended with the uninterpreted symbol 
 $\con p:\typeint \rightarrow \typeint$, can be shown well-founded under a strategy that
 evaluates the condition of an $\lite$ before evaluating the relevant branch,
@@ -677,22 +677,21 @@ $\conv_0( t\typ{\tau},\, p )$ $=$
 \begin{enumerate}
 %\begin{framed}
 \itemx[\ ]
-$\conv( \varphi )$ $=$ $\mathsf{let}$ $( \varphi',\, \_ ) = \conv_0( \varphi,\, \ppos )$ $\mathsf{in}$ $\varphi'$
+$\conv( \varphi )$ $=$ $\mathsf{let}$ $( \varphi',\, \chi ) = \conv_0( \varphi,\, \ppos )$ $\mathsf{in}$ $\varphi'$
 %\\[-1.25\baselineskip] %% TYPESETTING
 \end{enumerate}
-\caption{\,Definition of translation $\conv$.
-}
+\caption{\,Definition of translation $\conv$}
 \label{fig:A}
 \end{figure}
 
 For the rest of the section, let $\varphi$ be a $\Sigma$-formula
-in definitional form with respect to $\sfundefs{\Sigma}$,
+in definitional form with respect to $\sfundefs{\Sigma}$
 whose definitions are admissible.
 %We may translate $\varphi$ into a equisatisfiable formula $\phi'$ for which known model-finding procedures~\cite{GeDeM-CAV-09, ReyEtAl-1-RR-13} are applicable.
 We present a method that constructs an extended signature
 $\extendsig{ \Sigma }$ and an $\extendsig{ \Sigma }$-formula $\varphi'$ such that
 $\varphi'$ is $T$-satisfiable if and only if $\varphi$ is $T$-satisfiable---i.e.,
-$\varphi$ and $\varphi'$ are \emph{equisatisfiable (in $T$)}.
+$\varphi$ and $\varphi'$ are \emph{equisatisfiable} (\emph{in $T$}).
 The idea behind this translation
 is to use an uninterpreted type to abstract the set of
 \emph{relevant} tuples for each defined function $\con{f}$ and restrict the
@@ -720,7 +719,7 @@ on the auxiliary function $\conv_0$, which takes two arguments:\ the term $t$
 to translate and a \relax{polarity}~$p$ for $t$, which is either $\ppos$, $\pneg$, or
 $\pnone$. 
 \vthinspace$\conv_0$ returns a pair $( t'\negvthinspace,\, \chi )$, where $t'$ is a term of
-the same type as $t$ and $\chi$ is a $\extendsig{\Sigma}$-formula.
+the same type as $t$ and $\chi$ is an $\extendsig{\Sigma}$-formula.
 %an additional constraint.
 %This constraint is needed if the polarity is $\pnone$; otherwise, it is encoded
 %directly in $t'$ and $\chi$ is simply $\ltrue$.
@@ -734,19 +733,19 @@ the same type as $t$ and $\chi$ is a $\extendsig{\Sigma}$-formula.
 %the (restricted) function definition for $\con{f}$ includes certain tuples in
 %its domain, which we explain more in the following.
 
-The translation alters $\varphi$ in two ways. First, it restricts the
+The translation alters the formula $\varphi$ in two ways. First, it restricts the
 quantification on function definitions for $\con{f}$ to the corresponding
 uninterpreted type $\fargtype{\con{f}}$, inserting applications of the concretization functions $\fargx{\con{f}}{i}$ as needed. 
 Second, it augments $\varphi$ with additional constraints of the form
-$\exists a : \fargtype{\con{f}}.\;\, \vecfarg{\con{f}}( a ) \teq \vec s$
-where, if $\vec s = (s_1,\ldots,s_m)$, $\vecfarg{\con{f}}( a ) \teq \vec s$ abbreviates the formula
-$\bigwedge_{i=1,\ldots,m} \fargx{\con{f}}{i}(a) \teq s_i$.
-These constraints
+$\exists a :\nobreak \fargtype{\con{f}}.\;\, \vecfarg{\con{f}}( a ) \teq \vec s$,
+where $\vecfarg{\con{f}}( a ) \teq \vec s$ abbreviates the formula
+$\bigwedge_{i=1}^m\, \fargx{\con{f}}{i}(a) \teq s_i$
+with $\vec s = (s_1,\ldots,s_m)$.
+These existential %%% for typesetting
+constraints
 ensure that the restricted definition for $\con{f}$ covers all relevant tuples
 of terms, namely those occurring in applications of $\con{f}$ 
 that are relevant to the satisfiability of $\varphi$.
-%\jb{what does ``current branch of'' mean? can we drop it / rephrase it / vague
-%it up?}
 
 If $t$ is an application of a predicate symbol $\boolop$, including the
 operators ${\oldneg}$, ${\wedge}$, ${\vee}$, ${\teq}$, and ${\lite}$,
@@ -777,8 +776,8 @@ $\conv_0$ constructs a quantified formula over a single variable
 $a$ of type $\fargtype{\con{f}}$ and replaces all occurrences of $\vec x$ in
 the body of that formula with $\vecfarg{\con{f}}( a )$. 
 %ct removed this for consistency because we give no rationale for the other cases when we return true
-%Since function definitions are a top-level conjunct, %by case analysis on the return values of $\conv$,
-%$\chi$ must be $\ltrue$.
+(Since function definitions are top-level conjuncts, %by case analysis on the return values of $\conv$,
+$\chi$ must be $\ltrue$ and can be ignored.)
 %
 If $t$ is an unannotated quantified formula, $\conv_0$ calls itself
 on the body with the same polarity. \begin{longv}A quantifier is prefixed to the
@@ -786,13 +785,15 @@ quantified formula and constraint returned by the recursive call.\end{longv}
 Otherwise, $t$ is either an application of an uninterpreted predicate symbol or a term
 of a type other than $\Bool$. Then, the returned constraint is a conjunction of
 formulas of the form $\exists a : {\fargtype{\con{f}}}.\;\, \vecfarg{\con{f}}(
-a ) \teq \vec s$ for each subterm $\con{f}( \vec s )$ of $t$ such that $\con{f}
+a ) \teq \vec s$ for each subterm $\con{f}( \vec s )$ of~$t$ such that $\con{f}
 \in \sfundefs{\Sigma}$. Such constraints, when asserted positively, ensure that
+the tuple of uninterpreted functions $\vecfarg{\con{f}}$ has the argument
+tuple $\vec s$ in its range.
 %ct 
-% the tuple of uninterpreted functions $\vecfarg{\con{f}}$ has $\vec s$ in its range.
+% 
 %ct I find the following reformulation clearer
-the input tuple $\vec s$ is the preimage of some element in the abstract domain 
-$\fargtype{\con f}$.
+%the input tuple $\vec s$ is the preimage of some element in the abstract domain 
+%$\fargtype{\con f}$.
 
 %We demonstrate this translation with an example.
 
@@ -810,16 +811,10 @@ positive integers up to $x$. The formula $\varphi$ is in definitional form with
 respect to $\sfundefs{\Sigma}$ 
 %\jb{correct? It said $\Sigma_u$, which was definitely wrong} 
 and states that the sum of all
-positive numbers up to some value $\const{c}$ is greater than $100$. It is
+positive numbers up to some constant $\const{c}$ is greater than $100$. It is
 satisfiable with a model that interprets $\const{c}$ as $14$ or more.
 Due to the universal quantifier,
 current SMT techniques
-%~\cite{GeDeM-CAV-09, ReyEtAl-1-RR-13,reynolds-et-al-2013}
-%%% We described them in the intro. When I see references like that appear with
-%%% no description, as a reader, I get all paranoid and wonder if it's the old
-%%% stuff from the intro (Ge, Moura, Renoylds et al.) or if it's new stuff ---
-%%% and I cannot remember numbers like [9,18,19] across sections or even
-%%% paragraphs. --jb
 are unable to find
 a model for $\varphi$. The signature $\extendsig{\Sigma}$ extends $\Sigma$ with the type
 $\fargtype{\con{s}}$ and the uninterpreted function symbol $\farg{\con{s}} : \fargtype{\con{s}}
@@ -842,17 +837,17 @@ is the $\extendsig{\Sigma}$-formula
 \end{aligned}
 \end{equation}
 %
-The universal quantification in the resulting formula~(\ref{eq:ex-after}) is over an uninterpreted
-type $\fargtype{\con{s}}$, making~(\ref{eq:ex-after}) amenable to the finite model finding
+The universal quantification in formula~(\ref{eq:ex-after}) is over an uninterpreted
+type $\fargtype{\con{s}}$, making it amenable to the finite model finding
 techniques by Reynolds et al.\ \cite{ReyEtAl-1-RR-13,reynolds-et-al-2013},
 implemented in \cvc, which search for a finite interpretation for $\fargtype{\con{s}}$. 
-Furthermore, since all occurrences of the quantified variable~$a$ in~(\ref{eq:ex-after}) are 
+Furthermore, since all occurrences of the quantified variable~$a$ are 
 beneath applications of the uninterpreted function $\farg{\con{s}}$, 
 the formula is in the essentially uninterpreted fragment,
 for which Ge and de Moura \cite{GeDeM-CAV-09} provide 
 a complete instantiation procedure, implemented in \ziii. 
-Fittingly,
-%%% Added "apparently". Or are we sure?  
+As expected,
+%%% Are we sure?  
 % Yes, I'm planning to post the 2 versions of the benchmark on the evaluation page (when we add it) --ajr
 % Yes, but how can you be sure that Z3 will run forever? Your benchmarks surely have a timeout! --jb
 \cvc and \ziii run indefinitely on formula~(\ref{eq:ex-before}), 
@@ -866,7 +861,7 @@ within 100 milliseconds.\xend
       \lite(\ldots,\allowbreak\; \lite( x \teq 13,\allowbreak\, 91,\allowbreak\, 105 )\negvthinspace \ldots ))))}
 
 Note that the translation $\conv$ results in formulas whose models
-(i.e., satisfying interpretations) are different in general than those of $\varphi$.
+(i.e., satisfying interpretations) are generally different from those of $\varphi$.
 %\ct{"Preserves models" means that it does not drop models, not that it adds models.}
 One model $\I$ for formula~(\ref{eq:ex-after}) in the above example interprets
 $\fargtype{\con{s}}$ as a finite set $\{ u_0, \ldots, u_{14} \}$,
@@ -890,12 +885,14 @@ interprets $\con{s}( n )$ as $105$ when $n < 0$ or $n > 14$.
 
 However, under the assumption that the function definitions in
 $\sfundefs{\Sigma}$ are admissible, %we claim that
-$\conv(\varphi)$ is equisatisfiable with $\varphi$ for any input $\varphi$.\footnote{
+$\conv(\varphi)$ is equisatisfiable with $\varphi$ for any input $\varphi$.
+%\footnote{
 %ct moved in a footnote to avoid breaking the flow
-For the previous example, the intuition is that the
-interpretation of a term such as $\con{s}( -1 )$, say, is not
-relevant to the satisfiability of formula~(\ref{eq:ex-before}). 
-}
+%jb killed altogether
+%For the previous example, the intuition is that the
+%interpretation of a term such as $\con{s}( -1 )$ is not
+%relevant to the satisfiability of formula~(\ref{eq:ex-before}). 
+%}
 %ct removed because obvious
 %Thus, a ``satisfiable'' or ``unsatisfiable'' response from an SMT solver on input $\conv(
 %\varphi )$ implies the existence or nonexistence of a model for
@@ -909,9 +906,9 @@ $\con{c}$ and $\con{s}(n)$ in the same way (for $0 \le n \le 14$).
 In general, for every model of $\conv( \varphi )$,
 there exists a model of $\varphi$ that
 coincides with it on its interpretation of all
-function symbols in $\sfuns{\Sigma} - \sfundefs{\Sigma}$ 
-($\{\con{s} \}$ in the example
-\ct{This is not right. To start, the set difference should contain all the arithmetic symbols here. Moreover, isn't $\con s$ in $\sfundefs{\Sigma}$?}). 
+function symbols in $\sfuns{\Sigma} - \sfundefs{\Sigma}$.
+%($\{\con{s} \}$ in the example
+%\ct{This is not right. To start, the set difference should contain all the arithmetic symbols here. Moreover, isn't $\con s$ in $\sfundefs{\Sigma}$?})
 Furthermore, the model of $\conv( \varphi )$ will
 also give correct information for the defined functions at all points belonging
 to the domains of the corresponding abstract types. This can sometimes help
@@ -1031,7 +1028,7 @@ i.e., $\varphi$.
 The intuition of the above proof is as follows.
 First, $\conv( \varphi )$ cannot be unsatisfiable when $\varphi$ is satisfiable
 since any $\Sigma$-interpretation that satisfies $\varphi$ can be extended in a straightforward way to 
-a $\extendsig{\Sigma}$-interpretation that satisfies $\conv( \varphi )$.
+an $\extendsig{\Sigma}$-interpretation that satisfies $\conv( \varphi )$.
 Second, if a model is found for $\conv( \varphi )$,
 then the constraints $\exists a : \fargtype{\con{f}}.\;\, \vecfarg{\con{f}}( a ) \teq \vec t$
 occurring in $\conv( \varphi )$ ensure that this model also satisfies
@@ -1045,8 +1042,8 @@ assuming $\DDD$ is admissible.
 \begin{shortv}
 We give an intuition of the above theorem in the context of an example.
 For a set of ground $\Sigma$-literals $L$, let $\absconstraints( L )$ be the set
-$\{ \exists a : {\fargtype{\con{f}}}.\;\, \vecfarg{\con{f}}( a ) \teq \vec t
-\mid \con{f}( \vec t ) \in \terms( L ),\: \con{f} \in \sfundefs{\Sigma}
+$\{ \exists a : {\fargtype{\con{f}}}.\;\, \vecfarg{\con{f}}( a ) \teq \vec s
+\mid \con{f}( \vec s ) \in \terms( L ),\: \con{f} \in \sfundefs{\Sigma}
 \}$.
 \end{shortv}
 
@@ -1057,14 +1054,14 @@ Let us revisit the formulas in Example~\ref{ex:translation}.
 %formula~(\ref{eq:ex-before}) is unsatisfiable, since $\fargtype{\con{s}}$ can be
 %interpreted as the integers and $\farg{\con{s}}$ as the identity
 %function. 
-If the original formula~(\ref{eq:ex-before}) is $T$-satisfiable then the translated
+If the original formula~(\ref{eq:ex-before}) is $T$-satisfiable, the translated
 formula~(\ref{eq:ex-after}) is clearly also $T$-satisfiable since $\fargtype{\con{s}}$ can be
 interpreted as the integers and $\farg{\con{s}}$ as the identity function. 
 %
 Conversely, we claim that~(\ref{eq:ex-after}) is $T$-satisfiable
 only if~(\ref{eq:ex-before}) is $T$-satisfiable, noting that the set
 $\{ \forallf{\con{s}} x.\;\, \varphi_\con{s} \}$ is admissible,
-where $\varphi_\con{s}$ is the formula $\lite\bigl( x \leq 0,\; \con{s}(x) \teq 0,\; \con{s}( x ) \teq x + \con{s}( x-1 ) \bigr)$.
+where $\varphi_\con{s}$ is the formula $\lite\bigl( x \leq 0,\allowbreak\; \con{s}(x) \teq\nobreak 0,\allowbreak\; \con{s}( x ) \teq x + \con{s}( x-1 ) \bigr)$.
 %\ct{
 %You cannot possibly mean "if and only if" in the two sentences above.
 %Once I show that (1) is unsat iff (2) is unsat, I do not need to argue that
@@ -1084,7 +1081,7 @@ where $\varphi_\con{s}$ is the formula $\lite\bigl( x \leq 0,\; \con{s}(x) \teq 
 %$\exists b.\;\, \farg{\con{s}}( b ) \teq \farg{\con{s}}( a )-1$ ensures that
 %a similar constraint is enforced recursively: when $\varphi_{\con{s}}[t/x]$ is used in part to evaluate $\con{s}( \con{c} )$,
 %any model of $\varphi_{\con{s}}[t/x]$ must also satisfy $\varphi_{\con{s}}[t-1/x]$ when $t > 0$. 
-Clearly any interpretation $\I$ satisfying formula~(\ref{eq:ex-after}) satisfies 
+Clearly, any interpretation $\I$ satisfying formula~(\ref{eq:ex-after}) satisfies 
 $L_0 \cup \absconstraints( L_0 )$,
 where $L_0 = \{ \con{s}( \con{c} ) > 100 \}$
 and $\absconstraints( L_0 )$ consists of the single constraint
@@ -1180,7 +1177,7 @@ reasoning in SMT~\cite{reynolds-kuncak-2015}.
 \begin{figure}[t]
 %ct I would not use the normal size in figure makes them look out of proportion
 %\normalsize
-\small
+%\small
 \centering
 \begin{tabular}{l@{\kern1.5em}r@{\kern0.375em}r@{\kern1.5em}r@{\kern0.375em}r@{\kern1.5em}r@{\kern0.375em}r@{\kern1.5em}r@{\kern0.375em}r@{\,\,}}
   & \multicolumn{2}{c@{\kern1.5em}}{\phantom{0}\ziiib}     & \multicolumn{2}{c@{\kern1.5em}}{\phantom{0}\cvcd}     & \multicolumn{2}{c@{\kern1.5em}}{\phantom{0}\cvcf}     & \multicolumn{2}{c@{\,\,}}{\phantom{0}\cvci}
@@ -1207,7 +1204,7 @@ Total & \phantom{0}11  & 112 & \phantom{00}6 & \phantom{00}6 & \phantom{00}6 & {
 
 \begin{figure}[t]
 %\normalsize
-\small
+%\small
 \centering
 \begin{tabular}{l@{\kern1.5em}r@{\kern0.375em}r@{\kern1.5em}r@{\kern0.375em}r@{\kern1.5em}r@{\kern0.375em}r@{\kern1.5em}r@{\kern0.375em}r@{\,\,}}
   & \multicolumn{2}{c@{\kern1.5em}}{\phantom{0}\ziiib}     & \multicolumn{2}{c@{\kern1.5em}}{\phantom{0}\cvcd}     & \multicolumn{2}{c@{\kern1.5em}}{\phantom{0}\cvcf}     & \multicolumn{2}{c@{\,\,}}{\phantom{0}\cvci}
@@ -1251,27 +1248,26 @@ finding models for benchmarks containing recursively defined functions.
 The translation $\conv$ (the ``$\conv(\varphi)$'' columns) has a major
 impact. \cvcf finds 331 of the 885 benchmarks to be satisfiable,
 including 9~benchmarks in the nonmutated \leon benchmark set. The
-performance of \ziiib for counterexamples also improves dramatically, as it
+performance of \ziiib for countermodels also improves dramatically, as it
 finds 101 more benchmarks to be satisfiable, including 10 that are not solved by \cvcf.
 %
 We conclude that the translation $\conv$ enables SMT
-solvers to find models for conjectures involving recursively defined functions
+solvers to find countermodels for conjectures involving recursively defined functions
 whose definitions are admissible.
 %Both \ziiib and \cvcf were able to find a
-%large number of counterexamples after the translation, with the latter
+%large number of countermodels after the translation, with the latter
 %configuration finding significantly more instances (331 to 112).
 
-Over \emph{unsat} benchmarks, configuration \cvci is the
+Over \emph{unsat} benchmarks, \cvci is the
 clear winner, finding 318 total benchmarks to be unsatisfiable. Moreover, the
 translation $\conv$ helps \ziii for \emph{unsat} responses as well:
-\ziii solves a total of 209 after the translation, whereas it solves only 187 before the
-translation.
+\ziii solves a total of 209 with the translation, whereas it solves only 187 without it.
 %
-In contrast, \cvcd finds 211 benchmarks unsatisfiable after the translation.
+In contrast, \cvcd finds 211 benchmarks unsatisfiable with the translation.
 In general, the translation $\conv$ does not significantly degrade performance
 over unsatisfiable benchmarks, and in some cases it actually aids the solver 
-in determining unsatisfiability. The exception is \cvci whose inductive
-arguments, however, are guided by the types of the quantified variables.
+in determining unsatisfiability. The exception is \cvci, whose inductive
+arguments are guided by the types of the quantified variables.
 
 \section{Front-End Support in \cvc}
 \label{sec:front-end}
@@ -1279,11 +1275,11 @@ arguments, however, are guided by the types of the quantified variables.
 The translation $\conv$ significantly improves the effectiveness of current SMT
 techniques for finding models of formulas involving recursive
 function definitions.
-We have implemented in the development version of \cvc %~\cite{ReyEtAl-1-RR-13}
+We have implemented it in the development version of \cvc %~\cite{ReyEtAl-1-RR-13}
 (version~1.5 prerelease).
 Function definitions $\forallf{\con{f}} \vec x.\; \varphi$ can be written using the $\definefunreccmd$ command
 from the new version (2.5) of the SMT-LIB standard~\cite{smtlib25}.
-For example, formula~(\ref{eq:ex-before}) from Example~\ref{ex:translation}
+Thus, formula~(\ref{eq:ex-before}) from Example~\ref{ex:translation}
 can be specified as %follows:
 %
 \begin{quote}
@@ -1323,9 +1319,9 @@ the values of $\con{s}(x)$ for $x = 0,\ldots,14$ are given.
 
 The \texttt{--fmf-fun} option tells \cvc to assume that
 functions introduced using \texttt{define-\allowbreak fun-\allowbreak rec} are admissible.
-We stress that admissibility must be verified \begin{longv}separately \end{longv}\relax{by the user}---e.g., using a
+We stress that admissibility must be discharged separately by the user---e.g., using a
 syntactic criterion or a termination prover.
-If it is not met, \cvc may answer \emph{sat} for
+If some function definitions are not admissible, \cvc may answer \emph{sat} for
 an unsatisfiable problem. 
 \begin{longv}
 Indeed, if we add the inconsistent definition
@@ -1465,9 +1461,8 @@ with underspecification and nonexecutable functions.
 
 We presented a translation scheme that extends the scope of finite model finding 
 techniques in SMT, allowing one to use them to find models of quantified formulas 
-over \emph{infinite} types, such as integers and algebraic datatypes.
-%\end{nottinyv}
-
+over \relax{infinite} types, such as integers and algebraic datatypes.
+%
 In future work, it would be interesting to evaluate the approach against other
 counterexample generators, notably Leon and Nitpick, and enrich the benchmark
 suite with problems exercising \cvc's support for coalgebraic datatypes
@@ -1518,7 +1513,7 @@ C.~Barrett, C.~L. Conway, M.~Deters, L.~Hadarean, D.~Jovanovic, T.~King,
 C.~Barrett, P.~Fontaine, and C.~Tinelli.
 \newblock {The SMT-LIB Standard: Version 2.5}.
 \newblock Technical report, The University of Iowa, 2015.
-\newblock (Available at \url{http://smt-lib.org}).
+\newblock Available at \url{http://smt-lib.org/}.
 
 \bibitem{baumgartner-et-al-2009}
 P.~Baumgartner, A.~Fuchs, H.~de~Nivelle, and C.~Tinelli.
