@@ -787,8 +787,11 @@ of a type other than $\Bool$. Then, the returned constraint is a conjunction of
 formulas of the form $\exists a : {\fargtype{\con{f}}}.\;\, \vecfarg{\con{f}}(
 a ) \teq \vec s$ for each subterm $\con{f}( \vec s )$ of~$t$ such that $\con{f}
 \in \sfundefs{\Sigma}$. Such constraints, when asserted positively, ensure that
-the tuple of uninterpreted functions $\vecfarg{\con{f}}$ has the argument
-tuple $\vec s$ in its range.
+some element in the abstract domain $\fargtype{\con f}$ is the preimage of
+the argument tuple $\vec s$. % under $\vecfarg{\con{f}}$.
+
+%the tuple of uninterpreted functions $\vecfarg{\con{f}}$ has the argument
+%tuple $\vec s$ in its range.
 %ct 
 % 
 %ct I find the following reformulation clearer
@@ -1513,7 +1516,8 @@ C.~Barrett, C.~L. Conway, M.~Deters, L.~Hadarean, D.~Jovanovic, T.~King,
 C.~Barrett, P.~Fontaine, and C.~Tinelli.
 \newblock {The SMT-LIB Standard: Version 2.5}.
 \newblock Technical report, The University of Iowa, 2015.
-\newblock Available at \url{http://smt-lib.org/}.
+\newblock 
+Available at \url{http://smt-lib.org/}.
 
 \bibitem{baumgartner-et-al-2009}
 P.~Baumgartner, A.~Fuchs, H.~de~Nivelle, and C.~Tinelli.
