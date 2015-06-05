@@ -607,13 +607,13 @@ or productivity, without affecting admissibility.
 %   \con{g}( x ) \teq \con{f}( x ),\allowbreak\;
 %   \con{g}( x ) \teq \con{g}( x ) + 1)\}}
 \newcommand\badassex{
- \{\forallf{\con{f}} x : \typeint.\;\, \con{f}( x ) \teq \con{f}( x ),\;\,
+ \{\forallf{\con{f}} x : \typeint.\;\, \con{f}( x ) \teq \con{f}( x ),\allowbreak\;\,
  \forallf{\con{g}} x : \typeint.\;\, \con{g}( x ) \teq \con{g}( x ) + \nobreak\con{f}( x )\}}
 
 An example of an inadmissible set is
 $\{ \forallf{\con{f}} x : \typeint.\;\, \con{f}( x ) \teq \con{f}( x ) + 1 \}$,
 where $T$ is integer arithmetic extended to a set of uninterpreted symbols 
-$\{\con f:\typeint \rightarrow \typeint,\, \con g:\typeint \rightarrow \typeint,\, \ldots \}$.
+$\{\con f, \con g :\typeint \rightarrow \typeint,\, \ldots \}$.
 The reason is that the formula $\ltrue$ is (trivially) closed under function expansion with respect to this set,
 and there is no model of $T$
 satisfying $\con{f}$'s definition. A more subtle %ct specimen 
@@ -739,8 +739,8 @@ uninterpreted type $\fargtype{\con{f}}$, inserting applications of the concretiz
 Second, it augments $\varphi$ with additional constraints of the form
 $\exists a :\nobreak \fargtype{\con{f}}.\;\, \vecfarg{\con{f}}( a ) \teq \vec s$,
 where $\vecfarg{\con{f}}( a ) \teq \vec s$ abbreviates the formula
-$\bigwedge_{i=1}^m\, \fargx{\con{f}}{i}(a) \teq s_i$
-with $\vec s = (s_1,\ldots,s_m)$.
+$\bigwedge_{i=1}^n\, \fargx{\con{f}}{i}(a) \teq s_i$
+with $\vec s = (s_1,\ldots,s_n)$.
 These existential %%% for typesetting
 constraints
 ensure that the restricted definition for $\con{f}$ covers all relevant tuples
