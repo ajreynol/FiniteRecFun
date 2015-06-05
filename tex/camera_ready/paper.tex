@@ -802,7 +802,7 @@ the argument tuple $\vec s$. % under $\vecfarg{\con{f}}$.
 
 \begin{example}
 \label{ex:translation}
-Let $T$ be linear arithmetic with the uninterpreted symbols  $\{ \con{s} : { \typeint \rightarrow \typeint },\, \const{c} : { \typeint } \}$.
+Let $T$ be linear arithmetic with the uninterpreted symbols  $\{ \const{c} : { \typeint },\> \con{s} : { \typeint \rightarrow \typeint } \}$.
 Let $\varphi$ be the $\Sigma$-formula
 \begin{equation} \label{eq:ex-before}
 \forallf{\con{s}} x : {\typeint}.\;\, \lite\bigl( x \leq 0,\; \con{s}(x) \teq 0,\;
@@ -1181,6 +1181,7 @@ reasoning in SMT~\cite{reynolds-kuncak-2015}.
 %ct I would not use the normal size in figure makes them look out of proportion
 %\normalsize
 %\small
+\small
 \centering
 \begin{tabular}{l@{\kern1.5em}r@{\kern0.375em}r@{\kern1.5em}r@{\kern0.375em}r@{\kern1.5em}r@{\kern0.375em}r@{\kern1.5em}r@{\kern0.375em}r@{\,\,}}
   & \multicolumn{2}{c@{\kern1.5em}}{\phantom{0}\ziiib}     & \multicolumn{2}{c@{\kern1.5em}}{\phantom{0}\cvcd}     & \multicolumn{2}{c@{\kern1.5em}}{\phantom{0}\cvcf}     & \multicolumn{2}{c@{\,\,}}{\phantom{0}\cvci}
@@ -1206,6 +1207,7 @@ Total & \phantom{0}11  & 112 & \phantom{00}6 & \phantom{00}6 & \phantom{00}6 & {
 \end{figure}
 
 \begin{figure}[t]
+\small
 %\normalsize
 %\small
 \centering
