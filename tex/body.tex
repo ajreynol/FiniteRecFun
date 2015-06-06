@@ -1268,7 +1268,7 @@ to its list of assertions,
 which after rewriting becomes
 $\forallf{\con{s}} x.\;\, \lite\bigl( x \leq 0,\; \con{s}( x ) \teq 0,\; \con{s}( x ) \teq \con{s}( x-1 ) \bigr)$. \end{shortv}%
 If \cvc's finite model finding mode for recursive functions is enabled (using
-the command-line option \texttt{--fmf-fun}), it will replace its list of known
+the command-line option \texttt{-}\texttt{-fmf-fun}), it will replace its list of known
 assertions based on the translation $\conv$ before checking for satisfiability.
 %If the functions provided in the input are admissible,
 %then a ``satisfiable" response from the solver implies that a model exists for the original formula.
@@ -1290,7 +1290,7 @@ the values of $\con{s}(x)$ for $x = 0,\ldots,14$ are correctly given:
 \end{verbatim}
 \end{quote}
 
-The \texttt{--fmf-fun} option tells \cvc to assume that
+The \texttt{-}\texttt{-fmf-fun} option tells \cvc to assume that
 functions introduced using \texttt{define-\allowbreak fun-\allowbreak rec} are admissible.
 We stress that admissibility must be discharged separately by the user---e.g., using a
 syntactic criterion or a termination prover.
@@ -1306,7 +1306,7 @@ Indeed, if we add the inconsistent definition
 \end{verbatim}
 \end{quote}
 %
-to the above problem and run \cvc with the \texttt{--fmf-fun} option,
+to the above problem and run \cvc with the \texttt{-}\texttt{-fmf-fun} option,
 it wrongly answers \emph{sat}.
 \end{longv}
 
