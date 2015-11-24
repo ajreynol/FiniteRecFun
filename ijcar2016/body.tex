@@ -1,46 +1,16 @@
-%\documentclass[runningheads,a4paper]{llncs}
-\usepackage[T1]{fontenc}
-\usepackage{amsmath}
-\usepackage{amssymb}
-\usepackage[scaled=.82]{beramono}
-%\usepackage{mathptmx}
-\usepackage{listings}
-\usepackage{colonequals}
-%\usepackage{mathpartir}
-\usepackage{xspace}
-\setcounter{tocdepth}{3}
-\usepackage{graphicx}
-\usepackage{stmaryrd}
-\usepackage{cite}
-\usepackage{amsthm}
-%\usepackage{framed}
+%\theoremstyle{plain}
+%\newtheorem{theorem}{Theorem}%[section]
+%\newtheorem{lemma}[theorem]{Lemma}%[section]
+%\newtheorem{corollary}[theorem]{Corollary}%[section]
 
-% http://mirror.switch.ch/ftp/mirror/tex/macros/latex/contrib/xcolor/xcolor.pdf
-\usepackage{xcolor}
+%\theoremstyle{definition}
+%\newtheorem{definition}{Definition}%[section]
 
-%\usepackage{amsthm}
-\usepackage{amsmath}    % need for subequations
-\usepackage{booktabs}
-\usepackage{version}
-%\usepackage{float}
-%\usepackage{fullpage}
-%\floatstyle{ruled}
-%\newfloat{alg}{ht}{loa}
-%\floatname{alg}{Algorithm}
+%\theoremstyle{remark}
+%\newtheorem*{proofsketch}{Proof sketch}
+%\newtheorem{example}{Example}%[section]
 
-\theoremstyle{plain}
-\newtheorem{theorem}{Theorem}%[section]
-\newtheorem{lemma}[theorem]{Lemma}%[section]
-\newtheorem{corollary}[theorem]{Corollary}%[section]
-
-\theoremstyle{definition}
-\newtheorem{definition}{Definition}%[section]
-
-\theoremstyle{remark}
-\newtheorem*{proofsketch}{Proof sketch}
-\newtheorem{example}{Example}%[section]
-
-%\spnewtheorem*{proof}{Proof sketch}{\itshape}{\rmfamily}
+\spnewtheorem*{proofsketch}{Proof sketch}{\itshape}{\rmfamily}
 
 \usepackage{url}
 \urldef{\mailsa}\path|firstname.lastname@epfl.ch|
@@ -227,16 +197,16 @@ action ``Contre-exemples utilisables par Isabelle et Coq'' (CUIC).
 }
 \titlerunning {Model Finding for Recursive Functions in SMT}
 
-\author {Andrew Reynolds\inst{1} \and Jasmin Christian Blanchette\inst{2,3} \and Cesare Tinelli \inst{4}}
+\author {Andrew Reynolds\inst{1} \and Jasmin Christian Blanchette\inst{2,3} \and \\ Simon~Cruanes\inst{2} \and Cesare~Tinelli \inst{1}}
 \authorrunning {A. Reynolds, J. C. Blanchette, C. Tinelli}
 \institute{
-\'Ecole Polytechnique F\'ed\'erale de Lausanne (EPFL), Switzerland
+Department of Computer Science, The University of Iowa, USA
 \and
-Inria Nancy \& LORIA, Villers-l\`es-Nancy, France
+Inria Nancy -- Grand-Est, Villers-l\`es-Nancy, France
 \and
 Max-Planck-Institut f\"ur Informatik, Saarbr\"ucken, Germany
-\and
-Department of Computer Science, The University of Iowa, USA
+%\and
+%\'Ecole Polytechnique F\'ed\'erale de Lausanne (EPFL), Switzerland
 }
 
 \maketitle
@@ -244,7 +214,6 @@ Department of Computer Science, The University of Iowa, USA
 %% The institutions above shouldn't count as footnotes
 \setcounter{footnote}{0}
 
-%\begin{nottinyv}
 \begin{abstract}
 \noindent
 SMT solvers have recently been extended with techniques for finding models
@@ -260,7 +229,6 @@ The translation is implemented as a preprocessor in the solver CVC4.
 
 \section{Introduction}
 \label{sec:introduction}
-%\end{nottinyv}
 
 %\ct{The paper used "recursive datatype" in some places and "inductive datatype" in others. I have replaced both by "algebraic datatype" which is more accurate for \cvc.
 %("recursive datatype" is a more general notion and "inductive datatype" has a stronger meaning in higher-order logics.)}  
@@ -316,45 +284,45 @@ command for introducing them, \texttt{define-fun-rec}, to the SMT-LIB standard \
 %In this paper,
 We present a method for translating formulas involving recursive function
 definitions into formulas where finite model finding techniques can be applied.
-The recursive functions must meet a semantic criterion to be admissible\begin{nottinyv}
-(Section~\ref{sec:prelim})\end{nottinyv}. This criterion is met by well-founded (terminating)
-recursive function definitions. \begin{longv}It is not met by inconsistent
+The recursive functions must meet a semantic criterion to be admissible
+(Section~\ref{sec:prelim}). This criterion is met by well-founded (terminating)
+recursive function definitions. \begin{rep}It is not met by inconsistent
 definitions such as $\forall x : {\typeint}.\;\, \con{f}(x) \teq \con{f}(x) +
-1$.\end{longv} %ct and it is possible to construct consistent examples that do not meet it.
+1$.\end{rep} %ct and it is possible to construct consistent examples that do not meet it.
 %as well as other example of consistent definition.
 
 We define a translation for a class of
-formulas involving admissible recursive function definitions\begin{nottinyv}
-(Section~\ref{sec:encoding})\end{nottinyv}. The main insight is that a
+formulas involving admissible recursive function definitions
+(Section~\ref{sec:encoding}). The main insight is that a
 recursive definition $\forall x : \tau.\;\, \const{f}(x) \teq t$
 can be translated to
 $\forall a :
 \fargtype{\tau}.\;\, \const{f}(\farg{\con{f}}(a)) \teq t[\farg{\con{f}}(a)/x]$, where
-$\fargtype{\tau}$ is an uninterpreted \relax{abstract} type and $\farg{\con{f}} \begin{longv}:
-\fargtype{\tau} \to \tau\end{longv}$ converts the abstract type to the concrete
+$\fargtype{\tau}$ is an uninterpreted \relax{abstract} type and $\farg{\con{f}} \begin{rep}:
+\fargtype{\tau} \to \tau\end{rep}$ converts the abstract type to the concrete
 type. Additional constraints ensure that the abstract values that are relevant
 to the formula's satisfiability
-exist. The translation preserves satisfiability and\begin{longv}, for admissible definitions,\end{longv}
+exist. The translation preserves satisfiability and\begin{rep}, for admissible definitions,\end{rep}
 unsatisfiability, and makes finite model finding possible for problems in this
-class.\begin{shortv} Detailed proofs of correctness are included in a technical
-report \cite{our-report}.\end{shortv}
+class.\begin{conf} Detailed proofs of correctness are included in a technical
+report \cite{our-report}.\end{conf}
 
 Our empirical evaluation on benchmarks from the IsaPlanner proof planner~\cite{DBLP:conf/itp/JohanssonDB10}
 and the Leon verifier~\cite{blanc2013overview} provides
 evidence that this translation improves the effectiveness of the SMT solvers
-\cvc and \ziii for finding countermodels to verification conditions\begin{nottinyv}
-(Section~\ref{sec:evaluation})\end{nottinyv}. The approach is implemented as a preprocessor
-in \cvc \begin{nottinyv}(Section~\ref{sec:front-end})\end{nottinyv}. \begin{longv}%
+\cvc and \ziii for finding countermodels to verification conditions
+(Section~\ref{sec:evaluation}). The approach is implemented as a preprocessor
+in \cvc (Section~\ref{sec:front-end}). \begin{rep}%
 When invoked with a specific
 command-line option, the solver assumes that functions introduced using the
-\texttt{define-fun-rec} command are admissible and translates them accordingly.\end{longv}
+\texttt{define-fun-rec} command are admissible and translates them accordingly.\end{rep}
 
 %this option targets users who wish to determine the satisfiability of inputs
 %that involving function definitions that are known to be consistent, whereas it
 %does not target users who wish to check the consistency of a set of function
 %definitions.
 
-%\begin{nottinyv}
+%
 \section{Preliminaries}
 \label{sec:prelim}
 
@@ -386,7 +354,7 @@ We write $t\typ{\tau}$ to denote %ct a metavariable ranging over
 terms of type~$\tau$ and $\terms( t )$ to denote the set of subterms in $t$.
 Given a term $u$, we write $u[\vec t/\vec x]$ to denote the result of replacing
 all occurrences of $\vec x$ with $\vec t$ in $u$.
-\begin{longv}When applied to terms, the symbol $=$ denotes syntactic equality.\end{longv}
+\begin{rep}When applied to terms, the symbol $=$ denotes syntactic equality.\end{rep}
 
 %We write $\functerms^\Sigma( t )$ to denote the set of $f$-applications in $t$ such that $\con{f} \in \sfundefs{\Sigma}$.
 
@@ -402,8 +370,8 @@ the \emph{models} of $T$, closed under variable reassignment
 (i.e., for every $I \in \Mo$, every $\Sigma$-interpretation that differs
 from $I$ only on the variables of $\svars \Sigma$ is also in $\Mo$).
 A $\Sigma$-formula $\varphi$ is \emph{$T$-satisfiable}
-if it is satisfied by some interpretation in $\Mo$\begin{longv};
-otherwise, it is \emph{$T$-unsatisfiable}\end{longv}.
+if it is satisfied by some interpretation in $\Mo$\begin{rep};
+otherwise, it is \emph{$T$-unsatisfiable}\end{rep}.
 A formula $\varphi$ \emph{$T$-entails} $\psi$, written $\varphi \models_T \psi$,
 if all interpretations in $\Mo$ that satisfy $\varphi$ also satisfy $\psi$.
 Two formulas $\varphi$ and $\psi$ are \emph{$T$-equivalent} 
@@ -450,7 +418,7 @@ form
 $(\forallf{\con{f}_1} \vec x_1.\; \varphi_1) \wedge \cdots \wedge
 (\forallf{\con{f}_n} \vec x_n.\; \varphi_n) \wedge \psi$,
 %
-where $\con{f}_1, \ldots, \con{f}_n$ are distinct\begin{longv} function symbols\end{longv},
+where $\con{f}_1, \ldots, \con{f}_n$ are distinct\begin{rep} function symbols\end{rep},
 %ct added
 $\forallf{\con{f}_i} \vec x_i.\; \varphi_i$ is a function definition
 for $i = 1, \ldots, n$,
@@ -478,8 +446,8 @@ $\DDD = \{ \forallf{\con{f}_1} \vec x.\; \varphi_1, \ldots, \forallf{\con{f}_n} 
 a ground formula $\psi$ 
 %\ct{I suppose $\psi$ is meant to be ground.} yes --ajr
 is \emph{closed under function expansion with respect to $\DDD$} if
-\begin{shortv}$\closurefmla$. \end{shortv}%
-\begin{longv}\[\closurefmla\]\end{longv}%
+\begin{conf}$\closurefmla$. \end{conf}%
+\begin{rep}\[\closurefmla\]\end{rep}%
 The set $\DDD$ is \emph{admissible} if for every $T$-satisfiable formula 
 $\psi$ closed under function expansion with respect to $\DDD$,
 the formula
@@ -506,15 +474,15 @@ x \leq 0,\allowbreak\; \con{p}( x ) \teq 1,\allowbreak\; \con{p}( x ) \teq 2 * \
 where $T$ is integer arithmetic extended with the uninterpreted symbol 
 $\con p:\typeint \rightarrow \typeint$, can be shown well-founded under a strategy that
 evaluates the condition of an $\lite$ before evaluating the relevant branch,
-ignoring the other branch. \begin{longv}Logically, such dependencies can be captured by
-congruence rules. \end{longv}Krauss developed these ideas in the more general context of
+ignoring the other branch. \begin{rep}Logically, such dependencies can be captured by
+congruence rules. \end{rep}Krauss developed these ideas in the more general context of
 higher-order logic \cite[Section 2]{krauss-2009-phd}.
 
 \begin{theorem}\label{thm:adm}
 If $\DDD$ is a set of well-founded function definitions for\/
-$\sfundefs{\Sigma} \begin{longv} = \{\con{f}_1,\ldots,\con{f}_n\}\end{longv}$, then it is admissible.
+$\sfundefs{\Sigma} \begin{rep} = \{\con{f}_1,\ldots,\con{f}_n\}\end{rep}$, then it is admissible.
 \end{theorem}
-\begin{longv}
+\begin{rep}
 \begin{proofsketch}
 Let $\psi$ be a satisfiable formula closed under function expansion with
 respect to $\DDD$. We show that $\psi \wedge \bigwedge \Delta$ is also
@@ -537,9 +505,9 @@ Since $\J \models \Delta$ by assumption, we have $\J \models \psi \wedge
 %$\varphi \,\models_T\, \bigwedge\nolimits_{\,i=1}^{n} \{ \varphi_i[ \vec t / \vec x ] \mid \con{f}_i( \vec t ) \in \terms( \varphi ) \}$.
 \qed
 \end{proofsketch}
-\end{longv}
+\end{rep}
 
-\begin{longv}
+\begin{rep}
 Another useful fragment of function definitions is the class of
 \emph{productive} corecursive functions. Corecursive functions are functions to
 a coalgebraic datatype. These functions can be non-well-founded, without
@@ -565,7 +533,7 @@ such as $\forallf{\con{f}} x : \typeint.\allowbreak\;\, \con{f}( x )
 tail-recursive calls (i.e., calls that occupy the right-hand side of the
 definition, potentially under some $\lite$ branch) when establishing well-foundedness
 or productivity, without affecting admissibility.
-\end{longv}
+\end{rep}
 
 %\newcommand\badassex{
 % \{\forallf{\con{f}} x : \typeint.\;\, \con{f}( x ) \teq \con{f}( x ),\;\,
@@ -583,12 +551,12 @@ $\{\con f, \con g :\typeint \rightarrow \typeint,\, \ldots \}$.
 The reason is that the formula $\ltrue$ is (trivially) closed under function expansion with respect to this set,
 and there is no model of $T$
 satisfying $\con{f}$'s definition. A more subtle example is
-\begin{shortv}$\badassex$. \end{shortv}%
-\begin{longv}\[\badassex\]\end{longv}%
+\begin{conf}$\badassex$. \end{conf}%
+\begin{rep}\[\badassex\]\end{rep}%
 While this set has a model where $\con f$ and $\con g$ are interpreted as the
 constant function $0$, it is not admissible since %the formula
 $\con{f}( 0 ) \teq 1$ is
-closed under function expansion \begin{longv}with respect to this set\end{longv}
+closed under function expansion \begin{rep}with respect to this set\end{rep}
 and yet there exists
 no interpretation satisfying both $\con{f}( 0 ) \teq 1$ and $\con{g}$'s
 definition.
@@ -733,7 +701,7 @@ disjunction with the negated constraint, to achieve the same overall effect.
 It $p$ is $\pnone$, the constraint $\chi$ is
 returned to the caller.
 %
-\begin{longv}\par\end{longv}
+\begin{rep}\par\end{rep}
 %
 If $t$ is a function definition, % of a function in $\sfundefs{\Sigma}$,
 $\conv_0$ constructs a quantified formula over a single variable
@@ -743,8 +711,8 @@ the body of that formula with $\vecfarg{\con{f}}( a )$.
 $\chi$ must be $\ltrue$ and can be ignored.)
 %
 If $t$ is an unannotated quantified formula, $\conv_0$ calls itself
-on the body with the same polarity. \begin{longv}A quantifier is prefixed to the
-quantified formula and constraint returned by the recursive call.\end{longv}
+on the body with the same polarity. \begin{rep}A quantifier is prefixed to the
+quantified formula and constraint returned by the recursive call.\end{rep}
 Otherwise, $t$ is either an application of an uninterpreted predicate symbol or a term
 of a type other than $\Bool$. Then, the returned constraint is a conjunction of
 formulas of the form $\exists a : {\fargtype{\con{f}}}.\;\, \vecfarg{\con{f}}(
@@ -828,8 +796,8 @@ $\con{c}$ as $14$,
 and $\con{s}$ as the almost constant function
 %
 %\begin{equation} \label{eq:approx-interp}
-\begin{shortv}$\badlambda$. \end{shortv}%
-\begin{longv}\[\badlambda\]\end{longv}%
+\begin{conf}$\badlambda$. \end{conf}%
+\begin{rep}\[\badlambda\]\end{rep}%
 %\end{equation}
 %
 In other words, $\const{s}$ is interpreted as a function mapping $x$ to the sum
@@ -884,7 +852,7 @@ users debug their specifications.
 %%% want to see the partial information available about defined functions. I've
 %%% added a couple of sentences above to that effect.
 
-\begin{longv}
+\begin{rep}
 %In the following,
 We sketch the correctness of translation~$\conv$.
 For a set of ground literals~$L$, 
@@ -916,7 +884,7 @@ By definition of $\conv$ and case analysis on the return values of $\conv_0$.
 \begin{corollary}\label{cor:conv}
 If $\psi$ is a formula not containing function definitions, then $\conv( \psi )$ entails $\psi$.
 \end{corollary}
-\end{longv}
+\end{rep}
 
 \begin{theorem}\label{thm:equi}
 If $\varphi$ is a\/ $\Sigma$-formula in definitional form with respect to\/
@@ -925,7 +893,7 @@ and the set of function definitions\/ $\DDD$ corresponding to\/
 $\sfundefs{\Sigma}$ is admissible, then\/ $\varphi$ and\/ $\conv( \varphi )$ are
 equisatisfiable in $T$.
 \end{theorem}
-\begin{longv}
+\begin{rep}
 \begin{proofsketch}
 First, we show that if $\varphi$ is satisfied by an
 $\Sigma$-interpretation $\I$, then $\conv( \varphi )$ is satisfied by an $\extendsig{\Sigma}$-interpretation $\J$.
@@ -995,15 +963,15 @@ that entails the conjecture of $\varphi$.
 This implies the existence of a model for $\varphi$,
 assuming $\DDD$ is admissible.
 %For clarity, we demonstrate the consequences of this theorem by means of an example.
-\end{longv}
+\end{rep}
 
-\begin{shortv}
+\begin{conf}
 We give an intuition of the above theorem in the context of an example.
 For a set of ground $\Sigma$-literals $L$, let $\absconstraints( L )$ be the set
 $\{ \exists a : {\fargtype{\con{f}}}.\;\, \vecfarg{\con{f}}( a ) \teq \vec s
 \mid \con{f}( \vec s ) \in \terms( L ),\: \con{f} \in \sfundefs{\Sigma}
 \}$.
-\end{shortv}
+\end{conf}
 
 \begin{example}
 Let us revisit the formulas in Example~\ref{ex:translation}. 
@@ -1047,7 +1015,7 @@ $\exists a : {\fargtype{\con{s}}}.\;\, \farg{\con{s}}( a ) \teq \con{c}$.
 %The latter ensures that $\I$ satisfies a formula that entails both $\con{s}( \con{c} ) > 100$ and $\varphi_{\con{s}}[\con{c}/x]$.
 Since $\I$ also satisfies both the translated function definition for $\con{s}$
 (the first conjunct of~(\ref{eq:ex-after})) and $\absconstraints( L_0
-)$, it must also satisfy\begin{longv} the formula $\psi_1$:\end{longv}
+)$, it must also satisfy\begin{rep} the formula $\psi_1$:\end{rep}
 \[
 \lite\bigl( \con{c} \leq 0,\; 
             \con{s}(\con{c}) \teq 0,\;
@@ -1254,19 +1222,19 @@ can be specified as %follows:
 \end{quote}
 %
 When reading this input,
-\begin{longv}%
+\begin{rep}%
 \cvc adds the annotated quantified formula
 $$\forallf{\con{s}} x.\;\, \con{s}( x ) \teq \lite\bigl( x \leq 0,\; 0,\; \con{s}( x-1 )\bigr)$$
 to its list of assertions,
 which after rewriting becomes
 $$\forallf{\con{s}} x.\;\, \lite\bigl( x \leq 0,\; \con{s}( x ) \teq 0,\; \con{s}( x ) \teq \con{s}( x-1 ) \bigr)$$
-\end{longv}%
-\begin{shortv}%
+\end{rep}%
+\begin{conf}%
 \cvc adds
 $\forallf{\con{s}} x.\;\, \con{s}( x ) \teq \lite\bigl( x \leq 0,\; 0,\; \con{s}( x-1 )\bigr)$
 to its list of assertions,
 which after rewriting becomes
-$\forallf{\con{s}} x.\;\, \lite\bigl( x \leq 0,\; \con{s}( x ) \teq 0,\; \con{s}( x ) \teq \con{s}( x-1 ) \bigr)$. \end{shortv}%
+$\forallf{\con{s}} x.\;\, \lite\bigl( x \leq 0,\; \con{s}( x ) \teq 0,\; \con{s}( x ) \teq \con{s}( x-1 ) \bigr)$. \end{conf}%
 If \cvc's finite model finding mode for recursive functions is enabled (using
 the command-line option \texttt{-}\texttt{-fmf-fun}), it will replace its list of known
 assertions based on the translation $\conv$ before checking for satisfiability.
@@ -1296,7 +1264,7 @@ We stress that admissibility must be discharged separately by the user---e.g., u
 syntactic criterion or a termination prover.
 If some function definitions are not admissible, \cvc may answer \emph{sat} for
 an unsatisfiable problem. 
-\begin{longv}
+\begin{rep}
 Indeed, if we add the inconsistent definition
 %
 \begin{quote}
@@ -1308,7 +1276,7 @@ Indeed, if we add the inconsistent definition
 %
 to the above problem and run \cvc with the \texttt{-}\texttt{-fmf-fun} option,
 it wrongly answers \emph{sat}.
-\end{longv}
+\end{rep}
 
 %Usually not interested in showing logical consistency, there
 %exist other tools that check e.g. termination.
@@ -1326,12 +1294,12 @@ The finite model finding support in the instantiation-based iProver
 %Model finding has been studied outside the world of SMT.
 
 Some finite model finders are based on a reduction to a decidable logic,
-typically propositional logic. \begin{longv}They translate the input problem to the weaker
-logic and pass it to a solver for that logic.\end{longv}
+typically propositional logic. \begin{rep}They translate the input problem to the weaker
+logic and pass it to a solver for that logic.\end{rep}
 The translation is parameterized by upper or exact finite bounds on
 the cardinalities of the atomic types. This procedure was pioneered by McCune
 in the earlier versions of
-\begin{shortv}MACE\end{shortv}\begin{longv}Mace (or MACE)\end{longv}
+\begin{conf}MACE\end{conf}\begin{rep}Mace (or MACE)\end{rep}
 \cite{mccune-1994}.
 Other conceptually similar finders are Paradox \cite{claessen-sorensson-2003}
 and FM-Darwin \cite{baumgartner-et-al-2009} for first-order logic with
@@ -1345,20 +1313,20 @@ cardinalities, the search space is represented as multidimensional
 tables. The procedure tries different values in the function and predicate
 tables, checking each time if the problem is satisfied.
 This approach was pioneered by FINDER
-\cite{slaney-1994} and SEM \cite{zhang-zhang-1995}\begin{longv} and serves as
+\cite{slaney-1994} and SEM \cite{zhang-zhang-1995}\begin{rep} and serves as
 the basis of many more model finders, notably the Alloy Analyzer's precursor
 \cite{jackson-1996} and the later versions of~Mace
-\cite{mccune-prover9-mace4}\end{longv}.
+\cite{mccune-prover9-mace4}\end{rep}.
 
-\begin{longv}
+\begin{rep}
 Most of the above tools cannot cope with algebraic datatypes or other infinite
-types. \end{longv}%
+types. \end{rep}%
 Kuncak and Jackson \cite{kuncak-jackson-2005} presented an idiom for
 encoding datatypes and recursive functions in Alloy, by approximating datatypes
 by finite subterm-closed substructures. The approach finds sound (fragments
 of) models for formulas in the \relax{existential--bounded-universal} fragment%
-\begin{longv} (i.e., formulas whose prenex normal forms contain no unbounded universal
-quantifiers ranging over datatypes)\end{longv}. This idiom was further developed by Dunets
+\begin{rep} (i.e., formulas whose prenex normal forms contain no unbounded universal
+quantifiers ranging over datatypes)\end{rep}. This idiom was further developed by Dunets
 et al.\ \cite{dunets-et-al-2010}, who presented a translation scheme
 for primitive recursion. Their definedness guards play a similar role to the
 existential constraints generated by our translation $\conv$.
@@ -1366,9 +1334,9 @@ existential constraints generated by our translation $\conv$.
 The higher-order model finder Nitpick \cite{blanchette-nipkow-2010}
 for the Isabelle/HOL proof assistant
 relies on another variant of Kuncak and Jackson's approach inside a
-Kleene-style three-valued logic\begin{longv}, inspired by abstract interpretation\end{longv}.
-\begin{longv}It was also the first tool of its kind to support corecursion and
-coalgebraic datatypes \cite{blanchette-2013-relational}.\end{longv}
+Kleene-style three-valued logic\begin{rep}, inspired by abstract interpretation\end{rep}.
+\begin{rep}It was also the first tool of its kind to support corecursion and
+coalgebraic datatypes \cite{blanchette-2013-relational}.\end{rep}
 The three-valued logic approach extends each
 approximated type with an unknown value, which is propagated by function
 application. This scheme works reasonably well in Nitpick, because it builds
@@ -1380,21 +1348,21 @@ The Leon system~\cite{blanc2013overview} implements a procedure that can
 produce both proofs and counter\-examples for properties of terminating functions
 written in a subset of Scala. Leon is based on an SMT solver. It avoids
 quantifiers altogether by unfolding recursive definitions up to a certain
-depth\begin{longv}, which is increased on a per-need basis\end{longv}.
+depth\begin{rep}, which is increased on a per-need basis\end{rep}.
 Our translation~$\conv$ works in an analogous manner, 
 where instead the SMT solver is invoked only once 
 and quantifier instantiation is used in lieu of function unfolding.
-\begin{longv}It would be
+\begin{rep}It would be
 worth investigating how existing approaches for function
 unfolding can inform approaches for dedicated quantifier instantiation
-techniques for function definitions, and vice versa.\end{longv}
+techniques for function definitions, and vice versa.\end{rep}
 
 Model finding is concerned with satisfying arbitrary logical constraints. Some
 tools are tailored for problems that correspond to total functional
 programs. QuickCheck \cite{claessen-hughes-2000} for Haskell is an
-early example, based on random testing. Bounded exhaustive testing\begin{longv}
-\cite{runciman-et-al-2008}\end{longv} and narrowing\begin{longv}
-\cite{lindblad-2008-testing}\end{longv} are other successful strategies. These
+early example, based on random testing. Bounded exhaustive testing\begin{rep}
+\cite{runciman-et-al-2008}\end{rep} and narrowing\begin{rep}
+\cite{lindblad-2008-testing}\end{rep} are other successful strategies. These
 tools are often much faster than model finders, but they typically cannot cope
 with underspecification and nonexecutable functions.
 
@@ -1449,13 +1417,6 @@ enlarging the applicability of the translation scheme presented here.
 %to evaluating Alloy itself. Leon is, in part, a counterexample generator.
 %``Model finder'' is probably a stretch.}
 
-\begin{tinyv}
-This abstract is based on a regular submission to the SMT 2015 workshop,
-which itself is based on a longer technical report. Both are available online.%
-\footnote{\url{http://lara.epfl.ch/~reynolds/SMT2015-recfun/}}
-\end{tinyv}
-
-%\begin{nottinyv}
 {%\footnotesize
 \def\ackname{Acknowledgment}
 \paragraph{%\footnotesize
@@ -1465,7 +1426,7 @@ to thank Damien Busato-Gaston and Emmanouil Koukoutos for providing the initial
 set of benchmarks used in the evaluation, and the anonymous reviewers for their
 suggestions and comments.
 }
-%\end{nottinyv}
+%
 
 {
 \bibliographystyle{abbrv}
