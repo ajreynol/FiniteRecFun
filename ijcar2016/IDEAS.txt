@@ -1,0 +1,20 @@
+1. Elaborate the connection between "admissibility" and recursion,
+corecrusion, and tail recursion.
+
+2. Discuss an optimization whereby uninterpreted sorts can have cardinality 0.
+(Andy uses this trick and it's quite useful -- e.g. if a function f is not
+needed at all, there's no point in putting any element in the corresponding
+\alpha_f sort. It sometimes makes a difference in practice.) This is
+technically easy, but we should work out the metatheory, since SMT-LIB sorts
+are always inhabited.
+
+3. Add a section with examples or small case studies, based on the various
+users and usages of the feature. (We would not add all these users as
+coauthors, but I'm sure they would be happy to see their work mentioned. See
+e.g. pp. 10 and 11 of http://www.loria.fr/~jablanch/jar-smt.pdf for the
+overall flavor of what we have in mind.)
+
+4. Enrich the evaluation with Isabelle problems, generated using Nunchaku.
+
+5. Rename "Front-End Support in CVC4" to, say, "Implementation" and have two
+subsections: CVC4 and Nunchaku.
