@@ -1,8 +1,10 @@
 * design space
   * motivate decisions, discuss alternatives
     * e.g. change signature of recursive function symbols or not?
-      (advantage of current scheme: simpler to extract models)
+      (advantage of current scheme: simpler to extract models? also: works with underspecification)
   * moving "ite" outside helps
+
+  * --uf-ss-fair-monotone
 
 1. Elaborate the connection between "admissibility" and recursion,
 corecrusion, and tail recursion.
