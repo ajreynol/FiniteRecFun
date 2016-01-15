@@ -209,7 +209,7 @@ action ``Contre-exemples utilisables par Isabelle et Coq'' (CUIC).
 \institute{
 Department of Computer Science, The University of Iowa, USA
 \and
-Inria Nancy -- Grand-Est, Villers-l\`es-Nancy, France
+Inria Nancy -- Grand Est \& LORIA, Villers-l\`es-Nancy, France
 \and
 Max-Planck-Institut f\"ur Informatik, Saarbr\"ucken, Germany
 %\and
@@ -231,7 +231,8 @@ to universally quantified formulas for which these
 techniques are applicable.
 An empirical evaluation confirms that the approach improves 
 the performance of existing solvers on benchmarks from two sources. 
-The translation is implemented as a preprocessor in the solver CVC4.
+The translation is implemented as a preprocessor in the CVC4 solver
+and in a new higher-order model finder called Nunchaku.
 \end{abstract}
 
 \section{Introduction}
@@ -559,8 +560,7 @@ $\{\con f, \con g :\typeint \rightarrow \typeint,\, \ldots \}$.
 The reason is that the formula $\ltrue$ is (trivially) closed under function expansion with respect to this set,
 and there is no model of $T$
 satisfying $\con{f}$'s definition. A more subtle example is
-\begin{conf}$\badassex$. \end{conf}%
-\begin{rep}\[\badassex\]\end{rep}%
+\[\badassex\]
 While this set has a model where $\con f$ and $\con g$ are interpreted as the
 constant function $0$, it is not admissible since %the formula
 $\con{f}( 0 ) \teq 1$ is
@@ -1152,6 +1152,9 @@ it wrongly answers \emph{sat}.
   * standalone tool; have a frontend for Isabelle and are envisioning
     frontends for other proof assistants, notably Coq and the
     TLA\textsuperscript{+} proof system
+  * displace Nitpick, based on Kodkod
+    * CVC4 has built-in (co)datatypes and efficient arithmetic
+    * also, Nitpick is intimately tied to Isabelle
 
   * flavor of input language
     * case expressions
