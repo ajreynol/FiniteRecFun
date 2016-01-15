@@ -1,3 +1,10 @@
+%%% BEGIN Times font
+\usepackage{mathptmx}
+\usepackage[scaled=.82]{beramono}
+\usepackage[scaled=.86]{helvet}
+\DeclareSymbolFont{letters}{OML}{txmi}{m}{it}
+%%% END Times font
+
 %\theoremstyle{plain}
 %\newtheorem{theorem}{Theorem}%[section]
 %\newtheorem{lemma}[theorem]{Lemma}%[section]
@@ -312,7 +319,8 @@ and the Leon verifier~\cite{blanc2013overview} provides
 evidence that this translation improves the effectiveness of the SMT solvers
 \cvc and \ziii for finding countermodels to verification conditions
 (Section~\ref{sec:evaluation}). The approach is implemented as a preprocessor
-in \cvc (Section~\ref{sec:front-end}). \begin{rep}%
+in \cvc and in the Nunchaku model finder
+(Section~\ref{sec:implementations}). \begin{rep}%
 When invoked with a specific
 command-line option, the solver assumes that functions introduced using the
 \texttt{define-fun-rec} command are admissible and translates them accordingly.\end{rep}
@@ -1041,6 +1049,143 @@ there exists a $\Sigma$-interpretation satisfying $\psi \wedge \forallf{\con{s}}
 which entails formula~(\ref{eq:ex-before}).\xend
 \end{example}
 
+\section{Implementations}
+\label{sec:implementations}
+
+The translation $\conv$ significantly improves the effectiveness of current SMT
+techniques for finding models of formulas involving recursive
+function definitions.
+We have implemented it in the development version of \cvc %~\cite{ReyEtAl-1-RR-13}
+(version~1.5 prerelease).
+
+\subsection{CVC4}
+\label{ssec:cvc4}
+
+In \cvc, function definitions $\forallf{\con{f}} \vec x.\; \varphi$ can be written using the $\definefunreccmd$ command
+from the SMT-LIB 2.5 standard~\cite{smtlib25}.
+Thus, formula~(\ref{eq:ex-before}) from Example~\ref{ex:translation}
+can be specified as %follows:
+%
+\begin{quote}
+%\small -- no small, unless you convince me that these mixtures of font sizes
+% are aesthetic and serve a purpose --jb
+\begin{verbatim}
+(define-fun-rec s ((x Int)) Int (ite (<= x 0) 0 (+ x (s (- x 1)))))
+(declare-fun c () Int)
+(assert (> (s c) 100))
+(check-sat)
+\end{verbatim}
+\end{quote}
+%
+When reading this input,
+\begin{rep}%
+\cvc adds the annotated quantified formula
+$$\forallf{\con{s}} x.\;\, \con{s}( x ) \teq \lite\bigl( x \leq 0,\; 0,\; \con{s}( x-1 )\bigr)$$
+to its list of assertions,
+which after rewriting becomes
+$$\forallf{\con{s}} x.\;\, \lite\bigl( x \leq 0,\; \con{s}( x ) \teq 0,\; \con{s}( x ) \teq \con{s}( x-1 ) \bigr)$$
+\end{rep}%
+\begin{conf}%
+\cvc adds
+$\forallf{\con{s}} x.\;\, \con{s}( x ) \teq \lite\bigl( x \leq 0,\; 0,\; \con{s}( x-1 )\bigr)$
+to its list of assertions,
+which after rewriting becomes
+$\forallf{\con{s}} x.\;\, \lite\bigl( x \leq 0,\; \con{s}( x ) \teq 0,\; \con{s}( x ) \teq \con{s}( x-1 ) \bigr)$. \end{conf}%
+If \cvc's finite model finding mode for recursive functions is enabled (using
+the command-line option \texttt{-}\texttt{-fmf-fun}), it will replace its list of known
+assertions based on the translation $\conv$ before checking for satisfiability.
+%If the functions provided in the input are admissible,
+%then a ``satisfiable" response from the solver implies that a model exists for the original formula.
+Accordingly, the solver will output the approximation of the interpretation it
+used for recursive function definitions. 
+For the example above, it outputs a %partial
+model of~$\con{s}$ where only
+the values of $\con{s}(x)$ for $x = 0,\ldots,14$ are correctly given:
+\begin{quote}
+%\small
+\begin{verbatim}
+(model
+  (define-fun s (($x1 Int)) Int 
+    (ite (= $x1 14) 105 (ite (= $x1 13) 91 (ite (= $x1 12) 78 
+      (ite (= $x1 11) 66 (ite (= $x1 10) 55 (ite (= $x1 4) 10 
+        (ite (= $x1 9) 45 (ite (= $x1 8) 36 (ite (= $x1 7) 28 
+          (ite (= $x1 6) 21 (ite (= $x1 3) 6 (ite (= $x1 5) 15 
+            (ite (= $x1 2) 3 (ite (= $x1 1) 1 0)))))))))))))))
+  (define-fun c () Int 14))
+\end{verbatim}
+\end{quote}
+
+The \texttt{-}\texttt{-fmf-fun} option tells \cvc to assume that
+functions introduced using \texttt{define-\allowbreak fun-\allowbreak rec} are admissible.
+We stress that admissibility must be discharged separately by the user---e.g., using a
+syntactic criterion or a termination prover.
+If some function definitions are not admissible, \cvc may answer \emph{sat} for
+an unsatisfiable problem. 
+\begin{rep}
+Indeed, if we add the inconsistent definition
+%
+\begin{quote}
+%\small
+\begin{verbatim}
+(define-fun-rec h ((x Int)) Int (+ (h x) x))
+\end{verbatim}
+\end{quote}
+%
+to the above problem and run \cvc with the \texttt{-}\texttt{-fmf-fun} option,
+it wrongly answers \emph{sat}.
+\end{rep}
+
+%Usually not interested in showing logical consistency, there
+%exist other tools that check e.g. termination.
+%Thus, want SMT solver to check satisfiability the assumption that recursive
+%functions are consistent (where this needs to be defined precisely).
+
+\subsection{Nunchaku}
+\label{ssec:nunchaku}
+
+  * Nunchaku
+    * intended as a higher-order model finder with a rich input language,
+      including (co)datatypes, (co)recursive functions, and
+      (co)inductive predicates
+  * first version, 0.1, came out in January 2016, without support for
+    higher-order constructs yet
+  * standalone tool; have a frontend for Isabelle and are envisioning
+    frontends for other proof assistants, notably Coq and the
+    TLA\textsuperscript{+} proof system
+
+  * flavor of input language
+    * case expressions
+
+  * architecture: pipeline of transformations, each of which consists of a
+    pair of functions $(translate, reconstruct)$:
+    * translates transforms a problem over a signature $\Sigma$ in a logic $\mathcal{L}$
+      to a problem over a signature $\Sigma'$ in a logic $\mathcal{L}'$
+    * reconstruct transforms a model back from $\Sigma'$ to $\Sigma$
+    * similar to institutions \cite{goguen-meseguer}
+
+  * table with the current pipeline
+
+  * rec transformation is just one operation in pipeline
+    * reconstruct function: transforms a total model of the encoded problem
+      into a partial model of the original model, trimming out junk and adding
+      "..." to represent missing entries
+
+  * higher-order support will be done as a natural extension of the encoding
+    presented in this paper
+    * explain a bit
+    * two o
+
+\section{Examples}
+\label{sec:examples}
+
+\subsection{ANDY?}
+
+\subsection{Lists and Lazy Lists}
+
+\subsection{AVL Trees?}
+
+\subsection{Huffman's Algorithm}
+
 \section{Evaluation}
 \label{sec:evaluation}
 
@@ -1196,92 +1341,6 @@ In general, the translation $\conv$ does not significantly degrade performance
 over unsatisfiable benchmarks, and in some cases it actually aids the solver 
 in determining unsatisfiability. The exception is \cvci, whose inductive
 arguments are guided by the types of the quantified variables.
-
-\section{Front-End Support in \cvc}
-\label{sec:front-end}
-
-The translation $\conv$ significantly improves the effectiveness of current SMT
-techniques for finding models of formulas involving recursive
-function definitions.
-We have implemented it in the development version of \cvc %~\cite{ReyEtAl-1-RR-13}
-(version~1.5 prerelease).
-Function definitions $\forallf{\con{f}} \vec x.\; \varphi$ can be written using the $\definefunreccmd$ command
-from the new version (2.5) of the SMT-LIB standard~\cite{smtlib25}.
-Thus, formula~(\ref{eq:ex-before}) from Example~\ref{ex:translation}
-can be specified as %follows:
-%
-\begin{quote}
-%\small -- no small, unless you convince me that these mixtures of font sizes
-% are aesthetic and serve a purpose --jb
-\begin{verbatim}
-(define-fun-rec s ((x Int)) Int (ite (<= x 0) 0 (+ x (s (- x 1)))))
-(declare-fun c () Int)
-(assert (> (s c) 100))
-(check-sat)
-\end{verbatim}
-\end{quote}
-%
-When reading this input,
-\begin{rep}%
-\cvc adds the annotated quantified formula
-$$\forallf{\con{s}} x.\;\, \con{s}( x ) \teq \lite\bigl( x \leq 0,\; 0,\; \con{s}( x-1 )\bigr)$$
-to its list of assertions,
-which after rewriting becomes
-$$\forallf{\con{s}} x.\;\, \lite\bigl( x \leq 0,\; \con{s}( x ) \teq 0,\; \con{s}( x ) \teq \con{s}( x-1 ) \bigr)$$
-\end{rep}%
-\begin{conf}%
-\cvc adds
-$\forallf{\con{s}} x.\;\, \con{s}( x ) \teq \lite\bigl( x \leq 0,\; 0,\; \con{s}( x-1 )\bigr)$
-to its list of assertions,
-which after rewriting becomes
-$\forallf{\con{s}} x.\;\, \lite\bigl( x \leq 0,\; \con{s}( x ) \teq 0,\; \con{s}( x ) \teq \con{s}( x-1 ) \bigr)$. \end{conf}%
-If \cvc's finite model finding mode for recursive functions is enabled (using
-the command-line option \texttt{-}\texttt{-fmf-fun}), it will replace its list of known
-assertions based on the translation $\conv$ before checking for satisfiability.
-%If the functions provided in the input are admissible,
-%then a ``satisfiable" response from the solver implies that a model exists for the original formula.
-Accordingly, the solver will output the approximation of the interpretation it
-used for recursive function definitions. 
-For the example above, it outputs a partial model of~$\con{s}$ where only
-the values of $\con{s}(x)$ for $x = 0,\ldots,14$ are correctly given:
-\begin{quote}
-%\small
-\begin{verbatim}
-(model
-  (define-fun s (($x1 Int)) Int 
-    (ite (= $x1 14) 105 (ite (= $x1 13) 91 (ite (= $x1 12) 78 
-      (ite (= $x1 11) 66 (ite (= $x1 10) 55 (ite (= $x1 4) 10 
-        (ite (= $x1 9) 45 (ite (= $x1 8) 36 (ite (= $x1 7) 28 
-          (ite (= $x1 6) 21 (ite (= $x1 3) 6 (ite (= $x1 5) 15 
-            (ite (= $x1 2) 3 (ite (= $x1 1) 1 0)))))))))))))))
-  (define-fun c () Int 14))
-\end{verbatim}
-\end{quote}
-
-The \texttt{-}\texttt{-fmf-fun} option tells \cvc to assume that
-functions introduced using \texttt{define-\allowbreak fun-\allowbreak rec} are admissible.
-We stress that admissibility must be discharged separately by the user---e.g., using a
-syntactic criterion or a termination prover.
-If some function definitions are not admissible, \cvc may answer \emph{sat} for
-an unsatisfiable problem. 
-\begin{rep}
-Indeed, if we add the inconsistent definition
-%
-\begin{quote}
-%\small
-\begin{verbatim}
-(define-fun-rec h ((x Int)) Int (+ (h x) x))
-\end{verbatim}
-\end{quote}
-%
-to the above problem and run \cvc with the \texttt{-}\texttt{-fmf-fun} option,
-it wrongly answers \emph{sat}.
-\end{rep}
-
-%Usually not interested in showing logical consistency, there
-%exist other tools that check e.g. termination.
-%Thus, want SMT solver to check satisfiability the assumption that recursive
-%functions are consistent (where this needs to be defined precisely).
 
 \section{Related Work}
 
