@@ -516,6 +516,9 @@ Since $\J \models \Delta$ by assumption, we have $\J \models \psi \wedge
 \end{proofsketch}
 \end{rep}
 
+TODO: Say something about admissibility for tail-recursion: Watch out if the
+argument always changes...
+
 \begin{rep}
 Another useful fragment of function definitions is the class of
 \emph{productive} corecursive functions. Corecursive functions are functions to
@@ -1158,6 +1161,12 @@ it wrongly answers \emph{sat}.
     * CVC4 has built-in (co)datatypes and efficient arithmetic
     * also, Nitpick is intimately tied to Isabelle
 
+  * advantage over Nitpick:
+    * generates a single problem, not parameterized by cardinalities
+      * pushes all the work to the SMT solver
+        * we are just starting with that -- and see lots of potential for
+          optimizations and tuning
+
   * flavor of input language
     * case expressions
 
@@ -1180,16 +1189,16 @@ it wrongly answers \emph{sat}.
     * explain a bit
     * two o
 
-\section{Examples}
-\label{sec:examples}
+\section{Case Studies}
+\label{sec:case-studies}
 
-\subsection{ANDY?}
+\subsection{Lazy Lists}
 
-\subsection{Lists and Lazy Lists}
+XXX
 
-\subsection{AVL Trees?}
+\subsection{Huffman Coding}
 
-\subsection{Huffman's Algorithm}
+XXX
 
 \section{Evaluation}
 \label{sec:evaluation}
