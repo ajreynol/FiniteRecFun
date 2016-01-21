@@ -1205,58 +1205,37 @@ For each such pair, \textsf{encode}
 transforms a problem over a signature $\Sigma$ in a logic
 $\mathcal{L}$ to a problem over a signature $\Sigma'$ in a slightly different
 logic $\mathcal{L}'$, and \textsf{decode} translates a model of \mathcal{L'}
-over $\Sigma'$ into a model of $\mathcal{L}$ over $\Sigma$. The table
-from Figure~\ref{fig:pipeline} presents the current pipeline implemented in Nunchaku.
+over $\Sigma'$ into a model of $\mathcal{L}$ over $\Sigma$. The pipeline
+currently implemented in Nunchaku is described below.
 
-\begin{figure}[tb]
+\begin{description}
 %{{{
-\begin{tabular}{|l|p{0.6\textwidth}|}
-  \hline
-  component & description \\
-  \hline
-  \hline
-  Type inference
-    & Infer types and checks definitions \\
-  \hline
-  Type skolemization
-    & Replaces $\exists \alpha. p[\alpha]$
-      with $p[\tau]$ where $\tau$ is a fresh type \\
-  \hline
-  Monomorphization
-    & specializes polymorphic functions on their type arguments \\
-  \hline
-  Elimination of Equations
-    & Translates multiple-equations definitions of functions into
-      a single nested pattern matching \\
-  \hline
-  Polarization
-    & specialize some predicates into a version used in positive position
-      and one used in negative position \\
-  \hline
-  Unrolling
-    & Add a decreasing argument to non-well-founded predicates \\
-  \hline
-  Skolemization
-    & Introduce Skolem symbols for term variables \\
-  \hline
-  Elimination of Predicates
-    & Changes a multi-clauses (co)inductive predicate definition
-      into a single recursive function \\
-  \hline
-  Recursion Elimination
-    & The encoding from Section~\ref{sec:encoding} \\
-  \hline
-  Elimination of Match
-    & Transforms pattern-matching expressions into tests and selectors \\
-  \hline
-  CVC4 Invocation 
-    & Call CVC4 to obtain a model \\
-  \hline
-\end{tabular}
+  \item[Type inference] infers types and checks definitions;
+  \item[Type skolemization]
+    replaces $\exists \alpha. p[\alpha]$
+      with $p[\tau]$ where $\tau$ is a fresh type;
+  \item[Monomorphization]
+    specializes polymorphic functions on their type arguments;
+  \item[Elimination of Equations]
+    translates multiple-equations definitions of functions into
+      a single nested pattern matching;
+  \item[Polarization]
+    specializes some predicates into a version used in positive position
+      and one used in negative position;
+  \item[Unrolling]
+    adds a decreasing argument to non-well-founded predicates;
+  \item[Skolemization]
+    introduces Skolem symbols for term variables;
+  \item[Elimination of Predicates]
+    changes a multi-clauses (co)inductive predicate definition
+      into a single recursive function;
+  \item[Recursion Elimination]
+    performs the encoding from Section~\ref{sec:encoding};
+  \item[Elimination of Match]
+    transforms pattern-matching expressions into tests and selectors;
+  \item[CVC4 Invocation] calls CVC4 to obtain a model.
 %}}}
-\caption{Pipeline of Transformations in Nunchaku}
-\label{fig:pipeline}
-\end{figure}
+\end{description}
 
 TODO: similar to institutions \cite{goguen-meseguer} (?)
 
