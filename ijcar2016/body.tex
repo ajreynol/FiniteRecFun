@@ -1363,15 +1363,15 @@ and \cvcfm incorporates the fairness scheme for monotonic sorts as described in 
 \\
 \midrule
 
-\isanun & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0
+\isanun  & 0 & 14 & 0 & 0 & 0 & 155 & 0 & {\win 156} & 0 & 155 & 0 & 0
 \\
-\isa & 0 & 43 & 0 & 0 & 0 & {\win 161} & 0 & {\win 161} & 0 & {\win 161} & 0 & 0
+\isa & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0
+\\
+\isam & 0 & 43 & 0 & 0 & 0 & {\win 161} & 0 & {\win 161} & 0 & {\win 161} & 0 & 0
 \\
 \leon  & 8 & 30 & 6 & 6 & 6 & {\win 54} & 6 & 53 & 6 & {\win 54} & 6 & 6
 \\
-\isam & 6 & 61 & 0 & 0 & 2 & 180 & 2 & {\win 181} & 2 & {\win 181} & 0 & 0
-\\
-\leonm  & 0 & 14 & 0 & 0 & 0 & 155 & 0 & {\win 156} & 0 & 155 & 0 & 0
+\leonm & 6 & 61 & 0 & 0 & 2 & 180 & 2 & {\win 181} & 2 & {\win 181} & 0 & 0
 \\[\jot]
 Total & 14 & 148 & 6 & 6 & 8 & 550 & 8 & {\win 551} & 8 & {\win 551} & 6 & 6
 \end{tabular}
@@ -1417,7 +1417,7 @@ Total & 251 & 269 & 263 & 264 & 91 & 270 & 261 & 267 & 91 & 270 & {\win 376} & 2
 
 The results are summarized in Figures \ref{fig:sat} and \ref{fig:unsat}.
 The benchmarks and more detailed results are available online.%
-\footnote{\url{http://lara.epfl.ch/~reynolds/SMT2015-recfun/}}
+\footnote{\url{http://lara.epfl.ch/~reynolds/IJCAR2016-recfun/}}
 The figures are divided into benchmarks triggering \emph{unsat} and \emph{sat}
 responses and further into benchmarks before and after the translation $\conv$.
 The raw evaluation data reveals no cases in which a solver answered
@@ -1432,10 +1432,12 @@ configurations. This confirms the shortcomings of existing SMT techniques for
 finding models for benchmarks containing recursively defined functions.
 %
 The translation $\conv$ (the ``$\conv(\varphi)$'' columns) has a major
-impact. \cvcf finds 331 of the 885 benchmarks to be satisfiable,
-including 9~benchmarks in the nonmutated \leon benchmark set. The
-performance of \ziiib for countermodels also improves dramatically, as it
-finds 101 more benchmarks to be satisfiable, including 10 that are not solved by \cvcf.
+impact. \cvcf finds 550 of the 1242 benchmarks to be satisfiable,
+including 6~benchmarks in the nonmutated \leon benchmark set. 
+The two optimizations for finite model finding in \cvc (configurations \cvcfe and \cvcfm) 
+led to a net gain of 1 satisfiable benchmark each.
+The performance of \ziiib for countermodels also improved dramatically, as it
+finds 134 more benchmarks to be satisfiable, including 5 that are not solved by \cvcf.
 %
 We conclude that the translation $\conv$ enables SMT
 solvers to find countermodels for conjectures involving recursively defined functions
@@ -1445,15 +1447,15 @@ whose definitions are admissible.
 %configuration finding significantly more instances (331 to 112).
 
 Over \emph{unsat} benchmarks, \cvci is the
-clear winner, finding 318 total benchmarks to be unsatisfiable. Moreover, the
-translation $\conv$ helps \ziii for \emph{unsat} responses as well:
-\ziii solves a total of 209 with the translation, whereas it solves only 187 without it.
-%
-In contrast, \cvcd finds 211 benchmarks unsatisfiable with the translation.
-In general, the translation $\conv$ does not significantly degrade performance
-over unsatisfiable benchmarks, and in some cases it actually aids the solver 
-in determining unsatisfiability. The exception is \cvci, whose inductive
-arguments are guided by the types of the quantified variables.
+clear winner, finding 376 total benchmarks to be unsatisfiable. 
+Apart from this configuration, 
+the translation $\conv$ helps all configurations for \emph{unsat} responses as well.
+In particular,
+\ziii solves a total of 269 with the translation, whereas it solves only 251 without it.
+The configuration \cvcf improved even more significantly, 
+solving 270 unsat benchmarks overall, which is more than both \cvcd and \ziii.
+
+\ajr{Importance of the translation helping in practice for Isabelle/Nunchaku, if any}
 
 \section{Related Work}
 
