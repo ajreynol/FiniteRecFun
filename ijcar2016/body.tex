@@ -1060,18 +1060,24 @@ which entails formula~(\ref{eq:ex-before}).\xend
 \section{Implementations}
 \label{sec:implementations}
 
-The translation $\conv$ significantly improves the effectiveness of current SMT
-techniques for finding models of formulas involving recursive
-function definitions.
-We have implemented it in the development version of \cvc %~\cite{ReyEtAl-1-RR-13}
-(version~1.5 prerelease).
+We have implemented the translation $\conv$ in two separate systems, 
+as a preprocessor in the development version of \cvc %~\cite{ReyEtAl-1-RR-13} (version~1.5 prerelease),
+and in the higher-order model finder Nunchaku.
+This section describes how the translation is implemented in both these systems,
+as well as optimizations used by \cvc for finding models for the translated benchmarks.
+
+%The translation $\conv$ significantly improves the effectiveness of current SMT
+%techniques for finding models of formulas involving recursive
+%function definitions.
+%We have implemented it in the development version of \cvc %~\cite{ReyEtAl-1-RR-13}
+%(version~1.5 prerelease).
 
 \subsection{CVC4}
 \label{ssec:cvc4}
 
 In \cvc, function definitions $\forallf{\con{f}} \vec x.\; \varphi$ can be written using the $\definefunreccmd$ command
 from the SMT-LIB 2.5 standard~\cite{smtlib25}.
-Thus, formula~(\ref{eq:ex-before}) from Example~\ref{ex:translation}
+Formula~(\ref{eq:ex-before}) from Example~\ref{ex:translation}
 can be specified as %follows:
 %
 \begin{quote}
@@ -1142,6 +1148,8 @@ Indeed, if we add the inconsistent definition
 to the above problem and run \cvc with the \texttt{-}\texttt{-fmf-fun} option,
 it wrongly answers \emph{sat}.
 \end{rep}
+
+\par
 
 \textbf{TODO:} Mention monotonicity analysis and zero sorts.
 
@@ -1317,7 +1325,7 @@ conjectures from \isa and 427 mutated forms of conjectures from \leon. We will
 call these sets \isam and \leonm, respectively.
 Thus, our benchmark set consists of 1242 benchmarks (640 mutants plus the
 original 602). 
-Each of the 1242 benchmarks were generated in SMT lib version 2 format~\cite{}.
+Each of the 1242 benchmarks were generated in SMT lib version 2.5 format~\cite{smtlib25}. %ajr : although these don't require 2.5 features
 For \isanun, \ajr{describe generation of smt2 benchmarks without encoding}
 The others were translated to SMT lib version 2 by the Leon tool.
 
@@ -1331,7 +1339,7 @@ by outputting the result of running the preprocessor from Section~\ref{ssec:cvc4
 For solvers, we considered the SMT solver \ziii~\cite{de-moura-bjoerner-2008},
 which runs heuristic methods for quantifier instantiation~\cite{MouraBjoerner07}
 as well as methods for finding models for quantified formulas~\cite{GeDeM-CAV-09}.
-We also considered various configurations of \cvc~\cite{barrett-et-al-2011},
+We also considered five configurations of \cvc~\cite{barrett-et-al-2011},
 which we will refer to as \cvcd, \cvci, \cvcf, \cvcfe, and \cvcfm.
 The default configuration \cvcd runs heuristic 
 and conflict-based techniques for quantifier instantiation~\cite{ReynoldsTinelliMoura14},
@@ -1340,7 +1348,7 @@ The configuration \cvci additionally incorporates techniques for automating indu
 reasoning in SMT~\cite{reynolds-kuncak-2015}.
 All other configurations run the finite model
 finding procedure due to Reynolds et al.\ \cite{ReyEtAl-1-RR-13,reynolds-et-al-2013}.
-The configuration \cvcfe additionally incorporates heuristic quantifier instantiation,
+The configuration \cvcfe additionally incorporates heuristic quantifier instantiation as described in Section 2.3 of~\cite{reynolds-et-al-2013},
 and \cvcfm incorporates the fairness scheme for monotonic sorts as described in Section~\ref{ssec:cvc4}.
 
 \begin{figure}[t]
