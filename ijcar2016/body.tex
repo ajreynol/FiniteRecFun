@@ -1149,7 +1149,6 @@ to the above problem and run \cvc with the \texttt{-}\texttt{-fmf-fun} option,
 it wrongly answers \emph{sat}.
 \end{rep}
 
-\par
 
 \textbf{TODO:} Mention monotonicity analysis and zero sorts.
 
@@ -1443,16 +1442,13 @@ The translation $\conv$ (the ``$\conv(\varphi)$'' columns) has a major
 impact. \cvcf finds 550 of the 1242 benchmarks to be satisfiable,
 including 6~benchmarks in the nonmutated \leon benchmark set. 
 The two optimizations for finite model finding in \cvc (configurations \cvcfe and \cvcfm) 
-led to a net gain of 1 satisfiable benchmark each.
+led to a net gain of 1 satisfiable benchmark each with respect to \cvcf.
 The performance of \ziiib for countermodels also improved dramatically, as it
 finds 134 more benchmarks to be satisfiable, including 5 that are not solved by \cvcf.
 %
 We conclude that the translation $\conv$ enables SMT
 solvers to find countermodels for conjectures involving recursively defined functions
 whose definitions are admissible.
-%Both \ziiib and \cvcf were able to find a
-%large number of countermodels after the translation, with the latter
-%configuration finding significantly more instances (331 to 112).
 
 Over \emph{unsat} benchmarks, \cvci is the
 clear winner, finding 376 total benchmarks to be unsatisfiable. 
@@ -1462,8 +1458,7 @@ In particular,
 \ziii solves a total of 269 with the translation, whereas it solves only 251 without it.
 The configuration \cvcf improved even more significantly, 
 solving 270 unsat benchmarks overall, which is more than both \cvcd and \ziii.
-
-\ajr{Importance of the translation helping in practice for Isabelle/Nunchaku, if any}
+\ajr{Importance of the translation helping unsat in practice for Isabelle/Nunchaku, if any}
 
 \section{Related Work}
 
