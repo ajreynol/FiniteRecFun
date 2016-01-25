@@ -1,9 +1,11 @@
+%%% TODO: mention that admissible does not mean finite model
+%%% e.g. ite inside or outside, or custom Bool operators
+
 %%% BEGIN Times font
 \usepackage{mathptmx}
 \usepackage[scaled=.82]{beramono}
 \usepackage[scaled=.86]{helvet}
 \DeclareSymbolFont{letters}{OML}{txmi}{m}{it}
-
 %%% END Times font
 
 %\theoremstyle{plain}
@@ -56,6 +58,8 @@
 
 \newcommand{\con}[1]{\mathsf{#1}}
 \let\const=\con
+
+\newcommand\innerkw[1]{\textrm{#1}}
 
 \renewcommand\vec[1]{\overline{#1}}
 
@@ -193,6 +197,11 @@
 
 \hyphenation{counter-example counter-examples Isa-belle}
 
+\let\labelitemi=\labelitemii %% CHEAT!
+\makeatletter
+\ps@myheadings
+\makeatother
+
 \begin{document}
 
 \title{Model Finding for Recursive Functions in SMT\thanks{%
@@ -203,7 +212,7 @@ action ``Contre-exemples utilisables par Isabelle et Coq'' (CUIC).
 \titlerunning {Model Finding for Recursive Functions in SMT}
 
 \author {Andrew Reynolds\inst{1} \and Jasmin Christian Blanchette\inst{2,3} \and \\ Simon~Cruanes\inst{2} \and Cesare~Tinelli \inst{1}}
-\authorrunning {A. Reynolds, J. C. Blanchette, C. Tinelli}
+\authorrunning {A. Reynolds et al.} % , J. C. Blanchette, S. Cruanes, C. Tinelli}
 \institute{
 Department of Computer Science, The University of Iowa, USA
 \and
@@ -312,8 +321,9 @@ type. Additional constraints ensure that the abstract values that are relevant
 to the formula's satisfiability
 exist. The translation preserves satisfiability and, for admissible definitions,
 unsatisfiability, and makes finite model finding possible for problems in this
-class.\begin{conf} Detailed proofs of correctness are included in a technical
-report \cite{our-report}.\end{conf}
+class.
+%\begin{conf} Detailed proofs of correctness are included in a technical
+%report \cite{our-report}.\end{conf}
 
 The approach is implemented as a preprocessor in \cvc and in the Nunchaku
 model finder (Section~\ref{sec:implementations}). As a case study, we employed
@@ -350,7 +360,7 @@ $\ltrue, \lfalse : \Bool$ for truth and falsity,
 an infix equality predicate ${\teq} : \tau \times \tau \to \Bool$
 for each $\tau \in \stypes{\Sigma}$,
 standard Boolean connectives ($\neg$, $\wedge$, $\vee$, etc.),
-and an if--then--else function symbol
+and an \innerkw{if}--\innerkw{then}--\innerkw{else} function symbol
 $\lite : \Bool \times \tau \times \tau \rightarrow \tau$
 for each $\tau \in \stypes{\Sigma}$.
 %
@@ -437,7 +447,7 @@ for $i = 1, \ldots, n$,
 %\jb{do we? I thought that the admissibility criterion below is enough.}
 % should be enough, unless I'm missing something? -ajr
 and $\psi$ contains no function definitions.
-We call $\psi$ the \emph{goal} of $\varphi$.
+We call $\psi$ the \emph{main formula} of $\varphi$.
 %\ct{Don't we need additional restrictions on the $\varphi_i$'s here?
 %(E.g., they are quantifier-free, or perhaps existential or containing only let binders.)}
 % Now fixed above -ajr
@@ -476,20 +486,20 @@ First-order logic has no built-in notion of computation or termination. To ensur
 that a function specification is well founded, it is sufficient to require that
 the function would terminate when seen as a functional program, under \emph{some}
 evaluation order. For example, the definition
-$\forall x : {\typeint}.\;\, \lite\bigl(
-x \leq 0,\allowbreak\; \con{p}( x ) \teq 1,\allowbreak\; \con{p}( x ) \teq 2 * \con{p}( x - 1 ) \bigr)$,
+$\forall x : {\typeint}.\;\, 
+\con{p}( x ) \teq \lite\bigl( x \leq 0,\allowbreak\;  1,\allowbreak\;
+  2 * \con{p}( x - 1 ) \bigr)$,
 where $T$ is integer arithmetic extended with the uninterpreted symbol 
 $\con p:\typeint \rightarrow \typeint$, can be shown well founded under a strategy that
 evaluates the condition of an $\lite$ before evaluating the relevant branch,
-ignoring the other branch. \begin{rep}Logically, such dependencies can be captured by
-congruence rules. \end{rep}Krauss developed these ideas in the more general context of
+ignoring the other branch. Logically, such dependencies can be captured by
+congruence rules. Krauss developed these ideas in the more general context of
 higher-order logic \cite[Section 2]{krauss-2009-phd}.
 
 \begin{theorem}\label{thm:adm}
 If $\DDD$ is a set of well-founded function definitions for\/
-$\sfundefs{\Sigma} \begin{rep} = \{\con{f}_1,\ldots,\con{f}_n\}\end{rep}$, then it is admissible.
+$\sfundefs{\Sigma} = \{\con{f}_1,\ldots,\con{f}_n\}$, then it is admissible.
 \end{theorem}
-\begin{rep}
 \begin{proofsketch}
 Let $\psi$ be a satisfiable formula closed under function expansion with
 respect to $\DDD$. We show that $\psi \wedge \bigwedge \Delta$ is also
@@ -512,12 +522,10 @@ Since $\J \models \Delta$ by assumption, we have $\J \models \psi \wedge
 %$\varphi \,\models_T\, \bigwedge\nolimits_{\,i=1}^{n} \{ \varphi_i[ \vec t / \vec x ] \mid \con{f}_i( \vec t ) \in \terms( \varphi ) \}$.
 \qed
 \end{proofsketch}
-\end{rep}
 
-TODO: Say something about admissibility for tail-recursion: Watch out if the
-argument always changes...
+% TODO: Say something about admissibility for tail-recursion: Watch out if the
+% argument always changes...
 
-\begin{rep}
 Another useful fragment of function definitions is the class of
 \emph{productive} corecursive functions. Corecursive functions are functions to
 a coalgebraic datatype. These functions can be ill founded, without
@@ -535,7 +543,10 @@ It is even possible to mix recursion and corecursion in the same function
 \cite{blanchette-et-al-2015-fouco}. Theorem~\ref{thm:adm} can be extended to
 cover such specifications, based on the observation that unfolding
 a corecursive definition infinitely computes a unique infinite object.
+%We conjecture that a large fragment of mixed recursive--corecursive
+%specifications are
 
+\begin{rep}
 Beyond totality, an admissible set can contain underspecified functions
 such as $\forallf{\con{f}} x : \typeint.\allowbreak\;\, \con{f}( x )
 \teq \con{f}( x - 1 )$ or $\forallf{\con{g}} x.\allowbreak\;\, \con{g}( x
@@ -589,26 +600,26 @@ definition.
 $\conv_0( t\typ{\tau},\, p )$ $=$
 %\\[-.8\baselineskip]
  \begin{itemize}
-   \itemx[] $\mathsf{if}$ $\tau = \Bool$ $\mathsf{and}$ $t = \boolop(t_1,\ldots,t_n)$ $\mathsf{then}$
+   \itemx[] $\innerkw{if}$ $\tau = \Bool$ $\mathsf{and}$ $t = \boolop(t_1,\ldots,t_n)$ $\innerkw{then}$
     \begin{itemize}
-      \itemx[] $\mathsf{let}$ $( t'_i,\, \chi_i ) = \conv_0( t_i,\, \pol( \boolop,\, i,\, p ) )$ $\mathsf{for}$ $i = 1, \ldots, n$ $\mathsf{in}$%\kern6.35em$\mid$
-      \itemx[] $\mathsf{let}$ $\chi = \chi_1 \wedge \cdots \wedge \chi_n$ $\mathsf{in}$
-      \itemx[] $\mathsf{if}$ $p = \ppos$ $\mathsf{then}$ \bigtuple{$\boolop(t'_1, \ldots, t'_n) ) \wedge \chi,\, \ltrue$}
-      \itemx[] $\mathsf{else}$ $\mathsf{if}$ $p = \pneg$ $\mathsf{then}$ \bigtuple{$\boolop(t'_1, \ldots, t'_n) \vee \neg \chi,\, \ltrue$}
-      \itemx[] $\mathsf{else}$ \bigtuple{$\boolop(t'_1, \ldots, t'_n),\, \chi$}
+      \itemx[] $\innerkw{let}$ $( t'_i,\, \chi_i ) = \conv_0( t_i,\, \pol( \boolop,\, i,\, p ) )$ $\mathsf{for}$ $i = 1, \ldots, n$ $\innerkw{in}$%\kern6.35em$\mid$
+      \itemx[] $\innerkw{let}$ $\chi = \chi_1 \wedge \cdots \wedge \chi_n$ $\innerkw{in}$
+      \itemx[] $\innerkw{if}$ $p = \ppos$ $\innerkw{then}$ \bigtuple{$\boolop(t'_1, \ldots, t'_n) ) \wedge \chi,\, \ltrue$}
+      \itemx[] $\innerkw{else}$ $\innerkw{if}$ $p = \pneg$ $\innerkw{then}$ \bigtuple{$\boolop(t'_1, \ldots, t'_n) \vee \neg \chi,\, \ltrue$}
+      \itemx[] $\innerkw{else}$ \bigtuple{$\boolop(t'_1, \ldots, t'_n),\, \chi$}
 %\\[-.8\baselineskip]
     \end{itemize}
-  \itemx[] $\mathsf{else}$ $\mathsf{if}$ $t = \forallf{\con{f}} \vec x.\;\, u$ $\mathsf{then}$
+  \itemx[] $\innerkw{else}$ $\innerkw{if}$ $t = \forallf{\con{f}} \vec x.\;\, u$ $\innerkw{then}$
     \begin{itemize}
-      \itemx[] $\mathsf{let}$ $( u',\, \chi ) = \conv_0( u,\, p )$ $\mathsf{in}$ \bigtuple{$\forall a : \fargtype{\con{f}}.\; u' [ \vecfarg{\con{f}}( a ) / \vec x ],\, \ltrue$}
+      \itemx[] $\innerkw{let}$ $( u',\, \chi ) = \conv_0( u,\, p )$ $\innerkw{in}$ \bigtuple{$\forall a : \fargtype{\con{f}}.\; u' [ \vecfarg{\con{f}}( a ) / \vec x ],\, \ltrue$}
 %\\[-.8\baselineskip]
     \end{itemize}
-  \itemx[] $\mathsf{else}$ $\mathsf{if}$ $t = \forall \vec x.\;\, u$ $\mathsf{then}$
+  \itemx[] $\innerkw{else}$ $\innerkw{if}$ $t = \forall \vec x.\;\, u$ $\innerkw{then}$
     \begin{itemize}
-      \itemx[] $\mathsf{let}$ $( u',\, \chi ) = \conv_0( u,\, p )$ $\mathsf{in}$ \bigtuple{$\forall \vec x.\; u',\, \forall \vec x.\; \chi$}
+      \itemx[] $\innerkw{let}$ $( u',\, \chi ) = \conv_0( u,\, p )$ $\innerkw{in}$ \bigtuple{$\forall \vec x.\; u',\, \forall \vec x.\; \chi$}
 %\\[-.8\baselineskip]
     \end{itemize}
-   \itemx[] $\mathsf{else}$
+   \itemx[] $\innerkw{else}$
    \begin{itemize}
      \itemx[] \return \bigtuple{$t,\; \bigwedge\, \{ \exists a : \fargtype{\con{f}}.\; \vecfarg{\con{f}}( a ) \teq \vec s \mid \con{f}( \vec s ) \in \terms( t ),\, \con{f} \in \sfundefs{\Sigma} \}$}
 %\\[-.8\baselineskip]
@@ -618,8 +629,8 @@ $\conv_0( t\typ{\tau},\, p )$ $=$
 \begin{enumerate}
 %\begin{framed}
 \itemx[\ ]
-$\conv( \varphi )$ $=$ $\mathsf{let}$ $( \varphi',\, \chi ) = \conv_0( \varphi,\, \ppos )$ $\mathsf{in}$ $\varphi'$
-%\\[-1.25\baselineskip] %% TYPESETTING
+$\conv( \varphi )$ $=$ $\innerkw{let}$ $( \varphi',\, \chi ) = \conv_0( \varphi,\, \ppos )$ $\innerkw{in}$ $\varphi'$
+\\[-1.5\baselineskip] %% TYPESETTING
 \end{enumerate}
 \caption{\,Definition of translation $\conv$}
 \label{fig:A}
@@ -686,12 +697,15 @@ These existential %%% for typesetting
 constraints
 ensure that the restricted definition for $\con{f}$ covers all relevant tuples
 of terms, namely those occurring in applications of $\con{f}$ 
-that are relevant to the satisfiability of $\varphi$.
+that are relevant to the satisfiability of $\varphi$. The constraints are
+generated as deep in the formula as possible, based on our knowledge of the
+polarities of logical connectives, to allow models in which the domains
+interpreting the $\fargtype{\con{f}}$ types are as small as possible.
 
 If $t$ is an application of a predicate symbol $\boolop$, including the
 operators ${\oldneg}$, ${\wedge}$, ${\vee}$, ${\teq}$, and ${\lite}$,
 $\conv_0$ calls itself recursively on the arguments $t_i$ and polarity $\pol(
-\boolop, i, p )$, with $\pol$ defined as
+\boolop, i, p )$, with $\pol$ d\rlap{efined as}
 \[\pol( \boolop, i, p ) =
 \begin{cases}
 p & \text{if either $\boolop \in \{{\wedge}, {\vee}\}$ or $\boolop = \lite$ and $i \in \{2, 3\}$} \\[-\jot]
@@ -701,17 +715,16 @@ p & \text{if either $\boolop \in \{{\wedge}, {\vee}\}$ or $\boolop = \lite$ and 
 where $\pnegate p$ is $\pneg$ if $p$ is $\ppos$, $\ppos$
 if $p$ is $\pneg$, and $\pnone$ if $p$ is $\pnone$.
 The term $t$ is then reconstructed as $\boolop(t_1',\ldots,t_n')$ 
-where each $t_i'$ is the result of the recursive call with argument $t_i$. 
+where each $t_i'$ is the result of the recursive call with argument~$t_i$. 
 If the polarity $p$ associated with $t$ is $\ppos$, 
 $\conv_0$ conjunctively adds to $\boolop(t_1',\ldots,t_n')$ the constraint $\chi$ derived from
-the subterms. Dually, if $p$ is $\pneg$, it adds a
+the subterms and returns $\top$ as the constraint.
+Dually, if $p$ is $\pneg$, it adds a
 disjunction with the negated constraint, to achieve the same overall effect.
 %ct  as in the positive case. 
 It $p$ is $\pnone$, the constraint $\chi$ is
 returned to the caller.
-%
-\begin{rep}\par\end{rep}
-%
+
 If $t$ is a function definition, % of a function in $\sfundefs{\Sigma}$,
 $\conv_0$ constructs a quantified formula over a single variable
 $a$ of type $\fargtype{\con{f}}$ and replaces all occurrences of $\vec x$ in
@@ -720,8 +733,8 @@ the body of that formula with $\vecfarg{\con{f}}( a )$.
 $\chi$ must be $\ltrue$ and can be ignored.)
 %
 If $t$ is an unannotated quantified formula, $\conv_0$ calls itself
-on the body with the same polarity. \begin{rep}A quantifier is prefixed to the
-quantified formula and constraint returned by the recursive call.\end{rep}
+on the body with the same polarity; a quantifier is prefixed to the
+quantified formula and constraint returned by the recursive call.
 Otherwise, $t$ is either an application of an uninterpreted predicate symbol or a term
 of a type other than $\Bool$. Then, the returned constraint is a conjunction of
 formulas of the form $\exists a : {\fargtype{\con{f}}}.\;\, \vecfarg{\con{f}}(
@@ -734,7 +747,8 @@ the argument tuple $\vec s$. % under $\vecfarg{\con{f}}$.
 
 \begin{example}
 \label{ex:translation}
-Let $T$ be linear arithmetic with the uninterpreted symbols  $\{ \const{c} : { \typeint },\> \con{s} : { \typeint \rightarrow \typeint } \}$.
+Let $T$ be linear integer arithmetic
+with the uninterpreted symbols  $\{ \const{c} : { \typeint },\allowbreak\> \con{s} : { \typeint \rightarrow \typeint } \}$.
 Let $\varphi$ be the $\Sigma$-formula
 \begin{equation} \label{eq:ex-before}
 \forallf{\con{s}} x : {\typeint}.\;\, \lite\bigl( x \leq 0,\; \con{s}(x) \teq 0,\;
@@ -805,8 +819,7 @@ $\con{c}$ as $14$,
 and $\con{s}$ as the almost constant function
 %
 %\begin{equation} \label{eq:approx-interp}
-\begin{conf}$\badlambda$. \end{conf}%
-\begin{rep}\[\badlambda\]\end{rep}%
+\[\badlambda\]
 %\end{equation}
 %
 In other words, $\const{s}$ is interpreted as a function mapping $x$ to the sum
@@ -846,8 +859,8 @@ function symbols in $\sfuns{\Sigma} - \sfundefs{\Sigma}$.
 %\ct{This is not right. To start, the set difference should contain all the arithmetic symbols here. Moreover, isn't $\con s$ in $\sfundefs{\Sigma}$?})
 Furthermore, the model of $\conv( \varphi )$ will
 also give correct information for the defined functions at all points belonging
-to the domains of the corresponding abstract types. This can sometimes help
-users debug their specifications.
+to the domains of the corresponding abstract types $\fargtype{\con{f}}$.
+This can sometimes help users debug their specifications.
 
 %%% @ANDY: I don't get the following comment --jb
 %   @JASMIN : The point of this comment is that the user is not interested in the SMT solver inferring any new information regarding the interpretation of s,
@@ -861,7 +874,6 @@ users debug their specifications.
 %%% want to see the partial information available about defined functions. I've
 %%% added a couple of sentences above to that effect.
 
-\begin{rep}
 %In the following,
 We sketch the correctness of translation~$\conv$.
 For a set of ground literals~$L$, 
@@ -869,12 +881,10 @@ we write $\absconstraints( L )$ to denote the set of constraints that
 force the concretization functions to have the necessary elements in their
 range for determining the satisfiability of $L$ with respect to the function
 definitions in the translation.
-Formally, we define
-$\absconstraints( L )$
-as
-$\{ \exists a : {\fargtype{\con{f}}}.\;\, \vecfarg{\con{f}}( a ) \teq \vec t
-\mid \con{f}( \vec t ) \in \terms( L ),\: \con{f} \in \sfundefs{\Sigma}
-\}$.
+Formally,
+\[\absconstraints( L ) \vthinspace=\vthinspace \smash{\{ \exists a : {\fargtype{\con{f}}}.\;\, \vecfarg{\con{f}}( a ) \teq \nobreak \vec t
+\nobreak\mid\allowbreak \con{f}( \vec t ) \in \terms( L ),\: \con{f} \in \sfundefs{\Sigma}
+\}}\]
 The following lemma states the central invariant behind the translation $\conv$.
 
 \begin{lemma}\label{lem:conv}
@@ -893,7 +903,6 @@ By definition of $\conv$ and case analysis on the return values of $\conv_0$.
 \begin{corollary}\label{cor:conv}
 If $\psi$ is a formula not containing function definitions, then $\conv( \psi )$ entails $\psi$.
 \end{corollary}
-\end{rep}
 
 \begin{theorem}\label{thm:equi}
 If $\varphi$ is a\/ $\Sigma$-formula in definitional form with respect to\/
@@ -902,7 +911,6 @@ and the set of function definitions\/ $\DDD$ corresponding to\/
 $\sfundefs{\Sigma}$ is admissible, then\/ $\varphi$ and\/ $\conv( \varphi )$ are
 equisatisfiable in $T$.
 \end{theorem}
-\begin{rep}
 \begin{proofsketch}
 First, we show that if $\varphi$ is satisfied by an
 $\Sigma$-interpretation $\I$, then $\conv( \varphi )$ is satisfied by an $\extendsig{\Sigma}$-interpretation $\J$.
@@ -963,16 +971,17 @@ i.e., $\varphi$.
 The intuition of the above proof is as follows.
 First, $\conv( \varphi )$ cannot be unsatisfiable when $\varphi$ is satisfiable
 since any $\Sigma$-interpretation that satisfies $\varphi$ can be extended in a straightforward way to 
-an $\extendsig{\Sigma}$-interpretation that satisfies $\conv( \varphi )$.
+an $\extendsig{\Sigma}$-interpretation that satisfies $\conv( \varphi )$, by
+interpreting the abstract types in the same way as the cartesian products they
+abstract, thereby satisfying all existential constraints introduced by \conv.
 Second, if a model is found for $\conv( \varphi )$,
 then the constraints $\exists a : \fargtype{\con{f}}.\;\, \vecfarg{\con{f}}( a ) \teq \vec t$
 occurring in $\conv( \varphi )$ ensure that this model also satisfies
 a $\Sigma$-formula that is closed under function expansion and
-that entails the goal of $\varphi$.
+that entails the main formula of $\varphi$.
 This implies the existence of a model for $\varphi$,
 assuming $\DDD$ is admissible.
 %For clarity, we demonstrate the consequences of this theorem by means of an example.
-\end{rep}
 
 \begin{conf}
 We give an intuition of the above theorem in the context of an example.
@@ -1209,8 +1218,8 @@ equality reasoning straightforward.
 
 The following problem is expressed in Nunchaku's input syntax; it starts with
 a datatype declaration, then two mutually recursive coinductive predicates
-are defined, and finally a goal (``find a non-zero natural number $m$ that
-is even'').
+are defined, and finally a distinguished axiom called the goal
+(``find a non-zero natural number $m$ that is even'').
 \begin{quote}
 \begin{verbatim}
 data nat := zero | Suc nat.
@@ -1497,9 +1506,7 @@ typically propositional logic. \begin{rep}They translate the input problem to th
 logic and pass it to a solver for that logic.\end{rep}
 The translation is parameterized by upper or exact finite bounds on
 the cardinalities of the atomic types. This procedure was pioneered by McCune
-in the earlier versions of
-\begin{conf}MACE\end{conf}\begin{rep}Mace (or MACE)\end{rep}
-\cite{mccune-1994}.
+in the earlier versions of Mace (or MACE) \cite{mccune-1994}.
 Other conceptually similar finders are Paradox \cite{claessen-sorensson-2003}
 and FM-Darwin \cite{baumgartner-et-al-2009} for first-order logic with
 equality; the Alloy Analyzer and its back-end Kodkod \cite{torlak-jackson-2007}
@@ -1512,20 +1519,19 @@ cardinalities, the search space is represented as multidimensional
 tables. The procedure tries different values in the function and predicate
 tables, checking each time if the problem is satisfied.
 This approach was pioneered by FINDER
-\cite{slaney-1994} and SEM \cite{zhang-zhang-1995}\begin{rep} and serves as
+\cite{slaney-1994} and SEM \cite{zhang-zhang-1995} and serves as
 the basis of many more model finders, notably the Alloy Analyzer's precursor
 \cite{jackson-1996} and the later versions of~Mace
-\cite{mccune-prover9-mace4}\end{rep}.
+\cite{mccune-prover9-mace4}.
 
-\begin{rep}
 Most of the above tools cannot cope with algebraic datatypes or other infinite
-types. \end{rep}%
+types.
 Kuncak and Jackson \cite{kuncak-jackson-2005} presented an idiom for
 encoding datatypes and recursive functions in Alloy, by approximating datatypes
 by finite subterm-closed substructures. The approach finds sound (fragments
 of) models for formulas in the \relax{existential--bounded-universal} fragment%
-\begin{rep} (i.e., formulas whose prenex normal forms contain no unbounded universal
-quantifiers ranging over datatypes)\end{rep}. This idiom was further developed by Dunets
+(i.e., formulas whose prenex normal forms contain no unbounded universal
+quantifiers ranging over datatypes). This idiom was further developed by Dunets
 et al.\ \cite{dunets-et-al-2010}, who presented a translation scheme
 for primitive recursion. Their definedness guards play a similar role to the
 existential constraints generated by our translation $\conv$.
@@ -1536,9 +1542,9 @@ axioms over infinite domains by proving their negation is entailed.
 The higher-order model finder Nitpick \cite{blanchette-nipkow-2010}
 for the Isabelle/HOL proof assistant
 relies on another variant of Kuncak and Jackson's approach inside a
-Kleene-style three-valued logic\begin{rep}, inspired by abstract interpretation\end{rep}.
-\begin{rep}It was also the first tool of its kind to support corecursion and
-coalgebraic datatypes \cite{blanchette-2013-relational}.\end{rep}
+Kleene-style three-valued logic, inspired by abstract interpretation.
+It was also the first tool of its kind to support corecursion and
+coalgebraic datatypes \cite{blanchette-2013-relational}.
 The three-valued logic approach extends each
 approximated type with an unknown value, which is propagated by function
 application. This scheme works reasonably well in Nitpick, because it builds
@@ -1550,21 +1556,21 @@ The Leon system~\cite{blanc2013overview} implements a procedure that can
 produce both proofs and counter\-examples for properties of terminating functions
 written in a subset of Scala. Leon is based on an SMT solver. It avoids
 quantifiers altogether by unfolding recursive definitions up to a certain
-depth\begin{rep}, which is increased on a per-need basis\end{rep}.
+depth, which is increased on a per-need basis.
 Our translation~$\conv$ works in an analogous manner, 
 where instead the SMT solver is invoked only once 
 and quantifier instantiation is used in lieu of function unfolding.
-\begin{rep}It would be
+It would be
 worth investigating how existing approaches for function
 unfolding can inform approaches for dedicated quantifier instantiation
-techniques for function definitions, and vice versa.\end{rep}
+techniques for function definitions, and vice versa.
 
 Model finding is concerned with satisfying arbitrary logical constraints. Some
 tools are tailored for problems that correspond to total functional
 programs. QuickCheck \cite{claessen-hughes-2000} for Haskell is an
-early example, based on random testing. Bounded exhaustive testing\begin{rep}
-\cite{runciman-et-al-2008}\end{rep} and narrowing\begin{rep}
-\cite{lindblad-2008-testing}\end{rep} are other successful strategies. These
+early example, based on random testing. Bounded exhaustive testing
+\cite{runciman-et-al-2008} and narrowing
+\cite{lindblad-2008-testing} are other successful strategies. These
 tools are often much faster than model finders, but they typically cannot cope
 with underspecification and nonexecutable functions.
 
