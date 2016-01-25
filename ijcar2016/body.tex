@@ -448,17 +448,13 @@ In the signature $\Sigma$, we distinguish a subset $\sfundefs{\Sigma}
 We consider $\Sigma$-formulas that are in definitional form with respect to
 $\sfundefs{\Sigma}$.
 
-\newcommand\closurefmla{
-  \ensuremath{\psi \models_T \bigwedge\nolimits_{\,i=1}^{n} \{ \varphi_i[ \vec t / \vec x ] \mid \con{f}_i( \vec t ) \in \terms( \psi ) \}} }
-
 \begin{definition}\rm
 Given a set of function definitions 
 $\DDD = \{ \forallf{\con{f}_1} \vec x.\; \varphi_1, \ldots, \forallf{\con{f}_n} \vec x.\; \varphi_n \}$, 
 a ground formula $\psi$ 
 %\ct{I suppose $\psi$ is meant to be ground.} yes --ajr
 is \emph{closed under function expansion with respect to $\DDD$} if
-\begin{conf}$\closurefmla$. \end{conf}%
-\begin{rep}\[\closurefmla\]\end{rep}%
+\[\psi \models_T \smash{\bigwedge\nolimits_{\,i=1}^{n} \{ \varphi_i[ \vec t / \vec x ] \mid \con{f}_i( \vec t ) \in \terms( \psi ) \}}\]
 The set $\DDD$ is \emph{admissible} if for every $T$-satisfiable formula 
 $\psi$ closed under function expansion with respect to $\DDD$,
 the formula
@@ -468,7 +464,7 @@ $\psi \wedge \bigwedge \Delta$ is also $T$-satisfiable.
 
 Admissibility is a semantic criterion that must be satisfied for each function
 definition before applying the translation described in
-Section~\ref{sec:encoding}. It is interesting to connect it to the
+Section~\ref{sec:encoding}. It is useful to connect it to the
 standard notion of \emph{well-founded} function definitions, often called
 \emph{terminating} definitions in a slight abuse of terminology. In such
 definitions, all recursive calls are decreasing with respect to a well-founded
@@ -477,13 +473,13 @@ using a termination prover. This ensures that the function is uniquely defined
 at all points.
 
 First-order logic has no built-in notion of computation or termination. To ensure
-that a function specification is well-founded, it is sufficient to require that
+that a function specification is well founded, it is sufficient to require that
 the function would terminate when seen as a functional program, under \emph{some}
 evaluation order. For example, the definition
 $\forall x : {\typeint}.\;\, \lite\bigl(
 x \leq 0,\allowbreak\; \con{p}( x ) \teq 1,\allowbreak\; \con{p}( x ) \teq 2 * \con{p}( x - 1 ) \bigr)$,
 where $T$ is integer arithmetic extended with the uninterpreted symbol 
-$\con p:\typeint \rightarrow \typeint$, can be shown well-founded under a strategy that
+$\con p:\typeint \rightarrow \typeint$, can be shown well founded under a strategy that
 evaluates the condition of an $\lite$ before evaluating the relevant branch,
 ignoring the other branch. \begin{rep}Logically, such dependencies can be captured by
 congruence rules. \end{rep}Krauss developed these ideas in the more general context of
@@ -524,7 +520,7 @@ argument always changes...
 \begin{rep}
 Another useful fragment of function definitions is the class of
 \emph{productive} corecursive functions. Corecursive functions are functions to
-a coalgebraic datatype. These functions can be non-well-founded, without
+a coalgebraic datatype. These functions can be ill founded, without
 their being inconsistent. Productive corecursive functions are functions that
 progressively reveal parts of their potentially infinite
 output \cite{turner-1995,mcbride-productive}.
@@ -1263,7 +1259,7 @@ currently implemented in Nunchaku is described below.
     specializes some predicates into a version used in positive position
       and one used in negative position;
   \item[Unrolling]
-    adds a decreasing argument to non-well-founded predicates;
+    adds a decreasing argument to possibly ill-founded predicates;
   \item[Skolemization]
     introduces Skolem symbols for term variables;
   \item[Elimination of Predicates]
