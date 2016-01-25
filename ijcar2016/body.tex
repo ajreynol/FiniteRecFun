@@ -1045,11 +1045,13 @@ The existential constraint in the above formula
 ensures that whenever $\I$ satisfies the set $L_1 = L_0 \cup \{ \neg \con{c} \leq 0,\; \con{s}(\con{c}) \teq \con{c} + \con{s}( \con{c}-1 ) \}$,
 $\I$ satisfies $\absconstraints( L_1 )$ as well.
 Hence, by repeated application of this reasoning, it follows that
-a model of formula~(\ref{eq:ex-after}) that interprets $\con{c}$ as $n$ must also satisfy~$\psi$:
+a model of formula~(\ref{eq:ex-after}) that interprets $\con{c}$ as~$n$ must also satisfy~$\psi$:
 %
-\[\con{s}( \con{c} ) > 100 \wedge %\displaystyle
-  \smash{\bigwedge\nolimits_{\vthinspace i=0}^{\!n-1}} \bigl( \neg (\con{c}-i \leq 0) \wedge \con{s}( \con{c}-i ) \teq \con{c}-i + \con{s}( \con{c}-i-1 ) \bigr)
-\wedge \con{c}-n \leq 0 \wedge \con{s}( \con{c}-n ) \teq 0\]
+\[\begin{aligned}[t]
+\con{s}( \con{c} ) > 100 %\displaystyle
+& {} \wedge \relax{\bigwedge\nolimits_{\vthinspace i=0}^{\!\smash{n-1}}} \bigl( \neg (\con{c}-i \leq 0) \wedge \con{s}( \con{c}-i ) \teq \con{c}-i + \con{s}( \con{c}-i-1 ) \bigr) \\[-\jot]
+& {} \wedge \con{c}-n \leq 0 \wedge \con{s}( \con{c}-n ) \teq 0
+\end{aligned}\]
 %
 This formula is closed under function expansion
 since it entails $\varphi_\con{s}[(\con{c}-i)/x]$ for $i = 0, \ldots, n$,
