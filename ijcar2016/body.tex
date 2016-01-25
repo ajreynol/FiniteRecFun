@@ -962,7 +962,7 @@ $\conv( \varphi_{\con{f}}[ \vec t / \vec x ] )$ entails $\varphi_{\con{f}}[ \vec
 Thus, $\psi$ entails $\{ \varphi_{\con{f}}[ \vec t / \vec x ] \mid \con{f}( \vec t ) \in \terms( \psi ), \con{f} \in \sfundefs{\Sigma} \}$,
 meaning that $\psi$ is closed under function expansion with respect to $\DDD$.
 Furthermore, $\psi$ entails $\varphi_0$ since $L_0 \subseteq L_\infty$.
-Since $\psi$ is a $T$-satisfiable formula that is closed under function expansion with respect to $\DDD$ and $\DDD$ is admissible, 
+Since $\psi$ is a $T$-satisfiable formula that is closed under function expansion\begin{rep} with respect to $\DDD$\end{rep} and $\DDD$ is admissible, 
 by definition there exists a $\Sigma$-interpretation $\I$ satisfying $\psi \wedge \DDD$, which entails $\DDD \wedge \varphi_0$,
 i.e., $\varphi$.
 \qed
@@ -974,9 +974,10 @@ since any $\Sigma$-interpretation that satisfies $\varphi$ can be extended in a 
 an $\extendsig{\Sigma}$-interpretation that satisfies $\conv( \varphi )$, by
 interpreting the abstract types in the same way as the cartesian products they
 abstract, thereby satisfying all existential constraints introduced by $\conv$.
-Second, if a model is found for $\conv( \varphi )$,
-then the constraints $\exists a : \fargtype{\con{f}}.\;\, \vecfarg{\con{f}}( a ) \teq \vec t$
-occurring in $\conv( \varphi )$ ensure that this model also satisfies
+Conversely, if a model is found for $\conv( \varphi )$,
+existential constraints
+%the constraints $\exists a : \fargtype{\con{f}}.\;\, \vecfarg{\con{f}}( a ) \teq \vec t$
+introduced by $\conv$ ensure that this model also satisfies
 a $\Sigma$-formula that is closed under function expansion and
 that entails the goal of $\varphi$.
 This implies the existence of a model for $\varphi$,
@@ -1033,7 +1034,7 @@ $\exists a : {\fargtype{\con{s}}}.\;\, \farg{\con{s}}( a ) \teq \con{c}$.
 %The latter ensures that $\I$ satisfies a formula that entails both $\con{s}( \con{c} ) > 100$ and $\varphi_{\con{s}}[\con{c}/x]$.
 Since $\I$ also satisfies both the translated function definition for $\con{s}$
 (the first conjunct of~(\ref{eq:ex-after})) and $\absconstraints( L_0
-)$, it must also satisfy\begin{rep} the formula $\psi_1$:\end{rep}
+)$, it must also satis\rlap{fy}
 \[
 \lite\bigl( \con{c} \leq 0,\; 
             \con{s}(\con{c}) \teq 0,\;
@@ -1044,8 +1045,7 @@ The existential constraint in the above formula
 ensures that whenever $\I$ satisfies the set $L_1 = L_0 \cup \{ \neg \con{c} \leq 0,\; \con{s}(\con{c}) \teq \con{c} + \con{s}( \con{c}-1 ) \}$,
 $\I$ satisfies $\absconstraints( L_1 )$ as well.
 Hence, by repeated application of this reasoning, it follows that
-a model of formula~(\ref{eq:ex-after}) that interprets $\con{c}$ as $n$ must also satisfy% the formula
-~$\psi$:
+a model of formula~(\ref{eq:ex-after}) that interprets $\con{c}$ as $n$ must also satisfy~$\psi$:
 %
 \[\con{s}( \con{c} ) > 100 \wedge %\displaystyle
   \smash{\bigwedge\nolimits_{\vthinspace i=0}^{\!n-1}} \bigl( \neg (\con{c}-i \leq 0) \wedge \con{s}( \con{c}-i ) \teq \con{c}-i + \con{s}( \con{c}-i-1 ) \bigr)
