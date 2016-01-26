@@ -88,11 +88,11 @@
 \newcommand\win{\bf}
 %\newcommand\bench{\ttfamily}
 
-\newcommand\isanun{Isa\xspace}
-\newcommand\isa{Ip\xspace}
-\newcommand\isam{Ip-Mut\xspace}
+\newcommand\isanun{Nunchaku-Mut\xspace}
+\newcommand\ip{IsaPlanner\xspace}
+\newcommand\ipm{\ip-Mut\xspace}
 \newcommand\leon{Leon\xspace}
-\newcommand\leonm{Leon-Mut\xspace}
+\newcommand\leonm{\leon-Mut\xspace}
 
 %\newcommand{\cvc}{\textsc{cvc}{\small 4}\xspace}
 %\newcommand{\cvciii}{\textsc{cvc}{\small 3}\xspace}
@@ -241,10 +241,6 @@ and in a new higher-order model finder called Nunchaku.
 
 \section{Introduction}
 \label{sec:introduction}
-
-%\ct{The paper used "recursive datatype" in some places and "inductive datatype" in others. I have replaced both by "algebraic datatype" which is more accurate for \cvc.
-%("recursive datatype" is a more general notion and "inductive datatype" has a stronger meaning in higher-order logics.)}  
-%% I agree --JB.
 
 Many solvers based on SMT (satisfiability modulo theories) can reason about
 quantified formulas using incomplete instantiation-based methods
@@ -1208,19 +1204,19 @@ problems produced from our translation.
 
 Nunchaku is a new higher-order model finder designed to be integrated with
 several proof assistants. The first version, 0.1, was released in January 2016
-with support for (co)datatypes, (co)recursive functions and (co)inductive
-predicates. Support for higher-order functions is planned for the next
-release. We have developed a preliminary Isabelle frontend and are planning
-further frontends for Coq, the TLA\textsuperscript{+} Proof System, and
-possibly other systems.
+with support for (co)algebraic datatypes, (co)recursive functions and
+(co)inductive predicates. Support for higher-order functions is planned for
+the next release. We have developed a preliminary Isabelle frontend and are
+planning further frontends for Coq, the TLA\textsuperscript{+} Proof System,
+and possibly other systems.
 
 Nunchaku is the spiritual successor to Nitpick for
 Isabelle/HOL~\cite{blanchette-nipkow-2010}, but is developed as a standalone
 OCaml program, with its own input language. Whereas Nitpick generates a
 succession of problems where cardinalities of finite types grow at each step,
 Nunchaku translates its input to one first-order logic program that targets
-the finite model finding fragment of CVC4, including interpreted
-(co)datatypes \cite{reynolds-blanchette-2015-codata}.
+the finite model finding fragment of CVC4, including
+(co)algebraic datatypes \cite{reynolds-blanchette-2015-codata}.
 Using CVC4 also allows Nunchaku to provide efficient arithmetic
 reasoning and to detect unsatisfiability in addition to satisfiability.
 % and makes
@@ -1347,59 +1343,83 @@ XXX
 \section{Evaluation}
 \label{sec:evaluation}
 
-{\looseness=-1
 In this section, we evaluate both the overall impact of the translation
 introduced in Section~\ref{sec:encoding} and the performance of individual SMT
 techniques.
 %
 We gathered 602 benchmarks from three sources, which we will refer to as
-\isanun, \isa and \leon. 
-The first source consists of 357 benchmarks coming from\ajr{where Isa-Nun benchmarks come from, what they represent, are they expected to be unsat/sat}.
-The second source consists of the 79
-benchmarks from the IsaPlanner
+\ip, \leon, and \isanun:
+\begin{itemize}
+\item
+\ip{} consists of the 79 benchmarks from the IsaPlanner
 suite~\cite{DBLP:conf/itp/JohanssonDB10} that do not contain higher-order
 functions. These benchmarks have been used recently as challenge problems for a
 variety of inductive theorem provers. They heavily involve
 recursive functions and are limited to a theory of algebraic datatypes
 with a signature that contains uninterpreted function symbols over these datatypes. 
-The third source consists of 166
+
+\smallskip
+
+\item
+\leon{} consists of 166
 benchmarks from the Leon repository,\footnote{%Available at
 \url{https://github.com/epfl-lara/leon/}} which were constructed from
 verification conditions about simple Scala programs. These benchmarks also
 heavily involve recursively defined functions over algebraic datatypes, 
 but cover a wide variety of additional theories, including bit vectors, arrays, and
-both linear and nonlinear arithmetic. All benchmarks are in definitional form
-with respect to a set of well-founded functions.
-A majority of the benchmarks in the latter two sets are unsatisfiable.
-}
+both linear and nonlinear arithmetic.
 
-For each of the 245 benchmarks in the \isa and \leon sets, 
+\smallskip
+
+\item
+\isanun{} consists of 357 benchmarks originating from Isabelle/HOL. They
+involve (co)recursively defined functions over (co)algebraic datatypes and
+uninterpreted functions but no other theories. They were obtained by mutation
+of negated Isabelle theorems, as was done for evaluating
+Nitpick~\cite{blanchette-nipkow-2010}. Benchmarks created by mutation have a
+high likelihood of having small, easy-to-find models.
+\end{itemize}
+
+The \ip{} and \leon{} benchmarks are expressed in SMT-LIB 2.5 and are in
+definitional form with respect to a set of well-founded functions.
+The Leon tool was used to generate SMT-LIB files.
+A majority of these benchmarks are unsatisfiable.
+For each of the 245 benchmarks,
 we considered up to three randomly selected
-mutated forms of its conjecture $\psi$. In particular, we considered unique
-formulas that are obtained as a result of swapping a subterm of $\psi$ at
+mutated forms of its goal $\psi$. In particular, we considered unique
+formulas that are obtained as a result of exchanging a subterm of $\psi$ at
 one position with another of the same type at another position.
-Note that benchmarks created in this way have a high likelihood of having
-small, easy-to-find countermodels. In total, we considered 213 mutated forms of
-theorems from \isa and 427 mutated forms of theorems from \leon. We will
-call these sets \isam and \leonm, respectively.
-Thus, our benchmark set consists of 1242 benchmarks (640 mutants plus the
-original 602). 
-Each of the 1242 benchmarks were generated in SMT lib version 2.5 format~\cite{smtlib25}. %ajr : although these don't require 2.5 features
-For \isanun, \ajr{describe generation of smt2 benchmarks without encoding}
-The others were translated to SMT lib version 2 by the Leon tool.
+In total, we considered 213 mutated forms of
+theorems from \ip and 427 mutated forms of theorems from \leon. We will
+call these sets \ipm and \leonm, respectively. Each of these benchmarks exists
+in two versions:\ without and with the $\conv$~translation. Problems with
+$\conv$ were produced by running \cvc's preprocessor % (Section~\ref{ssec:cvc4})
+on each benchmark.
 
-We additionally considered these 1242 benchmarks both before and after the translation~$\conv$.
-For example, \isa contains 79 original benchmarks $\varphi$ and 79 translated
-benchmarks $\conv(\varphi)$.
-For the \isanun, \ajr{describe generation of smt2 benchmarks with encoding}.
-All others were translated by \cvc 
-by outputting the result of running the preprocessor from Section~\ref{ssec:cvc4} on each benchmark.
+For \isanun, the Isabelle Nunchaku frontend was used to generate thousands of
+Nunchaku problems from Isabelle/HOL theory files involving lists, trees, and
+other functional data structures. Nunchaku was then used to generate SMT-LIB
+files, again in two versions:\ without and with the $\conv$~translation.
+Problems requiring higher-order logic were discarted, since Nunchaku does not
+yet support them, leaving 357 problems.
 
-For solvers, we considered the SMT solver \ziii~\cite{de-moura-bjoerner-2008},
-which runs heuristic methods for quantifier instantiation~\cite{MouraBjoerner07}
+% Our entire benchmark set consists of 1242 benchmarks (640 mutants plus the
+% original 602). 
+
+%Each of the 1242 benchmarks were generated in SMT lib version 2.5 format~\cite{smtlib25}. %ajr : although these don't require 2.5 features
+
+
+%We additionally considered these 1242 benchmarks both before and after the translation~$\conv$.
+%For example, \ip contains 79 original benchmarks $\varphi$ and 79 translated
+%benchmarks $\conv(\varphi)$.
+%For the \isanun, \ajr{describe generation of smt2 benchmarks with encoding}.
+
+Among SMT solvers, we considered \ziii~\cite{de-moura-bjoerner-2008} and
+\cvc~\cite{barrett-et-al-2011}.
+\ziii runs heuristic methods for quantifier instantiation~\cite{MouraBjoerner07}
 as well as methods for finding models for quantified formulas~\cite{GeDeM-CAV-09}.
-We also considered five configurations of \cvc~\cite{barrett-et-al-2011},
-which we will refer to as \cvcd, \cvcf, \cvcfe, and \cvcfm.
+For \cvc, we considered four configurations, referred
+to as \cvcd, \cvcf, \cvcfe, and \cvcfm.
 The configuration \cvcd runs heuristic 
 and conflict-based techniques for quantifier instantiation~\cite{ReynoldsTinelliMoura14},
 but does not include techniques for finding models.
@@ -1427,15 +1447,15 @@ and \cvcfm incorporates the fairness scheme for monotonic types as described in 
 \\
 \midrule
 
-\isanun  & 0 & 14 & 0 & 0 & 0 & 155 & 0 & {\win 156} & 0 & 155
+\ip & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0
 \\
-\isa & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0
-\\
-\isam & 0 & 43 & 0 & 0 & 0 & {\win 161} & 0 & {\win 161} & 0 & {\win 161}
+\ipm & 0 & 43 & 0 & 0 & 0 & {\win 161} & 0 & {\win 161} & 0 & {\win 161}
 \\
 \leon  & 8 & 30 & 6 & 6 & 6 & {\win 54} & 6 & 53 & 6 & {\win 54}
 \\
 \leonm & 6 & 61 & 0 & 0 & 2 & 180 & 2 & {\win 181} & 2 & {\win 181}
+\\
+\isanun  & 0 & 14 & 0 & 0 & 0 & 155 & 0 & {\win 156} & 0 & 155
 \\[\jot]
 Total & 14 & 148 & 6 & 6 & 8 & 550 & 8 & {\win 551} & 8 & {\win 551}
 \end{tabular}
@@ -1460,15 +1480,15 @@ Total & 14 & 148 & 6 & 6 & 8 & 550 & 8 & {\win 551} & 8 & {\win 551}
   & \hfill $\varphi$ \hfill & $\conv(\varphi)$\!\!
 \\
 \midrule
-\isanun & {\win 41} & 40 & 28 & 34 & 26 & 39 & 26 & 39 & 26 & 39
+\ip & 14 & {\win 15} & {\win 15} & {\win 15} & 1 & {\win 15} & {\win 15} & {\win 15} & 1 & {\win 15}
 \\
-\isa & 14 & {\win 15} & {\win 15} & {\win 15} & 1 & {\win 15} & {\win 15} & {\win 15} & 1 & {\win 15}
-\\
-\isam & 54 & 55 & {\win 56} & {\win 56} & 13 & 55 & {\win 56} & 55 & 13 & 55
+\ipm & 54 & 55 & {\win 56} & {\win 56} & 13 & 55 & {\win 56} & 55 & 13 & 55
 \\
 \leon & 48 & 52 & {\win 58} & 52 & 12 & 53 & {\win 58} & 50 & 12 & 53
 \\
 \leonm & 94 & 107 & 106 & 107 & 39 & {\win 108} & 106 & {\win 108} & 39 & {\win 108}
+\\
+\isanun & {\win 41} & 40 & 28 & 34 & 26 & 39 & 26 & 39 & 26 & 39
 \\[\jot]
 Total & 251 & 269 & 263 & 264 & 91 & {\win 270} & 261 & 267 & 91 & {\win 270}
 \end{tabular}
@@ -1477,6 +1497,7 @@ Total & 251 & 269 & 263 & 264 & 91 & {\win 270} & 261 & 267 & 91 & {\win 270}
 \end{figure}
 
 The results are summarized in Figures \ref{fig:sat} and \ref{fig:unsat}.
+Bold indicates the maximum of a row.
 The benchmarks and more detailed results are available online.%
 \footnote{\url{http://lara.epfl.ch/~reynolds/IJCAR2016-recfun/}}
 The figures are divided into benchmarks triggering \emph{unsat} and \emph{sat}
@@ -1496,7 +1517,7 @@ The translation $\conv$ (the ``$\conv(\varphi)$'' columns) has a major
 impact. \cvcf finds 550 of the 1242 benchmarks to be satisfiable,
 including 6~benchmarks in the nonmutated \leon benchmark set. 
 The two optimizations for finite model finding in \cvc (configurations \cvcfe and \cvcfm) 
-led to a net gain of 1 satisfiable benchmark each with respect to \cvcf.
+led to a net gain of one~satisfiable benchmark each with respect to \cvcf.
 The performance of \ziiib for countermodels also improved dramatically, as it
 finds 134 more benchmarks to be satisfiable, including 5 that are not solved by \cvcf.
 %
@@ -1509,11 +1530,11 @@ the translation $\conv$ helps all configurations for \emph{unsat} responses as w
 \ziii solves a total of 269 with the translation, whereas it solves only 251 without it.
 Surprisingly,
 the configuration \cvcf, which is not tailored for handling unsatisfiable benchmarks,
-solves 270 unsat benchmarks overall, which is more than both \cvcd and \ziii.
+solves 270 \emph{unsat} benchmarks overall, which is more than both \cvcd and \ziii.
 These results suggest that the translation do not degrade the performance 
 of SMT solvers for unsatisfiable problems involving recursive functions, 
-and instead often improve their performance.
-\ajr{Importance of the translation helping unsat in practice for Isabelle/Nunchaku, if any}
+and instead often improve their performance. It would be interesting to try this
+out in Sledgehammer \cite{blanchette-et-al-2013-smt} and to try Nunchaku as a proof tool.
 
 \section{Related Work}
 \label{sec:related-work}
