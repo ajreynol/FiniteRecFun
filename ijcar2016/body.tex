@@ -1266,16 +1266,16 @@ $m$ is skolemized into a fresh constants,
 then translated into admissible recursive functions,
 before another pass applies the encoding described in this paper.
 If a model is found, it is translated back to the input language,
-with \verb$?__$ placeholders as necessary.
+with \verb$?__$ placeholders indicating unknown values.
 
 Conceptually, the sequence of transformation is a \relax{two-way pipeline}
-built by composing pairs $(\textsf{encode}, \textsf{decode})$ of
+built by composing pairs $(\textsf{encode},\vthinspace \textsf{decode})$ of
 transformations. For each such pair, \textsf{encode} transforms a problem over
-a signature $\Sigma$ in a logic $\mathcal{L}$ to a problem over a signature
-$\Sigma'$ in a logic $\mathcal{L}'$, and \textsf{decode} translates a model in
-$\mathcal{L'}$ over $\Sigma'$ into a model in $\mathcal{L}$ over $\Sigma$,
+a signature $\Sigma$ in a logic~$\mathcal{L}$ to a problem over a signature
+$\Sigma'$ in a logic~$\mathcal{L}'$, and \textsf{decode} translates a model
+in~$\mathcal{L}'$ over $\Sigma'$ into a model in~$\mathcal{L}$ over $\Sigma$,
 in the spirit of institution theory \cite{goguen-burstall-1992}. The
-pipeline currently implemented in Nunchaku consists of the following phases:
+pipeline currently consists of the following phases:
 
 \begin{description}
 %{{{
@@ -1297,9 +1297,9 @@ pipeline currently implemented in Nunchaku consists of the following phases:
     them well founded;
   \item[Skolemization]
     introduces Skolem symbols for term variables;
-  \item[Elimination of Predicates]
-    changes a multiple-clauses (co)inductive predicate definition
-      into a single recursive function;
+  \item[Elimination of (co)inductive predicates]
+    recasts a multiple-clause (co)inductive predicate specification
+      into a recursive equation;
   \item[Recursion elimination]
     performs the encoding from Section~\ref{sec:encoding};
   \item[Elimination of pattern matching]
