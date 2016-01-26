@@ -1182,7 +1182,7 @@ because $\teq$ is never used directly on such types \cite{claessen-et-al-2011}.
 \cvc takes advantage of this by fixing the bounds for all 
 monotonic types simultaneously.
 That is, if $\tau_1$ and $\tau_2$ are inferred monotonic (whether they are
-introduced by our translation or are present in the original problem),
+present in the original problem or introduced by our translation),
 the solver fixes the bound for \relax{both} types to be $1$, then $2$, and so on.
 This scheme allows the solver greater flexibility compared with the default scheme,
 and comes with no loss of generality with respect to models,
@@ -1192,8 +1192,8 @@ By default, \cvc uses techniques to minimize the number of literals it
 considers when constructing propositional satisfying assignments for
 formulas~\cite{relevancy2007}. However, we have found such techniques degrade
 performance for finite model finding on problems having recursive functions
-that are defined by cases. For this reason, we prefer disabling such
-techniques for problems coming from our translation.
+that are defined by cases. For this reason, we disable the techniques for
+problems produced from our translation.
 
 %%% \ajr{More?} -- Probably no space. Otherwise, you could mention zero sorts. --jb
 
