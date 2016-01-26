@@ -1552,7 +1552,7 @@ typically propositional logic. \begin{rep}They translate the input problem to th
 logic and pass it to a solver for that logic.\end{rep}
 The translation is parameterized by upper or exact finite bounds on
 the cardinalities of the atomic types. This procedure was pioneered by McCune
-in the earlier versions of Mace (or MACE) \cite{mccune-1994}.
+in the earlier versions of Mace (originally styled MACE) \cite{mccune-1994}.
 Other conceptually similar finders are Paradox \cite{claessen-sorensson-2003}
 and FM-Darwin \cite{baumgartner-et-al-2009} for first-order logic with
 equality; the Alloy Analyzer and its back-end Kodkod \cite{torlak-jackson-2007}
@@ -1657,12 +1657,14 @@ techniques in SMT, allowing one to use them to find models of quantified formula
 over \relax{infinite} types, such as integers and algebraic datatypes.
 %
 In future work, it would be interesting to evaluate the approach against other
-counterexample generators, notably Leon and Nitpick, and enrich the benchmark
-suite with problems exercising \cvc's support for coalgebraic datatypes
-\cite{reynolds-blanchette-2015-codata}. We also plan to integrate \cvc as a
-counterexample generator in proof assistants.\ajr{Revise: this should say plans to develop Nunchaku.} Further work would also
-include identifying additional sufficient conditions for admissibility, thereby
-enlarging the applicability of the translation scheme presented here.
+counterexample generators, notably Leon, Nitpick, and Quickcheck,
+and enrich the benchmark suite with more problems exercising \cvc's support for
+coalgebraic datatypes \cite{reynolds-blanchette-2015-codata}.
+We are also working on an encoding of higher-order functions in SMT-LIB, as a
+generalization to the current translation scheme, for Nunchaku. Further work
+would also include identifying additional sufficient conditions for
+admissibility, thereby enlarging the applicability of the translation scheme
+presented here.
 
 %\ct{?? Leon is a model finder? Alloy?}
 %\jb{Alloy has no notion of datatypes, so it's pretty useless. Nitpick implements
@@ -1671,7 +1673,8 @@ enlarging the applicability of the translation scheme presented here.
 %to evaluating Alloy itself. Leon is, in part, a counterexample generator.
 %``Model finder'' is probably a stretch.}
 
-{%\footnotesize
+{\footnotesize
+
 \def\ackname{Acknowledgment}
 \paragraph{%\footnotesize
 \ackname.}
@@ -1680,6 +1683,7 @@ to thank Damien Busato-Gaston and Emmanouil Koukoutos for providing the
 set of Leon benchmarks used in the evaluation, and the anonymous reviewers for their
 suggestions and comments. Cruanes is supported by the Inria technological
 development action ``Contre-exemples utilisables par Isabelle et Coq'' (CUIC).
+
 }
 %
 
