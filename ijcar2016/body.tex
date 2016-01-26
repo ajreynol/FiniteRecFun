@@ -1156,34 +1156,46 @@ it wrongly answers \emph{sat}.
 \cvc implements a few optimizations designed to help finding finite models of
 $\conv(\varphi)$.
 Like other systems,
-the finite model finding capability of \cvc incrementally fixes bounds on the cardinalities of uninterpreted types,
+the finite model finding capability of \cvc incrementally fixes bounds on the cardinalities of uninterpreted types
 and increases these bounds until it encounters a model.
-When multiple sorts are present, it uses a fairness scheme which
+When multiple types are present, it uses a fairness scheme that
 bounds the sum of cardinalities of all uninterpreted types~\cite{reynolds2013finite}.
-For instance, if a signature has two uninterpreted types $\tau_1$ and $\tau_2$,
+For example, if a signature has two uninterpreted types $\tau_1$ and $\tau_2$,
 it will first search for models where 
-the cardinality of $\tau_1$ plus the cardinality of $\tau_2$ is at most $2$,
+$\left\vert\tau_1\right\vert + \left\vert\tau_2\right\vert$ is at most $2$,
 then $3$, $4$, and so on.
 To accelerate the search for models,
-we use an optimization based on statically inferring \emph{monotone} types.
-A monotone type is one in which models can always be extended with an additional element of that type.
-Inference of monotone types has been show in previous work~\cite{claessen2011mono,korovin-2013}
-to be an important component of finite model finding systems.
-Moreover, it is easy to see that types $\fargtype{\con{f}}$ introduced by our translation $\conv$ are monotone.
-The finite model finding capability of \cvc may take advantage of this fact by fixing the bounds for all 
-monotone types simultaneously.
-That is, if $\tau_1$ and $\tau_2$ are both monotone types (either introduced by our translation, or are otherwise inferred to be),
-then we fix the bound for \emph{both} of these types to be $1$, then $2$, and so on.
-This scheme allows the solver greater flexibility with respect to the default scheme,
-and comes with no loss of generality with respect to models, since monotone sorts can always be extended to have equal cardinalities.
+we implemented an optimization based on statically inferring \emph{monotonic} types.
+A monotonic type is one in which models can always be extended with additional
+elements of that type \cite{blanchette-krauss-2011,claessen-et-al-2011}.
+%%% I find this part more confusing than helping, since we use monotonicity to merge
+%%% sorts (or at least their cardinality bounds), whereas Paradox and iProver use
+%%% it to separate sorts! Our use of monotonicity is more related to Nitpick's. --jb
+%%%
+% korovin-2013
+%Inference of monotonic types has been show in previous work~
+%to be an important component of finite model finding systems.
+Types $\fargtype{\con{f}}$ introduced by our translation $\conv$ are monotonic,
+because $\teq$ is never used directly on such types \cite{claessen-et-al-2011}.
+%
+%The finite model finding capability of
+\cvc takes advantage of this by fixing the bounds for all 
+monotonic types simultaneously.
+That is, if $\tau_1$ and $\tau_2$ are inferred monotonic (whether they are
+introduced by our translation or are present in the original problem),
+the solver fixes the bound for \relax{both} types to be $1$, then $2$, and so on.
+This scheme allows the solver greater flexibility compared with the default scheme,
+and comes with no loss of generality with respect to models,
+since monotonic types can always be extended to have equal cardinalities.
 
-By default, 
-\cvc uses techniques to minimize the number of literals it considers when constructing propositional satisfying assignments for formulas~\cite{relevancy2007}.
-However, we have found such techniques degrade performance for finite model finding on
-benchmarks having recursive functions that are defined by cases.
-For this reason, we prefer disabling such techniques for benchmarks coming from our translation.
+By default, \cvc uses techniques to minimize the number of literals it
+considers when constructing propositional satisfying assignments for
+formulas~\cite{relevancy2007}. However, we have found such techniques degrade
+performance for finite model finding on problems having recursive functions
+that are defined by cases. For this reason, we prefer disabling such
+techniques for problems coming from our translation.
 
-\ajr{More?}
+%%% \ajr{More?} -- Probably no space. Otherwise, you could mention zero sorts. --jb
 
 %Usually not interested in showing logical consistency, there
 %exist other tools that check e.g. termination.
@@ -1379,7 +1391,7 @@ but does not include techniques for finding models.
 The other configurations run the finite model
 finding procedure due to Reynolds et al.\ \cite{ReyEtAl-1-RR-13,reynolds-et-al-2013}.
 The configuration \cvcfe additionally incorporates heuristic quantifier instantiation as described in Section 2.3 of~\cite{reynolds-et-al-2013},
-and \cvcfm incorporates the fairness scheme for monotonic sorts as described in Section~\ref{ssec:cvc4}.
+and \cvcfm incorporates the fairness scheme for monotonic types as described in Section~\ref{ssec:cvc4}.
 
 \begin{figure}[t]
 %ct I would not use the normal size in figure makes them look out of proportion
