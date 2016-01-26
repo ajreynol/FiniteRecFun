@@ -195,7 +195,8 @@
 \newcommand\xend{{\hfill$\scriptstyle\blacksquare$}}
 \renewcommand\qed{{\hfill$\squareforqed$}}
 
-\hyphenation{counter-example counter-examples Isa-belle}
+\hyphenation{counter-example counter-examples Isa-belle data-type data-types
+  co-data-type co-data-types}
 
 \let\labelitemi=\labelitemii %% CHEAT!
 \makeatletter
@@ -1205,118 +1206,132 @@ problems produced from our translation.
 \subsection{Nunchaku}
 \label{ssec:nunchaku}
 
-Nunchaku is a new model finder, intended
-to be used for finding counter-examples in several proof assistants. The
-first version, 0.1, was released in January 2016 with support for (co)datatypes,
-(co)recursive functions and (co)inductive predicates.
-Support for higher-order
-functions is planned in the next release.
-We intend for Nunchaku to be supported at least in Isabelle (where basic
-support for it already exists), Coq, and the TLA\textsuperscript{+} proof
-system.
+Nunchaku is a new higher-order model finder designed to be integrated with
+several proof assistants. The first version, 0.1, was released in January 2016
+with support for (co)datatypes, (co)recursive functions and (co)inductive
+predicates. Support for higher-order functions is planned for the next
+release. We have developed a preliminary Isabelle frontend and are planning
+further frontends for Coq, the TLA\textsuperscript{+} Proof System, and
+possibly other systems.
 
-Nunchaku is the spiritual successor to Nitpick~\cite{blanchette-nipkow-2010},
-but is developed as a standalone OCaml program (with its own input language) so
-as to be usable independently from Isabelle.
-Whereas Nitpick relies on propositional checking with Kodkod,
-generating a succession of problems where cardinalities of finite types
-grow at each step, Nunchaku
-translates its input to one first-order logic formula that targets
-the finite-model finding fragment of CVC4, including the (co)datatypes support.
-Using CVC4 will also allow Nunchaku to provide efficient arithmetic and makes
-equality reasoning straightforward.
+Nunchaku is the spiritual successor to Nitpick for
+Isabelle/HOL~\cite{blanchette-nipkow-2010}, but is developed as a standalone
+OCaml program, with its own input language. Whereas Nitpick generates a
+succession of problems where cardinalities of finite types grow at each step,
+Nunchaku translates its input to one first-order logic program that targets
+the finite model finding fragment of CVC4, including interpreted
+(co)datatypes \cite{reynolds-blanchette-2015-codata}.
+Using CVC4 also allows Nunchaku to provide efficient arithmetic
+reasoning and to detect unsatisfiability in addition to satisfiability.
+% and makes
+% equality reasoning straightforward.
 
-The following problem is expressed in Nunchaku's input syntax; it starts with
-a datatype declaration, then two mutually recursive coinductive predicates
-are defined, and finally a distinguished axiom called the goal
-(``find a non-zero natural number $m$ that is even'').
+The input syntax was inspired by that other systems based on higher-order
+logic (e.g., Isabelle/HOL) and by functional programming languages (e.g.,
+OCaml). The following simple problem gives a taste of the syntax:
+%
 \begin{quote}
-\begin{verbatim}
-data nat := zero | Suc nat.
-
-copred even : nat -> prop :=
-  even zero;
-  forall (n : nat). odd n => even (Suc n)
-and odd : nat -> prop :=
-  forall (n : nat). even n => odd (Suc n).
-
-goal exists m. (even m && ~ (m = zero)).
-\end{verbatim}
+\verb$data nat := Zero | Suc nat.$ \\[2\jot]
+\verb$pred even : nat -> prop :=$ \\
+\verb$  even Zero;$ \\
+\verb$  forall n. odd n => even (Suc n)$ \\
+\verb$and odd : nat -> prop :=$ \\
+\verb$  forall n. even n => odd (Suc n).$ \\[2\jot]
+\verb$val m : nat.$ \\
+\verb$goal even m && ~ (m = Zero).$
 \end{quote}
+%
+The problem defines a datatype (\texttt{nat}) and two mutually recursive
+inductive predicates (\texttt{even} and \texttt{odd}), it declares a constant
+\texttt{m}, and specifies a goal to satisfy (``$m$ is even and nonzero'').
+Nunchaku quickly finds the following partial model:
+%
+\begin{quote}
+\verb$val m := Suc (Suc Zero).$ \\
+\verb$val odd := fun x. if x = Suc Zero then true else ?__.$ \\
+\verb$val even := fun x. if x = Suc (Suc Zero) || x = Zero then true$ \\
+\verb$                   else ?__.$
+\end{quote}
+%
+The partial model gives sufficient information to the user to evaluate the
+goal: ``2 is even if 1 is odd, 1 is odd if 0 is even, and 0 is even.''
 
 Nunchaku parses and types the input problem before applying a sequence
-of translations, each reducing the distance to the target fragment. Here,
-for instance, the coinductive predicates
-\verb!even! and \verb!odd! are \emph{polarized} (specialized into
-\verb!even+!, used only in positive positions, and \verb!even-! used in negative
-positions),
-$m$ is Skolemized into a fresh constants,
-then then translated into admissible functions
-before another pass uses the encoding from Section~\ref{sec:encoding}.
-If a model is found, it is translated back to the input language.
-Conceptually, the sequence of transformation is a \emph{two ways pipeline}
-built by composing pairs \textsf{(encode,decode)}.
-For each such pair, \textsf{encode}
-transforms a problem over a signature $\Sigma$ in a logic
-$\mathcal{L}$ to a problem over a signature $\Sigma'$ in a slightly different
-logic $\mathcal{L}'$, and \textsf{decode} translates a model of $\mathcal{L'}$
-over $\Sigma'$ into a model of $\mathcal{L}$ over $\Sigma$. The pipeline
-currently implemented in Nunchaku is described below.
+of translations, each reducing the distance to the target fragment.
+In our example, the predicates
+\verb!even! and \verb!odd! are \emph{polarized} (specialized into a pair of
+predicates such that one is used in positive positions and the other in
+negative positions),
+$m$ is skolemized into a fresh constants,
+then translated into admissible recursive functions,
+before another pass applies the encoding described in this paper.
+If a model is found, it is translated back to the input language,
+with \verb$?__$ placeholders as necessary.
+
+Conceptually, the sequence of transformation is a \relax{two-way pipeline}
+built by composing pairs $(\textsf{encode}, \textsf{decode})$ of
+transformations. For each such pair, \textsf{encode} transforms a problem over
+a signature $\Sigma$ in a logic $\mathcal{L}$ to a problem over a signature
+$\Sigma'$ in a logic $\mathcal{L}'$, and \textsf{decode} translates a model in
+$\mathcal{L'}$ over $\Sigma'$ into a model in $\mathcal{L}$ over $\Sigma$,
+in the spirit of institution theory \cite{goguen-burstall-1992}. The
+pipeline currently implemented in Nunchaku consists of the following phases:
 
 \begin{description}
 %{{{
   \item[Type inference] infers types and checks definitions;
   \item[Type skolemization]
-    replaces $\exists \alpha. p[\alpha]$
-      with $p[\tau]$ where $\tau$ is a fresh type;
+    replaces $\exists \alpha.\; \varphi[\alpha]$
+      with $\varphi[\tau]$, where $\tau$ is a fresh type;
   \item[Monomorphization]
-    specializes polymorphic functions on their type arguments;
-  \item[Elimination of Equations]
-    translates multiple-equations definitions of functions into
+    specializes polymorphic definitions on their type arguments and removes
+    unused definitions;
+  \item[Elimination of equations]
+    translates multiple-equation definitions of recursive functions into
       a single nested pattern matching;
   \item[Polarization]
-    specializes some predicates into a version used in positive position
-      and one used in negative position;
+    specializes predicates into a version used in positive positions
+      and a version used in negative positions;
   \item[Unrolling]
-    adds a decreasing argument to possibly ill-founded predicates;
+    adds a decreasing argument to possibly ill-founded predicates to make
+    them well founded;
   \item[Skolemization]
     introduces Skolem symbols for term variables;
   \item[Elimination of Predicates]
-    changes a multi-clauses (co)inductive predicate definition
+    changes a multiple-clauses (co)inductive predicate definition
       into a single recursive function;
-  \item[Recursion Elimination]
+  \item[Recursion elimination]
     performs the encoding from Section~\ref{sec:encoding};
-  \item[Elimination of Match]
-    transforms pattern-matching expressions into tests and selectors;
-  \item[CVC4 Invocation] calls CVC4 to obtain a model.
+  \item[Elimination of pattern matching]
+    rewrites pattern-matching expressions using datatype
+    discriminators and selectors;
+  \item[CVC4 invocation] runs CVC4 to obtain a model.
 %}}}
 \end{description}
 
-TODO: similar to institutions \cite{goguen-meseguer} (?)
-
-\subsection{Decoding of Recursive Functions}
-
-Nunchaku is designed for finding counter-models to formulas a user thinks
-are theorems. Decoding models from CVC4 to hide any trace of the successive
-encodings is therefore vital for readability. Each step
-of the pipeline only has to concern itself with removing its changes to
-the signature and logic; our encoding of recursive functions is no exceptions.
-
-TODO explain how:
-- domains of proj. functions are computed
-- domains of original function is deduced
-- decision tree for original function is built
-- note how junk is removed in step 3 (but undefined "..." as last case)
-
-\subsection{Support for Higher-Order Functions}
-
-TODO:
-- currying with explicit application symbol --> function arguments are now
-  just constants
-- apply encoding on application symbol
-- gotcha: one function can be used with several arities.
-
-- optim: specialization (similar to monomorphization)
+% \subsection{Decoding of Recursive Functions}
+% 
+% Nunchaku is designed for finding counter-models to formulas a user thinks
+% are theorems. Decoding models from CVC4 to hide any trace of the successive
+% encodings is therefore vital for readability. Each step
+% of the pipeline only has to concern itself with removing its changes to
+% the signature and logic; our encoding of recursive functions is no exceptions.
+% 
+% TODO explain how:
+% - domains of proj. functions are computed
+% - domains of original function is deduced
+% - decision tree for original function is built
+% - note how junk is removed in step 3 (but undefined "..." as last case)
+% 
+% \subsection{Support for Higher-Order Functions}
+% 
+% TODO:
+% - currying with explicit application symbol --> function arguments are now
+%   just constants
+% - apply encoding on application symbol
+% - gotcha: one function can be used with several arities.
+% 
+% - optim: specialization (similar to monomorphization)
 
 \section{Case Studies}
 \label{sec:case-studies}
