@@ -204,11 +204,7 @@
 
 \begin{document}
 
-\title{Model Finding for Recursive Functions in SMT\thanks{%
-This research is partially supported by the Inria technological development
-action ``Contre-exemples utilisables par Isabelle et Coq'' (CUIC).
-}
-}
+\title{Model Finding for Recursive Functions in SMT}
 \titlerunning {Model Finding for Recursive Functions in SMT}
 
 \author {Andrew Reynolds\inst{1} \and Jasmin Christian Blanchette\inst{2,3} \and \\ Simon~Cruanes\inst{2} \and Cesare~Tinelli \inst{1}}
@@ -1065,10 +1061,11 @@ which entails formula~(\ref{eq:ex-before}).\xend
 \label{sec:implementations}
 
 We have implemented the translation $\conv$ in two separate systems, 
-as a preprocessor in the development version of \cvc (version~1.5 prerelease),
-and in the higher-order model finder Nunchaku.
-This section describes how the translation is implemented in both these systems,
-as well as optimizations used by \cvc for finding models for the translated benchmarks.
+as a preprocessor in \cvc (version~1.5 prerelease)
+and in the \cvc-based higher-order model finder Nunchaku.
+This section describes how the translation is implemented in these systems,
+as well as optimizations used by \cvc for finding models of translated
+problems. % for the translated benchmarks.
 
 %The translation $\conv$ significantly improves the effectiveness of current SMT
 %techniques for finding models of formulas involving recursive
@@ -1079,25 +1076,22 @@ as well as optimizations used by \cvc for finding models for the translated benc
 \subsection{CVC4}
 \label{ssec:cvc4}
 
-TODO:
-When invoked with a specific
-command-line option, the solver assumes that functions introduced using the
-\texttt{define-fun-rec} command are admissible and translates them accordingly.
+% When invoked with a specific
+% command-line option, the solver assumes that functions introduced using the
+% \texttt{define-fun-rec} command are admissible and translates them accordingly.
 
 In \cvc, function definitions $\forallf{\con{f}} \vec x.\; \varphi$ can be written using the $\definefunreccmd$ command
-from the SMT-LIB 2.5 standard~\cite{smtlib25}.
+from SMT-LIB 2.5~\cite{smtlib25}.
 Formula~(\ref{eq:ex-before}) from Example~\ref{ex:translation}
 can be specified as %follows:
 %
 \begin{quote}
 %\small -- no small, unless you convince me that these mixtures of font sizes
 % are aesthetic and serve a purpose --jb
-\begin{verbatim}
-(define-fun-rec s ((x Int)) Int (ite (<= x 0) 0 (+ x (s (- x 1)))))
-(declare-fun c () Int)
-(assert (> (s c) 100))
-(check-sat)
-\end{verbatim}
+\verb|(define-fun-rec s ((x Int)) Int (ite (<= x 0) 0 (+ x (s (- x 1)))))|\kern-200mm \\
+\verb|(declare-fun c () Int)| \\
+\verb|(assert (> (s c) 100))| \\
+\verb|(check-sat)|
 \end{quote}
 %
 When reading this input,
@@ -1114,9 +1108,10 @@ $\forallf{\con{s}} x.\;\, \con{s}( x ) \teq \lite\bigl( x \leq 0,\; 0,\; \con{s}
 to its list of assertions,
 which after rewriting becomes
 $\forallf{\con{s}} x.\;\, \lite\bigl( x \leq 0,\; \con{s}( x ) \teq 0,\; \con{s}( x ) \teq \con{s}( x-1 ) \bigr)$. \end{conf}%
-If \cvc's finite model finding mode for recursive functions is enabled (using
-the command-line option \texttt{-}\texttt{-fmf-fun}), it will replace its list of known
-assertions based on the translation $\conv$ before checking for satisfiability.
+By specifying the command-line option \texttt{-}\texttt{-fmf-fun}, users
+can enable \cvc's finite model finding mode for recursive functions.
+In this mode, \cvc will replace its list of known
+assertions based on the $\conv$ translation before checking for satisfiability.
 %If the functions provided in the input are admissible,
 %then a ``satisfiable" response from the solver implies that a model exists for the original formula.
 Accordingly, the solver will output the approximation of the interpretation it
@@ -1138,9 +1133,9 @@ the values of $\con{s}(x)$ for $x = 0,\ldots,14$ are correctly given:
 \end{verbatim}
 \end{quote}
 
-The \texttt{-}\texttt{-fmf-fun} option tells \cvc to assume that
+With the \texttt{-}\texttt{-fmf-fun} option enabled, \cvc assumes that
 functions introduced using \texttt{define-\allowbreak fun-\allowbreak rec} are admissible.
-We stress that admissibility must be discharged separately by the user---e.g., using a
+Admissibility must be discharged separately by the user---e.g., using a
 syntactic criterion or a termination prover.
 If some function definitions are not admissible, \cvc may answer \emph{sat} for
 an unsatisfiable problem. 
@@ -1158,7 +1153,8 @@ to the above problem and run \cvc with the \texttt{-}\texttt{-fmf-fun} option,
 it wrongly answers \emph{sat}.
 \end{rep}
 
-\paragraph{Optimizations for Finding Finite Models of $\conv(\varphi)$}
+\cvc implements a few optimizations designed to help finding finite models of
+$\conv(\varphi)$.
 Like other systems,
 the finite model finding capability of \cvc incrementally fixes bounds on the cardinalities of uninterpreted types,
 and increases these bounds until it encounters a model.
@@ -1634,7 +1630,8 @@ enlarging the applicability of the translation scheme presented here.
 Viktor Kuncak and Stephan Merz have made this work possible. We would also like
 to thank Damien Busato-Gaston and Emmanouil Koukoutos for providing the
 set of Leon benchmarks used in the evaluation, and the anonymous reviewers for their
-suggestions and comments.
+suggestions and comments. Cruanes is supported by the Inria technological
+development action ``Contre-exemples utilisables par Isabelle et Coq'' (CUIC).
 }
 %
 
