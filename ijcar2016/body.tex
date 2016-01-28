@@ -1094,19 +1094,11 @@ can be specified as %follows:
 \end{quote}
 %
 When reading this input,
-\begin{rep}%
 \cvc adds the annotated quantified formula
 $$\forallf{\con{s}} x.\;\, \con{s}( x ) \teq \lite\bigl( x \leq 0,\; 0,\; \con{s}( x-1 )\bigr)$$
 to its list of assertions,
 which after rewriting becomes
 $$\forallf{\con{s}} x.\;\, \lite\bigl( x \leq 0,\; \con{s}( x ) \teq 0,\; \con{s}( x ) \teq \con{s}( x-1 ) \bigr)$$
-\end{rep}%
-\begin{conf}%
-\cvc adds
-$\forallf{\con{s}} x.\;\, \con{s}( x ) \teq \lite\bigl( x \leq 0,\; 0,\; \con{s}( x-1 )\bigr)$
-to its list of assertions,
-which after rewriting becomes
-$\forallf{\con{s}} x.\;\, \lite\bigl( x \leq 0,\; \con{s}( x ) \teq 0,\; \con{s}( x ) \teq \con{s}( x-1 ) \bigr)$. \end{conf}%
 By specifying the command-line option \texttt{-}\texttt{-fmf-fun}, users
 can enable \cvc's finite model finding mode for recursive functions.
 In this mode, \cvc will replace its list of known
@@ -1137,9 +1129,7 @@ functions introduced using \texttt{define-\allowbreak fun-\allowbreak rec} are a
 Admissibility must be discharged separately by the user---e.g., using a
 syntactic criterion or a termination prover.
 If some function definitions are not admissible, \cvc may answer \emph{sat} for
-an unsatisfiable problem.
-\begin{rep}
-Indeed, if we add the inconsistent definition
+an unsatisfiable problem. For example, if we add the inconsistent definition
 %
 \begin{quote}
 %\small
@@ -1148,9 +1138,8 @@ Indeed, if we add the inconsistent definition
 \end{verbatim}
 \end{quote}
 %
-to the above problem and run \cvc with the \texttt{-}\texttt{-fmf-fun} option,
-it wrongly answers \emph{sat}.
-\end{rep}
+to the above problem and run \cvc with \texttt{-}\texttt{-fmf-fun},
+it wrongly answers \emph{sat.}
 
 \cvc implements a few optimizations designed to help finding finite models of
 $\conv(\varphi)$.
