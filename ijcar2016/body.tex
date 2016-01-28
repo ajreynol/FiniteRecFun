@@ -196,7 +196,7 @@
 \renewcommand\qed{{\hfill$\squareforqed$}}
 
 \hyphenation{counter-example counter-examples Isa-belle data-type data-types
-  co-data-type co-data-types}
+  co-data-type co-data-types bench-mark bench-marks}
 
 \let\labelitemi=\labelitemii %% CHEAT!
 \makeatletter
@@ -246,9 +246,9 @@ and in a new higher-order model finder called Nunchaku.
 Many solvers based on SMT (satisfiability modulo theories) can reason about
 quantified formulas using incomplete instantiation-based methods
 \cite{MouraBjoerner07,ReynoldsTinelliMoura14}.
-These methods work well in the context of proving the
+These methods work well for proving the
 unsatisfiability of an input set of formulas, 
-but they are of little help for finding models for them
+but they are of little help for finding models of them
 when they are satisfiable. Often, a single universal quantifier in one of the
 axioms of a problem is enough to prevent the discovery of models.
 
@@ -259,9 +259,7 @@ procedure for formulas in the \emph{essentially uninterpreted} fragment.
 This fragment is limited to universally quantified formulas where all
 %ct occurrences of
 variables occur as direct subterms of uninterpreted
-functions, as in $\forall x%\typ{\typeint} --- the type is not important, right?
-.\;\, \con{f}( x )
-\teq \con{g}( x ) + 5$.
+functions, as in $\forall x : \typeint.\; \con{f}( x ) \teq \con{g}( x ) + 5$.
 % since all
 % occurrences of $x$ occur beneath uninterpreted functions $\con{f}$ and
 % $\con{g}$.
@@ -289,7 +287,7 @@ algebraic datatypes. A simple example where both approaches fail is
 $$\forall x : {\typeint}.\;\,
 \con{p}( x ) \teq \lite\bigl( x \leq 0,\allowbreak\;  1,\allowbreak\;
   2 * \con{p}( x - 1 ) \bigr)$$ %.
-where $\lite$ is the if-then-else operator.
+where $\lite$ is the `if--then--else' operator.
 This state of affairs is unsatisfactory, given the frequency of
 recursive definitions in practice, underscored by the recent
 addition of a %dedicated
@@ -299,21 +297,26 @@ to the SMT-LIB standard \cite{smtlib25}.
 %In this paper,
 We present a method for translating formulas involving recursive function
 definitions into formulas where finite model finding techniques can be applied.
-The definitons must meet a semantic criterion to be admissible 
+The definitions must meet a semantic criterion to be admissible 
 (Section~\ref{sec:prelim}). 
 This criterion is general enough to include well-founded (terminating)
 recursive function definitions and restrictive enough to exclude inconsistent
-definitions such as \,$\forall x : {\typeint}.\;\, \con{f}(x) \teq \con{f}(x) +
+equations such as \,$\forall x : {\typeint}.\;\, \con{f}(x) \teq \con{f}(x) +
 1$.
 
 We define a translation for a class of
 formulas involving admissible recursive function definitions
 (Section~\ref{sec:encoding}). A
-recursive definition $\forall x : \tau.\;\, \const{f}(x) \teq \mathit{rhs}$
+recursive equation $\forall x : \tau.\;\, \const{f}(x) \teq t$
 is translated to
-$\forall a :
-\fargtype{\tau}.\;\, \const{f}(\farg{\con{f}}(a)) \teq \mathit{rhs}[\farg{\con{f}}(a)/x]$, where
-$\fargtype{\tau}$ is an \emph{abstract} (uninterpreted) type and $\farg{\con{f}} :
+$\forall a :\nobreak
+\fargtype{\tau}.\allowbreak\;\, \const{f}(\farg{\con{f}}(a)) \teq t[\farg{\con{f}}(a)/x]$, where
+%%% To me, "abstract" and "concrete" are just convenient labels to refer to the
+%%% thing. I don't want readers to start wondering, "What is an abstract type?"
+%%% So I find it important to leave "uninterpreted" outside of parentheses. As
+%%% for italics, I went for quotes instead, since this is an informal explanation
+%%% anyway. Later, we define \emph{abstract type} with italics. --JB
+$\fargtype{\tau}$ is an ``abstract'' uninterpreted type and $\farg{\con{f}} :
 \fargtype{\tau} \to \tau$ is an uninterpreted function
 from $\fargtype{\tau}$ to the corresponding concrete type $\tau$. 
 Additional constraints ensure that the abstract values that are relevant
@@ -378,10 +381,10 @@ define $\svars{\Sigma}$ as $\bigcup_{\tau \in \stypes{\Sigma}} \svars{\Sigma}_\t
 Formulas are terms of type $\Bool$.
 We write $t\typ{\tau}$ to denote %ct a metavariable ranging over
 terms of type~$\tau$ and $\terms( t )$ to denote the set of subterms in $t$.
-Given a term $u$, a variable tuple $\vec x = (x_1^{\tau_1},\ldots,x_n^{\tau_n})$ and 
-a term tuple $\vec t = (t_1^{\tau_1},\ldots,t_n^{\tau_n})$, 
+Given a term $u$, a variable tuple $\vec x = (x_1^{\tau_1},\dotsc,x_n^{\tau_n})$ and 
+a term tuple $\vec t = (t_{\smash{1}\vphantom{n}}^{\tau_1},\dotsc,t_n^{\tau_n})$, 
 we write $u[\vec t/\vec x]$ to denote the result of simultaneously replacing
-all occurrences of $x_i$ with $t_i$ in $u$, for each $i=1,\ldots,n$.
+all occurrences of $x_i$ with $t_i$ in $u$, for each $i=1,\dotsc,n$.
 \begin{rep}When applied to terms, the symbol $=$ denotes syntactic equality.\end{rep}
 
 %We write $\functerms^\Sigma( t )$ to denote the set of $f$-applications in $t$ such that $\con{f} \in \sfundefs{\Sigma}$.
@@ -390,7 +393,7 @@ A \emph{$\Sigma$-interpretation $\I$} %is a mathematical structure that
 maps each type $\tau \in \stypes{\Sigma}$ to a nonempty set $\tau^\I$,
 the \emph{domain} of~$\tau$ in~$\I,$
 each function symbol $\con{f} : \tau_1 \times \cdots \times \tau_n \rightarrow \tau$ in $\sfuns{\Sigma}$
-to a total function $\con{f}^\I : \tau_1^\I \times \cdots \times \tau_n^\I \rightarrow \tau^\I$,
+to a total function $\con{f}^\I : \tau_{\smash{1}}^\I \times \cdots \times \tau_n^\I \rightarrow \tau^\I$,
 and each variable $x:\tau$ of $\svars{\Sigma}$ to an element of $\tau^\I$.
 A \emph{theory} is a pair $T = (\Sigma, \Mo)$ where
 $\Sigma$ is a signature and $\Mo$ is a class of $\Sigma$-interpretations,
@@ -424,7 +427,7 @@ Given $\con{f} : \tau_1 \times \cdots \times \tau_n \rightarrow \tau$,
 an annotated
 quantified formula $\forallf{\con{f}} \vec x.\; \varphi$ is a \emph{function definition}
 (\,\emph{for $\con{f}$}\vthinspace) if $\vec x$ is a tuple of variables
-$x_1^{\tau_1}$, $\ldots,$ $x_n^{\tau_n}$
+$x_1^{\tau_1}$, $\dotsc,$ $x_n^{\tau_n}$
 and $\varphi$ is a quantifier-free formula
 $T$-equivalent to $\con{f}( \vec x ) \teq t$ for some term $t$ of type $\tau$.
 %\ct{Why can't $\varphi$ be existential instead of just quantifier free?}
@@ -437,7 +440,7 @@ We write $\exists
 
 \begin{definition}\rm
 A formula $\varphi$ is in \emph{definitional form with respect to}
-$\{ \con{f}_1, \ldots, \con{f}_n \} \subseteq \sfuns{\Sigma}$ if it is of the
+$\{ \con{f}_1, \dotsc, \con{f}_n \} \subseteq \sfuns{\Sigma}$ if it is of the
 form
 %
 %\kern-\abovedisplayskip
@@ -446,10 +449,10 @@ form
 $(\forallf{\con{f}_1} \vec x_1.\; \varphi_1) \wedge \cdots \wedge
 (\forallf{\con{f}_n} \vec x_n.\; \varphi_n) \wedge \psi$,
 %
-where $\con{f}_1, \ldots, \con{f}_n$ are distinct function symbols,
+where $\con{f}_1, \dotsc, \con{f}_n$ are distinct function symbols,
 %ct added
 $\forallf{\con{f}_i} \vec x_i.\; \varphi_i$ is a function definition
-for $i = 1, \ldots, n$,
+for $i = 1, \dotsc, n$,
 %
 %\ct{I think we need more conditions here on how a symbol $\con{f}_i$ can occur in $\varphi_j$.}
 %\jb{do we? I thought that the admissibility criterion below is enough.}
@@ -468,7 +471,7 @@ $\sfundefs{\Sigma}$.
 
 \begin{definition}\rm
 Given a set of function definitions
-$\DDD = \{ \forallf{\con{f}_1} \vec x_1.\; \varphi_1, \ldots, \forallf{\con{f}_n} \vec x_n.\; \varphi_n \}$,
+$\DDD = \{ \forallf{\con{f}_1} \vec x_1.\; \varphi_1, \dotsc, \forallf{\con{f}_n} \vec x_n.\; \varphi_n \}$,
 a ground formula $\psi$
 %\ct{I suppose $\psi$ is meant to be ground.} yes --ajr
 is \emph{closed under function expansion with respect to $\DDD$} if
@@ -506,7 +509,7 @@ higher-order logic \cite[Section 2]{krauss-2009-phd}.
 
 \begin{theorem}\label{thm:adm}
 If $\DDD$ is a set of well-founded function definitions for\/
-$\sfundefs{\Sigma} = \{\con{f}_1,\ldots,\con{f}_n\}$, then it is admissible.
+$\sfundefs{\Sigma} = \{\con{f}_1,\dotsc,\con{f}_n\}$, then it is admissible.
 \end{theorem}
 
 \begin{proofsketch}
@@ -546,7 +549,9 @@ For example, given a type of infinite streams constructed by
 $\con{scons} : \ty{int} \times \ty{stream} \to \ty{stream}$,
 the function defined by
 $\forallf{\const{e}} x.\;\, \const{e}(x) \teq \con{scons}(x,\; \const{e}(x + 1))$
-falls within this class: each call to $\const{e}$ produces one
+%%% If what follows ':' is a complete sentence, the standard Am.E. convention
+%%% is to capitalize it. --JB
+falls within this class: Each call to $\const{e}$ produces one
 constructor before entering the nested call. Like terminating recursion,
 productive corecursion totally specifies the functions it defines.
 It is even possible to mix recursion and corecursion in the same function
@@ -610,13 +615,13 @@ definition.
 $\conv_0( t\typ{\tau},\, p )$ $=$
 %\\[-.8\baselineskip]
  \begin{itemize}
-   \itemx[] $\innerkw{if}$ $\tau = \Bool$ $\mathsf{and}$ $t = \boolop(t_1,\ldots,t_n)$ $\innerkw{then}$
+   \itemx[] $\innerkw{if}$ $\tau = \Bool$ $\mathsf{and}$ $t = \boolop(t_1,\dotsc,t_n)$ $\innerkw{then}$
     \begin{itemize}
-      \itemx[] $\innerkw{let}$ $( t'_i,\, \chi_i ) = \conv_0( t_i,\, \pol( \boolop,\, i,\, p ) )$ $\mathsf{for}$ $i = 1, \ldots, n$ $\innerkw{in}$%\kern6.35em$\mid$
+      \itemx[] $\innerkw{let}$ $( t'_i,\, \chi_i ) = \conv_0( t_i,\, \pol( \boolop,\, i,\, p ) )$ $\mathsf{for}$ $i = 1, \dotsc, n$ $\innerkw{in}$%\kern6.35em$\mid$
       \itemx[] $\innerkw{let}$ $\chi = \chi_1 \wedge \cdots \wedge \chi_n$ $\innerkw{in}$
-      \itemx[] $\innerkw{if}$ $p = \ppos$ $\innerkw{then}$ \bigtuple{$\boolop(t'_1, \ldots, t'_n) ) \wedge \chi,\, \ltrue$}
-      \itemx[] $\innerkw{else}$ $\innerkw{if}$ $p = \pneg$ $\innerkw{then}$ \bigtuple{$\boolop(t'_1, \ldots, t'_n) \vee \neg \chi,\, \ltrue$}
-      \itemx[] $\innerkw{else}$ \bigtuple{$\boolop(t'_1, \ldots, t'_n),\, \chi$}
+      \itemx[] $\innerkw{if}$ $p = \ppos$ $\innerkw{then}$ \bigtuple{$\boolop(t'_1, \dotsc, t'_n) ) \wedge \chi,\, \ltrue$}
+      \itemx[] $\innerkw{else}$ $\innerkw{if}$ $p = \pneg$ $\innerkw{then}$ \bigtuple{$\boolop(t'_1, \dotsc, t'_n) \vee \neg \chi,\, \ltrue$}
+      \itemx[] $\innerkw{else}$ \bigtuple{$\boolop(t'_1, \dotsc, t'_n),\, \chi$}
 %\\[-.8\baselineskip]
     \end{itemize}
   \itemx[] $\innerkw{else}$ $\innerkw{if}$ $t = \forallf{\con{f}} \vec x.\;\, u$ $\innerkw{then}$
@@ -657,7 +662,7 @@ $\varphi$ and $\varphi'$ are \emph{equisatisfiable} (\emph{in $T$}).
 The idea behind this translation is to use an uninterpreted type $\alpha_\con{f}$
 to abstract the set of
 \emph{relevant} input tuples for each defined function $\con{f}$ and restrict the
-quantification of $\con{f}$'s definition to a (single) variable of this type.
+quantification of $\con{f}$'s definition to a single variable of this type.
 Informally, the relevant input tuples $\vec t$ of a function $\con{f}$ are the
 ones for which the interpretation of $\con{f}( \vec t )$ is relevant to the
 satisfiability of $\varphi$.
@@ -668,10 +673,10 @@ the extended signature $\extendsig{\Sigma}$ contains
 %\begin{itemize}
 %\item
 an uninterpreted \emph{abstract type} $\fargtype{\con{f}}$ 
-(abstracting the cross product $\tau_1 \times \cdots \times \tau_n$)
+abstracting the Cartesian product $\tau_1 \times \cdots \times \tau_n$
 and
 %\item
-$n$ uninterpreted \emph{concretization functions} $\fargx{\con{f}}{1} : \fargtype{\con{f}} \rightarrow \tau_1$, \ldots, $\fargx{\con{f}}{n} : \fargtype{\con{f}} \rightarrow \tau_n$.
+$n$ uninterpreted \emph{concretization functions} $\fargx{\con{f}}{1} : \fargtype{\con{f}} \rightarrow \tau_1$, $\dotsc,$ $\fargx{\con{f}}{n} : \fargtype{\con{f}} \rightarrow \tau_n$.
 %\end{itemize}
 %The interpretation of uninterpreted type $\fargtype{\con{f}}$ will denote the elements (tuples) on which the function $\con{f}$ is applied.
 %The role of the uninterpreted functions $\farg{\con{f}}^1$, $\ldots$, $\farg{\con{f}}^n$ will be discussed more in the following.
@@ -703,14 +708,14 @@ Second, it augments $\varphi$ with additional constraints of the form
 $\exists a :\nobreak \fargtype{\con{f}}.\;\, \vecfarg{\con{f}}( a ) \teq \vec s$,
 where $\vecfarg{\con{f}}( a ) \teq \vec s$ abbreviates the formula
 $\bigwedge_{i=1}^n\, \fargx{\con{f}}{i}(a) \teq s_i$
-with $\vec s = (s_1,\ldots,s_n)$.
+with $\vec s = (s_1,\dotsc,s_n)$.
 These existential %%% for typesetting
 constraints
 ensure that the restricted definition for $\con{f}$ covers all relevant tuples
 of terms, namely those occurring in applications of $\con{f}$
 that are relevant to the satisfiability of $\varphi$. The constraints are
-generated as deep in the formula as possible, based on our knowledge of the
-polarities of logical connectives, to allow models where the sets
+generated as deep in the formula as possible, based on the
+polarities of Boolean connectives, to allow models where the sets
 denoted by the $\fargtype{\con{f}}$ types are as small as possible.
 
 If $t$ is an application of a predicate symbol $\boolop$, including the
@@ -725,10 +730,10 @@ p & \text{if either $\boolop \in \{{\wedge}, {\vee}\}$ or $\boolop = \lite$ and 
 \end{cases}\]
 where $\pnegate p$ is $\pneg$ if $p$ is $\ppos$, $\ppos$
 if $p$ is $\pneg$, and $\pnone$ if $p$ is $\pnone$.
-The term $t$ is then reconstructed as $\boolop(t_1',\ldots,t_n')$
+The term $t$ is then reconstructed as $\boolop(t_1',\dotsc,t_n')$
 where each $t_i'$ is the result of the recursive call with argument~$t_i$.
 If the polarity $p$ associated with $t$ is $\ppos$,
-$\conv_0$ conjunctively adds to $\boolop(t_1',\ldots,t_n')$ the constraint $\chi$ derived from
+$\conv_0$ conjunctively adds to $\boolop(t_1',\dotsc,t_n')$ the constraint $\chi$ derived from
 the subterms and returns $\top$ as the constraint.
 Dually, if $p$ is $\pneg$, it adds a
 disjunction with the negated constraint, to achieve the same overall effect.
@@ -806,26 +811,22 @@ beneath applications of the uninterpreted function $\farg{\con{s}}$,
 the formula is in the essentially uninterpreted fragment,
 for which Ge and de Moura \cite{GeDeM-CAV-09} provide
 a complete instantiation procedure, implemented in \ziii.
-As expected,
-%%% Are we sure?
-% Yes, I'm planning to post the 2 versions of the benchmark on the evaluation page (when we add it) --ajr
-% Yes, but how can you be sure that Z3 will run forever? Your benchmarks surely have a timeout! --jb
-\cvc and \ziii run indefinitely on formula~(\ref{eq:ex-before}).
-Howevever, they produce a model for~(\ref{eq:ex-after})
+As expected, \cvc and \ziii run indefinitely on formula~(\ref{eq:ex-before}).
+However, they produce a model for~(\ref{eq:ex-after})
 within 100 milliseconds.\xend
 \end{example}
 
 \newcommand\badlambda{\lambda x : \typeint.\allowbreak\;\, \lite( x \teq 0,\allowbreak\; 0,\allowbreak\;
   \lite( x \teq 1,\allowbreak\; 1,\allowbreak\;
     \lite( x \teq 2,\allowbreak\; 3,\allowbreak\;
-      \lite(\ldots,\allowbreak\; \lite( x \teq 13,\allowbreak\, 91,\allowbreak\, 105 )\negvthinspace \ldots ))))}
+      \lite(\dotsc,\allowbreak\; \lite( x \teq 13,\allowbreak\, 91,\allowbreak\, 105 )\negvthinspace \ldots ))))}
 
 Note that the translation $\conv$ results in formulas whose models
 (i.e., satisfying interpretations) are generally different from those of $\varphi$.
 %\ct{"Preserves models" means that it does not drop models, not that it adds models.}
 One model $\I$ for formula~(\ref{eq:ex-after}) in the above example interprets
-$\fargtype{\con{s}}$ as a finite set $\{ u_0, \ldots, u_{14} \}$,
-$\farg{\con{s}}$ as a finite map $u_i \mapsto i$ for $i = 0, \ldots, 14$,
+$\fargtype{\con{s}}$ as a finite set $\{ u_0, \dotsc, u_{14} \}$,
+$\farg{\con{s}}$ as a finite map $u_i \mapsto i$ for $i = 0, \dotsc, 14$,
 $\con{c}$ as $14$,
 and $\con{s}$ as the almost constant function
 %
@@ -871,7 +872,7 @@ function symbols in $\sfuns{\Sigma} \setminus \sfundefs{\Sigma}$.
 Furthermore, the model of $\conv( \varphi )$ will
 also give correct information for the defined functions at all points belonging
 to the domains of the corresponding abstract types $\fargtype{\con{f}}$.
-This can sometimes help users debug their %specifications.
+This can sometimes help users debug their
 function definitions.
 
 %%% @ANDY: I don't get the following comment --jb
@@ -935,7 +936,7 @@ Let $\J$ be the $\extendsig{\Sigma}$-interpretation that interprets all types $\
 all functions $\con{f} \in \sfuns{\Sigma}$ as $\con{f}^\I$,
 and for each function $\con{f} : \tau_1 \times \cdots \times \tau_n \rightarrow \tau$ in $\sfundefs{\Sigma}$,
 interprets $\fargtype{\con{f}}$ as $\tau_1^\I \times \cdots \times \tau_n^\I$
-and each $\fargx{\con{f}}{i}$ as the $i$\vvthinspace{th} projection on such tuples for $i = 1, \ldots, n$.
+and each $\fargx{\con{f}}{i}$ as the $i$\vvthinspace{th} projection on such tuples for $i = 1, \dotsc, n$.
 Since $\J$ satisfies $\varphi$, it satisfies a set of ground literals $L$ that entail $\varphi$.
 Furthermore, $\J$ satisfies \relax{every} constraint of the form $\exists a : {\fargtype{\con{f}}}.\;\, \vecfarg{\con{f}}( a ) \teq \vec t$,
 since by our construction of $\J$ there exists a value $v \in {\fargtype{\con{f}}}^\J$ such that $v = \vec t^\J$.
@@ -1046,7 +1047,7 @@ where $\varphi_\con{s}$ is the formula $\lite\bigl( x \leq 0,\allowbreak\; \con{
 Clearly, any interpretation $\I$ satisfying formula~(\ref{eq:ex-after}) satisfies
 $L_0 \cup \absconstraints( L_0 )$,
 where $L_0 = \{ \con{s}( \con{c} ) > 100 \}$
-and $\absconstraints( L_0 )$ (see~(\ref{eq:xl})) consists of the single constraint
+and $\absconstraints( L_0 )$, defined by equation (\ref{eq:xl}), consists of the single constraint
 $\exists a : {\fargtype{\con{s}}}.\;\, \farg{\con{s}}( a ) \teq \con{c}$.
 %The latter ensures that $\I$ satisfies a formula that entails both $\con{s}( \con{c} ) > 100$ and $\varphi_{\con{s}}[\con{c}/x]$.
 Since $\I$ also satisfies both the translated function definition for $\con{s}$
@@ -1071,8 +1072,8 @@ a model of formula~(\ref{eq:ex-after}) that interprets $\con{c}$ as~$n$ must als
 \end{aligned}\]
 %
 This formula is closed under function expansion
-since it entails $\varphi_\con{s}[(\con{c}-i)/x]$ for $i = 0, \ldots, n$,
-and contains only $\con{s}$ applications corresponding to $\con{s}( \con{c}-i )$ for $i = 0, \ldots, n$.
+since it entails $\varphi_\con{s}[(\con{c}-i)/x]$ for $i = 0, \dotsc, n$
+and contains only $\con{s}$ applications corresponding to $\con{s}( \con{c}-i )$ for $i = 0, \dotsc, n$.
 Since $\{\forallf{\con{s}} x.\;\, \varphi_\con{s}\}$ is admissible,
 there exists a $\Sigma$-interpretation satisfying $\psi \wedge \forallf{\con{s}} x.\;\, \varphi_\con{s}$,
 which entails formula~(\ref{eq:ex-before}).\xend
@@ -1131,7 +1132,7 @@ Accordingly, the solver will output the approximation of the interpretation it
 used for recursive function definitions.
 For the example above, it outputs a %partial
 model of~$\con{s}$ where only
-the values of $\con{s}(x)$ for $x = 0,\ldots,14$ are correctly given:
+the values of $\con{s}(x)$ for $x = 0,\dotsc,14$ are correctly given:
 \begin{quote}
 %\small
 \begin{verbatim}
@@ -1148,7 +1149,7 @@ the values of $\con{s}(x)$ for $x = 0,\ldots,14$ are correctly given:
 
 With the \texttt{-}\texttt{-fmf-fun} option enabled, \cvc assumes that
 functions introduced using \texttt{define-\allowbreak fun-\allowbreak rec} are admissible.
-Admissibility must be proven externally by the user---e.g., manually, using a
+Admissibility must be proved externally by the user---e.g., manually, using a
 syntactic criterion, or with the help of a termination prover.
 If some function definitions are not admissible, \cvc may answer \emph{sat} for
 an unsatisfiable problem. For example, if we add the inconsistent definition
@@ -1449,7 +1450,7 @@ with a signature that contains uninterpreted function symbols over these datatyp
 The \leon{} set consists of 166
 benchmarks from the Leon repository,\footnote{%Available at
 \url{https://github.com/epfl-lara/leon/}} which were constructed from
-verification conditions on simple Scala programs. These bench\-marks also
+verification conditions on simple Scala programs. These benchmarks also
 heavily involve recursively defined functions over algebraic datatypes,
 but cover a wide variety of additional theories, including bit vectors, arrays, and
 both linear and nonlinear arithmetic.
@@ -1603,7 +1604,7 @@ The translation $\conv$ (the ``$\conv(\varphi)$'' columns) has a major
 impact. \cvcf finds 550 of the 1242 benchmarks to be satisfiable,
 including 6~benchmarks in the nonmutated \leon benchmark set.
 The two optimizations for finite model finding in \cvc (configurations \cvcfe and \cvcfm)
-leads to a net gain of one~satisfiable benchmark each with respect to \cvcf.
+lead to a net gain of one~satisfiable benchmark each with respect to \cvcf.
 The performance of \ziiib for countermodels also improves dramatically, as it
 finds 134 more benchmarks to be satisfiable, including 5 that are not solved by \cvcf.
 %
@@ -1621,8 +1622,8 @@ These results suggest that the translation does not degrade the performance
 of SMT solvers for unsatisfiable problems involving recursive functions,
 and instead often improve their performance. 
 These results suggest that it would be interesting to try this translation
-in Sledgehammer \cite{blanchette-et-al-2013-smt} and 
-that to try to use Nunchaku also as a proof tool.
+in Sledgehammer \cite{blanchette-et-al-2013-smt} and to try Nunchaku also as a
+proof tool.
 
 \section{Related Work}
 \label{sec:related-work}
@@ -1692,7 +1693,7 @@ written in a subset of Scala. Leon is based on an SMT solver. It avoids
 quantifiers altogether by unfolding recursive definitions up to a certain
 depth, which is increased on a per-need basis.
 Our translation~$\conv$ works in an analogous manner,
-where, however, the SMT solver is invoked only once
+but the SMT solver is invoked only once
 and quantifier instantiation is used in lieu of function unfolding.
 It would be
 worth investigating how existing approaches for function
