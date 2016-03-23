@@ -1,0 +1,228 @@
+----------------------- REVIEW 1 ---------------------
+PAPER: 8
+TITLE: Model Finding for Recursive Functions in SMT
+AUTHORS: Andrew Reynolds, Jasmin Christian Blanchette, Simon Cruanes and Cesare Tinelli
+
+OVERALL EVALUATION: 1 (weak accept)
+REVIEWER'S CONFIDENCE: 3 (medium)
+
+----------- Review -----------
+In many respects, this is promising work: the theory is carefully developed; a
+number of experiments have been performed; the results look impressive and the
+paper has been written up professionally. Nevertheless some aspects of the
+work dampen my enthusiasm a bit.
+
+The key idea seems to be a transformation inserted as a front-end to various
+SMT solvers. Recursive function definitions are modified in a queer way,
+inserting a dummy type along with a map into the real, "concrete" type.
+Somehow inverse of this map is never needed. This modification greatly
+improves the performance of SMT solvers at finding models formulas that
+include such recursive function definitions. It's a little puzzling that such
+a simple idea can have such a dramatic effect.
+
+I feel slightly cheated on two levels: first, there's an awful lot of
+technical complexity needed to set up a simple idea sketched above. I was
+already lost by Definition 2, buried in formal definitions. So by page 4 when
+I read that a formula is "trivially closed under function expansion" my
+reaction is "trivial to you perhaps, but unknowable to me". The other problem
+is that I get the impression that the same task could be accomplished using a
+tool such as quickcheck, if this is really just testing whether a
+quantifier-free first-order formula involving recursive functions is
+refutable.
+
+On page 15 a contrast is made between "total recursive functions" as compared
+with under specification and non-executable functions, but it's not easy for
+the reader to see that the proposed method copes with ease (because the notion
+of "admissible" is rather opaque).
+
+It's a sign of the effort that went into this paper that I have no
+typographical errors to report.
+
+
+----------------------- REVIEW 2 ---------------------
+PAPER: 8
+TITLE: Model Finding for Recursive Functions in SMT
+AUTHORS: Andrew Reynolds, Jasmin Christian Blanchette, Simon Cruanes and Cesare Tinelli
+
+OVERALL EVALUATION: 2 (accept)
+REVIEWER'S CONFIDENCE: 4 (high)
+
+----------- Review -----------
+The paper is concerned with the problem of generating models of quantified
+formulas in the SMT framework. A technique is presented for transforming
+recursive equations into universally quantified formulas of some particular
+form, for which finite model techniques can be employed. The intuitive idea is
+very simple: it consists to introduce a new sort representing the set of
+relevant input tuples for each recursively defined function. These abstract
+tuples are then associated with concrete values by so called "concretization
+functions", and axioms are added to ensure that these sorts indeed contain all
+the relevant elements. Thanks to this trick, the model builder can now focus
+on the interpretation of relevant tuples, rather than trying to construct the
+interpretation of every function on all possible inputs (which is usually
+infeasible for infinite sorts).
+
+(Un)satisfiability is preserved if the considered set of equations fulfills
+some additional semantic property, ensuring that the considered interpretation
+can always be extended into a model of recursive axioms.
+
+To my opinion, the paper is highly relevant to IJCAR and well-written. The
+results are sound, as far as I can see. However, some minor technical points
+deserves clarification, especially concerning the handling of quantifiers, see
+below. The method has been implemented and the experimental results clearly
+show the interest of the proposed approach. Rather interestingly, the results
+also indicate that the translation often improves the performances of the
+prover on unsatisfiable sets. I am thus recommending acceptance.
+
+Some minor remarks below.
+
+Preliminaries
+
+``whose \Sigma_1-reduct is a model of T1'': what about \Sigma_2-reduct ?
+
+The definition of ``uninterpreted symbols'' should be relative to a specific
+theory.
+
+Definition 1. Is the formula \Psi allowed to contain quantifiers? (this seems
+to be intended in Fig. 1).
+
+Just after Definition 1, it should be mentioned that f_i is in \Sigma^{dfn}.
+
+Definition 2. What if f_i(t) contains a variable that is universally or
+existentially quantified in \Psi? (or is \Psi quantifier-free?). When I first
+read the paper I though that \Psi was intended to be quantifier-free but Fig.
+1 contains rules for quantification, which puzzled me. If \Psi is allowed to
+contain quantifier then I think that Definition 2 should be rewritten. A
+quantification should probably be added to the formulas \phi_i in the set).
+
+Also Definition 2 can probably be relaxed in order to take into account the
+context in which the term t occurs (this is essential if quantifiers are
+allowed).
+
+The closed-ness under function definition is a very strong property, if finite
+formulas are considered. For instance given the equation f(x) = f(x-1) and the
+term f(n), one need to entail the equation f(n)=f(n-1), f(n-1)=f(n-2) etc.
+thus no finite closed formula exists.
+
+Mention that the "formula" can actually be infinite (it would be better to use
+infinite sets of formulas), because this is used in the proof of Theorem 7
+(\bigcup L_{\infy}).
+
+The notion of a well-founded definition is not very clear and should be
+clarified. In order to deal with definitions such as f(x) = f(x-1), the
+well-founded relation must be defined over interpreted terms (e.g., x > x-1
+modulo arithmetic), which means that the well-founded order must be defined
+with respect to the set of interpretations of the considered theory (this does
+not seem completely straightforward to me and deserves formal treatment).
+
+The remark on the completeness of the quantifier-elimination method in [19] is
+slightly misleading to my opinion. Indeed, because the underlying logic is not
+compact, the completeness of instantiation does not imply completeness of the
+calculus (since the set of relevant instances is unsatisfiable, but usually
+admits no unsatisfiable finite subset). I think a remark should be added to
+clarify this point (or just avoid referring to "completeness").
+
+
+----------------------- REVIEW 3 ---------------------
+PAPER: 8
+TITLE: Model Finding for Recursive Functions in SMT
+AUTHORS: Andrew Reynolds, Jasmin Christian Blanchette, Simon Cruanes and Cesare Tinelli
+
+OVERALL EVALUATION: 1 (weak accept)
+REVIEWER'S CONFIDENCE: 4 (high)
+
+----------- Review -----------
+Overview
+======
+
+In this paper, the authors propose a method for translating 
+formulas containing recursive function definitions into 
+formulas belonging to a class for which finite model finding 
+techniques exist (namely formulae with quantified variables 
+of uninterpreted type). 
+It is proved that for admissible definitions the translation 
+method yields a formula A(\phi) which is equisatisfiable with 
+the original formula \phi;  the formula A(\phi) contains only 
+quantified variables of an uninterpreted type, so the methods 
+by Reynolds et al. [32, 33] can be used for finiding finite models 
+for A(\phi) (however, in general these models are not models 
+of \phi). 
+
+Two implementations of this method in CVC4 and in Nunchaku 
+are presented; comparisons between Z3 and CVC4 (with four 
+configurations; with and without translation) are made. 
+
+
+Evaluation
+=======
+
+The submission is clearly in the scope of IJCAR. 
+The ideas are interesting; the presentation clear; 
+full proofs are provided for the main results. 
+The paper brings together two lines of research of the authors: 
+one on finite model finding [32, 33, 34]  and one on automated 
+reasoning in theories of (co)datatypes [29].
+
+It is not clear to me in which way the models obtained with 
+the method in the paper can be used  (they are in general not 
+models for the original formula \phi, but can be seen as a kind 
+of "partial models" of \phi). 
+
+In conclusion, my recommendation is "weak accept". 
+
+
+Detailed comments
+=============
+
+page 3: 
+- line 9: You use the index f to \forall only to mark the definition of f? 
+
+- Definition 1:  Do you impose any restrictions on the formula \psi 
+  occurring in a formula \phi in definitional form? 
+  Should \psi be a ground formula or can it contain quantifiers? 
+
+- Definition 2: 
+  - The notation {\cal T}(\psi) was not introduced before.
+
+  - It might be good to add an intuitive explanation after Definition 2, 
+     in which you explain that \psi is closed under function expansion 
+     wrt \Delta if it already constrains the functions defined in \Delta 
+     as much as necessary such that in every model {\cal I}  of \psi
+     the values for the terms f(t) occurring in \psi computed according 
+     to the definitions in \Delta agree with the values of these terms in I. 
+
+  - It would be useful to give already here examples of 
+     formulae which are/are not closed under function expansion.  
+
+- line 5 from the bottom: Why do you call the function p "uninterpreted"? 
+  The definition you give provides an "interpretation" for it. 
+
+page 4: 
+- it might be good to also formulate the result about the admissibility 
+  of productive co-recursive function  definitions in the form of a 
+  theorem. 
+
+- Section 3, lines 3-4: 
+  You mention the T-satisfiability of \phi'. 
+  Instead, the extension T' of T with "free" functions in E(\Sigma) 
+  should be considered (and satisfiability of \phi'  wrt T' ). 
+
+page 5: 
+- I found the algorithm in Figure 1 and the explanations on page 5 
+  -  especially the handling of polarities - difficult to understand. 
+  Giving an example in which also the polarities are handled might 
+  help increase clarity. 
+
+
+page 7: 
+- Lemma 5: 
+  Does the set L of ground literals depend on the interpretation I or not? 
+
+- Theorem 7: You mention that \phi and A(\phi) are T-equisatisfiable; 
+  Please clarify the terminology (the signature of the formula A(\phi) 
+  includes the functions in E(\Sigma)). 
+
+
+page 8: 
+- How do you know how many times you should unfold 
+  the definition in the case of s(c)? 
+  How is this implemented in CVC4?
