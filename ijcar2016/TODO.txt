@@ -83,8 +83,8 @@ TODO:
     the values for the terms f(t) occurring in \psi computed according 
     to the definitions in \Delta agree with the values of these terms in I. 
 
-  * It would be useful to give already here examples of formulae which are/are
-    not closed under function expansion.
+  * It would be useful to give already on p. 3 examples of formulae which
+    are/are not closed under function expansion.
 
   * line 5 from the bottom: Why do you call the function p "uninterpreted"? 
     The definition you give provides an "interpretation" for it. 
