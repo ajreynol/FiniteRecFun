@@ -66,6 +66,12 @@
 
 \renewcommand\vec[1]{\overline{#1}}
 
+%% TYPESETTING HACKS
+\newcommand\medrightarrow{\mathrel{{{\color{black}\relbar}\kern-0.9ex\rlap{\color{white}\ensuremath{\blacksquare}}\kern-0.9ex}\joinrel{\color{black}\rightarrow}}}
+\newcommand\Medrightarrow{\mathrel{{{\color{black}\Relbar}\kern-0.9ex\rlap{\color{white}\ensuremath{\blacksquare}}\kern-0.9ex}\joinrel{\color{black}\Rightarrow}}}
+\newcommand\medleftrightarrow{\mathrel{\leftarrow\kern-1.685ex\rightarrow}}
+\newcommand\Medleftrightarrow{\mathrel{\Leftarrow\kern-1.685ex\Rightarrow}}
+
 \let\oldcup=\cup
 \def\cup{\mathrel{\oldcup}}
 
@@ -736,11 +742,12 @@ where $\pnegate p$ is $\pneg$ if $p$ is $\ppos$, $\ppos$
 if $p$ is $\pneg$, and $\pnone$ if $p$ is $\pnone$.
 The term $t$ is then reconstructed as $\boolop(t_1',\dotsc,t_n')$
 where each $t_i'$ is the result of the recursive call with argument~$t_i$.
-If the polarity $p$ associated with $t$ is $\ppos$,
-$\conv_0$ conjunctively adds to $\boolop(t_1',\dotsc,t_n')$ the constraint $\chi$ derived from
+If the polarity $p$ of $t$ is $\ppos$,
+$\conv_0$ conjunctively adds to $\boolop(t_1',\dotsc,t_n')$ the constraint~$\chi$ derived from
 the subterms and returns $\top$ as the constraint.
 Dually, if $p$ is $\pneg$, it adds a
-disjunction with the negated constraint, to achieve the same overall effect.
+disjunction with the negated constraint to produce the same net effect
+(since $\lnot\;(\phi \mathrel\lor \lnot\;\chi) \Medleftrightarrow \lnot\;\phi \mathrel\land \chi$).
 %ct  as in the positive case.
 It $p$ is $\pnone$, the constraint $\chi$ is
 returned to the caller.
@@ -782,11 +789,11 @@ respect to $\sfundefs{\Sigma}$
 and states that the sum of all
 positive numbers up to some constant $\const{c}$ is greater than $100$. It is
 satisfiable with a model that interprets $\const{c}$ as $14$ or more.
-Due to the universal quantifier,
-current SMT techniques
-are unable to find
+Due to the universal quantifier, SMT solvers
+cannot find
 a model for $\varphi$. The signature $\extendsig{\Sigma}$ extends $\Sigma$ with the type
-$\fargtype{\con{s}}$ and the uninterpreted function symbol $\farg{\con{s}} : \fargtype{\con{s}}
+$\fargtype{\con{s}}$ and the %uninterpreted
+function symbol $\farg{\con{s}} : \fargtype{\con{s}}
 \rightarrow \typeint$. The result of $\conv( \varphi )$, after simplification,
 is the $\extendsig{\Sigma}$-formula
 %
@@ -1225,7 +1232,7 @@ several proof assistants. The first version, 0.1, was released in January 2016
 with support for (co)algebraic datatypes, (co)recursive functions and
 (co)inductive predicates. Support for higher-order functions is in the works.
 We have developed a preliminary Isabelle frontend and are
-planning further frontends for Coq, HOL4, HOL Light,
+planning further frontends for Coq, %HOL4, HOL Light,
 the TLA\textsuperscript{+} Proof System, and possibly other proof assistants.
 
 Nunchaku is the spiritual successor to Nitpick for
@@ -1237,6 +1244,8 @@ the finite model finding fragment of CVC4, including
 (co)algebraic datatypes \cite{reynolds-blanchette-2015-codata}.
 Using CVC4 also allows Nunchaku to provide efficient arithmetic
 reasoning and to detect unsatisfiability in addition to satisfiability.
+We plan to integrate other tools as backends, to exploit the
+strengths of competing approaches.
 % and makes
 % equality reasoning straightforward.
 
@@ -1745,7 +1754,10 @@ Another approach, which also fails in the face of underspecification,
 is to take the conjecture as an axiom and to attempt to derive a contradiction
 using an automatic theorem prover \cite{baumgartner2013}. If the other axioms
 are consistent (which can be checked syntactically in some cases),
-a contradiction imples the existence of countermodels.
+a contradiction imples the existence of countermodels. Compared with these
+approaches, the main advantage of our approach is that it can cope with
+underspecification and that it exploits the SMT solver (and its SAT solver) to
+enumerate candidate models efficiently.
 
 %(even on finite domains).
 

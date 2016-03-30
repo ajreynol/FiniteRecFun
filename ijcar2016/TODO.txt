@@ -1,21 +1,5 @@
 TODO:
 
-  * POLARITIES:
-    * JB: page 5: I found the algorithm in Figure 1 and the explanations on page 5 -
-      especially the handling of polarities - difficult to understand. Giving an
-      example in which also the polarities are handled might help increase
-      clarity.
-
-  * QUICKCHECK ETC.:
-    * JB: The other problem is that I get the impression that the same task could be
-      accomplished using a tool such as quickcheck, if this is really just
-      testing whether a quantifier-free first-order formula involving recursive
-      functions is refutable.
-    * JB: On page 15 a contrast is made between "total recursive functions" as
-      compared with under specification and non-executable functions, but it's
-      not easy for the reader to see that the proposed method copes with ease
-      (because the notion of "admissible" is rather opaque).
-
   * ADMISSIBILITY:
     * JB: The closed-ness under function definition is a very strong property, if
       finite formulas are considered. For instance given the equation f(x) =
@@ -109,12 +93,27 @@ IGNORE:
 
 KIND OF DONE:
 
+  * JB: page 5: I found the algorithm in Figure 1 and the explanations on page 5 -
+    especially the handling of polarities - difficult to understand. Giving an
+    example in which also the polarities are handled might help increase
+    clarity.
+
   * JB: It is not clear to me in which way the models obtained with the method in
     the paper can be used (they are in general not models for the original
     formula \phi, but can be seen as a kind of "partial models" of \phi).
 
 
 DONE:
+
+  * JB: The other problem is that I get the impression that the same task could be
+    accomplished using a tool such as quickcheck, if this is really just
+    testing whether a quantifier-free first-order formula involving recursive
+    functions is refutable.
+
+  * JB: On page 15 a contrast is made between "total recursive functions" as
+    compared with under specification and non-executable functions, but it's
+    not easy for the reader to see that the proposed method copes with ease
+    (because the notion of "admissible" is rather opaque).
 
   * JB: Theorem 7: You mention that \phi and A(\phi) are T-equisatisfiable; Please
     clarify the terminology (the signature of the formula A(\phi) includes the
