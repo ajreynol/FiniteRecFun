@@ -1251,15 +1251,15 @@ problems produced from our translation.
 \label{ssec:nunchaku}
 
 Nunchaku is a new higher-order model finder designed to be integrated with
-several proof assistants. The first version, 0.1, was released in January 2016
-with support for (co)algebraic datatypes, (co)recursive functions and
+several proof assistants. The first version was released in January 2016
+with support for (co)al\-gebraic datatypes, (co)recursive functions, and
 (co)inductive predicates. Support for higher-order functions is in the works.
-We have developed a preliminary Isabelle frontend and are
+We have developed an Isabelle frontend and are
 planning further frontends for Coq, %HOL4, HOL Light,
-the TLA\textsuperscript{+} Proof System, and possibly other proof assistants.
+the TLA\textsuperscript{+} Proof System, and other proof assistants.
 
-Nunchaku is the spiritual successor to Nitpick for
-Isabelle/HOL~\cite{blanchette-nipkow-2010}, but is developed as a standalone
+Nunchaku is a spiritual successor to Nitpick \cite{blanchette-nipkow-2010} for
+Isabelle/HOL, but is developed as a standalone
 OCaml program, with its own input language. Whereas Nitpick generates a
 succession of problems where cardinalities of finite types grow at each step,
 Nunchaku translates its input to one first-order logic program that targets
@@ -1288,7 +1288,7 @@ OCaml). The following simple problem gives a taste of the syntax:
 \end{quote}
 %
 The problem defines a datatype (\texttt{nat}) and two mutually recursive
-inductive predicates (\texttt{even} and \texttt{odd}), it declares a constant
+inductive predicates (\texttt{even} and \texttt{odd}), declares a constant
 \texttt{m}, and specifies a goal to satisfy (``\texttt{m} is even and nonzero'').
 Nunchaku quickly finds the following partial model:
 %
@@ -1300,10 +1300,10 @@ Nunchaku quickly finds the following partial model:
 %
 The partial model gives sufficient information to the user to evaluate the
 goal: ``2 is even if 1 is odd, 1 is odd if 0 is even, and 0 is even.''
-Our experience with the Nitpick~\cite{blanchette-nipkow-2010} model finder
+Our experience with Nitpick
 is that users are mostly interested in the values assigned to uninterpreted
-constants (e.g., \texttt{m}). Occasionally, the models of recursive functions
-are instructive in the face of underspecification. A typical example is
+constants (e.g.,~\texttt{m}). Occasionally, the models of underspecified
+recursive functions are instructive. A typical example is
 the \texttt{head} function that returns the first element of a nonempty list:
 %
 \begin{quote}
@@ -1340,11 +1340,11 @@ before another pass applies the encoding described in this paper.
 If a model is found, it is translated back to the input language,
 with \verb$?__$ placeholders indicating unknown values.
 
-Conceptually, the sequence of transformation is a \relax{two-way pipeline}
-built by composing pairs $(\textsf{encode},\vthinspace \textsf{decode})$ of
-transformations. For each such pair, \textsf{encode} transforms a problem over
-a signature $\Sigma$ in a logic~$\mathcal{L}$ to a problem over a signature
-$\Sigma'$ in a logic~$\mathcal{L}'$, and \textsf{decode} translates a model
+Conceptually, the sequence of transformation is a \relax{bidirectional pipeline}
+built by composing pairs $(\textit{Encode},\vthinspace \textit{Decode})$ of
+transformations. For each such pair, \textit{Encode} translates a
+$\Sigma$-problem in a logic~$\mathcal{L}$ to a $\Sigma'$-problem
+in a logic~$\mathcal{L}'$, and \textit{Decode} translates a model
 in~$\mathcal{L}'$ over $\Sigma'$ into a model in~$\mathcal{L}$ over $\Sigma$,
 in the spirit of institution theory \cite{goguen-burstall-1992}. The
 pipeline includes the following phases:
