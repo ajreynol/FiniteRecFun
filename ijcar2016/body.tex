@@ -196,7 +196,7 @@
 \renewcommand\qed{{\hfill$\squareforqed$}}
 
 \hyphenation{counter-example counter-examples Isa-belle data-type data-types
-  co-data-type co-data-types bench-mark bench-marks}
+  co-data-type co-data-types bench-mark bench-marks counter-model counter-models}
 
 \let\labelitemi=\labelitemii %% CHEAT!
 \makeatletter
@@ -252,7 +252,8 @@ but they are of little help for finding models of them
 when they are satisfiable. Often, a single universal quantifier in one of the
 axioms of a problem is enough to prevent the discovery of models.
 
-In the past few years, a few techniques have been developed to find models for
+In the past few years, %a few
+techniques have been developed to find models for
 quantified formulas in SMT.
 Ge and de Moura \cite{GeDeM-CAV-09} introduced a complete instantiation-based
 procedure for formulas in the \emph{essentially uninterpreted} fragment.
@@ -500,8 +501,9 @@ evaluation order. For example, the definition
 $\forall x : {\typeint}.\;\,
 \con{p}( x ) \teq \lite\bigl( x \leq 0,\allowbreak\;  1,\allowbreak\;
   2 * \con{p}( x - 1 ) \bigr)$,
-where the theory $T$ is integer arithmetic extended with the uninterpreted symbol
-$\con p:\typeint \rightarrow \typeint$, can be shown to be well founded under a strategy that
+where the theory $T$ is integer arithmetic extended with the %uninterpreted
+symbol $\con p:\typeint \rightarrow \typeint$, can be shown to be well founded
+under a strategy that
 evaluates the condition of an $\lite$ before evaluating the relevant branch,
 ignoring the other branch. Logically, such dependencies can be captured by
 congruence rules. Krauss developed these ideas in the more general context of
@@ -584,10 +586,12 @@ An example of an inadmissible set is
 $\{ \forallf{\con{f}} x : \typeint.\;\, \con{f}( x ) \teq \con{f}( x ) + 1 \}$,
 where $T$ is integer arithmetic extended to a set of uninterpreted symbols
 $\{\con f, \con g :\typeint \rightarrow \typeint,\, \ldots \}$.
-The reason is that the formula $\ltrue$ is (trivially) closed under function expansion with respect to this set,
-and there is no model of $T$
+The set is inadmissible because the formula $\ltrue$ is
+closed under function expansion with respect to this set
+(since $\con{f}$ does not occur in $\ltrue$),
+and yet there is no model of $T$
 satisfying $\con{f}$'s definition. A more subtle example is
-\[\badassex\]
+$\badassex$.
 While this set has a model where $\con f$ and $\con g$ are interpreted as the
 constant function $0$, it is not admissible since %the formula
 $\con{f}( 0 ) \teq 1$ is
@@ -657,8 +661,8 @@ whose definitions are admissible.
 %We may translate $\varphi$ into a equisatisfiable formula $\phi'$ for which known model-finding procedures~\cite{GeDeM-CAV-09, ReyEtAl-1-RR-13} are applicable.
 We present a method that constructs an extended signature
 $\extendsig{ \Sigma }$ and an $\extendsig{ \Sigma }$-formula $\varphi'$ such that
-$\varphi'$ is $T$-satisfiable if and only if $\varphi$ is $T$-satisfiable---i.e.,
-$\varphi$ and $\varphi'$ are \emph{equisatisfiable} (\emph{in $T$}).
+$\varphi'$ is $T$-satisfiable if and only if the $\Sigma$-formula $\varphi$ is
+$T$-satisfiable---i.e., $\varphi$ and $\varphi'$ are \emph{equisatisfiable} (\emph{in $T$}).
 The idea behind this translation is to use an uninterpreted type $\alpha_\con{f}$
 to abstract the set of
 \emph{relevant} input tuples for each defined function $\con{f}$ and restrict the
@@ -1219,10 +1223,10 @@ problems produced from our translation.
 Nunchaku is a new higher-order model finder designed to be integrated with
 several proof assistants. The first version, 0.1, was released in January 2016
 with support for (co)algebraic datatypes, (co)recursive functions and
-(co)inductive predicates. Support for higher-order functions is planned for
-the next release. We have developed a preliminary Isabelle frontend and are
-planning further frontends for Coq, the TLA\textsuperscript{+} Proof System,
-and possibly other proof assistants.
+(co)inductive predicates. Support for higher-order functions is in the works.
+We have developed a preliminary Isabelle frontend and are
+planning further frontends for Coq, HOL4, HOL Light,
+the TLA\textsuperscript{+} Proof System, and possibly other proof assistants.
 
 Nunchaku is the spiritual successor to Nitpick for
 Isabelle/HOL~\cite{blanchette-nipkow-2010}, but is developed as a standalone
@@ -1241,32 +1245,58 @@ logic (e.g., Isabelle/HOL) and by functional programming languages (e.g.,
 OCaml). The following simple problem gives a taste of the syntax:
 %
 \begin{quote}
-\verb$data nat := Zero | Suc nat.$ \\[2\jot]
+\verb$data nat := Z | Suc nat.$ \\[2\jot]
 \verb$pred even : nat -> prop :=$ \\
-\verb$  even Zero;$ \\
+\verb$  even Z;$ \\
 \verb$  forall n. odd n => even (Suc n)$ \\
 \verb$and odd : nat -> prop :=$ \\
 \verb$  forall n. even n => odd (Suc n).$ \\[2\jot]
 \verb$val m : nat.$ \\
-\verb$goal even m && ~ (m = Zero).$
+\verb$goal even m && ~ (m = Z).$
 \end{quote}
 %
 The problem defines a datatype (\texttt{nat}) and two mutually recursive
 inductive predicates (\texttt{even} and \texttt{odd}), it declares a constant
-\texttt{m}, and specifies a goal to satisfy (``$m$ is even and nonzero'').
+\texttt{m}, and specifies a goal to satisfy (``\texttt{m} is even and nonzero'').
 Nunchaku quickly finds the following partial model:
 %
 \begin{quote}
-\verb$val m := Suc (Suc Zero).$ \\
-\verb$val odd := fun x. if x = Suc Zero then true else ?__.$ \\
-\verb$val even := fun x. if x = Suc (Suc Zero) || x = Zero then true$ \\
-\verb$                   else ?__.$
+\verb$val m := Suc (Suc Z).$ \\
+\verb$val odd := fun x. if x = Suc Z then true else ?__.$ \\
+\verb$val even := fun x. if x = Suc (Suc Z) || x = Z then true else ?__.$\kern-200mm
 \end{quote}
 %
 The partial model gives sufficient information to the user to evaluate the
 goal: ``2 is even if 1 is odd, 1 is odd if 0 is even, and 0 is even.''
+Our experience with the Nitpick~\cite{blanchette-nipkow-2010} model finder
+is that users are mostly interested in the values assigned to uninterpreted
+constants (e.g., \texttt{m}). Occasionally, the models of recursive functions
+are instructive in the face of underspecification. A typical example is
+the \texttt{head} function that returns the first element of a nonempty list:
+%
+\begin{quote}
+\verb$data list A := Nil | Cons A (list A).$ \\[2\jot]
+\verb$rec head : pi A. list A -> A :=$ \\
+\verb$  forall y ys. head (Cons y ys) = y.$ \\[2\jot]
+\verb$goal ~ (head Nil = 0).$
+\end{quote}
+%
+Nunchaku transforms the specification of \verb$head$ into
+%
+\begin{quote}
+\verb$head xs = match xs with Nil -> head xs | Cons y ys -> y end$
+\end{quote}
+%
+where the unspecified \verb$Nil$ case is expressed via nonterminating
+recursion (\verb$head$ \verb$xs$ \verb$=$ \verb$head$ \verb$xs$).
+The tool exhibits a model in which \verb$head$ \verb$Nil$ is interpreted as
+a nonzero value.
 
-Nunchaku parses and types the input problem before applying a sequence
+%(e.g., the function \verb$f$ specified by
+%\verb$forall$ \verb$x.$\ \verb$f$ \verb$x$ \verb$=$ \verb$f$ \verb$x$).
+%(e.g., $\forall x.\;\, \con f(x) \teq \con f(x)$).
+
+Internally, Nunchaku parses and types the input problem before applying a sequence
 of translations, each reducing the distance to the target fragment.
 In our example, the predicates
 \verb!even! and \verb!odd! are \emph{polarized} (specialized into a pair of
@@ -1285,7 +1315,7 @@ a signature $\Sigma$ in a logic~$\mathcal{L}$ to a problem over a signature
 $\Sigma'$ in a logic~$\mathcal{L}'$, and \textsf{decode} translates a model
 in~$\mathcal{L}'$ over $\Sigma'$ into a model in~$\mathcal{L}$ over $\Sigma$,
 in the spirit of institution theory \cite{goguen-burstall-1992}. The
-pipeline currently consists of the following phases:
+pipeline includes the following phases:
 
 \begin{description}
 %{{{
@@ -1299,18 +1329,23 @@ pipeline currently consists of the following phases:
   \item[Elimination of equations]
     translates multiple-equation definitions of recursive functions into
       a single nested pattern matching;
+  \item[Specialization]
+    creates instances of functions with static arguments (i.e., an argument
+    that is passed unchanged to all recursive calls);
   \item[Polarization]
     specializes predicates into a version used in positive positions
       and a version used in negative positions;
   \item[Unrolling]
-    adds a decreasing argument to possibly ill-founded predicates to make
-    them well founded;
+    adds a decreasing argument to possibly ill-founded predicates; % to make them well founded;
   \item[Skolemization]
     introduces Skolem symbols for term variables;
   \item[Elimination of (co)inductive predicates]
     recasts a multiple-clause (co)inductive predicate specification
       into a recursive equation;
-  \item[Recursion elimination]
+  \item[Elimination of higher-order constructs]
+    eliminates $\lambda$-abstractions and substitutes arrays for
+    higher-order functions;
+  \item[Elimination of recursion]
     performs the encoding from Section~\ref{sec:encoding};
   \item[Elimination of pattern matching]
     rewrites pattern-matching expressions using datatype
@@ -1610,7 +1645,7 @@ finds 134 more benchmarks to be satisfiable, including 5 that are not solved by 
 %
 We conclude that the translation $\conv$ enables SMT
 solvers to find countermodels for conjectures involving recursively defined
-functions whose definitions are admissible.
+functions.  % whose definitions are admissible.
 
 Interestingly,
 the translation $\conv$ helps all configurations for \emph{unsat} responses as well.
@@ -1707,7 +1742,9 @@ early example, based on random testing. Bounded exhaustive testing
 \cite{runciman-et-al-2008} and narrowing
 \cite{lindblad-2008-testing} are other successful strategies. These
 tools are often much faster than model finders, but they typically cannot cope
-with underspecification and nonexecutable functions.
+with unspecified or underspecified functions (e.g., the \texttt{head} function from
+Section~\ref{ssec:nunchaku}).
+%(even on finite domains).
 
 % others
 %are Agsy for Agda \cite{xxx}, Quickcheck for Isabelle/HOL \cite{xxx}, and

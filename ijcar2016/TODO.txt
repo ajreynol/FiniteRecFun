@@ -1,26 +1,43 @@
 TODO:
 
-  * JB: When I read that a formula is "trivially closed under function expansion"
-    my reaction is "trivial to you perhaps, but unknowable to me".
+  * POLARITIES:
+    * JB: page 5: I found the algorithm in Figure 1 and the explanations on page 5 -
+      especially the handling of polarities - difficult to understand. Giving an
+      example in which also the polarities are handled might help increase
+      clarity.
 
-  * JB: The other problem is that I get the impression that the same task could be
-    accomplished using a tool such as quickcheck, if this is really just
-    testing whether a quantifier-free first-order formula involving recursive
-    functions is refutable.
+  * QUICKCHECK ETC.:
+    * JB: The other problem is that I get the impression that the same task could be
+      accomplished using a tool such as quickcheck, if this is really just
+      testing whether a quantifier-free first-order formula involving recursive
+      functions is refutable.
+    * JB: On page 15 a contrast is made between "total recursive functions" as
+      compared with under specification and non-executable functions, but it's
+      not easy for the reader to see that the proposed method copes with ease
+      (because the notion of "admissible" is rather opaque).
 
-  * JB: On page 15 a contrast is made between "total recursive functions" as
-    compared with under specification and non-executable functions, but it's
-    not easy for the reader to see that the proposed method copes with ease
-    (because the notion of "admissible" is rather opaque).
+  * ADMISSIBILITY:
+    * JB: The closed-ness under function definition is a very strong property, if
+      finite formulas are considered. For instance given the equation f(x) =
+      f(x-1) and the term f(n), one need to entail the equation f(n)=f(n-1),
+      f(n-1)=f(n-2) etc. thus no finite closed formula exists.
+
+    * JB: page 4: it might be good to also formulate the result about the
+      admissibility of productive co-recursive function definitions in the form
+      of a theorem.
+
+    * JB: The notion of a well-founded definition is not very clear and should be
+      clarified. In order to deal with definitions such as f(x) = f(x-1), the
+      well-founded relation must be defined over interpreted terms (e.g., x >
+      x-1 modulo arithmetic), which means that the well-founded order must be
+      defined with respect to the set of interpretations of the considered
+      theory (this does not seem completely straightforward to me and deserves
+      formal treatment).
 
   * AJR: ``whose \Sigma_1-reduct is a model of T1'': what about \Sigma_2-reduct ?
 
   * AJR: The definition of ``uninterpreted symbols'' should be relative to a
     specific theory.
-
-  * AJR: line 5 from the bottom: Why do you call the function p "uninterpreted"? 
-    The definition you give provides an "interpretation" for it.
-      >> Just drop "uninterpreted"
 
   * AJR: Definition 1. Is the formula \Psi allowed to contain quantifiers? (this
     seems to be intended in Fig. 1).
@@ -47,23 +64,10 @@ TODO:
     the values for the terms f(t) occurring in \psi computed according 
     to the definitions in \Delta agree with the values of these terms in I. 
 
-  * JB: The closed-ness under function definition is a very strong property, if
-    finite formulas are considered. For instance given the equation f(x) =
-    f(x-1) and the term f(n), one need to entail the equation f(n)=f(n-1),
-    f(n-1)=f(n-2) etc. thus no finite closed formula exists.
-
   * AJR: Mention that the "formula" can actually be infinite (it would be better
     to use infinite sets of formulas), because this is used in the proof of
     Theorem 7 (\bigcup L_{\infy}).
     
-  * JB: The notion of a well-founded definition is not very clear and should be
-    clarified. In order to deal with definitions such as f(x) = f(x-1), the
-    well-founded relation must be defined over interpreted terms (e.g., x >
-    x-1 modulo arithmetic), which means that the well-founded order must be
-    defined with respect to the set of interpretations of the considered
-    theory (this does not seem completely straightforward to me and deserves
-    formal treatment).
-
   * AJR: The remark on the completeness of the quantifier-elimination method in
     [19] is slightly misleading to my opinion. Indeed, because the underlying
     logic is not compact, the completeness of instantiation does not imply
@@ -72,10 +76,6 @@ TODO:
     a remark should be added to clarify this point (or just avoid referring to
     "completeness").
 
-  * JB: It is not clear to me in which way the models obtained with the method in
-    the paper can be used (they are in general not models for the original
-    formula \phi, but can be seen as a kind of "partial models" of \phi).
-
   * AJR: page 3: line 9: You use the index f to \forall only to mark the definition
     of f?
 
@@ -83,25 +83,12 @@ TODO:
     in a formula \phi in definitional form? Should \psi be a ground formula or
     can it contain quantifiers?
 
-  * JB: page 4: it might be good to also formulate the result about the
-    admissibility of productive co-recursive function definitions in the form
-    of a theorem.
-
   * AJR (double-check): Section 3, lines 3-4:  You mention the T-satisfiability
     of \phi'. Instead, the extension T' of T with "free" functions in E(\Sigma)
     should be considered (and satisfiability of \phi' wrt T' ).
 
-  * JB: page 5: I found the algorithm in Figure 1 and the explanations on page 5 -
-    especially the handling of polarities - difficult to understand. Giving an
-    example in which also the polarities are handled might help increase
-    clarity.
-
   * AJR: page 7: - Lemma 5: Does the set L of ground literals depend on the
     interpretation I or not?
-
-  * JB: Theorem 7: You mention that \phi and A(\phi) are T-equisatisfiable; Please
-    clarify the terminology (the signature of the formula A(\phi) includes the
-    functions in E(\Sigma)).
 
 
 MAYBE:
@@ -118,3 +105,26 @@ MAYBE:
 IGNORE:
 
   * Definition 2: The notation {\cal T}(\psi) was not introduced before.
+
+
+KIND OF DONE:
+
+  * JB: It is not clear to me in which way the models obtained with the method in
+    the paper can be used (they are in general not models for the original
+    formula \phi, but can be seen as a kind of "partial models" of \phi).
+
+
+DONE:
+
+  * JB: Theorem 7: You mention that \phi and A(\phi) are T-equisatisfiable; Please
+    clarify the terminology (the signature of the formula A(\phi) includes the
+    functions in E(\Sigma)).
+
+  * JB: When I read that a formula is "trivially closed under function expansion"
+    my reaction is "trivial to you perhaps, but unknowable to me".
+
+  * AJR: line 5 from the bottom: Why do you call the function p "uninterpreted"? 
+    The definition you give provides an "interpretation" for it.
+      >> Just drop "uninterpreted"
+
+  * SC/JB: Add missing elements to pipeline
