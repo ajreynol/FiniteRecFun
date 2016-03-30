@@ -75,6 +75,9 @@
 \let\oldcup=\cup
 \def\cup{\mathrel{\oldcup}}
 
+\let\oldcap=\cap
+\def\cap{\mathrel{\oldcap}}
+
 \let\oldchi=\chi
 \def\chi{{\vthinspace\oldchi}}
 
@@ -124,7 +127,7 @@
 %CT somehow this compiles into a Roman font, removed for now
 %\newcommand{\I}{\mathcalx{I}}
 %\newcommand{\J}{\mathcalx{J}}
-\newcommand{\I}{\mathcal{I}}
+\newcommand{\I}{\mathcal{I\!}}
 \newcommand{\J}{{\mathcal{I}'}}
 \newcommand{\conv}{\mathcalx{A}}
 
@@ -234,13 +237,13 @@ Max-Planck-Institut f\"ur Informatik, Saarbr\"ucken, Germany
 \begin{abstract}
 \noindent
 SMT solvers have recently been extended with techniques for finding models
-in the presence of universally quantified formulas in some restricted fragments
+of universally quantified formulas in some restricted fragments
 of first-order logic.
-This paper introduces a translation which reduces axioms specifying a large
-class of recursive functions, including well-founded (terminating) functions,
+This paper introduces a translation that reduces axioms specifying a large
+class of recursive functions, including terminating functions,
 to universally quantified formulas for which these
 techniques are applicable.
-An empirical evaluation confirms that the approach improves
+An evaluation confirms that the approach improves
 the performance of existing solvers on benchmarks from three sources.
 The translation is implemented as a preprocessor in the CVC4 solver
 and in a new higher-order model finder called Nunchaku.
@@ -296,10 +299,13 @@ $$\forall x : {\typeint}.\;\,
   2 * \con{p}( x - 1 ) \bigr)$$ %.
 where $\lite$ is the `if--then--else' operator.
 This state of affairs is unsatisfactory, given the frequency of
-recursive definitions in practice, underscored by the recent
-addition of a %dedicated
-command for introducing them, \texttt{define-fun-rec},
-to the SMT-LIB standard \cite{smtlib25}.
+recursive definitions in practice.
+%, underscored by the recent
+%addition of a %dedicated
+%command for introducing them, \texttt{define-fun-rec},
+%to the SMT-LIB standard \cite{smtlib25}.
+
+\pagebreak[2]
 
 %In this paper,
 We present a method for translating formulas involving recursive function
@@ -334,8 +340,9 @@ class.
 %\begin{conf} Detailed proofs of correctness are included in a technical
 %report \cite{our-report}.\end{conf}
 
-The approach is implemented as a preprocessor in \cvc and in the Nunchaku
-model finder (Section~\ref{sec:implementations}).
+The approach is implemented as a preprocessor in the SMT solver
+\cvc and in a new higher-order model finder called Nunchaku
+(Section~\ref{sec:implementations}).
 %As a case study, we employed
 %Nunchaku on Isabelle/HOL~\cite{nipkow-et-al-2002} formalizations of
 %coinductive lists and binary trees (Section~\ref{sec:case-studies}).
@@ -400,7 +407,7 @@ A \emph{$\Sigma$-interpretation $\I$} %is a mathematical structure that
 maps each type $\tau \in \stypes{\Sigma}$ to a nonempty set $\tau^\I$,
 the \emph{domain} of~$\tau$ in~$\I,$
 each function symbol $\con{f} : \tau_1 \times \cdots \times \tau_n \rightarrow \tau$ in $\sfuns{\Sigma}$
-to a total function $\con{f}^\I : \tau_{\smash{1}}^\I \times \cdots \times \tau_n^\I \rightarrow \tau^\I$,
+to a total function $\con{f}^\I : \tau_{\smash{1}}^\I \times \cdots \times\allowbreak \tau_n^\I \rightarrow\allowbreak \tau^\I$,
 and each variable $x:\tau$ of $\svars{\Sigma}$ to an element of $\tau^\I$.
 A \emph{theory} is a pair $T = (\Sigma, \Mo)$ where
 $\Sigma$ is a signature and $\Mo$ is a class of $\Sigma$-interpretations,
@@ -429,10 +436,9 @@ Unconventionally,
 we consider \emph{annotated quantified formulas} of the form
 $\forallf{\const{f}} \vec x.\; \varphi$, where $\con{f} \in \sfuns{\Sigma}$ is
 uninterpreted. Their
-semantics is the same as for standard quantified formulas $\forall \vec x.\; \varphi$.
+semantics is as for standard quantified formulas $\forall \vec x.\; \varphi$.
 Given $\con{f} : \tau_1 \times \cdots \times \tau_n \rightarrow \tau$,
-an annotated
-quantified formula $\forallf{\con{f}} \vec x.\; \varphi$ is a \emph{function definition}
+a formula $\forallf{\con{f}} \vec x.\; \varphi$ is a \emph{function definition}
 (\,\emph{for $\con{f}$}\vthinspace) if $\vec x$ is a tuple of variables
 $x_1^{\tau_1}$, $\dotsc,$ $x_n^{\tau_n}$
 and $\varphi$ is a quantifier-free formula
@@ -549,13 +555,13 @@ Since $\J \models \Delta$ by assumption, we have $\J \models \psi \wedge
 
 Another useful class of function definitions is that of
 \emph{productive} corecursive functions. Corecursive functions are functions to
-a coalgebraic datatype. These functions can be ill founded, without
+a coalgebraic datatype. These functions can be ill founded without
 their being inconsistent. 
 Intuitively, productive corecursive functions are functions that
 progressively reveal parts of their potentially infinite
 output \cite{turner-1995,mcbride-productive}.
-Given a type of infinite streams constructed by
-$\con{scons} : \ty{int} \times \ty{stream} \to \ty{stream}$,
+Given a type of infinite streams of integers constructed by
+$\con{scons} : \ty{int} \times \ty{stream} \to\allowbreak \ty{stream}$,
 the function defined by
 $\forallf{\const{e}} x.\;\, \const{e}(x) \teq \con{scons}(x,\; \const{e}(x + 1))$
 %%% If what follows ':' is a complete sentence, the standard Am.E. convention
@@ -585,8 +591,8 @@ $\sfundefs{\Sigma}$, then it is admissible.
  \{\forallf{\con{f}} x : \typeint.\;\, \con{f}( x ) \teq \con{f}( x ),\allowbreak\;\,
  \forallf{\con{g}} x : \typeint.\;\, \con{g}( x ) \teq \con{g}( x ) + \nobreak\con{f}( x )\}}
 
-It is even possible to mix recursion and corecursion in the same total function
-\cite{blanchette-et-al-2015-fouco}.
+It is even possible to mix recursion and corecursion in the same function
+\cite{blanchette-et-al-2015-fouco} while preserving totality and admissibility.
 Beyond totality, an admissible set can contain underspecified functions
 such as $\forallf{\con{f}} x : \typeint.\allowbreak\;\, \con{f}( x )
 \teq \con{f}( x )$ or $\forallf{\con{g}} x.\allowbreak\;\, \con{g}( x
@@ -595,10 +601,10 @@ in general the closure of a formula~$\psi$ that depends on some term
 $\con{f}(\con{a})$ is an infinite set
 $\{\psi\} \cup \{\con {g}(\con{a}+k) \teq \con {g}(\con{a}+k+1) \mid k \geq 0\}$.
 A similar issue arise with corecursive definitions specifying infinite
-\emph{acyclic} objects, such as the $\con{e}$ function introduced above.
+\emph{acyclic} objects, such as the $\con{e}$ stream introduced above.
 Nonetheless, admissibility is still useful if the problem does not refer to
-$\con{g}$ or $\con{e}$, because it tells us that we can safely ignore these
-functions altogether.
+$\con{g}$ or $\con{e}$, because it tells us that we can safely ignore their
+definitions.
 %
 We conjecture that it is safe to ignore all tail-recursive calls (i.e., calls that
 occupy the right-hand side of the definition, potentially under some $\lite$
