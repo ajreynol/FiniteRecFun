@@ -494,8 +494,8 @@ Admissibility is a semantic criterion that must be satisfied for each function
 definition before applying our translation, described in
 Section~\ref{sec:encoding}. It is useful to connect it to the
 standard notion of \emph{well-founded} function definitions, often called
-\emph{terminating} definitions in a slight abuse of terminology. In such
-definitions, all recursive calls are decreasing with respect to a well-founded
+\emph{terminating} definitions. % in a slight abuse of terminology.
+In such definitions, all recursive calls are decreasing with respect to a well-founded
 relation, which must be supplied by the user or inferred automatically
 using a termination prover. This ensures that the function is uniquely defined
 at all points.
@@ -507,13 +507,14 @@ evaluation order. For example, the definition
 $\forall x : {\typeint}.\;\,
 \con{p}( x ) \teq \lite\bigl( x \leq 0,\allowbreak\;  1,\allowbreak\;
   2 * \con{p}( x - 1 ) \bigr)$,
-where the theory $T$ is integer arithmetic extended with the %uninterpreted
-symbol $\con p:\typeint \rightarrow \typeint$, can be shown to be well founded
+where the theory~$T$ is integer arithmetic extended with %uninterpreted
+$\con p:\typeint \rightarrow \typeint$, can be shown to be well founded
 under a strategy that
 evaluates the condition of an $\lite$ before evaluating the relevant branch,
 ignoring the other branch. Logically, such dependencies can be captured by
-congruence rules. Krauss developed these ideas in the more general context of
-higher-order logic \cite[Section 2]{krauss-2009-phd}.
+congruence rules. Krauss developed these ideas in the general context of
+higher-order logic \cite[Section 2]{krauss-2009-phd}, where theories such as
+integer arithmetic can be axiomatized.
 
 \begin{theorem}\label{thm:adm}
 If $\DDD$ is a set of well-founded function definitions for\/
@@ -553,31 +554,27 @@ their being inconsistent.
 Intuitively, productive corecursive functions are functions that
 progressively reveal parts of their potentially infinite
 output \cite{turner-1995,mcbride-productive}.
-For example, given a type of infinite streams constructed by
+Given a type of infinite streams constructed by
 $\con{scons} : \ty{int} \times \ty{stream} \to \ty{stream}$,
 the function defined by
 $\forallf{\const{e}} x.\;\, \const{e}(x) \teq \con{scons}(x,\; \const{e}(x + 1))$
 %%% If what follows ':' is a complete sentence, the standard Am.E. convention
 %%% is to capitalize it. --JB
 falls within this class: Each call to $\const{e}$ produces one
-constructor before entering the nested call. Like terminating recursion,
-productive corecursion totally specifies the functions it defines.
-It is even possible to mix recursion and corecursion in the same function
-\cite{blanchette-et-al-2015-fouco}. Theorem~\ref{thm:adm} can be extended to
-cover such specifications, based on the observation that unfolding
-a corecursive definition infinitely computes a unique infinite object.
+constructor before entering the next call. Like terminating recursion,
+productive corecursion totally specifies the functions it defines,
+and the proof of Theorem~\ref{thm:adm} can be adapted to cover that case:
+
+\begin{theorem}\label{thm:adm-co}
+If $\DDD$ is a set of productive function definitions for\/
+$\sfundefs{\Sigma}$, then it is admissible.
+\end{theorem}
+
+%Theorem~\ref{thm:adm} can be extended to
+%cover such specifications, based on the observation that unfolding
+%a corecursive definition infinitely computes a unique infinite object.
 %We conjecture that a large fragment of mixed recursive--corecursive
 %specifications are
-
-\begin{rep}
-Beyond totality, an admissible set can contain underspecified functions
-such as $\forallf{\con{f}} x : \typeint.\allowbreak\;\, \con{f}( x )
-\teq \con{f}( x - 1 )$ or $\forallf{\con{g}} x.\allowbreak\;\, \con{g}( x
-) \teq \con{g}( x )$. We conjecture that one can ignore all
-tail-recursive calls (i.e., calls that occupy the right-hand side of the
-definition, potentially under some $\lite$ branch) when establishing well-foundedness
-or productivity, without affecting admissibility.
-\end{rep}
 
 %\newcommand\badassex{
 % \{\forallf{\con{f}} x : \typeint.\;\, \con{f}( x ) \teq \con{f}( x ),\;\,
@@ -588,9 +585,29 @@ or productivity, without affecting admissibility.
  \{\forallf{\con{f}} x : \typeint.\;\, \con{f}( x ) \teq \con{f}( x ),\allowbreak\;\,
  \forallf{\con{g}} x : \typeint.\;\, \con{g}( x ) \teq \con{g}( x ) + \nobreak\con{f}( x )\}}
 
+It is even possible to mix recursion and corecursion in the same total function
+\cite{blanchette-et-al-2015-fouco}.
+Beyond totality, an admissible set can contain underspecified functions
+such as $\forallf{\con{f}} x : \typeint.\allowbreak\;\, \con{f}( x )
+\teq \con{f}( x )$ or $\forallf{\con{g}} x.\allowbreak\;\, \con{g}( x
+) \teq \con{g}( x + 1 )$. The latter is problematic operationally, because
+in general the closure of a formula~$\psi$ that depends on some term
+$\con{f}(\con{a})$ is an infinite set
+$\{\psi\} \cup \{\con {g}(\con{a}+k) \teq \con {g}(\con{a}+k+1) \mid k \geq 0\}$.
+A similar issue arise with corecursive definitions specifying infinite
+\emph{acyclic} objects, such as the $\con{e}$ function introduced above.
+Nonetheless, admissibility is still useful if the problem does not refer to
+$\con{g}$ or $\con{e}$, because it tells us that we can safely ignore these
+functions altogether.
+%
+We conjecture that it is safe to ignore all tail-recursive calls (i.e., calls that
+occupy the right-hand side of the definition, potentially under some $\lite$
+branch) when establishing well-foundedness or productivity, without affecting
+admissibility.
+
 An example of an inadmissible set is
 $\{ \forallf{\con{f}} x : \typeint.\;\, \con{f}( x ) \teq \con{f}( x ) + 1 \}$,
-where $T$ is integer arithmetic extended to a set of uninterpreted symbols
+where~$T$ is integer arithmetic extended to a set of uninterpreted symbols
 $\{\con f, \con g :\typeint \rightarrow \typeint,\, \ldots \}$.
 The set is inadmissible because the formula $\ltrue$ is
 closed under function expansion with respect to this set
@@ -1290,7 +1307,7 @@ the \texttt{head} function that returns the first element of a nonempty list:
 \verb$goal ~ (head Nil = 0).$
 \end{quote}
 %
-Nunchaku transforms the specification of \verb$head$ into
+Nunchaku transforms the definition of \verb$head$ into
 %
 \begin{quote}
 \verb$head xs = match xs with Nil -> head xs | Cons y ys -> y end$
@@ -1349,7 +1366,7 @@ pipeline includes the following phases:
   \item[Skolemization]
     introduces Skolem symbols for term variables;
   \item[Elimination of (co)inductive predicates]
-    recasts a multiple-clause (co)inductive predicate specification
+    recasts a multiple-clause (co)inductive predicate definition
       into a recursive equation;
   \item[Elimination of higher-order constructs]
     eliminates $\lambda$-abstractions and substitutes arrays for

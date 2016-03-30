@@ -1,23 +1,5 @@
 TODO:
 
-  * ADMISSIBILITY:
-    * JB: The closed-ness under function definition is a very strong property, if
-      finite formulas are considered. For instance given the equation f(x) =
-      f(x-1) and the term f(n), one need to entail the equation f(n)=f(n-1),
-      f(n-1)=f(n-2) etc. thus no finite closed formula exists.
-
-    * JB: page 4: it might be good to also formulate the result about the
-      admissibility of productive co-recursive function definitions in the form
-      of a theorem.
-
-    * JB: The notion of a well-founded definition is not very clear and should be
-      clarified. In order to deal with definitions such as f(x) = f(x-1), the
-      well-founded relation must be defined over interpreted terms (e.g., x >
-      x-1 modulo arithmetic), which means that the well-founded order must be
-      defined with respect to the set of interpretations of the considered
-      theory (this does not seem completely straightforward to me and deserves
-      formal treatment).
-
   * AJR: ``whose \Sigma_1-reduct is a model of T1'': what about \Sigma_2-reduct ?
 
   * AJR: The definition of ``uninterpreted symbols'' should be relative to a
@@ -80,10 +62,10 @@ MAYBE:
   * AJR/JR: It would be useful to give already on p. 3 examples of formulae which
     are/are not closed under function expansion.
 
-  * JB: I was already lost by Definition 2, buried in formal definitions.
-
   * AJR: page 8: - How do you know how many times you should unfold the definition
     in the case of s(c)? How is this implemented in CVC4?
+
+  * JB: I was already lost by Definition 2, buried in formal definitions.
 
 
 IGNORE:
@@ -92,6 +74,14 @@ IGNORE:
 
 
 KIND OF DONE:
+
+  * JB: The notion of a well-founded definition is not very clear and should be
+    clarified. In order to deal with definitions such as f(x) = f(x-1), the
+    well-founded relation must be defined over interpreted terms (e.g., x >
+    x-1 modulo arithmetic), which means that the well-founded order must be
+    defined with respect to the set of interpretations of the considered
+    theory (this does not seem completely straightforward to me and deserves
+    formal treatment).
 
   * JB: page 5: I found the algorithm in Figure 1 and the explanations on page 5 -
     especially the handling of polarities - difficult to understand. Giving an
@@ -104,6 +94,15 @@ KIND OF DONE:
 
 
 DONE:
+
+  * JB: page 4: it might be good to also formulate the result about the
+    admissibility of productive co-recursive function definitions in the form
+    of a theorem.
+
+  * JB: The closed-ness under function definition is a very strong property, if
+    finite formulas are considered. For instance given the equation f(x) =
+    f(x-1) and the term f(n), one need to entail the equation f(n)=f(n-1),
+    f(n-1)=f(n-2) etc. thus no finite closed formula exists.
 
   * JB: The other problem is that I get the impression that the same task could be
     accomplished using a tool such as quickcheck, if this is really just
