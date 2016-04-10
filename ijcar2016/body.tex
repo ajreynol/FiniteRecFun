@@ -1242,12 +1242,12 @@ This scheme allows the solver greater flexibility compared with the default sche
 and comes with no loss of generality with respect to models,
 since monotonic types can always be extended to have equal cardinalities.
 
-%By default, \cvc uses techniques to minimize the number of literals it
-%considers when constructing propositional satisfying assignments for
-%formulas~\cite{relevancy2007}. However, we have found such techniques degrade
-%performance for finite model finding on problems having recursive functions
-%that are defined by cases. For this reason, we disable the techniques for
-%problems produced from our translation.
+By default, \cvc uses techniques to minimize the number of literals it
+considers when constructing propositional satisfying assignments for
+formulas~\cite{relevancy2007}. However, we have found such techniques degrade
+performance for finite model finding on problems having recursive functions
+that are defined by cases. For this reason, we disable the techniques for
+problems produced from our translation.
 
 %%% \ajr{More?} -- Probably no space. Otherwise, you could mention zero sorts. --jb
 
