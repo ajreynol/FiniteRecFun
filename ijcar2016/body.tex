@@ -264,7 +264,7 @@ axioms of a problem is enough to prevent the discovery of models.
 In the past few years, %a few
 techniques have been developed to find models for
 quantified formulas in SMT.
-Ge and de Moura \cite{GeDeM-CAV-09} introduced a complete instantiation-based
+Ge and de Moura \cite{GeDeM-CAV-09} introduced an instantiation-based
 procedure for formulas in the \emph{essentially uninterpreted} fragment.
 This fragment is limited to universally quantified formulas where all
 %ct occurrences of
@@ -443,6 +443,7 @@ a formula $\forallf{\con{f}} \vec x.\; \varphi$ is a \emph{function definition}
 $x_1^{\tau_1}$, $\dotsc,$ $x_n^{\tau_n}$
 and $\varphi$ is a quantifier-free formula
 $T$-equivalent to $\con{f}( \vec x ) \teq t$ for some term $t$ of type $\tau$.
+We will consider only annotated quantified formulas that are function definitions.
 %\ct{Why can't $\varphi$ be existential instead of just quantifier free?}
 %I don't think it makes much sense to have any quantifiers within function bodies,
 %since they aren't operational, that's why I put quantifier-free. --ajr
@@ -460,7 +461,7 @@ form
 %\kern+\abovedisplayshortskip
 %
 $(\forallf{\con{f}_1} \vec x_1.\; \varphi_1) \wedge \cdots \wedge
-(\forallf{\con{f}_n} \vec x_n.\; \varphi_n) \wedge \psi$,
+(\forallf{\con{f}_n} \vec x_n.\; \varphi_n) \wedge \phi$,
 %
 where $\con{f}_1, \dotsc, \con{f}_n$ are distinct function symbols,
 %ct added
@@ -470,8 +471,8 @@ for $i = 1, \dotsc, n$,
 %\ct{I think we need more conditions here on how a symbol $\con{f}_i$ can occur in $\varphi_j$.}
 %\jb{do we? I thought that the admissibility criterion below is enough.}
 % should be enough, unless I'm missing something? -ajr
-and $\psi$ contains no function definitions.
-We call $\psi$ the \emph{goal} of $\varphi$.
+and $\phi$ contains no function definitions.
+We call $\phi$ the \emph{goal} of $\varphi$.
 %\ct{Don't we need additional restrictions on the $\varphi_i$'s here?
 %(E.g., they are quantifier-free, or perhaps existential or containing only let binders.)}
 % Now fixed above -ajr
@@ -495,6 +496,14 @@ the formula
 $\psi \wedge \bigwedge \Delta$ is also $T$-satisfiable.
 %\ct{I}
 \end{definition}
+
+In Definition 1, notice that $\phi$ is a formula possibly containing quantifiers.
+Given an admissible set of function definitions $\DDD$, 
+we may establish a model exists for $\DDD \wedge \phi$ 
+if we are able to find a ground formula $\psi_0$ that entails $\phi$,
+and subsequently extend $\psi_0$ to a $T$-satisfiable ground formula $\psi$ that is closed under function expansion with respect to $\DDD$.
+We may obtain $\psi$ from $\psi_0$ by conjoining to it ground formulas 
+(typically, conjunctions of ground literals) that entail instances of function definitions from $\DDD$ until the criterion in Definition 2 is met.
 
 Admissibility is a semantic criterion that must be satisfied for each function
 definition before applying our translation, described in
@@ -844,7 +853,7 @@ Furthermore, since all occurrences of the quantified variable~$a$ are
 beneath applications of the uninterpreted function $\farg{\con{s}}$,
 the formula is in the essentially uninterpreted fragment,
 for which Ge and de Moura \cite{GeDeM-CAV-09} provide
-a complete instantiation procedure, implemented in \ziii.
+an instantiation procedure, implemented in \ziii.
 As expected, \cvc and \ziii run indefinitely on formula~(\ref{eq:ex-before}).
 However, they produce a model for~(\ref{eq:ex-after})
 within 100 milliseconds.\xend
@@ -1151,11 +1160,11 @@ can be specified as %follows:
 \end{quote}
 %
 When reading this input,
-\cvc adds the annotated quantified formula
-$$\forallf{\con{s}} x.\;\, \con{s}( x ) \teq \lite\bigl( x \leq 0,\; 0,\; \con{s}( x-1 )\bigr)$$
+\cvc adds 
+$\forallf{\con{s}} x.\;\, \con{s}( x ) \teq \lite\bigl( x \leq 0,\; 0,\; \con{s}( x-1 )\bigr)$
 to its list of assertions,
 which after rewriting becomes
-$$\forallf{\con{s}} x.\;\, \lite\bigl( x \leq 0,\; \con{s}( x ) \teq 0,\; \con{s}( x ) \teq \con{s}( x-1 ) \bigr)$$
+$\forallf{\con{s}} x.\;\, \lite\bigl( x \leq 0,\; \con{s}( x ) \teq 0,\; \con{s}( x ) \teq \con{s}( x-1 ) \bigr)$.
 By specifying the command-line option \texttt{-}\texttt{-fmf-fun}, users
 can enable \cvc's finite model finding mode for recursive functions.
 In this mode, \cvc will replace its list of known
@@ -1233,12 +1242,12 @@ This scheme allows the solver greater flexibility compared with the default sche
 and comes with no loss of generality with respect to models,
 since monotonic types can always be extended to have equal cardinalities.
 
-By default, \cvc uses techniques to minimize the number of literals it
-considers when constructing propositional satisfying assignments for
-formulas~\cite{relevancy2007}. However, we have found such techniques degrade
-performance for finite model finding on problems having recursive functions
-that are defined by cases. For this reason, we disable the techniques for
-problems produced from our translation.
+%By default, \cvc uses techniques to minimize the number of literals it
+%considers when constructing propositional satisfying assignments for
+%formulas~\cite{relevancy2007}. However, we have found such techniques degrade
+%performance for finite model finding on problems having recursive functions
+%that are defined by cases. For this reason, we disable the techniques for
+%problems produced from our translation.
 
 %%% \ajr{More?} -- Probably no space. Otherwise, you could mention zero sorts. --jb
 
