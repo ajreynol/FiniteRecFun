@@ -275,7 +275,7 @@ functions, as in $\forall x : \typeint.\; \con{f}( x ) \teq \con{g}( x ) + 5$.
 % occurrences of $x$ occur beneath uninterpreted functions $\con{f}$ and
 % $\con{g}$.
 Other syntactic criteria extend
-this fragment slightly, including cases when variables occur as arguments of
+this fragment slightly, including some cases when variables occur as arguments of
 arithmetic predicate symbols. Subsequently, Reynolds et al.\
 \cite{ReyEtAl-1-RR-13,reynolds-et-al-2013} introduced techniques for finding finite
 models for quantified
@@ -293,7 +293,7 @@ essentially uninterpreted fragment does not allow the argument of a
 recursive function to be used inside a complex term on the right-hand side
 of the definition,
 whereas the finite model finding techniques %of Reynolds et al.\
-are not applicable for functions over infinite domains such as the integers or
+are not applicable in the presence of functions over infinite domains such as the integers or
 algebraic datatypes. A simple example where both approaches fail is
 $$\forall x : {\typeint}.\;\,
 \con{p}( x ) \teq \lite\bigl( x \leq 0,\allowbreak\;  1,\allowbreak\;
@@ -310,7 +310,7 @@ recursive definitions in practice.
 
 %In this paper,
 We present a method for translating formulas involving recursive function
-definitions into formulas where finite model finding techniques can be applied.
+definitions to formulas where finite model finding techniques can be applied.
 The definitions must meet a semantic criterion to be admissible 
 (Section~\ref{sec:prelim}). 
 This criterion is general enough to include well-founded (terminating)
@@ -352,9 +352,9 @@ We evaluated the two implementations on benchmarks from
 IsaPlanner~\cite{DBLP:conf/itp/JohanssonDB10}, Leon~\cite{blanc2013overview},
 and Isabelle/HOL, to demonstrate that this translation improves the
 effectiveness of the SMT solvers \cvc and \ziii in finding countermodels to
-verification conditions (Section~\ref{sec:evaluation}). Unlike earlier work,
-our approach relies on off-the-shelf SMT solvers
-(Section~\ref{sec:related-work}).
+verification conditions (Section~\ref{sec:evaluation}). 
+Note that, unlike earlier work (Section~\ref{sec:related-work}),
+our approach relies on off-the-shelf SMT solvers.
 
 An earlier version of this paper was presented at the SMT 2015 workshop in San
 Francisco \cite{reynolds-et-al-2015-smt}. This paper extends the workshop
@@ -395,13 +395,13 @@ define $\svars{\Sigma}$ as $\bigcup_{\tau \in \stypes{\Sigma}} \svars{\Sigma}_\t
 %
 Formulas are terms of type $\Bool$.
 We write $t\typ{\tau}$ to denote %ct a metavariable ranging over
-terms of type~$\tau$ and $\terms( t )$ to denote the set of subterms in $t$.
+terms of type~$\tau$ and $\terms( t )$ to denote the set of subterms of $t$.
 Given a term $u$, a variable tuple $\vec x = (x_1^{\tau_1},\dotsc,x_n^{\tau_n})$ and 
 a term tuple $\vec t = (t_{\smash{1}\vphantom{n}}^{\tau_1},\dotsc,t_n^{\tau_n})$, 
 we write $u[\vec t/\vec x]$ to denote the result of simultaneously replacing
 all occurrences of $x_i$ with $t_i$ in $u$, for each $i=1,\dotsc,n$.
 \begin{rep}When applied to terms, the symbol $=$ denotes syntactic equality.\end{rep}
-
+When convenient, we will treat a finite set of formulas as the conjunction of its elements.
 %We write $\functerms^\Sigma( t )$ to denote the set of $f$-applications in $t$ such that $\con{f} \in \sfundefs{\Sigma}$.
 
 A \emph{$\Sigma$-interpretation $\I$} %is a mathematical structure that
@@ -416,7 +416,8 @@ the \emph{models} of $T$, closed under variable reassignment
 (i.e., for every $\I \in \Mo$, every $\Sigma$-interpretation that differs
 from $\I$ only on the variables of $\svars \Sigma$ is also in $\Mo$).
 A $\Sigma$-formula $\varphi$ is \emph{$T$-satisfiable}
-if it is satisfied by some interpretation in $\Mo$\begin{rep};
+if it is satisfied by some interpretation in $\Mo$,
+which we call a \emph{$T$-model of $\varphi$}\begin{rep},
 otherwise, it is \emph{$T$-unsatisfiable}\end{rep}.
 A formula $\varphi$ \emph{$T$-entails} $\psi$, written $\varphi \models_T \psi$,
 if all interpretations in $\Mo$ that satisfy $\varphi$ also satisfy $\psi$.
@@ -431,14 +432,15 @@ whose $\Sigma_0$-reduct is a model of $T_0$.
 Note that $T$ is a \emph{conservative} extension of $T_0$, in the sense that
 a $\Sigma_0$-formula is $T_0$-satisfiable if and only it is $T$-satisfiable.
 We refer to the symbols of $\Sigma$ that are not in $\Sigma_0$ as \emph{uninterpreted}.
+
 For the rest of the paper, \relax{we fix a theory $T = (\Sigma, \Mo)$
-with uninterpreted symbols} constructed as above.
+with uninterpreted symbols}, constructed as above.
 
 Unconventionally,
 we consider \emph{annotated quantified formulas} of the form
 $\forallf{\const{f}} \vec x.\; \varphi$, where $\con{f} \in \sfuns{\Sigma}$ is
 uninterpreted. Their
-semantics is as for standard quantified formulas $\forall \vec x.\; \varphi$.
+semantics is the same as for standard quantified formulas $\forall \vec x.\; \varphi$.
 Given $\con{f} : \tau_1 \times \cdots \times \tau_n \rightarrow \tau$,
 a formula $\forallf{\con{f}} \vec x.\; \varphi$ is a \emph{function definition}
 (\,\emph{for $\con{f}$}\vthinspace) if $\vec x$ is a tuple of variables
@@ -495,11 +497,11 @@ is \emph{closed under function expansion with respect to $\DDD$} if
 The set $\DDD$ is \emph{admissible} if for every $T$-satisfiable formula
 $\psi$ closed under function expansion with respect to $\DDD$,
 the formula
-$\psi \wedge \bigwedge \Delta$ is also $T$-satisfiable.
+$\psi \wedge \Delta$ is also $T$-satisfiable.
 %\ct{I}
 \end{definition}
 
-In Definition 1, notice that $\phi$ is a formula possibly containing quantifiers.
+In Definition 1, notice that the goal $\phi$ is a formula possibly containing quantifiers.
 Given an admissible set of function definitions $\DDD$, 
 we may establish a model exists for $\DDD \wedge \phi$ 
 if we are able to find a ground formula $\psi_0$ that entails $\phi$,
@@ -539,13 +541,13 @@ $\sfundefs{\Sigma} = \{\con{f}_1,\dotsc,\con{f}_n\}$, then it is admissible.
 \end{theorem}
 
 \begin{proofsketch}
-Let $\psi$ be a satisfiable formula closed under function expansion with
-respect to $\DDD$. We show that $\psi \wedge \bigwedge \Delta$ is also
-satisfiable. Let $\I$ be a model of $\psi$, and
+Let $\psi$ be a $T$-satisfiable formula closed under function expansion with
+respect to $\DDD$. We show that $\psi \wedge \Delta$ is also
+$T$-satisfiable. Let $\I$ be a $T$-model of $\psi$, and
 let $\I_0$ be the reduct of $\I$ to the function symbols in $\sfuns{\Sigma} \setminus
 \sfundefs{\Sigma}$. Because well-founded definitions uniquely characterize
 the interpretation of the functions they define, there exists a
-$\Sigma$-interpretation $\J$ that extends $\I_0$ such that $\J \models \Delta$.
+model $\J$ of $T$ that extends $\I_0$ such that $\J \models \Delta$.
 %
 Since $\psi$ is closed under function expansion, it already constrains the
 functions in $\sfundefs{\Sigma}$ recursively as far as is
@@ -553,8 +555,8 @@ necessary for interpreting $\psi$. Thus, any point $v$ for which
 $\const{f}_i^\I(v)$ is needed for interpreting $\psi$ will have its
 expected value according to its definition and hence coincide with $\J$.
 And since $\psi^\I$ does not depend on the interpretation at the other
-points, $\J$ is, like $\I$, a model of $\psi$.
-Since $\J \models \Delta$ by assumption, we have $\J \models \psi \wedge
+points, $\J$ is, like $\I$, a $T$-model of $\psi$.
+Since $\J \models \Delta$ by assumption, we have $\J \models \psi
 \bigwedge \Delta$ as desired.
 %We have
 %$\varphi \,\models_T\, \bigwedge\nolimits_{\,i=1}^{n} \{ \varphi_i[ \vec t / \vec x ] \mid \con{f}_i( \vec t ) \in \terms( \varphi ) \}$.
@@ -566,12 +568,11 @@ Since $\J \models \Delta$ by assumption, we have $\J \models \psi \wedge
 
 Another useful class of function definitions is that of
 \emph{productive} corecursive functions. Corecursive functions are functions to
-a coalgebraic datatype. These functions can be ill founded without
-their being inconsistent. 
+a coalgebraic datatype. These functions can be ill founded without being inconsistent. 
 Intuitively, productive corecursive functions are functions that
 progressively reveal parts of their potentially infinite
 output \cite{turner-1995,mcbride-productive}.
-Given a type of infinite streams of integers constructed by
+For instance, given a type of infinite streams of integers constructed by
 $\con{scons} : \ty{int} \times \ty{stream} \to\allowbreak \ty{stream}$,
 the function defined by
 $\forallf{\const{e}} x.\;\, \const{e}(x) \teq \con{scons}(x,\; \const{e}(x + 1))$
@@ -580,7 +581,7 @@ $\forallf{\const{e}} x.\;\, \const{e}(x) \teq \con{scons}(x,\; \const{e}(x + 1))
 falls within this class: Each call to $\const{e}$ produces one
 constructor before entering the next call. Like terminating recursion,
 productive corecursion totally specifies the functions it defines,
-and the proof of Theorem~\ref{thm:adm} can be adapted to cover that case:
+and the proof of Theorem~\ref{thm:adm} can be adapted to cover that case.
 
 \begin{theorem}\label{thm:adm-co}
 If $\DDD$ is a set of productive function definitions for\/
@@ -609,11 +610,11 @@ such as $\forallf{\con{f}} x : \typeint.\allowbreak\;\, \con{f}( x )
 \teq \con{f}( x )$ or $\forallf{\con{g}} x.\allowbreak\;\, \con{g}( x
 ) \teq \con{g}( x + 1 )$. The latter is problematic operationally, because
 in general the closure of a formula~$\psi$ that depends on some term
-$\con{f}(\con{a})$ is an infinite set
+$\con{f}(\con{a})$ is an infinite set:
 $\{\psi\} \cup \{\con {g}(\con{a}+k) \teq \con {g}(\con{a}+k+1) \mid k \geq 0\}$.
-A similar issue arise with corecursive definitions specifying infinite
+A similar issue arises with corecursive definitions specifying infinite
 \emph{acyclic} objects, such as the $\con{e}$ stream introduced above.
-Nonetheless, admissibility is still useful if the problem does not refer to
+Nonetheless, admissibility is still useful if a goal formula does not refer to
 $\con{g}$ or $\con{e}$, because it tells us that we can safely ignore their
 definitions.
 %
@@ -628,7 +629,7 @@ where~$T$ is integer arithmetic extended to a set of uninterpreted symbols
 $\{\con f, \con g :\typeint \rightarrow \typeint,\, \ldots \}$.
 The set is inadmissible because the formula $\ltrue$ is
 closed under function expansion with respect to this set
-(since $\con{f}$ does not occur in $\ltrue$),
+(trivially, since $\con{f}$ does not occur in $\ltrue$),
 and yet there is no model of $T$
 satisfying $\con{f}$'s definition. A more subtle example is
 $\badassex$.
@@ -636,8 +637,7 @@ While this set has a model where $\con f$ and $\con g$ are interpreted as the
 constant function $0$, it is not admissible since %the formula
 $\con{f}( 0 ) \teq 1$ is
 closed under function expansion \begin{rep}with respect to this set\end{rep}
-and yet there exists
-no interpretation satisfying both $\con{f}( 0 ) \teq 1$ and $\con{g}$'s
+but there is no interpretation satisfying both $\con{f}( 0 ) \teq 1$ and $\con{g}$'s
 definition.
 
 %Terminating function specifications are always admissible, but also some
@@ -1864,7 +1864,7 @@ Mark Summerfield for suggesting
 several textual improvements. %, and the anonymous reviewers for their suggestions and comments. 
 Cruanes is supported by the Inria technological
 development action ``Contre-exemples utilisables par Isabelle et Coq'' (CUIC).
-
+Reynolds and Tinelli are partially supported by grant 1228765 from the National Science Foundation.
 }
 %
 
