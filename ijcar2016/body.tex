@@ -186,7 +186,8 @@
 \newcommand{\definefunreccmd}{\con{define}\text{-}\con{fun}\text{-}\con{rec}}
 \newcommand{\definefunsreccmd}{\con{define}\text{-}\con{funs}\text{-}\con{rec}}
 
-\newcommand{\Mo}{{\mathcal{I}}}
+%\newcommand{\Mo}{{\mathcal{I}}}
+\newcommand{\Mo}{{\mathbf{I}}}
 
 %\newcommand{\euf}{\ensuremath{\mathrm{E}}\xspace}
 \newcommand{\euf}{\ensuremath{\mathcalx{UF}}\xspace}
@@ -412,8 +413,8 @@ and each variable $x:\tau$ of $\svars{\Sigma}$ to an element of $\tau^\I$.
 A \emph{theory} is a pair $T = (\Sigma, \Mo)$ where
 $\Sigma$ is a signature and $\Mo$ is a class of $\Sigma$-interpretations,
 the \emph{models} of $T$, closed under variable reassignment
-(i.e., for every $I \in \Mo$, every $\Sigma$-interpretation that differs
-from $I$ only on the variables of $\svars \Sigma$ is also in $\Mo$).
+(i.e., for every $\I \in \Mo$, every $\Sigma$-interpretation that differs
+from $\I$ only on the variables of $\svars \Sigma$ is also in $\Mo$).
 A $\Sigma$-formula $\varphi$ is \emph{$T$-satisfiable}
 if it is satisfied by some interpretation in $\Mo$\begin{rep};
 otherwise, it is \emph{$T$-unsatisfiable}\end{rep}.
@@ -421,14 +422,15 @@ A formula $\varphi$ \emph{$T$-entails} $\psi$, written $\varphi \models_T \psi$,
 if all interpretations in $\Mo$ that satisfy $\varphi$ also satisfy $\psi$.
 Two formulas $\varphi$ and $\psi$ are \emph{$T$-equivalent}
 if each $T$-entails the other.
-If $T_1 = (\Sigma_1, \Mo_1)$ is a theory and $\Sigma_2$ is a signature
-with $\sfuns{\Sigma_1} \cap \sfuns{\Sigma_2} = \emptyset$,
-the \emph{extension of $T_1$ to $\Sigma_2$} is the theory $T = (\Sigma, \Mo)$ where
-$\sfuns{\Sigma} = \sfuns{\Sigma_1} \cup \sfuns{\Sigma_2}$,
-$\stypes{\Sigma} = \stypes{\Sigma_1} \cup \stypes{\Sigma_2}$,
-and $\Mo$ is the set of all $\Sigma$-interpretations $\I$
-whose $\Sigma_1$-reduct is a model of $T_1$.
-We refer to the symbols of $\Sigma_2$ that are not in $\Sigma_1$ as \emph{uninterpreted}.
+If $T_0 = (\Sigma_0, \Mo_0)$ is a theory and $\Sigma$ is a signature
+with $\sfuns{\Sigma_0} \subseteq \sfuns{\Sigma}$ 
+and $\stypes{\Sigma_0} \subseteq \stypes{\Sigma}$,
+the \emph{extension of $T_0$ to $\Sigma$} is the theory $T = (\Sigma, \Mo)$ 
+where $\Mo$ is the set of all $\Sigma$-interpretations $\I$
+whose $\Sigma_0$-reduct is a model of $T_0$.
+Note that $T$ is a \emph{conservative} extension of $T_0$, in the sense that
+a $\Sigma_0$-formula is $T_0$-satisfiable if and only it is $T$-satisfiable.
+We refer to the symbols of $\Sigma$ that are not in $\Sigma_0$ as \emph{uninterpreted}.
 For the rest of the paper, \relax{we fix a theory $T = (\Sigma, \Mo)$
 with uninterpreted symbols} constructed as above.
 
@@ -698,9 +700,12 @@ in definitional form with respect to $\sfundefs{\Sigma}$
 whose definitions are admissible.
 %We may translate $\varphi$ into a equisatisfiable formula $\phi'$ for which known model-finding procedures~\cite{GeDeM-CAV-09, ReyEtAl-1-RR-13} are applicable.
 We present a method that constructs an extended signature
-$\extendsig{ \Sigma }$ and an $\extendsig{ \Sigma }$-formula $\varphi'$ such that
-$\varphi'$ is $T$-satisfiable if and only if the $\Sigma$-formula $\varphi$ is
-$T$-satisfiable---i.e., $\varphi$ and $\varphi'$ are \emph{equisatisfiable} (\emph{in $T$}).
+$\extendsig{ \Sigma }$ and an $\extendsig{ \Sigma }$-formula $\varphi'$ 
+that is $T'$-satisfiable if and only if $\varphi$ is $T$-satisfiable
+where $T'$ is the extension of $T$ to $\extendsig{ \Sigma }$---i.e., $\varphi$ and $\varphi'$ 
+are \emph{equisatisfiable} (\emph{in $T'$}).
+Since $T'$ is a conservative extension of $T$, for notational simplicity
+we will refer to it also as $T$ from now on.
 The idea behind this translation is to use an uninterpreted type $\alpha_\con{f}$
 to abstract the set of
 \emph{relevant} input tuples for each defined function $\con{f}$ and restrict the
