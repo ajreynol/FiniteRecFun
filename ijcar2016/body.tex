@@ -423,6 +423,10 @@ A formula $\varphi$ \emph{$T$-entails} $\psi$, written $\varphi \models_T \psi$,
 if all interpretations in $\Mo$ that satisfy $\varphi$ also satisfy $\psi$.
 Two formulas $\varphi$ and $\psi$ are \emph{$T$-equivalent}
 if each $T$-entails the other.
+We call a theory a \emph{Herbrand} theory if 
+for every quantifier-free $\Sigma$-formula $\psi$ over the variables $\vec x$,
+$\{\psi[\vec t/\vec x] \mid t \text{ ground $\Sigma$-term}\} \models_T \forall \vec x.\; \psi$.
+
 If $T_0 = (\Sigma_0, \Mo_0)$ is a theory and $\Sigma$ is a signature
 with $\sfuns{\Sigma_0} \subseteq \sfuns{\Sigma}$ 
 and $\stypes{\Sigma_0} \subseteq \stypes{\Sigma}$,
@@ -434,7 +438,9 @@ a $\Sigma_0$-formula is $T_0$-satisfiable if and only it is $T$-satisfiable.
 We refer to the symbols of $\Sigma$ that are not in $\Sigma_0$ as \emph{uninterpreted}.
 
 For the rest of the paper, \relax{we fix a theory $T = (\Sigma, \Mo)$
-with uninterpreted symbols}, constructed as above.
+with uninterpreted symbols}, constructed as above, and assume it is a Herbrand theory.
+While this is an actual restriction, it can be shown that the theories typically considered 
+in SMT are Herbrand. 
 
 Unconventionally,
 we consider \emph{annotated quantified formulas} of the form
