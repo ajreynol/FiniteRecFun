@@ -965,7 +965,7 @@ By definition of $\conv$ and case analysis on the return values of $\conv_0$.
 \qed
 \end{proofsketch}
 
-\begin{lemma}\label{lem:conv}
+\begin{lemma}\label{lem:conv2}
 If $\psi$ is a $\Sigma$-formula not containing function definitions, 
 then $\conv( \psi ) \models_T\psi$.
 \end{lemma}
@@ -1023,7 +1023,7 @@ and let $\psi$ be the $\Sigma$-formula $\bigwedge L_\infty$.
 To show that $\psi$ is closed under function expansion with respect to $\DDD$,
 we first note that by construction $\psi$ entails $\psi_\infty$.
 For any function symbol~$\con{f}$ and terms~$\vec t$, since $\varphi_{\con{f}}[ \vec t / \vec x ]$ does not contain function definitions,
-by Lemma~\ref{lem:conv},
+by Lemma~\ref{lem:conv2},
 $\conv( \varphi_{\con{f}}[ \vec t / \vec x ] )$ entails $\varphi_{\con{f}}[ \vec t / \vec x ]$.
 Thus, $\psi$ entails $\{ \varphi_{\con{f}}[ \vec t / \vec x ] \mid \con{f}( \vec t ) \in \terms( \psi ), \con{f} \in \sfundefs{\Sigma} \}$,
 meaning that $\psi$ is closed under function expansion with respect to $\DDD$.
