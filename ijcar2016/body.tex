@@ -342,7 +342,7 @@ class.
 %report \cite{our-report}.\end{conf}
 
 The approach is implemented as a preprocessor in the SMT solver
-\cvc and in a new higher-order model finder called Nunchaku
+\cvc~\cite{barrett-et-al-2011} and in a new higher-order model finder called Nunchaku
 (Section~\ref{sec:implementations}).
 %As a case study, we employed
 %Nunchaku on Isabelle/HOL~\cite{nipkow-et-al-2002} formalizations of
@@ -351,9 +351,10 @@ The approach is implemented as a preprocessor in the SMT solver
 We evaluated the two implementations on benchmarks from
 IsaPlanner~\cite{DBLP:conf/itp/JohanssonDB10}, Leon~\cite{blanc2013overview},
 and Isabelle/HOL, to demonstrate that this translation improves the
-effectiveness of the SMT solvers \cvc and \ziii in finding countermodels to
+effectiveness of two SMT solvers, \cvc  and 
+\ziii~\cite{de-moura-bjoerner-2008}, in finding countermodels to
 verification conditions (Section~\ref{sec:evaluation}). 
-Note that, unlike earlier work (Section~\ref{sec:related-work}),
+Unlike earlier work (Section~\ref{sec:related-work}),
 our approach relies on off-the-shelf SMT solvers.
 
 An earlier version of this paper was presented at the SMT 2015 workshop in San
@@ -423,7 +424,7 @@ A formula $\varphi$ \emph{$T$-entails} $\psi$, written $\varphi \models_T \psi$,
 if all interpretations in $\Mo$ that satisfy $\varphi$ also satisfy $\psi$.
 Two formulas $\varphi$ and $\psi$ are \emph{$T$-equivalent}
 if each $T$-entails the other.
-We call a theory a \emph{Herbrand} theory if 
+We call $T$ a \emph{Herbrand} theory if 
 for every quantifier-free $\Sigma$-formula $\psi$ over the variables $\vec x$,
 $\{\psi[\vec t/\vec x] \mid t \text{ ground $\Sigma$-term}\} \models_T \forall \vec x.\; \psi$.
 
@@ -993,9 +994,9 @@ all function symbols $\con{f} \in \sfuns{\Sigma}$ as $\con{f}^\I$,
 and for each $\con{f} : \tau_1 \times \cdots \times \tau_n \rightarrow \tau$ in $\sfundefs{\Sigma}$,
 interprets $\fargtype{\con{f}}$ as $\tau_1^\I \times \cdots \times \tau_n^\I$
 and each $\fargx{\con{f}}{i}$ as the $i$\vvthinspace{th} projection on such tuples for $i = 1, \dotsc, n$.
-Since $\J$ satisfies $\varphi$, it satisfies a set of ground literals $L$ that entail $\varphi$.
+Since $\J$ satisfies $\varphi$ and $T$ is Herbrand, $\J$ satisfies a set of ground literals $L$ that entail $\varphi$.
 Furthermore, $\J$ satisfies \relax{every} constraint of the form $\exists a : {\fargtype{\con{f}}}.\;\, \vecfarg{\con{f}}( a ) \teq \vec t$,
-since by our construction of $\J$ there exists a value $v \in {\fargtype{\con{f}}}^\J$ such that $v = \vec t^\J$.
+since by its construction there is a value $v \in {\fargtype{\con{f}}}^\J$ such that $v = \vec t^\J$.
 %By case analysis it follows that $\conv_0$ maintains the invariant that
 %if $\conv_0( t\typ{\Bool}, \ppos )$ returns $( {t'}, \chi )$,
 %then $\I$ satisfies $t$ if and only if $\J$ satisfies $t'$.
@@ -1168,25 +1169,25 @@ can be specified as %follows:
 % are aesthetic and serve a purpose --jb
 \verb|(define-fun-rec s ((x Int)) Int (ite (<= x 0) 0 (+ x (s (- x 1)))))|\kern-200mm \\
 \verb|(declare-fun c () Int)| \\
-\verb|(assert (> (s c) 100))| \\
-\verb|(check-sat)|
+\verb|(assert (> (s c) 100))| % \\
+%\verb|(check-sat)|
 \end{quote}
 %
-When reading this input,
-\cvc adds 
+When asked to check the satisfiability of the assertions above,
+\cvc adds the formula
 $\forallf{\con{s}} x.\;\, \con{s}( x ) \teq \lite\bigl( x \leq 0,\; 0,\; \con{s}( x-1 )\bigr)$
 to its list of assertions,
 which after rewriting becomes
 $\forallf{\con{s}} x.\;\, \lite\bigl( x \leq 0,\; \con{s}( x ) \teq 0,\; \con{s}( x ) \teq \con{s}( x-1 ) \bigr)$.
 By specifying the command-line option \texttt{-}\texttt{-fmf-fun}, users
 can enable \cvc's finite model finding mode for recursive functions.
-In this mode, \cvc will replace its list of known
-assertions based on the $\conv$ translation before checking for satisfiability.
+In this mode, \cvc will rewrite the asserted formulas according to the $\conv$ translation 
+before checking for satisfiability.
 %If the functions provided in the input are admissible,
 %then a ``satisfiable" response from the solver implies that a model exists for the original formula.
-Accordingly, the solver will output the approximation of the interpretation it
+Accordingly, it will output the approximation of the interpretation it
 used for recursive function definitions.
-For the example above, it outputs a %partial
+For the example above, \cvc outputs a %partial
 model of~$\con{s}$ where only
 the values of $\con{s}(x)$ for $x = 0,\dotsc,14$ are correctly given:
 \begin{quote}
@@ -1222,7 +1223,7 @@ it wrongly answers \emph{sat.}
 
 \cvc implements a few optimizations designed to help finding finite models of
 $\conv(\varphi)$.
-Like other systems,
+As in other systems,
 the finite model finding capability of \cvc incrementally fixes bounds on the cardinalities of uninterpreted types
 and increases these bounds until it encounters a model.
 When multiple types are present, it uses a fairness scheme that
@@ -1233,8 +1234,8 @@ $\left\vert\tau_1\right\vert + \left\vert\tau_2\right\vert$ is at most $2$,
 then $3$, $4$, and so on.
 To accelerate the search for models,
 we implemented an optimization based on statically inferring \emph{monotonic} types.
-A monotonic type is one in which models can always be extended with additional
-elements of that type \cite{blanchette-krauss-2011,claessen-et-al-2011}.
+Intuitively, a type of a theory $T$ is monotonic if every model of $T$ can be extended with additional
+elements of that type and remain a model of $T$~\cite{blanchette-krauss-2011,claessen-et-al-2011}.
 %%% I find this part more confusing than helping, since we use monotonicity to merge
 %%% sorts (or at least their cardinality bounds), whereas Paradox and iProver use
 %%% it to separate sorts! Our use of monotonicity is more related to Nitpick's. --jb
@@ -1257,9 +1258,9 @@ since monotonic types can always be extended to have equal cardinalities.
 
 By default, \cvc uses techniques to minimize the number of literals it
 considers when constructing propositional satisfying assignments for
-formulas~\cite{relevancy2007}. However, we have found such techniques degrade
-performance for finite model finding on problems having recursive functions
-that are defined by cases. For this reason, we disable the techniques for
+formulas~\cite{relevancy2007}. However, we have found that such techniques degrade
+performance for finite model finding on problems with recursive functions
+defined by cases. For this reason, we disable the techniques for
 problems produced from our translation.
 
 %%% \ajr{More?} -- Probably no space. Otherwise, you could mention zero sorts. --jb
@@ -1283,7 +1284,7 @@ the TLA\textsuperscript{+} Proof System, and other proof assistants.
 Nunchaku is a spiritual successor to Nitpick \cite{blanchette-nipkow-2010} for
 Isabelle/HOL, but is developed as a standalone
 OCaml program, with its own input language. Whereas Nitpick generates a
-succession of problems where cardinalities of finite types grow at each step,
+succession of problems where the cardinalities of finite types grow at each step,
 Nunchaku translates its input to one first-order logic program that targets
 the finite model finding fragment of CVC4, including
 (co)algebraic datatypes \cite{reynolds-blanchette-2015-codata}.
@@ -1294,9 +1295,9 @@ strengths of competing approaches.
 % and makes
 % equality reasoning straightforward.
 
-The input syntax was inspired by that other systems based on higher-order
+The input syntax was inspired by that of other systems based on higher-order
 logic (e.g., Isabelle/HOL) and by functional programming languages (e.g.,
-OCaml). The following simple problem gives a taste of the syntax:
+OCaml). The following simple problem gives a taste of it:
 %
 \begin{quote}
 \verb$data nat := 0 | Suc nat.$ \\[2\jot]
@@ -1590,8 +1591,7 @@ yet support them, leaving 357 problems.
 %benchmarks $\conv(\varphi)$.
 %For the \isanun, \ajr{describe generation of smt2 benchmarks with encoding}.
 
-Among SMT solvers, we considered \ziii~\cite{de-moura-bjoerner-2008} and
-\cvc~\cite{barrett-et-al-2011}.
+Among SMT solvers, we considered \ziii and \cvc.
 \ziii runs heuristic methods for quantifier instantiation~\cite{MouraBjoerner07}
 as well as methods for finding models for quantified formulas~\cite{GeDeM-CAV-09}.
 For \cvc, we considered four configurations, referred
@@ -1673,8 +1673,8 @@ Total & 251 & 269 & 263 & 264 & 91 & {\win 270} & 261 & 267 & 91 & {\win 270}
 \end{figure}
 
 The results are summarized in Figures \ref{fig:sat} and \ref{fig:unsat}.
-Bold indicates the maximum of a row.
-The benchmarks and more detailed results are available online.%
+The bold font indicates the maximum value of a row.
+All the benchmarks and more detailed results are available online.%
 \footnote{\url{http://cs.uiowa.edu/~ajreynol/IJCAR2016-recfun}}
 The figures are divided into benchmarks triggering \emph{unsat} and \emph{sat}
 responses and further into benchmarks before and after the translation $\conv$.
@@ -1694,7 +1694,7 @@ impact. \cvcf finds 550 of the 1242 benchmarks to be satisfiable,
 including 9~benchmarks in the nonmutated \leon benchmark set. 
 The two optimizations for finite model finding in \cvc (configurations \cvcfe and \cvcfm) 
 lead to a net gain of one~satisfiable benchmark each with respect to \cvcf.
-The performance of \ziiib for countermodels also improves dramatically, as it
+The performance of \ziiib for countermodels also improves dramatically, as \ziiib
 finds 134 more benchmarks to be satisfiable, including 5 that are not solved by \cvcf.
 %
 We conclude that the translation $\conv$ enables SMT
@@ -1706,11 +1706,11 @@ the translation $\conv$ helps all configurations for \emph{unsat} responses as w
 \ziii solves a total of 269 with the translation, whereas it solves only 251 without it.
 Surprisingly,
 the configuration \cvcf, which is not tailored for handling unsatisfiable benchmarks,
-solves 270 \emph{unsat} benchmarks overall, which is more than both \cvcd and \ziii.
+solves 270 \emph{unsat} benchmarks overall, which is more than either \cvcd or \ziii.
 These results suggest that the translation does not degrade the performance
 of SMT solvers for unsatisfiable problems involving recursive functions,
-and instead often improve their performance. 
-These results suggest that it would be interesting to try this translation
+and in fact it often improves it. 
+They also suggest that it might be interesting to use this translation
 in Sledgehammer \cite{blanchette-et-al-2013-smt} and to try Nunchaku also as a
 proof tool.
 
