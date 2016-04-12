@@ -465,7 +465,7 @@ form
 %\kern+\abovedisplayshortskip
 %
 $(\forallf{\con{f}_1} \vec x_1.\; \varphi_1) \wedge \cdots \wedge
-(\forallf{\con{f}_n} \vec x_n.\; \varphi_n) \wedge \phi$,
+(\forallf{\con{f}_n} \vec x_n.\; \varphi_n) \wedge \varphi_0$,
 %
 where $\con{f}_1, \dotsc, \con{f}_n$ are distinct function symbols,
 %ct added
@@ -475,8 +475,8 @@ for $i = 1, \dotsc, n$,
 %\ct{I think we need more conditions here on how a symbol $\con{f}_i$ can occur in $\varphi_j$.}
 %\jb{do we? I thought that the admissibility criterion below is enough.}
 % should be enough, unless I'm missing something? -ajr
-and $\phi$ contains no function definitions.
-We call $\phi$ the \emph{goal} of $\varphi$.
+and $\varphi_0$ contains no function definitions.
+We call $\varphi_0$ the \emph{goal} of $\varphi$.
 %\ct{Don't we need additional restrictions on the $\varphi_i$'s here?
 %(E.g., they are quantifier-free, or perhaps existential or containing only let binders.)}
 % Now fixed above -ajr
@@ -501,10 +501,10 @@ $\psi \wedge \Delta$ is also $T$-satisfiable.
 %\ct{I}
 \end{definition}
 
-In Definition 1, notice that the goal $\phi$ is a formula possibly containing quantifiers.
+In Definition 1, notice that the goal $\varphi_0$ is a formula possibly containing quantifiers.
 Given an admissible set of function definitions $\DDD$, 
-we may establish a model exists for $\DDD \wedge \phi$ 
-if we are able to find a ground formula $\psi_0$ that entails $\phi$,
+we may establish a model exists for $\DDD \wedge \varphi_0$ 
+if we are able to find a ground formula $\psi_0$ that entails $\varphi_0$,
 and subsequently extend $\psi_0$ to a $T$-satisfiable ground formula $\psi$ that is closed under function expansion with respect to $\DDD$.
 We may obtain $\psi$ from $\psi_0$ by conjoining to it ground formulas 
 (typically, conjunctions of ground literals) that entail instances of function definitions from $\DDD$ until the criterion in Definition 2 is met.
@@ -972,9 +972,11 @@ then $\conv( \psi ) \models_T\psi$.
 
 \begin{theorem}\label{thm:equi}
 If $\varphi$ is a\/ $\Sigma$-formula in definitional form with respect to\/
-$\sfundefs{\Sigma}$
-and the set of function definitions\/ $\DDD$ corresponding to\/
-$\sfundefs{\Sigma}$ is admissible, then\/ $\varphi$ and\/ $\conv( \varphi )$ are
+$\sfundefs{\Sigma}$,
+the set of function definitions\/ $\DDD$ corresponding to\/
+$\sfundefs{\Sigma}$ is admissible, 
+and the goal formula $\varphi_0$ of $\varphi$ is ground,
+then\/ $\varphi$ and\/ $\conv( \varphi )$ are
 equisatisfiable in $T$.
 \end{theorem}
 \begin{proofsketch}
