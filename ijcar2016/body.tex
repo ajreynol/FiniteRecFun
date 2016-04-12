@@ -701,26 +701,27 @@ whose definitions are admissible.
 %We may translate $\varphi$ into a equisatisfiable formula $\phi'$ for which known model-finding procedures~\cite{GeDeM-CAV-09, ReyEtAl-1-RR-13} are applicable.
 We present a method that constructs an extended signature
 $\extendsig{ \Sigma }$ and an $\extendsig{ \Sigma }$-formula $\varphi'$ 
-that is $T'$-satisfiable if and only if $\varphi$ is $T$-satisfiable
+that is $T'$-satisfiable if and only if $\varphi$ is $T$-satisfiable,
 where $T'$ is the extension of $T$ to $\extendsig{ \Sigma }$---i.e., $\varphi$ and $\varphi'$ 
 are \emph{equisatisfiable} (\emph{in $T'$}).
-Since $T'$ is a conservative extension of $T$, for notational simplicity
+Since $T'$ is a conservative extension of $T$, for simplicity
 we will refer to it also as $T$ from now on.
-The idea behind this translation is to use an uninterpreted type $\alpha_\con{f}$
+The idea behind this construction is to use an uninterpreted type $\alpha_\con{f}$
 to abstract the set of
-\emph{relevant} input tuples for each defined function $\con{f}$ and restrict the
+\emph{relevant} input tuples for each defined function $\con{f}$, and restrict the
 quantification of $\con{f}$'s definition to a single variable of this type.
 Informally, the relevant input tuples $\vec t$ of a function $\con{f}$ are the
 ones for which the interpretation of $\con{f}( \vec t )$ is relevant to the
 satisfiability of $\varphi$.
-More precisely,
+
 %suppose our signature $\Sigma$ contains a set of defined function symbols $\sfundefs{\Sigma} \subseteq \sfuns{\Sigma}$.
+We construct the signature $\extendsig{\Sigma}$ so that,
 for each $\con{f} : \tau_1 \times \cdots \times \tau_n \rightarrow \tau \in \sfundefs{\Sigma}$,
-the extended signature $\extendsig{\Sigma}$ contains
+it contains
 %\begin{itemize}
 %\item
-an uninterpreted \emph{abstract type} $\fargtype{\con{f}}$ 
-abstracting the Cartesian product $\tau_1 \times \cdots \times \tau_n$
+an uninterpreted \emph{abstract type} $\fargtype{\con{f}}$,
+abstracting the Cartesian product $\tau_1 \times \cdots \times \tau_n$,
 and
 %\item
 $n$ uninterpreted \emph{concretization functions} $\fargx{\con{f}}{1} : \fargtype{\con{f}} \rightarrow \tau_1$, $\dotsc,$ $\fargx{\con{f}}{n} : \fargtype{\con{f}} \rightarrow \tau_n$.
@@ -728,10 +729,10 @@ $n$ uninterpreted \emph{concretization functions} $\fargx{\con{f}}{1} : \fargtyp
 %The interpretation of uninterpreted type $\fargtype{\con{f}}$ will denote the elements (tuples) on which the function $\con{f}$ is applied.
 %The role of the uninterpreted functions $\farg{\con{f}}^1$, $\ldots$, $\farg{\con{f}}^n$ will be discussed more in the following.
 
-The translation $\conv$ defined in Figure~\ref{fig:A} translates the $\Sigma$-formula
+The translation $\conv$ defined in Figure~\ref{fig:A} converts the $\Sigma$-formula
 $\varphi$ into the $\extendsig{\Sigma}$-formula $\varphi'$. It relies
 on the auxiliary function $\conv_0$, which takes two arguments:\ the term $t$
-to translate and a \relax{polarity}~$p$ for $t$, which is either $\ppos$, $\pneg$, or
+to translate and a \relax{polarity}~$p$ for $t$, which can be $\ppos$, $\pneg$, or
 $\pnone$.
 \vthinspace$\conv_0$ returns a pair $( t'\negvthinspace,\, \chi )$, where $t'$ is a term of
 the same type as $t$ and $\chi$ is an $\extendsig{\Sigma}$-formula.
@@ -765,43 +766,43 @@ generated as deep in the formula as possible, based on the
 polarities of Boolean connectives, to allow models where the sets
 denoted by the $\fargtype{\con{f}}$ types are as small as possible.
 
-If $t$ is an application of a predicate symbol $\boolop$, including the
+In the call $\conv_0(t, p)$, if $t$'s top symbol is a predicate symbol $\boolop$, including the
 operators ${\oldneg}$, ${\wedge}$, ${\vee}$, ${\teq}$, and ${\lite}$,
-$\conv_0$ calls itself recursively on the arguments $t_i$ and polarity $\pol(
-\boolop, i, p )$, with $\pol$ d\rlap{efined as}
+$\conv_0$ calls itself recursively on the arguments $t_i$ of $b$ and polarity 
+$\pol(\boolop, i, p )$ with $\pol$ defined as
 \[\pol( \boolop, i, p ) =
 \begin{cases}
-p & \text{if either $\boolop \in \{{\wedge}, {\vee}\}$ or $\boolop = \lite$ and $i \in \{2, 3\}$} \\[-\jot]
+p & \text{if $\boolop \in \{{\wedge}, {\vee}\}$, or $\boolop = \lite$ and $i \in \{2, 3\}$} \\[-\jot]
 \pnegate p & \text{if $\boolop = {\neg}$} \\[-\jot]
 \pnone & \text{otherwise}
 \end{cases}\]
 where $\pnegate p$ is $\pneg$ if $p$ is $\ppos$, $\ppos$
-if $p$ is $\pneg$, and $\pnone$ if $p$ is $\pnone$.
+if $p$ is $\pneg$, and $\pnone$ otherwise.
 The term $t$ is then reconstructed as $\boolop(t_1',\dotsc,t_n')$
 where each $t_i'$ is the result of the recursive call with argument~$t_i$.
 If the polarity $p$ of $t$ is $\ppos$,
 $\conv_0$ conjunctively adds to $\boolop(t_1',\dotsc,t_n')$ the constraint~$\chi$ derived from
-the subterms and returns $\top$ as the constraint.
+the subterms, and returns $\top$ as the constraint.
 Dually, if $p$ is $\pneg$, it adds a
 disjunction with the negated constraint to produce the same net effect
 (since $\lnot\;(\phi \mathrel\lor \lnot\;\chi) \Medleftrightarrow \lnot\;\phi \mathrel\land \chi$).
 %ct  as in the positive case.
-It $p$ is $\pnone$, the constraint $\chi$ is
-returned to the caller.
+It $p$ is $\pnone$, it returns the constraint $\chi$.
 
-If $t$ is a function definition, % of a function in $\sfundefs{\Sigma}$,
-$\conv_0$ constructs a quantified formula over a single variable
-$a$ of type $\fargtype{\con{f}}$ and replaces all occurrences of $\vec x$ in
-the body of that formula with $\vecfarg{\con{f}}( a )$.
+If $t$ is a function definition $\forallf{\con{f}} \vec x.\; u$, % of a function in $\sfundefs{\Sigma}$,
+then $\conv_0$ recursively constructs a formula $u'$ from $u$,
+replaces all occurrences of $\vec x$ in $u'$ with $\vecfarg{\con{f}}( a )$
+where $a$ is single variable of type $\fargtype{\con{f}}$,
+and then quantifies $a$.
 (Since function definitions are top-level conjuncts, %by case analysis on the return values of $\conv$,
 $\chi$ must be $\ltrue$ and can be ignored.)
 %
-If $t$ is an unannotated quantified formula, $\conv_0$ calls itself
-on the body with the same polarity; a quantifier is prefixed to the
-quantified formula and constraint returned by the recursive call.
-Otherwise, $t$ is either an application of an uninterpreted predicate symbol or a term
-of a type other than $\Bool$. Then, the returned constraint is a conjunction of
-formulas of the form $\exists a : {\fargtype{\con{f}}}.\;\, \vecfarg{\con{f}}(
+If $t$ is an unannotated quantified formula $\forall \vec x.\; u$, then $\conv_0$ calls itself
+on $u$ with the same polarity $p$ and returns the quantification over $\vec x$ 
+of the formula $u'$ and of the constraint $\chi$ returned by the recursive call.
+Finally, if $t$ is an application of an uninterpreted predicate symbol or a term
+of a type other than $\Bool$, $\conv_0$ returns $t$ together with a conjunction of
+constraints of the form $\exists a : {\fargtype{\con{f}}}.\;\, \vecfarg{\con{f}}(
 a ) \teq \vec s$ for each subterm $\con{f}( \vec s )$ of~$t$ such that $\con{f}
 \in \sfundefs{\Sigma}$. Such constraints, when asserted positively, ensure that
 some element in the abstract domain $\fargtype{\con f}$ is the preimage of
@@ -820,12 +821,12 @@ Let $\varphi$ be the $\Sigma$-formula
 \end{equation}
 %
 The definition of $\const{s}$ specifies that it returns the sum of all
-positive integers up to $x$. The formula $\varphi$ is in definitional form with
-respect to $\sfundefs{\Sigma}$
+positive integers up to $x$. The formula $\varphi$, which is in definitional form with
+respect to $\sfundefs{\Sigma}$,
 %\jb{correct? It said $\Sigma_u$, which was definitely wrong}
-and states that the sum of all
+states that the sum of all
 positive numbers up to some constant $\const{c}$ is greater than $100$. It is
-satisfiable with a model that interprets $\const{c}$ as $14$ or more.
+satisfied in a model of $T$ that interprets $\const{c}$ as $14$ or more.
 Due to the universal quantifier, SMT solvers
 cannot find
 a model for $\varphi$. The signature $\extendsig{\Sigma}$ extends $\Sigma$ with the type
@@ -859,9 +860,8 @@ beneath applications of the uninterpreted function $\farg{\con{s}}$,
 the formula is in the essentially uninterpreted fragment,
 for which Ge and de Moura \cite{GeDeM-CAV-09} provide
 an instantiation procedure, implemented in \ziii.
-As expected, \cvc and \ziii run indefinitely on formula~(\ref{eq:ex-before}).
-However, they produce a model for~(\ref{eq:ex-after})
-within 100 milliseconds.\xend
+Both \cvc and \ziii run indefinitely on formula~(\ref{eq:ex-before}), as expected.
+However, they both produce a model for~(\ref{eq:ex-after}) within 100 milliseconds.\xend
 \end{example}
 
 \newcommand\badlambda{\lambda x : \typeint.\allowbreak\;\, \lite( x \teq 0,\allowbreak\; 0,\allowbreak\;
@@ -882,7 +882,7 @@ and $\con{s}$ as the almost constant function
 \[\badlambda\]
 %\end{equation}
 %
-In other words, $\const{s}$ is interpreted as a function mapping $x$ to the sum
+In other words, $\I$ interprets $\const{s}$ as a function mapping $x$ to the sum
 of all positive integers up to $x$ when $0 \leq x \leq 13$, and $105$
 otherwise.
 The $\Sigma$-reduct of $\I$ is not a model of the original formula~(\ref{eq:ex-before}),
@@ -939,8 +939,8 @@ function definitions.
 We sketch the correctness of translation~$\conv$.
 For a set of ground literals~$L$,
 we write $\absconstraints( L )$ to denote the set of constraints that
-force the concretization functions to have the necessary elements in their
-range for determining the satisfiability of $L$ with respect to the function
+force the concretization functions to have enough elements in their range 
+to determine the satisfiability of $L$ with respect to the function
 definitions in the translation.
 Formally,
 \begin{equation} \label{eq:xl}
@@ -952,11 +952,11 @@ Formally,
 The following lemma states the central invariant behind the translation $\conv$.
 
 \begin{lemma}\label{lem:conv}
-Let $\psi$ be a formula not containing function definitions,
-and let $\I$ be an $\extendsig{\Sigma}$-interpretation whose $\Sigma$-reduct
-is a model of $T$.
-Then $\I$ satisfies $\conv( \psi )$ if and only if
-it satisfies $L \cup \absconstraints( L )$, where $L$ is a set of ground $\Sigma$-literals that $T$-entail $\psi$.
+Let $\psi$ be a $\Sigma$-formula not containing function definitions,
+and let $\I$ be an $\extendsig{\Sigma}$-model of $T$.
+Then, $\I$ satisfies $\conv( \psi )$ if and only if
+it satisfies $L \cup \absconstraints( L )$
+for some set $L$ of ground $\Sigma$-literals such that $L \models_T \psi$.
 %There exists a set of ground $\Sigma$-literals $L$ such that $L$ entails $\varphi$,
 %and $\I$ satisfies $L \cup \absconstraints( L )$.
 \end{lemma}
@@ -966,7 +966,7 @@ By definition of $\conv$ and case analysis on the return values of $\conv_0$.
 \end{proofsketch}
 
 \begin{lemma}\label{lem:conv}
-If $\psi$ is a formula not containing function definitions, 
+If $\psi$ is a $\Sigma$-formula not containing function definitions, 
 then $\conv( \psi ) \models_T\psi$.
 \end{lemma}
 
@@ -978,11 +978,11 @@ $\sfundefs{\Sigma}$ is admissible, then\/ $\varphi$ and\/ $\conv( \varphi )$ are
 equisatisfiable in $T$.
 \end{theorem}
 \begin{proofsketch}
-First, we show that if $\varphi$ is satisfied by an
-$\Sigma$-interpretation $\I$, then $\conv( \varphi )$ is satisfied by an $\extendsig{\Sigma}$-interpretation $\J$.
-Let $\J$ be the $\extendsig{\Sigma}$-interpretation that interprets all types $\tau \in \stypes{\Sigma}$ as~$\tau^\I$,
-all functions $\con{f} \in \sfuns{\Sigma}$ as $\con{f}^\I$,
-and for each function $\con{f} : \tau_1 \times \cdots \times \tau_n \rightarrow \tau$ in $\sfundefs{\Sigma}$,
+First, we show that if $\varphi$ is satisfied by a
+$\Sigma$-model $\I$ of $T$, then $\conv( \varphi )$ is satisfied by an $\extendsig{\Sigma}$-model $\J$.
+Given such a model $\I$, let $\J$ be the $\extendsig{\Sigma}$-interpretation that interprets all types $\tau \in \stypes{\Sigma}$ as~$\tau^\I$,
+all function symbols $\con{f} \in \sfuns{\Sigma}$ as $\con{f}^\I$,
+and for each $\con{f} : \tau_1 \times \cdots \times \tau_n \rightarrow \tau$ in $\sfundefs{\Sigma}$,
 interprets $\fargtype{\con{f}}$ as $\tau_1^\I \times \cdots \times \tau_n^\I$
 and each $\fargx{\con{f}}{i}$ as the $i$\vvthinspace{th} projection on such tuples for $i = 1, \dotsc, n$.
 Since $\J$ satisfies $\varphi$, it satisfies a set of ground literals $L$ that entail $\varphi$.
@@ -1004,7 +1004,7 @@ $\DDD \wedge \varphi_0$.
 %where $\varphi'$ entails $\varphi_0$.
 %To construct $\varphi'$,
 First, we define a sequence of $\Sigma$-literals sets $L_0 \subseteq L_1 \subseteq \cdots$
-such that $\J$ satisfies $L_i \cup \absconstraints( L_i )$ for $i = 0, 1, \ldots\vthinspace$.
+such that $\J$ satisfies $L_i \cup \absconstraints( L_i )$ for $i \geq 0$.
 Since $\J$ satisfies $\conv( \varphi_0 )$,
 by Lemma~\ref{lem:conv},
 $\J$ satisfies a set of literals $L \cup \absconstraints( L )$ where $L$ is a set of $\Sigma$-literals that entail $\varphi_0$.
